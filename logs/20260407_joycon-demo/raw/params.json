@@ -1,0 +1,105 @@
+{
+  "/cmd_vel_to_motor_node": {
+    "qos_overrides./parameter_events.publisher.depth": "1000",
+    "qos_overrides./parameter_events.publisher.durability": "volatile",
+    "qos_overrides./parameter_events.publisher.history": "keep_last",
+    "qos_overrides./parameter_events.publisher.reliability": "reliable",
+    "use_sim_time": "False"
+  },
+  "/joy_node": {
+    "autorepeat_rate": "20.0",
+    "coalesce_interval_ms": "1",
+    "deadzone": "0.3",
+    "device_id": "0",
+    "device_name": "",
+    "qos_overrides./parameter_events.publisher.depth": "1000",
+    "qos_overrides./parameter_events.publisher.durability": "volatile",
+    "qos_overrides./parameter_events.publisher.history": "keep_last",
+    "qos_overrides./parameter_events.publisher.reliability": "reliable",
+    "sticky_buttons": "False",
+    "use_sim_time": "False"
+  },
+  "/my_pub": {
+    "use_sim_time": "False"
+  },
+  "/my_pub_polling": {
+    "use_sim_time": "False"
+  },
+  "/my_sub": {
+    "use_sim_time": "False"
+  },
+  "/my_sub_2": {
+    "use_sim_time": "False"
+  },
+  "/om_node": {
+    "axis_num": "3",
+    "first_gen": "",
+    "global_id": "10",
+    "init_baudrate": "230400",
+    "init_com": "/dev/serial/by-id/usb-FTDI_USB-RS485_Cable_FT7E9M3C-if00-port0",
+    "init_topicID": "0",
+    "init_update_rate": "100",
+    "qos_overrides./parameter_events.publisher.depth": "1000",
+    "qos_overrides./parameter_events.publisher.durability": "volatile",
+    "qos_overrides./parameter_events.publisher.history": "keep_last",
+    "qos_overrides./parameter_events.publisher.reliability": "reliable",
+    "second_gen": "1,2,3",
+    "use_sim_time": "False"
+  },
+  "/read_write_node": {
+    "qos_overrides./parameter_events.publisher.depth": "1000",
+    "qos_overrides./parameter_events.publisher.durability": "volatile",
+    "qos_overrides./parameter_events.publisher.history": "keep_last",
+    "qos_overrides./parameter_events.publisher.reliability": "reliable",
+    "use_sim_time": "False"
+  },
+  "/robot_odom_node": {
+    "qos_overrides./parameter_events.publisher.depth": "1000",
+    "qos_overrides./parameter_events.publisher.durability": "volatile",
+    "qos_overrides./parameter_events.publisher.history": "keep_last",
+    "qos_overrides./parameter_events.publisher.reliability": "reliable",
+    "qos_overrides./tf.publisher.depth": "100",
+    "qos_overrides./tf.publisher.durability": "volatile",
+    "qos_overrides./tf.publisher.history": "keep_last",
+    "qos_overrides./tf.publisher.reliability": "reliable",
+    "use_sim_time": "False"
+  },
+  "/steer_motor_node": {
+    "qos_overrides./parameter_events.publisher.depth": "1000",
+    "qos_overrides./parameter_events.publisher.durability": "volatile",
+    "qos_overrides./parameter_events.publisher.history": "keep_last",
+    "qos_overrides./parameter_events.publisher.reliability": "reliable",
+    "use_sim_time": "False"
+  },
+  "/teleop_twist_joy_node": {
+    "axis_angular.pitch": "-1",
+    "axis_angular.roll": "-1",
+    "axis_angular.yaw": "3",
+    "axis_linear.x": "1",
+    "axis_linear.y": "0",
+    "axis_linear.z": "-1",
+    "enable_button": "4",
+    "enable_turbo_button": "5",
+    "frame": "teleop_twist_joy",
+    "inverted_reverse": "False",
+    "publish_stamped_twist": "False",
+    "qos_overrides./parameter_events.publisher.depth": "1000",
+    "qos_overrides./parameter_events.publisher.durability": "volatile",
+    "qos_overrides./parameter_events.publisher.history": "keep_last",
+    "qos_overrides./parameter_events.publisher.reliability": "reliable",
+    "require_enable_button": "True",
+    "scale_angular.pitch": "0.0",
+    "scale_angular.roll": "0.0",
+    "scale_angular.yaw": "0.4",
+    "scale_angular_turbo.pitch": "0.0",
+    "scale_angular_turbo.roll": "0.0",
+    "scale_angular_turbo.yaw": "0.6",
+    "scale_linear.x": "0.4",
+    "scale_linear.y": "0.4",
+    "scale_linear.z": "0.0",
+    "scale_linear_turbo.x": "1.0",
+    "scale_linear_turbo.y": "1.0",
+    "scale_linear_turbo.z": "",
+    "use_sim_time": "False"
+  }
+}

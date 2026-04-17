@@ -1,0 +1,190 @@
+[
+  {
+    "name": "/angle_chokudo_node",
+    "publishers": [
+      {
+        "name": "/cameraswingmotor/angle",
+        "type": "std_msgs/msg/Float32"
+      },
+      {
+        "name": "/chokudomotor/angle",
+        "type": "std_msgs/msg/Float32"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      },
+      {
+        "name": "/sensor/pressure",
+        "type": "std_msgs/msg/Float32"
+      }
+    ],
+    "subscribers": [
+      {
+        "name": "/cameraswingmotor/target_angle",
+        "type": "std_msgs/msg/Float32"
+      },
+      {
+        "name": "/chokudomotor/target_angle",
+        "type": "std_msgs/msg/Float32"
+      }
+    ],
+    "service_servers": [
+      {
+        "name": "/angle_chokudo_node/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/angle_chokudo_node/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/angle_chokudo_node/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/angle_chokudo_node/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/angle_chokudo_node/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/angle_chokudo_node/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [],
+    "action_servers": [],
+    "action_clients": []
+  },
+  {
+    "name": "/angle_serial_manual_node",
+    "publishers": [
+      {
+        "name": "/cameraswingmotor/target_angle",
+        "type": "std_msgs/msg/Float32"
+      },
+      {
+        "name": "/chokudomotor/target_angle",
+        "type": "std_msgs/msg/Float32"
+      },
+      {
+        "name": "/motor_angles",
+        "type": "std_msgs/msg/Float32MultiArray"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      }
+    ],
+    "subscribers": [
+      {
+        "name": "/cameraswingmotor/angle",
+        "type": "std_msgs/msg/Float32"
+      },
+      {
+        "name": "/chokudomotor/angle",
+        "type": "std_msgs/msg/Float32"
+      },
+      {
+        "name": "/motor_current_angles",
+        "type": "std_msgs/msg/Float32MultiArray"
+      }
+    ],
+    "service_servers": [
+      {
+        "name": "/angle_serial_manual_node/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/angle_serial_manual_node/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/angle_serial_manual_node/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/angle_serial_manual_node/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/angle_serial_manual_node/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/angle_serial_manual_node/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [],
+    "action_servers": [],
+    "action_clients": []
+  },
+  {
+    "name": "/angle_serial_node",
+    "publishers": [
+      {
+        "name": "/motor_current_angles",
+        "type": "std_msgs/msg/Float32MultiArray"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      },
+      {
+        "name": "/switch",
+        "type": "std_msgs/msg/Int8MultiArray"
+      }
+    ],
+    "subscribers": [
+      {
+        "name": "/motor_angles",
+        "type": "std_msgs/msg/Float32MultiArray"
+      }
+    ],
+    "service_servers": [
+      {
+        "name": "/angle_serial_node/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/angle_serial_node/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/angle_serial_node/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/angle_serial_node/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/angle_serial_node/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/angle_serial_node/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [],
+    "action_servers": [],
+    "action_clients": []
+  }
+]

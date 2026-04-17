@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>デモ詳細 | FY2026 Robot Harness System</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#f8fafc; --surface:#ffffff; --surface2:#f1f5f9;
+  --border:#e2e8f0; --border2:#cbd5e1;
+  --accent:#2563eb; --accent2:#059669; --accent3:#d97706;
+  --danger:#dc2626; --purple:#7c3aed;
+  --text:#0f172a; --muted:#64748b; --muted2:#94a3b8;
+  --r:12px;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Meiryo',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.75;}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+  height: 56px; background: rgba(255,255,255,.97);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  padding: 0 28px; display: flex; align-items: center; gap: 2px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none; margin-right: 16px; flex-shrink: 0;
+}
+.nav-logo-icon {
+  width: 30px; height: 30px; background: var(--text); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.nav-logo-sep { font-size: 20px; color: var(--border2); font-weight: 300; }
+.nav-logo-text { font-size: 12px; color: var(--muted); font-weight: 600; }
+.nav-item { position: relative; }
+.nav-btn {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--muted); text-decoration: none;
+  padding: 6px 11px; border-radius: 7px;
+  border: none; background: none; cursor: pointer; font-family: inherit;
+  transition: background .12s, color .12s; white-space: nowrap;
+}
+.nav-btn:hover, .nav-item:hover > .nav-btn { background: var(--surface2); color: var(--text); }
+.nav-btn.cur { color: var(--accent); }
+.nav-caret { font-size: 8px; opacity: .5; transition: transform .15s; }
+.nav-item:hover .nav-caret { transform: rotate(180deg); }
+.nav-drop {
+  position: absolute; top: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  min-width: 240px; background: #fff;
+  border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.11), 0 2px 8px rgba(0,0,0,.05);
+  padding: 8px; z-index: 999;
+  opacity: 0; pointer-events: none;
+  transition: opacity .15s, transform .15s;
+}
+.nav-item:hover .nav-drop { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.nav-drop-label {
+  font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em;
+  color: #94a3b8; padding: 6px 10px 3px; display: block;
+}
+.nav-drop-link {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; padding: 9px 10px; border-radius: 9px; transition: background .1s;
+}
+.nav-drop-link:hover { background: var(--surface2); }
+.nav-dl-icon { font-size: 18px; flex-shrink: 0; }
+.nav-dl-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.nav-dl-sub { font-size: 11px; color: var(--muted); }
+.nav-drop-sep { height: 1px; background: var(--border); margin: 5px 6px; }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.nav-badge-pill {
+  font-size: 11px; font-weight: 700;
+  background: #ecfdf5; color: #059669;
+  border: 1px solid rgba(5,150,105,.25);
+  padding: 4px 12px; border-radius: 99px; white-space: nowrap;
+}
+.nav-pulse {
+  width: 7px; height: 7px; border-radius: 50%; background: #059669;
+  animation: npulse 2s infinite; flex-shrink: 0;
+}
+@keyframes npulse {
+  0%,100%{ box-shadow: 0 0 0 0 rgba(5,150,105,.4); }
+  50%     { box-shadow: 0 0 0 5px rgba(5,150,105,0); }
+}
+
+/* ── HERO ─────────────────────────────────────── */
+.page-hero{padding:88px 24px 52px;background:linear-gradient(135deg,#fff 0%,#eff6ff 60%,#f5f3ff 100%);border-bottom:1px solid var(--border);position:relative;overflow:hidden;}
+.page-hero::before{content:'🤖';position:absolute;right:60px;bottom:10px;font-size:140px;opacity:.05;line-height:1;}
+.page-hero-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1;}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--accent);background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.2);padding:3px 12px;border-radius:99px;margin-bottom:14px;font-weight:600;}
+h1{font-size:clamp(24px,5vw,40px);font-weight:800;color:var(--text);margin-bottom:8px;}
+.hero-desc{font-size:15px;color:var(--muted);}
+
+/* ── MAIN ─────────────────────────────────────── */
+main{max-width:1100px;margin:0 auto;padding:48px 24px 80px;}
+section{margin-bottom:72px;}
+.sec-tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);display:block;margin-bottom:6px;}
+h2{font-size:clamp(20px,3.5vw,28px);font-weight:800;color:var(--text);margin-bottom:6px;}
+.sec-desc{font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.7;}
+
+/* ── ARCHITECTURE FLOW ───────────────────────── */
+.arch-banner{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px 28px;margin-bottom:28px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.arch-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:16px;}
+.arch-flow{display:flex;align-items:center;flex-wrap:wrap;gap:8px;}
+.arch-node{display:flex;align-items:center;gap:8px;background:rgba(37,99,235,.07);border:1px solid rgba(37,99,235,.2);color:var(--accent);font-size:13px;font-weight:600;padding:10px 18px;border-radius:10px;}
+.arch-node .num{font-size:11px;background:var(--accent);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.arch-arrow{color:var(--muted2);font-size:18px;}
+
+/* ── PRIORITY BANNER ─────────────────────────── */
+.priority-banner{background:linear-gradient(90deg,rgba(220,38,38,.06),rgba(37,99,235,.06));border:1px solid var(--border);border-left:3px solid var(--danger);border-radius:var(--r);padding:14px 20px;margin-bottom:28px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.prio-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);white-space:nowrap;}
+.prio-items{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.prio-item{font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;}
+.prio-item.p1{background:rgba(220,38,38,.1);color:var(--danger);border:1px solid rgba(220,38,38,.2);}
+.prio-item.p2{background:rgba(37,99,235,.1);color:var(--accent);border:1px solid rgba(37,99,235,.2);}
+.prio-item.p3{background:rgba(124,58,237,.1);color:var(--purple);border:1px solid rgba(124,58,237,.2);}
+.prio-item.p4{background:rgba(5,150,105,.1);color:var(--accent2);border:1px solid rgba(5,150,105,.2);}
+.prio-gt{color:var(--muted2);font-size:14px;font-weight:300;}
+
+/* ── REQUIREMENT CARDS ───────────────────────── */
+.req-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;}
+.req-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;transition:all .2s;position:relative;overflow:hidden;}
+.req-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.req-card.crit::before{background:var(--danger);}
+.req-card.high::before{background:var(--accent);}
+.req-card.med::before{background:var(--accent2);}
+.req-card.purple::before{background:var(--purple);}
+.req-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.07);}
+.req-icon{font-size:26px;margin-bottom:8px;}
+.req-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;margin-bottom:8px;display:inline-block;}
+.req-badge.crit{background:rgba(220,38,38,.1);color:var(--danger);}
+.req-badge.high{background:rgba(37,99,235,.1);color:var(--accent);}
+.req-badge.med{background:rgba(5,150,105,.1);color:var(--accent2);}
+.req-badge.purple{background:rgba(124,58,237,.1);color:var(--purple);}
+.req-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.req-func{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;}
+.req-func-tag{font-size:10px;background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:2px 7px;border-radius:4px;}
+.req-tech-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted2);margin-bottom:5px;}
+.req-tech{display:flex;flex-wrap:wrap;gap:4px;}
+.req-tech-tag{font-size:10px;background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.15);color:var(--accent);padding:2px 7px;border-radius:4px;}
+
+/* ── CATEGORY HEADERS ────────────────────────── */
+.cat-header{border-radius:var(--r);padding:18px 22px;margin:28px 0 14px;}
+.cat-header-inner{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.cat-icon{font-size:28px;flex-shrink:0;}
+.cat-title{font-size:15px;font-weight:800;color:var(--text);margin-bottom:3px;}
+.cat-desc{font-size:12px;color:var(--muted);}
+.cat-levels{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap;}
+.cat-lv{font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px;}
+
+/* ── SCENARIO CARDS ──────────────────────────── */
+.scenario-list{display:flex;flex-direction:column;gap:16px;}
+.sc-status.active{background:rgba(5,150,105,.1);color:var(--accent2);border:1px solid rgba(5,150,105,.2);}
+.sc-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:box-shadow .2s;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+.sc-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.08);}
+.sc-featured-bar{background:linear-gradient(90deg,#eff6ff,#f5f3ff);padding:6px 22px;font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.05em;border-bottom:1px solid var(--border);}
+/* Two-column layout: content + mini radar */
+.sc-layout{display:flex;align-items:stretch;}
+.sc-content{flex:1;min-width:0;}
+.sc-radar-col{
+  width:186px; flex-shrink:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:14px 14px 14px 0; gap:8px; border-left:1px solid var(--border);
+  background:linear-gradient(135deg,#fff,#f8fafc);
+}
+.sc-radar-col svg{display:block;overflow:visible;}
+.sc-radar-axes{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;max-width:170px;}
+.sc-radar-ax{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;}
+/* Pie chart title */
+.sc-pie-title{font-size:9px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+@media(max-width:680px){
+  .sc-layout{flex-direction:column;}
+  .sc-radar-col{width:100%;border-left:none;border-top:1px solid var(--border);flex-direction:row;padding:12px 20px;background:none;}
+}
+.sc-head{padding:20px 22px 0;display:flex;align-items:flex-start;gap:14px;}
+.sc-rank{font-size:26px;flex-shrink:0;}
+.sc-meta{flex:1;}
+.sc-title{font-size:16px;font-weight:800;color:var(--text);margin-bottom:4px;}
+.sc-sub{font-size:13px;color:var(--muted);}
+.sc-status{font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px;white-space:nowrap;margin-top:2px;}
+.sc-status.plan{background:rgba(217,119,6,.1);color:var(--accent3);border:1px solid rgba(217,119,6,.2);}
+.sc-body{padding:16px 22px 20px;}
+.sc-flow{font-size:12px;background:var(--surface2);border-radius:8px;padding:12px 14px;line-height:2.2;margin-bottom:14px;border:1px solid var(--border);color:var(--text);}
+.sf{color:var(--accent2);font-weight:600;}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.chip{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
+.chip.t{background:rgba(37,99,235,.08);color:var(--accent);border:1px solid rgba(37,99,235,.18);}
+.chip.a{background:rgba(124,58,237,.08);color:var(--purple);border:1px solid rgba(124,58,237,.18);}
+.chip.h{background:rgba(217,119,6,.08);color:var(--accent3);border:1px solid rgba(217,119,6,.18);}
+.chip.g{background:rgba(5,150,105,.08);color:var(--accent2);border:1px solid rgba(5,150,105,.18);}
+/* requirement relevance tags on scenario cards */
+.sc-req-row{margin-top:10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.sc-req-label{font-size:10px;color:var(--muted2);font-weight:600;margin-right:2px;}
+.req-rel{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;}
+.req-rel.nav{background:rgba(220,38,38,.08);color:var(--danger);border:1px solid rgba(220,38,38,.15);}
+.req-rel.mem{background:rgba(37,99,235,.08);color:var(--accent);border:1px solid rgba(37,99,235,.15);}
+.req-rel.agent{background:rgba(124,58,237,.08);color:var(--purple);border:1px solid rgba(124,58,237,.15);}
+.req-rel.manip{background:rgba(217,119,6,.08);color:var(--accent3);border:1px solid rgba(217,119,6,.15);}
+.req-rel.nlui{background:rgba(5,150,105,.08);color:var(--accent2);border:1px solid rgba(5,150,105,.15);}
+.req-rel.perc{background:rgba(6,182,212,.08);color:#0891b2;border:1px solid rgba(6,182,212,.15);}
+.req-rel.skill{background:rgba(15,23,42,.07);color:#475569;border:1px solid rgba(15,23,42,.12);}
+.req-rel.sys{background:rgba(100,116,139,.1);color:#475569;border:1px solid rgba(100,116,139,.2);}
+
+/* ── USE CASES ───────────────────────────────── */
+.uc-section-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:32px 0 12px;display:flex;align-items:center;gap:10px;}
+.uc-section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.uc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+.uc-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;transition:all .2s;box-shadow:0 1px 2px rgba(0,0,0,.04);}
+.uc-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 5px 16px rgba(0,0,0,.07);}
+.uc-scene{font-size:11px;color:var(--muted2);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.uc-situation{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.uc-action{font-size:13px;color:var(--accent2);display:flex;align-items:center;gap:4px;margin-bottom:10px;}
+.uc-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.uc-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:12px;}
+
+/* ── RADAR CHART ─────────────────────────────── */
+.radar-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;}
+@media(min-width:640px){.radar-wrap{flex-direction:row;align-items:flex-start;justify-content:center;}}
+.radar-legend{display:flex;flex-direction:column;gap:8px;min-width:200px;}
+.rl-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);}
+.rl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+
+/* ── SCROLL REVEAL ───────────────────────────── */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .5s,transform .5s;}
+.reveal.in{opacity:1;transform:none;}
+
+/* ── FOOTER ──────────────────────────────────── */
+footer{border-top:1px solid var(--border);padding:24px;text-align:center;font-size:12px;color:var(--muted2);}
+footer a{color:var(--accent);text-decoration:none;}
+footer a:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="plan-fy26.html">
+      <div class="nav-logo-icon">🧠</div>
+      <span class="nav-logo-sep">/</span>
+      <span class="nav-logo-text">FY26 Plan</span>
+    </a>
+
+    <div class="nav-item">
+      <button class="nav-btn" onclick="location.href='plan-fy26.html'">プラン <span class="nav-caret">▾</span></button>
+      <div class="nav-drop">
+        <span class="nav-drop-label">メインページ</span>
+        <a class="nav-drop-link" href="plan-fy26.html#background">
+          <span class="nav-dl-icon">📖</span>
+          <div><div class="nav-dl-name">研究背景</div><div class="nav-dl-sub">現状の課題と研究目的</div></div>
+        </a>
+        <a class="nav-drop-link" href="plan-fy26.html#figures">
+          <span class="nav-dl-icon">📐</span>
+          <div><div class="nav-dl-name">設計資料</div><div class="nav-dl-sub">アーキテクチャ図・スライド</div></div>
+        </a>
+        <a class="nav-drop-link" href="plan-fy26.html#schedule">
+          <span class="nav-dl-icon">📅</span>
+          <div><div class="nav-dl-name">スケジュール</div><div class="nav-dl-sub">フェーズ・ガントチャート</div></div>
+        </a>
+        <a class="nav-drop-link" href="plan-fy26.html#demo">
+          <span class="nav-dl-icon">🎯</span>
+          <div><div class="nav-dl-name">デモ概要</div><div class="nav-dl-sub">デモ要件レーダー</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-item">
+      <a class="nav-btn" href="todo.html">Todo</a>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-btn cur">デモ詳細 <span class="nav-caret">▾</span></button>
+      <div class="nav-drop">
+        <span class="nav-drop-label">このページ</span>
+        <a class="nav-drop-link" href="#req-map">
+          <span class="nav-dl-icon">🗺️</span>
+          <div><div class="nav-dl-name">要件マップ</div><div class="nav-dl-sub">9カテゴリ・技術要素</div></div>
+        </a>
+        <a class="nav-drop-link" href="#scenarios">
+          <span class="nav-dl-icon">🎬</span>
+          <div><div class="nav-dl-name">デモシナリオ</div><div class="nav-dl-sub">3カテゴリ × Level 1/2/3</div></div>
+        </a>
+        <a class="nav-drop-link" href="#usecases">
+          <span class="nav-dl-icon">💡</span>
+          <div><div class="nav-dl-name">活用シーン</div><div class="nav-dl-sub">14のユースケース</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-btn" onclick="location.href='issues/arm-vertical/arm-vertical.html'">Issues <span class="nav-caret">▾</span></button>
+      <div class="nav-drop">
+        <span class="nav-drop-label">問題対処記録</span>
+        <a class="nav-drop-link" href="issues/arm-vertical/arm-vertical.html">
+          <span class="nav-dl-icon">🔧</span>
+          <div><div class="nav-dl-name">アーム上下機構</div><div class="nav-dl-sub">コネクタ破損 → 再設計（解決済み）</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-btn" onclick="location.href='disscussion/arm-demo-level123-ja.html'">Discussion <span class="nav-caret">▾</span></button>
+      <div class="nav-drop">
+        <span class="nav-drop-label">議論・検討ドキュメント</span>
+        <a class="nav-drop-link" href="disscussion/arm-demo-level123-ja.html">
+          <span class="nav-dl-icon">🦾</span>
+          <div><div class="nav-dl-name">マニピュレーション実証ロードマップ</div><div class="nav-dl-sub">アーム単体 Demo Level 1-3 分類</div></div>
+        </a>
+        <a class="nav-drop-link" href="disscussion/move-base-level123-ja.html">
+          <span class="nav-dl-icon">🤖</span>
+          <div><div class="nav-dl-name">ナビゲーション Level 1-3 分類基準</div><div class="nav-dl-sub">自律移動システム設計方針</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <span class="nav-pulse"></span>
+      <div class="nav-badge-pill">Phase 0 進行中</div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────────── -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="hero-tag">🎯 FY2026 Demo Planning</div>
+    <h1>デモ計画 &amp; 要件マップ</h1>
+    <p class="hero-desc">Robot Harness System — デモシナリオ・活用シーン・技術要件の全体像</p>
+  </div>
+</div>
+
+<!-- ── MAIN ─────────────────────────────────────────── -->
+<main>
+
+  <!-- ① ARCHITECTURE + PRIORITY -->
+  <section class="reveal">
+    <span class="sec-tag">System Architecture</span>
+    <h2>システムアーキテクチャ</h2>
+    <p class="sec-desc">知覚から行動まで — Robot Harness System の情報フロー</p>
+
+    <div class="arch-banner">
+      <div class="arch-title">コアフロー（処理パイプライン）</div>
+      <div class="arch-flow">
+        <div class="arch-node"><span class="num">1</span>👁️ 知覚</div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-node"><span class="num">2</span>🧠 記憶</div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-node"><span class="num">3</span>🤖 Agent (LLM)</div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-node"><span class="num">4</span>🔗 Skill System</div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-node"><span class="num">5</span>🦾 Robot</div>
+      </div>
+    </div>
+
+    <div class="priority-banner">
+      <span class="prio-label">開発優先順位</span>
+      <div class="prio-items">
+        <span class="prio-item p1">① SLAM</span>
+        <span class="prio-gt">＞</span>
+        <span class="prio-item p2">② Skill System</span>
+        <span class="prio-gt">＞</span>
+        <span class="prio-item p3">③ AI Agent</span>
+        <span class="prio-gt">＞</span>
+        <span class="prio-item p4">④ VLA</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ② REQUIREMENTS MAP -->
+  <section class="reveal" id="req-map">
+    <span class="sec-tag">Requirements Map</span>
+    <h2>要件マップ</h2>
+    <p class="sec-desc">Robot Harness System を構成する9つの要件カテゴリと技術要素</p>
+
+    <div class="req-grid">
+
+      <!-- 1. Navigation -->
+      <div class="req-card crit">
+        <div class="req-icon">🚗</div>
+        <div class="req-badge crit">① SLAM 最優先</div>
+        <div class="req-title">屋内・屋外走行（Navigation）</div>
+        <div class="req-func">
+          <span class="req-func-tag">屋内ナビゲーション</span>
+          <span class="req-func-tag">屋外ナビゲーション</span>
+          <span class="req-func-tag">長距離移動</span>
+          <span class="req-func-tag">自己位置推定</span>
+        </div>
+        <div class="req-tech-title">センサー / 認識 / ナビゲーション</div>
+        <div class="req-tech">
+          <span class="req-tech-tag">Stereo Camera</span>
+          <span class="req-tech-tag">LiDAR</span>
+          <span class="req-tech-tag">IMU</span>
+          <span class="req-tech-tag">GNSS</span>
+          <span class="req-tech-tag">ORB-SLAM3</span>
+          <span class="req-tech-tag">RTAB-Map</span>
+          <span class="req-tech-tag">Visual Odometry</span>
+          <span class="req-tech-tag">EKF</span>
+          <span class="req-tech-tag">Nav2</span>
+          <span class="req-tech-tag">A*</span>
+          <span class="req-tech-tag">DWA</span>
+          <span class="req-tech-tag">Waypoint Nav</span>
+        </div>
+      </div>
+
+      <!-- 2. Memory -->
+      <div class="req-card high">
+        <div class="req-icon">🧠</div>
+        <div class="req-badge high">② 記憶システム</div>
+        <div class="req-title">記憶（Memory）</div>
+        <div class="req-func">
+          <span class="req-func-tag">状態記憶</span>
+          <span class="req-func-tag">履歴記録</span>
+          <span class="req-func-tag">知識蓄積</span>
+          <span class="req-func-tag">経験活用</span>
+        </div>
+        <div class="req-tech-title">Memory 構造 / 実装 / AI</div>
+        <div class="req-tech">
+          <span class="req-tech-tag">Working Memory</span>
+          <span class="req-tech-tag">Episodic Memory</span>
+          <span class="req-tech-tag">Long-term Memory</span>
+          <span class="req-tech-tag">FAISS</span>
+          <span class="req-tech-tag">Chroma</span>
+          <span class="req-tech-tag">Vector DB</span>
+          <span class="req-tech-tag">JSON Logs</span>
+          <span class="req-tech-tag">ROS bag</span>
+          <span class="req-tech-tag">RAG</span>
+          <span class="req-tech-tag">Context Injection</span>
+        </div>
+      </div>
+
+      <!-- 3. Multi-Agent -->
+      <div class="req-card high">
+        <div class="req-icon">🤖</div>
+        <div class="req-badge high">③ マルチエージェント</div>
+        <div class="req-title">AI System（Multi-Agent）</div>
+        <div class="req-func">
+          <span class="req-func-tag">タスク計画</span>
+          <span class="req-func-tag">状態監視</span>
+          <span class="req-func-tag">自己改善</span>
+          <span class="req-func-tag">安全制御</span>
+        </div>
+        <div class="req-tech-title">Agent 構成 / LLM / Prompt</div>
+        <div class="req-tech">
+          <span class="req-tech-tag">Planner Agent</span>
+          <span class="req-tech-tag">Ops Agent</span>
+          <span class="req-tech-tag">Builder Agent</span>
+          <span class="req-tech-tag">Safety Agent</span>
+          <span class="req-tech-tag">Event Bus</span>
+          <span class="req-tech-tag">Scheduler</span>
+          <span class="req-tech-tag">GPT / Claude / Qwen</span>
+          <span class="req-tech-tag">Chain-of-Thought</span>
+          <span class="req-tech-tag">Tool-use prompting</span>
+          <span class="req-tech-tag">Reflection loop</span>
+        </div>
+      </div>
+
+      <!-- 4. Manipulation -->
+      <div class="req-card med">
+        <div class="req-icon">🦾</div>
+        <div class="req-badge med">④ 軽量アーム</div>
+        <div class="req-title">Manipulation</div>
+        <div class="req-func">
+          <span class="req-func-tag">把持</span>
+          <span class="req-func-tag">配置</span>
+          <span class="req-func-tag">操作</span>
+        </div>
+        <div class="req-tech-title">ハード / 制御 / 認識 / 学習</div>
+        <div class="req-tech">
+          <span class="req-tech-tag">SOARM101</span>
+          <span class="req-tech-tag">LeRobot</span>
+          <span class="req-tech-tag">ROS2 control</span>
+          <span class="req-tech-tag">IK / FK</span>
+          <span class="req-tech-tag">YOLO</span>
+          <span class="req-tech-tag">Depth estimation</span>
+          <span class="req-tech-tag">Imitation Learning</span>
+          <span class="req-tech-tag">VLA</span>
+        </div>
+      </div>
+
+      <!-- 5. NL Interface -->
+      <div class="req-card med">
+        <div class="req-icon">🗣️</div>
+        <div class="req-badge med">⑤ 自然言語UI</div>
+        <div class="req-title">自然言語インターフェース</div>
+        <div class="req-func">
+          <span class="req-func-tag">音声指示</span>
+          <span class="req-func-tag">会話</span>
+          <span class="req-func-tag">タスク生成</span>
+        </div>
+        <div class="req-tech-title">入力 / 出力 / 理解 / 対話</div>
+        <div class="req-tech">
+          <span class="req-tech-tag">Whisper（音声認識）</span>
+          <span class="req-tech-tag">TTS</span>
+          <span class="req-tech-tag">LLM</span>
+          <span class="req-tech-tag">Prompt設計</span>
+          <span class="req-tech-tag">Dialogue Memory</span>
+          <span class="req-tech-tag">Context管理</span>
+        </div>
+      </div>
+
+      <!-- 6. Perception -->
+      <div class="req-card high">
+        <div class="req-icon">👁️</div>
+        <div class="req-badge high">⑥ 知覚（コア）</div>
+        <div class="req-title">Perception</div>
+        <div class="req-func">
+          <span class="req-func-tag">物体認識</span>
+          <span class="req-func-tag">シーン理解</span>
+          <span class="req-func-tag">状態検出</span>
+        </div>
+        <div class="req-tech-title">認識 / VLM / OCR</div>
+        <div class="req-tech">
+          <span class="req-tech-tag">YOLO</span>
+          <span class="req-tech-tag">DETR</span>
+          <span class="req-tech-tag">Semantic Segmentation</span>
+          <span class="req-tech-tag">Depth estimation</span>
+          <span class="req-tech-tag">GPT-4V</span>
+          <span class="req-tech-tag">Qwen-VL</span>
+          <span class="req-tech-tag">OCR</span>
+        </div>
+      </div>
+
+      <!-- 7. System Infrastructure -->
+      <div class="req-card crit">
+        <div class="req-icon">⚙️</div>
+        <div class="req-badge crit">⑦ システム基盤（超重要）</div>
+        <div class="req-title">System Infrastructure</div>
+        <div class="req-func">
+          <span class="req-func-tag">常時稼働</span>
+          <span class="req-func-tag">安全管理</span>
+          <span class="req-func-tag">状態監視</span>
+        </div>
+        <div class="req-tech-title">基盤技術</div>
+        <div class="req-tech">
+          <span class="req-tech-tag">ROS2</span>
+          <span class="req-tech-tag">Docker</span>
+          <span class="req-tech-tag">Logging system</span>
+          <span class="req-tech-tag">Health monitoring</span>
+          <span class="req-tech-tag">Watchdog</span>
+          <span class="req-tech-tag">Fail-safe system</span>
+        </div>
+      </div>
+
+      <!-- 8. Skill System -->
+      <div class="req-card crit">
+        <div class="req-icon">🔗</div>
+        <div class="req-badge crit">⑧ Skill（核心）</div>
+        <div class="req-title">Skill System</div>
+        <div class="req-func">
+          <span class="req-func-tag">AI → Robot 接続</span>
+        </div>
+        <div class="req-tech-title">API / 制御 / 安全</div>
+        <div class="req-tech">
+          <span class="req-tech-tag">Skill API設計</span>
+          <span class="req-tech-tag">JSON schema</span>
+          <span class="req-tech-tag">Action wrapper (ROS2)</span>
+          <span class="req-tech-tag">Retry / Timeout</span>
+          <span class="req-tech-tag">Safety constraint</span>
+        </div>
+      </div>
+
+      <!-- 9. World Model -->
+      <div class="req-card purple">
+        <div class="req-icon">🌍</div>
+        <div class="req-badge purple">⑨ World Model（将来）</div>
+        <div class="req-title">World Model</div>
+        <div class="req-func">
+          <span class="req-func-tag">環境理解</span>
+          <span class="req-func-tag">長期推論</span>
+        </div>
+        <div class="req-tech-title">モデル / 空間</div>
+        <div class="req-tech">
+          <span class="req-tech-tag">Scene Graph</span>
+          <span class="req-tech-tag">Spatial Memory</span>
+          <span class="req-tech-tag">JEPA系</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ③ DEMO REQUIREMENTS RADAR -->
+  <section class="reveal">
+    <span class="sec-tag">Demo Requirements</span>
+    <h2>デモ要件の優先度</h2>
+    <p class="sec-desc">要件マップ9カテゴリ全体のデモへの重要度・関連度を可視化（スコア 0–10）</p>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:28px;box-shadow:0 1px 3px rgba(0,0,0,.05);">
+      <div class="radar-wrap">
+        <svg id="radar" width="320" height="320" viewBox="-160 -160 320 320" style="flex-shrink:0;"></svg>
+        <div class="radar-legend">
+          <div style="font-size:11px;color:var(--muted);font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em;">9要件カテゴリ</div>
+          <div class="rl-item"><span class="rl-dot" style="background:#dc2626;"></span><span>① Navigation（SLAM・屋外）</span></div>
+          <div class="rl-item"><span class="rl-dot" style="background:#2563eb;"></span><span>② Memory（記憶・RAG）</span></div>
+          <div class="rl-item"><span class="rl-dot" style="background:#7c3aed;"></span><span>③ Multi-Agent（AI）</span></div>
+          <div class="rl-item"><span class="rl-dot" style="background:#d97706;"></span><span>④ Manipulation（SOARM101）</span></div>
+          <div class="rl-item"><span class="rl-dot" style="background:#059669;"></span><span>⑤ NL Interface（音声UI）</span></div>
+          <div class="rl-item"><span class="rl-dot" style="background:#0891b2;"></span><span>⑥ Perception（知覚・VLM）</span></div>
+          <div class="rl-item"><span class="rl-dot" style="background:#475569;"></span><span>⑦ System Infra（基盤）</span></div>
+          <div class="rl-item"><span class="rl-dot" style="background:#0f172a;"></span><span>⑧ Skill System（核心）</span></div>
+          <div class="rl-item"><span class="rl-dot" style="background:#6d28d9;"></span><span>⑨ World Model（将来）</span></div>
+          <div style="height:10px;"></div>
+          <div style="font-size:11px;color:var(--muted2);">各頂点は要件カテゴリ軸。塗り面積が広いほど重要度が高い。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ④ DEMO SCENARIOS -->
+  <section class="reveal" id="scenarios">
+    <span class="sec-tag">Demo Scenarios</span>
+    <h2>デモシナリオ一覧</h2>
+    <p class="sec-desc">3カテゴリ × Level 1/2/3 — 難易度順に段階的に実証。右端の円グラフは各シナリオが活用する要件カテゴリを示します。</p>
+
+    <!-- Category legend -->
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px;">
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;background:rgba(37,99,235,.07);border:1px solid rgba(37,99,235,.2);font-size:12px;font-weight:700;color:var(--accent);">🚗 モバイルベース単体</div>
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;background:rgba(217,119,6,.07);border:1px solid rgba(217,119,6,.2);font-size:12px;font-weight:700;color:var(--accent3);">🦾 アーム単体</div>
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;background:rgba(5,150,105,.07);border:1px solid rgba(5,150,105,.2);font-size:12px;font-weight:700;color:var(--accent2);">🤝 モバイル + アーム 複合</div>
+    </div>
+
+    <div class="scenario-list">
+
+    <!-- ====== CATEGORY A: MOBILE ONLY ====== -->
+    <div class="cat-header" style="background:linear-gradient(135deg,rgba(37,99,235,.08),rgba(37,99,235,.03));border-left:4px solid var(--accent);">
+      <div class="cat-header-inner">
+        <span class="cat-icon">🚗</span>
+        <div>
+          <div class="cat-title">カテゴリ A — モバイルベース 単体 Demo</div>
+          <div class="cat-desc">移動・自己位置推定・記憶を段階的に実証</div>
+        </div>
+        <div class="cat-levels">
+          <span class="cat-lv" style="background:rgba(217,119,6,.12);color:#d97706;">L1 予定</span>
+          <span class="cat-lv" style="background:rgba(217,119,6,.12);color:#d97706;">L2 予定</span>
+          <span class="cat-lv" style="background:rgba(217,119,6,.12);color:#d97706;">L3 予定</span>
+        </div>
+      </div>
+    </div>
+    <div class="scenario-list">
+
+      <!-- A prerequisite note -->
+      <div style="background:linear-gradient(90deg,rgba(5,150,105,.1),rgba(5,150,105,.04));border:1px solid rgba(5,150,105,.25);border-radius:10px;padding:12px 18px;margin-bottom:12px;font-size:12px;color:#059669;">
+        <strong>前提（完了済み 2026-04-11）：</strong> Joy-Con 手動操縦・モーター制御チェーン確認 &nbsp;→&nbsp;
+        <a href="logs/20260407_joycon-demo/snapshot.html" target="_blank" style="color:#059669;text-decoration:underline;">joycon-demo snapshot</a> /
+        <a href="media/teleoperate.MOV" style="color:#059669;text-decoration:underline;">teleoperate.MOV</a>
+      </div>
+
+      <!-- A-Level 1 -->
+      <div class="sc-card" style="border-left:3px solid var(--accent);">
+        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(37,99,235,.08),transparent);color:var(--accent);">Level 1 基礎 — Phase 1–2</div>
+        <div class="sc-layout">
+          <div class="sc-content">
+            <div class="sc-head">
+              <span class="sc-rank">🗺️</span>
+              <div class="sc-meta">
+                <div class="sc-title">A-Level 1 — SLAM 自律移動 &amp; 音声指令操縦 + 走行ログ記録</div>
+                <div class="sc-sub">音声指示で SLAM + Nav2 自律走行し、走行ログを記録して記憶システムの基盤を構築</div>
+              </div>
+              <span class="sc-status plan">Phase 1–2</span>
+            </div>
+            <div class="sc-body">
+              <div class="sc-flow">
+                🗣️ 音声/テキスト指示 → <span class="sf">🤖 LLM 解釈</span> → <span class="sf">📍 Waypoint 生成</span> → <span class="sf">🗺️ SLAM 自己位置推定</span> → <span class="sf">🚗 Nav2 自律走行</span> → <span class="sf">📝 走行ログ記録（経路・時刻・位置）</span> → ✅ 到達確認
+              </div>
+              <div class="chips">
+                <span class="chip t">ORB-SLAM3</span>
+                <span class="chip t">Nav2</span>
+                <span class="chip a">LLM Planner</span>
+                <span class="chip g">Whisper</span>
+                <span class="chip t">ROS bag</span>
+                <span class="chip g">Walk Log</span>
+              </div>
+              <div class="sc-req-row">
+                <span class="sc-req-label">要件カテゴリ：</span>
+                <span class="req-rel nav">① Nav</span>
+                <span class="req-rel agent">③ Multi-Agent</span>
+                <span class="req-rel nlui">⑤ NL UI</span>
+                <span class="req-rel sys">⑦ System</span>
+                <span class="req-rel skill">⑧ Skill</span>
+              </div>
+            </div>
+          </div>
+          <div class="sc-radar-col">
+            <div class="sc-pie-title">関連要件</div>
+            <svg class="sc-pie" data-reqs="1,3,5,7,8" width="150" height="150" viewBox="-75 -75 150 150"></svg>
+            <div class="sc-radar-axes">
+              <span class="sc-radar-ax" style="background:rgba(220,38,38,.08);color:#dc2626;">①Nav</span>
+              <span class="sc-radar-ax" style="background:rgba(124,58,237,.08);color:#7c3aed;">③Agent</span>
+              <span class="sc-radar-ax" style="background:rgba(5,150,105,.08);color:#059669;">⑤NL</span>
+              <span class="sc-radar-ax" style="background:rgba(71,85,105,.08);color:#475569;">⑦Sys</span>
+              <span class="sc-radar-ax" style="background:rgba(15,23,42,.07);color:#0f172a;">⑧Skill</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- A-Level 2 -->
+      <div class="sc-card" style="border-left:3px solid var(--accent);">
+        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(37,99,235,.08),transparent);color:var(--accent);">Level 2 応用 — Phase 3–4</div>
+        <div class="sc-layout">
+          <div class="sc-content">
+            <div class="sc-head">
+              <span class="sc-rank">🧠</span>
+              <div class="sc-meta">
+                <div class="sc-title">A-Level 2 — 記憶システム活用による文脈移動</div>
+                <div class="sc-sub">走行ログを Vector DB に蓄積し、「前に行った場所へ」という文脈指示で Memory 参照して自律移動</div>
+              </div>
+              <span class="sc-status plan">Phase 3–4</span>
+            </div>
+            <div class="sc-body">
+              <div class="sc-flow">
+                🗣️ 文脈指示（「前に行った〇〇へ」）→ <span class="sf">🧠 Memory 検索（Vector DB + RAG）</span> → <span class="sf">📍 位置推定</span> → <span class="sf">🗺️ SLAM ナビゲーション</span> → <span class="sf">🚗 自律走行</span> → <span class="sf">📝 Memory 更新</span> → ✅ 完了報告
+              </div>
+              <div class="chips">
+                <span class="chip a">RAG</span>
+                <span class="chip a">Vector DB</span>
+                <span class="chip t">SLAM</span>
+                <span class="chip t">Nav2</span>
+                <span class="chip a">Episodic Memory</span>
+                <span class="chip a">LLM Planner</span>
+              </div>
+              <div class="sc-req-row">
+                <span class="sc-req-label">要件カテゴリ：</span>
+                <span class="req-rel nav">① Nav</span>
+                <span class="req-rel mem">② Memory</span>
+                <span class="req-rel agent">③ Multi-Agent</span>
+                <span class="req-rel nlui">⑤ NL UI</span>
+              </div>
+            </div>
+          </div>
+          <div class="sc-radar-col">
+            <div class="sc-pie-title">関連要件</div>
+            <svg class="sc-pie" data-reqs="1,2,3,5" width="150" height="150" viewBox="-75 -75 150 150"></svg>
+            <div class="sc-radar-axes">
+              <span class="sc-radar-ax" style="background:rgba(220,38,38,.08);color:#dc2626;">①Nav</span>
+              <span class="sc-radar-ax" style="background:rgba(37,99,235,.08);color:#2563eb;">②Mem</span>
+              <span class="sc-radar-ax" style="background:rgba(124,58,237,.08);color:#7c3aed;">③Agent</span>
+              <span class="sc-radar-ax" style="background:rgba(5,150,105,.08);color:#059669;">⑤NL</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- A-Level 3 -->
+      <div class="sc-card" style="border-left:3px solid var(--accent);">
+        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(37,99,235,.08),transparent);color:var(--accent);">Level 3 発展 — Phase 5–6</div>
+        <div class="sc-layout">
+          <div class="sc-content">
+            <div class="sc-head">
+              <span class="sc-rank">🌳</span>
+              <div class="sc-meta">
+                <div class="sc-title">A-Level 3 — 屋外・屋内シームレス走行 + 安全システム + 記憶統合</div>
+                <div class="sc-sub">GNSS+SLAM で屋外→屋内を安定走行し、Safety Agent が障害物・異常を自律判断。記憶システムと連携</div>
+              </div>
+              <span class="sc-status plan">Phase 5–6</span>
+            </div>
+            <div class="sc-body">
+              <div class="sc-flow">
+                📋 ルート設定 → <span class="sf">🌳 屋外走行（GNSS+SLAM）</span> → <span class="sf">🏢 屋内移動（Nav2）</span> → <span class="sf">⚠️ Safety Agent 監視（障害物・段差・異常）</span> → <span class="sf">🔄 安定走行制御（EKF + IMU）</span> → <span class="sf">🧠 記憶参照・更新</span> → ✅ 到達・記録
+              </div>
+              <div class="chips">
+                <span class="chip t">GNSS</span>
+                <span class="chip t">ORB-SLAM3</span>
+                <span class="chip t">Nav2</span>
+                <span class="chip a">Safety Agent</span>
+                <span class="chip t">EKF</span>
+                <span class="chip a">Memory</span>
+                <span class="chip h">IMU</span>
+              </div>
+              <div class="sc-req-row">
+                <span class="sc-req-label">要件カテゴリ：</span>
+                <span class="req-rel nav">① Nav</span>
+                <span class="req-rel mem">② Memory</span>
+                <span class="req-rel agent">③ Multi-Agent</span>
+                <span class="req-rel sys">⑦ System</span>
+              </div>
+            </div>
+          </div>
+          <div class="sc-radar-col">
+            <div class="sc-pie-title">関連要件</div>
+            <svg class="sc-pie" data-reqs="1,2,3,7" width="150" height="150" viewBox="-75 -75 150 150"></svg>
+            <div class="sc-radar-axes">
+              <span class="sc-radar-ax" style="background:rgba(220,38,38,.08);color:#dc2626;">①Nav</span>
+              <span class="sc-radar-ax" style="background:rgba(37,99,235,.08);color:#2563eb;">②Mem</span>
+              <span class="sc-radar-ax" style="background:rgba(124,58,237,.08);color:#7c3aed;">③Agent</span>
+              <span class="sc-radar-ax" style="background:rgba(71,85,105,.08);color:#475569;">⑦Sys</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /category-A -->
+
+    <!-- ====== CATEGORY B: ARM ONLY ====== -->
+    <div class="cat-header" style="background:linear-gradient(135deg,rgba(217,119,6,.08),rgba(217,119,6,.03));border-left:4px solid var(--accent3);">
+      <div class="cat-header-inner">
+        <span class="cat-icon">🦾</span>
+        <div>
+          <div class="cat-title">カテゴリ B — アーム単体 Demo</div>
+          <div class="cat-desc">SOARM101 アームの単体能力を段階的に実証</div>
+        </div>
+        <div class="cat-levels">
+          <span class="cat-lv" style="background:rgba(217,119,6,.12);color:#d97706;">L1 予定</span>
+          <span class="cat-lv" style="background:rgba(217,119,6,.12);color:#d97706;">L2 予定</span>
+          <span class="cat-lv" style="background:rgba(217,119,6,.12);color:#d97706;">L3 予定</span>
+        </div>
+      </div>
+    </div>
+    <div class="scenario-list">
+
+      <!-- B prerequisite note -->
+      <div style="background:linear-gradient(90deg,rgba(5,150,105,.1),rgba(5,150,105,.04));border:1px solid rgba(5,150,105,.25);border-radius:10px;padding:12px 18px;margin-bottom:12px;font-size:12px;color:#059669;">
+        <strong>前提（完了済み 2026-04-11）：</strong> SOARM101 基本動作確認・Teleoperator・VLA サンプル実行 &nbsp;→&nbsp;
+        <a href="media/VLA.MOV" style="color:#059669;text-decoration:underline;">VLA.MOV</a> /
+        <a href="media/teleoperate.MOV" style="color:#059669;text-decoration:underline;">teleoperate.MOV</a>
+      </div>
+
+      <!-- B-Level 1 -->
+      <div class="sc-card" style="border-left:3px solid var(--accent3);">
+        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(217,119,6,.08),transparent);color:var(--accent3);">Level 1 基礎 — Phase 1–2</div>
+        <div class="sc-layout">
+          <div class="sc-content">
+            <div class="sc-head">
+              <span class="sc-rank">🔘</span>
+              <div class="sc-meta">
+                <div class="sc-title">B-Level 1 — 音声指令によるエレベーターボタン押下</div>
+                <div class="sc-sub">「3階のボタンを押して」という音声指示を LLM が解釈し、YOLO/VLM でボタンを認識して SOARM101 で押下</div>
+              </div>
+              <span class="sc-status plan">Phase 1–2</span>
+            </div>
+            <div class="sc-body">
+              <div class="sc-flow">
+                🗣️ 音声指示 → <span class="sf">🤖 LLM 解釈（階数・対象認識）</span> → <span class="sf">📸 カメラ入力</span> → <span class="sf">👁️ ボタン検出（YOLO/VLM）</span> → <span class="sf">📐 Depth 推定 + IK 計算</span> → <span class="sf">🦾 SOARM101 押下</span> → ✅ 動作確認
+              </div>
+              <div class="chips">
+                <span class="chip h">SOARM101</span>
+                <span class="chip g">YOLO</span>
+                <span class="chip a">VLM</span>
+                <span class="chip g">IK</span>
+                <span class="chip t">Depth estimation</span>
+                <span class="chip a">LLM</span>
+                <span class="chip g">Whisper</span>
+              </div>
+              <div class="sc-req-row">
+                <span class="sc-req-label">要件カテゴリ：</span>
+                <span class="req-rel manip">④ Manipulation</span>
+                <span class="req-rel nlui">⑤ NL UI</span>
+                <span class="req-rel perc">⑥ Perception</span>
+                <span class="req-rel skill">⑧ Skill System</span>
+              </div>
+            </div>
+          </div>
+          <div class="sc-radar-col">
+            <div class="sc-pie-title">関連要件</div>
+            <svg class="sc-pie" data-reqs="4,5,6,8" width="150" height="150" viewBox="-75 -75 150 150"></svg>
+            <div class="sc-radar-axes">
+              <span class="sc-radar-ax" style="background:rgba(217,119,6,.08);color:#d97706;">④Manip</span>
+              <span class="sc-radar-ax" style="background:rgba(5,150,105,.08);color:#059669;">⑤NL</span>
+              <span class="sc-radar-ax" style="background:rgba(8,145,178,.08);color:#0891b2;">⑥Perc</span>
+              <span class="sc-radar-ax" style="background:rgba(15,23,42,.07);color:#0f172a;">⑧Skill</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- B-Level 2 -->
+      <div class="sc-card" style="border-left:3px solid var(--accent3);">
+        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(217,119,6,.08),transparent);color:var(--accent3);">Level 2 応用 — Phase 3–4</div>
+        <div class="sc-layout">
+          <div class="sc-content">
+            <div class="sc-head">
+              <span class="sc-rank">🔤</span>
+              <div class="sc-meta">
+                <div class="sc-title">B-Level 2 — 物品名称指定 &amp; 文字ブロックスペリング</div>
+                <div class="sc-sub">物品名を指示すると LLM が順序を計画し、OCR+YOLO でブロックを認識して複数ステップで把持・配置</div>
+              </div>
+              <span class="sc-status plan">Phase 3–4</span>
+            </div>
+            <div class="sc-body">
+              <div class="sc-flow">
+                🗣️ 物品名指示 → <span class="sf">🤖 LLM 解釈（スペリング計画）</span> → <span class="sf">👁️ OCR+YOLO ブロック認識</span> → <span class="sf">📋 順序計画</span> → <span class="sf">🦾 ブロック把持 × N回</span> → <span class="sf">📍 指定位置に配置</span> → ✅ 完成確認
+              </div>
+              <div class="chips">
+                <span class="chip g">YOLO</span>
+                <span class="chip a">OCR</span>
+                <span class="chip g">IK</span>
+                <span class="chip t">FK</span>
+                <span class="chip a">LLM Planner</span>
+                <span class="chip g">Sequential manipulation</span>
+              </div>
+              <div class="sc-req-row">
+                <span class="sc-req-label">要件カテゴリ：</span>
+                <span class="req-rel agent">③ Multi-Agent</span>
+                <span class="req-rel manip">④ Manipulation</span>
+                <span class="req-rel perc">⑥ Perception</span>
+                <span class="req-rel skill">⑧ Skill System</span>
+              </div>
+            </div>
+          </div>
+          <div class="sc-radar-col">
+            <div class="sc-pie-title">関連要件</div>
+            <svg class="sc-pie" data-reqs="3,4,6,8" width="150" height="150" viewBox="-75 -75 150 150"></svg>
+            <div class="sc-radar-axes">
+              <span class="sc-radar-ax" style="background:rgba(124,58,237,.08);color:#7c3aed;">③Agent</span>
+              <span class="sc-radar-ax" style="background:rgba(217,119,6,.08);color:#d97706;">④Manip</span>
+              <span class="sc-radar-ax" style="background:rgba(8,145,178,.08);color:#0891b2;">⑥Perc</span>
+              <span class="sc-radar-ax" style="background:rgba(15,23,42,.07);color:#0f172a;">⑧Skill</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- B-Level 3 -->
+      <div class="sc-card" style="border-left:3px solid var(--accent3);">
+        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(217,119,6,.08),transparent);color:var(--accent3);">Level 3 発展 — Phase 5–6</div>
+        <div class="sc-layout">
+          <div class="sc-content">
+            <div class="sc-head">
+              <span class="sc-rank">🔌</span>
+              <div class="sc-meta">
+                <div class="sc-title">B-Level 3 — 精密フィードバック制御操作（プラグ挿入）</div>
+                <div class="sc-sub">視覚フィードバックをリアルタイムに活用した精細操作。挿入口認識→位置補正ループ→電流/映像で完了検出</div>
+              </div>
+              <span class="sc-status plan">Phase 5–6</span>
+            </div>
+            <div class="sc-body">
+              <div class="sc-flow">
+                🗣️ 操作指示 → <span class="sf">👁️ VLM/YOLO 挿入口認識</span> → <span class="sf">📐 精密 IK 計算</span> → <span class="sf">🦾 挿入アプローチ</span> → <span class="sf">🔄 視覚フィードバック補正ループ</span> → ✅ 挿入確認（電流/映像）
+              </div>
+              <div class="chips">
+                <span class="chip h">SOARM101</span>
+                <span class="chip g">IK</span>
+                <span class="chip a">VLM</span>
+                <span class="chip a">Visual Feedback</span>
+                <span class="chip t">Current sensing</span>
+                <span class="chip g">Closed-loop</span>
+              </div>
+              <div class="sc-req-row">
+                <span class="sc-req-label">要件カテゴリ：</span>
+                <span class="req-rel manip">④ Manipulation</span>
+                <span class="req-rel perc">⑥ Perception</span>
+                <span class="req-rel sys">⑦ System</span>
+                <span class="req-rel skill">⑧ Skill System</span>
+              </div>
+            </div>
+          </div>
+          <div class="sc-radar-col">
+            <div class="sc-pie-title">関連要件</div>
+            <svg class="sc-pie" data-reqs="4,6,7,8" width="150" height="150" viewBox="-75 -75 150 150"></svg>
+            <div class="sc-radar-axes">
+              <span class="sc-radar-ax" style="background:rgba(217,119,6,.08);color:#d97706;">④Manip</span>
+              <span class="sc-radar-ax" style="background:rgba(8,145,178,.08);color:#0891b2;">⑥Perc</span>
+              <span class="sc-radar-ax" style="background:rgba(71,85,105,.08);color:#475569;">⑦Sys</span>
+              <span class="sc-radar-ax" style="background:rgba(15,23,42,.07);color:#0f172a;">⑧Skill</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /category-B -->
+
+    <!-- ====== CATEGORY C: COMBINED ====== -->
+    <div class="cat-header" style="background:linear-gradient(135deg,rgba(124,58,237,.08),rgba(124,58,237,.03));border-left:4px solid var(--purple);">
+      <div class="cat-header-inner">
+        <span class="cat-icon">🚀</span>
+        <div>
+          <div class="cat-title">カテゴリ C — モバイル ＋ アーム 複合 Demo</div>
+          <div class="cat-desc">移動・認識・操作を統合し、実用レベルのタスクを自律実行</div>
+        </div>
+        <div class="cat-levels">
+          <span class="cat-lv" style="background:rgba(217,119,6,.12);color:#d97706;">L1 予定</span>
+          <span class="cat-lv" style="background:rgba(217,119,6,.12);color:#d97706;">L2 予定</span>
+          <span class="cat-lv" style="background:rgba(220,38,38,.12);color:#dc2626;">L3 最終目標</span>
+        </div>
+      </div>
+    </div>
+    <div class="scenario-list">
+
+      <!-- C-Level 1 -->
+      <div class="sc-card" style="border-left:3px solid var(--purple);">
+        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(124,58,237,.08),transparent);color:var(--purple);">Level 1 基礎 — Phase 2–3</div>
+        <div class="sc-layout">
+          <div class="sc-content">
+            <div class="sc-head">
+              <span class="sc-rank">🎯</span>
+              <div class="sc-meta">
+                <div class="sc-title">C-Level 1 — 音声指令による移動 &amp; ターゲット操作 + 走行ログ記録</div>
+                <div class="sc-sub">移動＋操作を1つの音声指示で実行。SLAM移動でターゲットに接近し、アーム操作を実行。走行ログも記録</div>
+              </div>
+              <span class="sc-status plan">Phase 2–3</span>
+            </div>
+            <div class="sc-body">
+              <div class="sc-flow">
+                🗣️ 音声指示 → <span class="sf">🤖 LLM 分解（移動タスク + アームタスク）</span> → <span class="sf">🗺️ SLAM+Nav2 移動</span> → <span class="sf">📝 走行ログ記録</span> → <span class="sf">👁️ ターゲット認識（YOLO/VLM）</span> → <span class="sf">📐 Depth + IK</span> → <span class="sf">🦾 アーム操作</span> → ✅ 完了報告
+              </div>
+              <div class="chips">
+                <span class="chip t">Nav2</span>
+                <span class="chip t">SLAM</span>
+                <span class="chip h">SOARM101</span>
+                <span class="chip g">YOLO</span>
+                <span class="chip a">VLM</span>
+                <span class="chip g">IK</span>
+                <span class="chip a">LLM Planner</span>
+                <span class="chip g">Whisper</span>
+              </div>
+              <div class="sc-req-row">
+                <span class="sc-req-label">要件カテゴリ：</span>
+                <span class="req-rel nav">① Nav</span>
+                <span class="req-rel agent">③ Multi-Agent</span>
+                <span class="req-rel manip">④ Manipulation</span>
+                <span class="req-rel nlui">⑤ NL UI</span>
+                <span class="req-rel skill">⑧ Skill System</span>
+              </div>
+            </div>
+          </div>
+          <div class="sc-radar-col">
+            <div class="sc-pie-title">関連要件</div>
+            <svg class="sc-pie" data-reqs="1,3,4,5,8" width="150" height="150" viewBox="-75 -75 150 150"></svg>
+            <div class="sc-radar-axes">
+              <span class="sc-radar-ax" style="background:rgba(220,38,38,.08);color:#dc2626;">①Nav</span>
+              <span class="sc-radar-ax" style="background:rgba(124,58,237,.08);color:#7c3aed;">③Agent</span>
+              <span class="sc-radar-ax" style="background:rgba(217,119,6,.08);color:#d97706;">④Manip</span>
+              <span class="sc-radar-ax" style="background:rgba(5,150,105,.08);color:#059669;">⑤NL</span>
+              <span class="sc-radar-ax" style="background:rgba(15,23,42,.07);color:#0f172a;">⑧Skill</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C-Level 2 -->
+      <div class="sc-card" style="border-left:3px solid var(--purple);">
+        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(124,58,237,.08),transparent);color:var(--purple);">Level 2 応用 — Phase 4–5</div>
+        <div class="sc-layout">
+          <div class="sc-content">
+            <div class="sc-head">
+              <span class="sc-rank">🏢</span>
+              <div class="sc-meta">
+                <div class="sc-title">C-Level 2 — 記憶活用 × 移動 × 物品操作（自律デリバリー）</div>
+                <div class="sc-sub">Episodic Memory を活用した文脈指示に対応。記憶から位置推定し、移動→把持→搬送→配置を一貫実行</div>
+              </div>
+              <span class="sc-status plan">Phase 4–5</span>
+            </div>
+            <div class="sc-body">
+              <div class="sc-flow">
+                🗣️ 文脈指示 → <span class="sf">🧠 Memory 検索（RAG+Vector DB）</span> → <span class="sf">📍 位置推定</span> → <span class="sf">🗺️ SLAM+Nav2 移動</span> → <span class="sf">👁️ YOLO 物体認識</span> → <span class="sf">📐 Depth+IK</span> → <span class="sf">🦾 把持・搬送</span> → <span class="sf">📍 配置</span> → <span class="sf">🧠 Memory 更新</span> → ✅ 完了報告
+              </div>
+              <div class="chips">
+                <span class="chip a">RAG</span>
+                <span class="chip a">Episodic Memory</span>
+                <span class="chip t">Nav2</span>
+                <span class="chip g">YOLO</span>
+                <span class="chip g">IK</span>
+                <span class="chip h">SOARM101</span>
+                <span class="chip a">LLM Planning</span>
+                <span class="chip g">Whisper</span>
+                <span class="chip g">TTS</span>
+              </div>
+              <div class="sc-req-row">
+                <span class="sc-req-label">要件カテゴリ：</span>
+                <span class="req-rel nav">① Nav</span>
+                <span class="req-rel mem">② Memory</span>
+                <span class="req-rel agent">③ Multi-Agent</span>
+                <span class="req-rel manip">④ Manipulation</span>
+                <span class="req-rel nlui">⑤ NL UI</span>
+              </div>
+            </div>
+          </div>
+          <div class="sc-radar-col">
+            <div class="sc-pie-title">関連要件</div>
+            <svg class="sc-pie" data-reqs="1,2,3,4,5" width="150" height="150" viewBox="-75 -75 150 150"></svg>
+            <div class="sc-radar-axes">
+              <span class="sc-radar-ax" style="background:rgba(220,38,38,.08);color:#dc2626;">①Nav</span>
+              <span class="sc-radar-ax" style="background:rgba(37,99,235,.08);color:#2563eb;">②Mem</span>
+              <span class="sc-radar-ax" style="background:rgba(124,58,237,.08);color:#7c3aed;">③Agent</span>
+              <span class="sc-radar-ax" style="background:rgba(217,119,6,.08);color:#d97706;">④Manip</span>
+              <span class="sc-radar-ax" style="background:rgba(5,150,105,.08);color:#059669;">⑤NL</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C-Level 3: FINAL DEMO -->
+      <div class="sc-card sc-featured" style="border:2px solid var(--danger);box-shadow:0 0 0 4px rgba(220,38,38,.08);">
+        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(220,38,38,.12),transparent);color:var(--danger);font-weight:800;font-size:12px;">⭐ FINAL GOAL — Level 3 統合最終デモ — Phase 7–8</div>
+        <div class="sc-layout">
+          <div class="sc-content">
+            <div class="sc-head">
+              <span class="sc-rank">🎯</span>
+              <div class="sc-meta">
+                <div class="sc-title">C-Level 3 — 屋外・屋内 × 精密操作 × 安全 × 記憶 統合最終デモ</div>
+                <div class="sc-sub">全要素統合。屋外・屋内シームレス走行＋Safety Agent＋記憶システム＋精密フィードバック操作が連携</div>
+              </div>
+              <span class="sc-status plan">Phase 7–8</span>
+            </div>
+            <div class="sc-body">
+              <div class="sc-flow">
+                🗣️ 複合指示 → <span class="sf">🧠 Memory 参照（RAG+Vector DB）</span> → <span class="sf">🌳 屋外走行（GNSS+SLAM）</span> → <span class="sf">🏢 屋内移動（Nav2）</span> → <span class="sf">⚠️ Safety 監視</span> → <span class="sf">👁️ VLM 状態認識</span> → <span class="sf">🦾 精密操作（Closed-loop フィードバック）</span> → <span class="sf">📝 Memory 更新・報告</span>
+              </div>
+              <div class="chips">
+                <span class="chip t">GNSS+ORB-SLAM3</span>
+                <span class="chip t">Nav2</span>
+                <span class="chip a">Safety Agent</span>
+                <span class="chip a">Episodic Memory</span>
+                <span class="chip h">SOARM101</span>
+                <span class="chip g">Closed-loop</span>
+                <span class="chip a">VLM</span>
+                <span class="chip g">Whisper</span>
+                <span class="chip a">RAG</span>
+              </div>
+              <div class="sc-req-row">
+                <span class="sc-req-label">要件カテゴリ：</span>
+                <span class="req-rel nav">① Nav</span>
+                <span class="req-rel mem">② Memory</span>
+                <span class="req-rel agent">③ Multi-Agent</span>
+                <span class="req-rel manip">④ Manipulation</span>
+                <span class="req-rel nlui">⑤ NL UI</span>
+                <span class="req-rel perc">⑥ Perception</span>
+                <span class="req-rel sys">⑦ System</span>
+              </div>
+            </div>
+          </div>
+          <div class="sc-radar-col">
+            <div class="sc-pie-title">関連要件</div>
+            <svg class="sc-pie" data-reqs="1,2,3,4,5,6,7" width="150" height="150" viewBox="-75 -75 150 150"></svg>
+            <div class="sc-radar-axes">
+              <span class="sc-radar-ax" style="background:rgba(220,38,38,.08);color:#dc2626;">①Nav</span>
+              <span class="sc-radar-ax" style="background:rgba(37,99,235,.08);color:#2563eb;">②Mem</span>
+              <span class="sc-radar-ax" style="background:rgba(124,58,237,.08);color:#7c3aed;">③Agent</span>
+              <span class="sc-radar-ax" style="background:rgba(217,119,6,.08);color:#d97706;">④Manip</span>
+              <span class="sc-radar-ax" style="background:rgba(5,150,105,.08);color:#059669;">⑤NL</span>
+              <span class="sc-radar-ax" style="background:rgba(8,145,178,.08);color:#0891b2;">⑥Perc</span>
+              <span class="sc-radar-ax" style="background:rgba(71,85,105,.08);color:#475569;">⑦Sys</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /category-C -->
+  </section>
+
+  <!-- ⑤ USE CASES -->
+  <section class="reveal" id="usecases">
+    <span class="sec-tag">Use Case Library</span>
+    <h2>活用できるシーン</h2>
+    <p class="sec-desc">各ユースケースが関連する要件カテゴリをタグで表示します</p>
+
+    <!-- Category A: 日常生活支援 -->
+    <div class="uc-section-label">🏠 日常生活支援（Daily Assistance）</div>
+    <div class="uc-grid">
+      <div class="uc-card">
+        <div class="uc-scene">📍 場面</div>
+        <div class="uc-situation">「コーヒー持ってきて」</div>
+        <div class="uc-action">→ 台所まで移動して物品を把持・配達</div>
+        <div class="uc-tags">
+          <span class="uc-tag req-rel nav">① Nav</span>
+          <span class="uc-tag req-rel manip">④ Manip</span>
+          <span class="uc-tag req-rel nlui">⑤ NL UI</span>
+          <span class="uc-tag req-rel skill">⑧ Skill</span>
+        </div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-scene">📍 場面</div>
+        <div class="uc-situation">「明日の天気を教えて」</div>
+        <div class="uc-action">→ LLMが情報取得・音声で回答</div>
+        <div class="uc-tags">
+          <span class="uc-tag req-rel nlui">⑤ NL UI</span>
+          <span class="uc-tag req-rel agent">③ Agent</span>
+          <span class="uc-tag req-rel mem">② Memory</span>
+        </div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-scene">📍 場面</div>
+        <div class="uc-situation">部屋の片付けを手伝う</div>
+        <div class="uc-action">→ 物体認識・分類・指定場所への移動</div>
+        <div class="uc-tags">
+          <span class="uc-tag req-rel perc">⑥ Percept</span>
+          <span class="uc-tag req-rel manip">④ Manip</span>
+          <span class="uc-tag req-rel nav">① Nav</span>
+          <span class="uc-tag req-rel skill">⑧ Skill</span>
+        </div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-scene">📍 場面</div>
+        <div class="uc-situation">いつものルーティン覚えてる？</div>
+        <div class="uc-action">→ Episodic Memoryから習慣を想起して先回り</div>
+        <div class="uc-tags">
+          <span class="uc-tag req-rel mem">② Memory</span>
+          <span class="uc-tag req-rel agent">③ Agent</span>
+          <span class="uc-tag req-rel nlui">⑤ NL UI</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category B: 屋外探索・配達 -->
+    <div class="uc-section-label">🌿 屋外探索・配達（Outdoor Exploration）</div>
+    <div class="uc-grid">
+      <div class="uc-card">
+        <div class="uc-scene">📍 場面</div>
+        <div class="uc-situation">キャンパス内の建物Aへ移動</div>
+        <div class="uc-action">→ GNSS + SLAM で屋外自律走行</div>
+        <div class="uc-tags">
+          <span class="uc-tag req-rel nav">① Nav</span>
+          <span class="uc-tag req-rel perc">⑥ Percept</span>
+          <span class="uc-tag req-rel sys">⑦ System</span>
+        </div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-scene">📍 場面</div>
+        <div class="uc-situation">未知エリアを探索してマップ生成</div>
+        <div class="uc-action">→ RTAB-Map でリアルタイム地図構築</div>
+        <div class="uc-tags">
+          <span class="uc-tag req-rel nav">① Nav</span>
+          <span class="uc-tag req-rel perc">⑥ Percept</span>
+          <span class="uc-tag req-rel mem">② Memory</span>
+        </div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-scene">📍 場面</div>
+        <div class="uc-situation">雨天・段差・傾斜への対応</div>
+        <div class="uc-action">→ IMU + Depth で走行可能領域を判断</div>
+        <div class="uc-tags">
+          <span class="uc-tag req-rel nav">① Nav</span>
+          <span class="uc-tag req-rel sys">⑦ System</span>
+          <span class="uc-tag req-rel perc">⑥ Percept</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category C: 研究・実験支援 -->
+    <div class="uc-section-label">🔬 研究・実験支援（Lab Support）</div>
+    <div class="uc-grid">
+      <div class="uc-card">
+        <div class="uc-scene">📍 場面</div>
+        <div class="uc-situation">実験器具を正確な位置に配置</div>
+        <div class="uc-action">→ SOARM101 + IK で精密把持・配置</div>
+        <div class="uc-tags">
+          <span class="uc-tag req-rel manip">④ Manip</span>
+          <span class="uc-tag req-rel perc">⑥ Percept</span>
+          <span class="uc-tag req-rel skill">⑧ Skill</span>
+        </div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-scene">📍 場面</div>
+        <div class="uc-situation">長時間実験のモニタリング</div>
+        <div class="uc-action">→ 常時稼働 + Watchdog でデータ記録</div>
+        <div class="uc-tags">
+          <span class="uc-tag req-rel sys">⑦ System</span>
+          <span class="uc-tag req-rel mem">② Memory</span>
+          <span class="uc-tag req-rel perc">⑥ Percept</span>
+        </div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-scene">📍 場面</div>
+        <div class="uc-situation">実験手順を音声で指示</div>
+        <div class="uc-action">→ Whisper → LLM → Skill 実行</div>
+        <div class="uc-tags">
+          <span class="uc-tag req-rel nlui">⑤ NL UI</span>
+          <span class="uc-tag req-rel agent">③ Agent</span>
+          <span class="uc-tag req-rel skill">⑧ Skill</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category D: 社会インフラ応用 -->
+    <div class="uc-section-label">🏙️ 社会インフラ応用（Social Infrastructure）</div>
+    <div class="uc-grid">
+      <div class="uc-card">
+        <div class="uc-scene">📍 場面</div>
+        <div class="uc-situation">病院での薬品搬送</div>
+        <div class="uc-action">→ 自律走行 + 精密把持 + 安全管理</div>
+        <div class="uc-tags">
+          <span class="uc-tag req-rel nav">① Nav</span>
+          <span class="uc-tag req-rel manip">④ Manip</span>
+          <span class="uc-tag req-rel sys">⑦ System</span>
+          <span class="uc-tag req-rel skill">⑧ Skill</span>
+        </div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-scene">📍 場面</div>
+        <div class="uc-situation">施設内巡回・異常検知</div>
+        <div class="uc-action">→ 自律巡回 + VLM で状態を監視・報告</div>
+        <div class="uc-tags">
+          <span class="uc-tag req-rel nav">① Nav</span>
+          <span class="uc-tag req-rel perc">⑥ Percept</span>
+          <span class="uc-tag req-rel agent">③ Agent</span>
+          <span class="uc-tag req-rel mem">② Memory</span>
+        </div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-scene">📍 場面</div>
+        <div class="uc-situation">介護補助・見守り支援</div>
+        <div class="uc-action">→ 会話 + 状態検出 + 緊急時報告</div>
+        <div class="uc-tags">
+          <span class="uc-tag req-rel nlui">⑤ NL UI</span>
+          <span class="uc-tag req-rel perc">⑥ Percept</span>
+          <span class="uc-tag req-rel sys">⑦ System</span>
+          <span class="uc-tag req-rel agent">③ Agent</span>
+        </div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-scene">📍 場面</div>
+        <div class="uc-situation">将来：World Model で環境推論</div>
+        <div class="uc-action">→ Scene Graph + JEPA で長期的な行動計画</div>
+        <div class="uc-tags">
+          <span class="uc-tag" style="background:rgba(124,58,237,.08);color:var(--purple);border:1px solid rgba(124,58,237,.15);">⑨ World Model</span>
+          <span class="uc-tag req-rel mem">② Memory</span>
+          <span class="uc-tag req-rel agent">③ Agent</span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  <p>Robot Harness System — FY2026 Research Plan &nbsp;|&nbsp; <a href="plan-fy26.html">← メインページへ</a> &nbsp;|&nbsp; 最終更新: 2026-04-13</p>
+</footer>
+
+<script>
+/* ── 9-AXIS RADAR CHART ─────────────────── */
+(function() {
+  const svg = document.getElementById('radar');
+  // 9 requirement categories
+  const axes  = ['① Nav','② Memory','③ Agent','④ Manip','⑤ NL','⑥ Percept','⑦ System','⑧ Skill','⑨ World'];
+  const scores = [9, 8, 7, 8, 7, 8, 9, 9, 3]; // out of 10
+  const colors = ['#dc2626','#2563eb','#7c3aed','#d97706','#059669','#0891b2','#475569','#0f172a','#6d28d9'];
+  const N = axes.length;
+  const R = 120;
+  const levels = 5;
+  const cx = 0, cy = 0;
+
+  function pt(i, val) {
+    const angle = (Math.PI * 2 * i / N) - Math.PI / 2;
+    return {
+      x: cx + (R * val / 10) * Math.cos(angle),
+      y: cy + (R * val / 10) * Math.sin(angle)
+    };
+  }
+
+  // Grid circles
+  for (let l = 1; l <= levels; l++) {
+    const r = R * l / levels;
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', cx); circle.setAttribute('cy', cy);
+    circle.setAttribute('r', r);
+    circle.setAttribute('fill', 'none');
+    circle.setAttribute('stroke', '#e2e8f0');
+    circle.setAttribute('stroke-width', '1');
+    svg.appendChild(circle);
+  }
+
+  // Axis lines
+  for (let i = 0; i < N; i++) {
+    const end = pt(i, 10);
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', cx); line.setAttribute('y1', cy);
+    line.setAttribute('x2', end.x); line.setAttribute('y2', end.y);
+    line.setAttribute('stroke', '#e2e8f0'); line.setAttribute('stroke-width', '1');
+    svg.appendChild(line);
+  }
+
+  // Axis labels (2-line: number + short name)
+  for (let i = 0; i < N; i++) {
+    const lp = pt(i, 13.2);
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', lp.x); text.setAttribute('y', lp.y);
+    text.setAttribute('text-anchor', 'middle'); text.setAttribute('dominant-baseline', 'middle');
+    text.setAttribute('font-size', '8.5');
+    text.setAttribute('font-weight', '700');
+    text.setAttribute('fill', colors[i]);
+    text.setAttribute('font-family', "system-ui, sans-serif");
+    text.textContent = axes[i];
+    svg.appendChild(text);
+  }
+
+  // Data polygon
+  const pts = scores.map((s, i) => pt(i, s));
+  const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+  poly.setAttribute('points', pts.map(p => `${p.x},${p.y}`).join(' '));
+  poly.setAttribute('fill', 'rgba(37,99,235,0.10)');
+  poly.setAttribute('stroke', '#2563eb');
+  poly.setAttribute('stroke-width', '1.5');
+  svg.appendChild(poly);
+
+  // Data dots — each colored by requirement
+  pts.forEach((p, i) => {
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', p.x); circle.setAttribute('cy', p.y);
+    circle.setAttribute('r', '5');
+    circle.setAttribute('fill', colors[i]);
+    circle.setAttribute('stroke', '#fff');
+    circle.setAttribute('stroke-width', '1.5');
+    // Score tooltip via title
+    const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+    title.textContent = axes[i] + ': ' + scores[i] + '/10';
+    circle.appendChild(title);
+    svg.appendChild(circle);
+  });
+})();
+
+/* ── PIE / DONUT CHARTS (per scenario) ──── */
+(function() {
+  // 9 requirement categories: index 1–9
+  const REQ = [
+    null, // index 0 unused
+    { label:'① Nav',    color:'#dc2626' },
+    { label:'② Mem',    color:'#2563eb' },
+    { label:'③ Agent',  color:'#7c3aed' },
+    { label:'④ Manip',  color:'#d97706' },
+    { label:'⑤ NL',     color:'#059669' },
+    { label:'⑥ Percept',color:'#0891b2' },
+    { label:'⑦ System', color:'#475569' },
+    { label:'⑧ Skill',  color:'#0f172a' },
+    { label:'⑨ World',  color:'#6d28d9' },
+  ];
+
+  const NS = 'http://www.w3.org/2000/svg';
+  const R_OUT = 62, R_IN = 28, GAP = 0.03; // gap in radians between slices
+
+  function polarToXY(angle, r) {
+    return { x: Math.cos(angle) * r, y: Math.sin(angle) * r };
+  }
+
+  function slicePath(startA, endA, ro, ri) {
+    const s1 = polarToXY(startA + GAP, ro);
+    const e1 = polarToXY(endA   - GAP, ro);
+    const s2 = polarToXY(endA   - GAP, ri);
+    const e2 = polarToXY(startA + GAP, ri);
+    const large = (endA - startA - GAP * 2) > Math.PI ? 1 : 0;
+    return [
+      `M ${s1.x} ${s1.y}`,
+      `A ${ro} ${ro} 0 ${large} 1 ${e1.x} ${e1.y}`,
+      `L ${s2.x} ${s2.y}`,
+      `A ${ri} ${ri} 0 ${large} 0 ${e2.x} ${e2.y}`,
+      'Z'
+    ].join(' ');
+  }
+
+  document.querySelectorAll('.sc-pie').forEach(svg => {
+    const reqs = svg.dataset.reqs.split(',').map(Number); // e.g. [1,4,5,6,7,8]
+    const n = reqs.length;
+    const step = (Math.PI * 2) / n;
+    const startOffset = -Math.PI / 2; // start from top
+
+    // Background circle
+    const bg = document.createElementNS(NS, 'circle');
+    bg.setAttribute('cx', 0); bg.setAttribute('cy', 0);
+    bg.setAttribute('r', R_OUT);
+    bg.setAttribute('fill', '#f8fafc');
+    svg.appendChild(bg);
+
+    // Draw slices
+    reqs.forEach((reqIdx, i) => {
+      const startA = startOffset + step * i;
+      const endA   = startOffset + step * (i + 1);
+      const req    = REQ[reqIdx];
+
+      const path = document.createElementNS(NS, 'path');
+      path.setAttribute('d', slicePath(startA, endA, R_OUT, R_IN));
+      path.setAttribute('fill', req.color);
+      path.setAttribute('opacity', '0.88');
+      // Tooltip
+      const title = document.createElementNS(NS, 'title');
+      title.textContent = req.label;
+      path.appendChild(title);
+      // Hover effect
+      path.style.cursor = 'pointer';
+      path.addEventListener('mouseenter', () => { path.setAttribute('opacity','1'); path.setAttribute('transform','scale(1.04)'); path.style.transformOrigin='center'; });
+      path.addEventListener('mouseleave', () => { path.setAttribute('opacity','0.88'); path.setAttribute('transform',''); });
+      svg.appendChild(path);
+
+      // Slice label (short number)
+      const midA = startA + step / 2;
+      const lp   = polarToXY(midA, (R_OUT + R_IN) / 2);
+      const lbl  = document.createElementNS(NS, 'text');
+      lbl.setAttribute('x', lp.x); lbl.setAttribute('y', lp.y);
+      lbl.setAttribute('text-anchor', 'middle');
+      lbl.setAttribute('dominant-baseline', 'middle');
+      lbl.setAttribute('font-size', n <= 5 ? '10' : '8');
+      lbl.setAttribute('font-weight', '800');
+      lbl.setAttribute('fill', '#ffffff');
+      lbl.setAttribute('font-family', 'system-ui,sans-serif');
+      lbl.setAttribute('pointer-events', 'none');
+      lbl.textContent = reqIdx;
+      svg.appendChild(lbl);
+    });
+
+    // Center: count / 9
+    const cNum = document.createElementNS(NS, 'text');
+    cNum.setAttribute('x', 0); cNum.setAttribute('y', -5);
+    cNum.setAttribute('text-anchor', 'middle'); cNum.setAttribute('dominant-baseline', 'middle');
+    cNum.setAttribute('font-size', '17'); cNum.setAttribute('font-weight', '800');
+    cNum.setAttribute('fill', '#0f172a'); cNum.setAttribute('font-family', 'system-ui,sans-serif');
+    cNum.textContent = n + '/9';
+    svg.appendChild(cNum);
+
+    const cSub = document.createElementNS(NS, 'text');
+    cSub.setAttribute('x', 0); cSub.setAttribute('y', 10);
+    cSub.setAttribute('text-anchor', 'middle'); cSub.setAttribute('dominant-baseline', 'middle');
+    cSub.setAttribute('font-size', '8'); cSub.setAttribute('font-weight', '600');
+    cSub.setAttribute('fill', '#64748b'); cSub.setAttribute('font-family', 'system-ui,sans-serif');
+    cSub.textContent = '要件';
+    svg.appendChild(cSub);
+  });
+})();
+
+/* ── SCROLL REVEAL ─────────────────────── */
+const reveals = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: 0.08 });
+reveals.forEach(r => io.observe(r));
+</script>
+</body>
+</html>

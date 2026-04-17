@@ -1,0 +1,342 @@
+[
+  {
+    "name": "/cmd_vel_to_motor_node/describe_parameters",
+    "type": "rcl_interfaces/srv/DescribeParameters"
+  },
+  {
+    "name": "/cmd_vel_to_motor_node/get_parameter_types",
+    "type": "rcl_interfaces/srv/GetParameterTypes"
+  },
+  {
+    "name": "/cmd_vel_to_motor_node/get_parameters",
+    "type": "rcl_interfaces/srv/GetParameters"
+  },
+  {
+    "name": "/cmd_vel_to_motor_node/list_parameters",
+    "type": "rcl_interfaces/srv/ListParameters"
+  },
+  {
+    "name": "/cmd_vel_to_motor_node/set_parameters",
+    "type": "rcl_interfaces/srv/SetParameters"
+  },
+  {
+    "name": "/cmd_vel_to_motor_node/set_parameters_atomically",
+    "type": "rcl_interfaces/srv/SetParametersAtomically"
+  },
+  {
+    "name": "/get_position",
+    "type": "dynamixel_sdk_custom_interfaces/srv/GetPosition"
+  },
+  {
+    "name": "/joy_node/describe_parameters",
+    "type": "rcl_interfaces/srv/DescribeParameters"
+  },
+  {
+    "name": "/joy_node/get_parameter_types",
+    "type": "rcl_interfaces/srv/GetParameterTypes"
+  },
+  {
+    "name": "/joy_node/get_parameters",
+    "type": "rcl_interfaces/srv/GetParameters"
+  },
+  {
+    "name": "/joy_node/list_parameters",
+    "type": "rcl_interfaces/srv/ListParameters"
+  },
+  {
+    "name": "/joy_node/set_parameters",
+    "type": "rcl_interfaces/srv/SetParameters"
+  },
+  {
+    "name": "/joy_node/set_parameters_atomically",
+    "type": "rcl_interfaces/srv/SetParametersAtomically"
+  },
+  {
+    "name": "/my_nodepub/describe_parameters",
+    "type": "rcl_interfaces/srv/DescribeParameters"
+  },
+  {
+    "name": "/my_nodepub/get_parameter_types",
+    "type": "rcl_interfaces/srv/GetParameterTypes"
+  },
+  {
+    "name": "/my_nodepub/get_parameters",
+    "type": "rcl_interfaces/srv/GetParameters"
+  },
+  {
+    "name": "/my_nodepub/list_parameters",
+    "type": "rcl_interfaces/srv/ListParameters"
+  },
+  {
+    "name": "/my_nodepub/set_parameters",
+    "type": "rcl_interfaces/srv/SetParameters"
+  },
+  {
+    "name": "/my_nodepub/set_parameters_atomically",
+    "type": "rcl_interfaces/srv/SetParametersAtomically"
+  },
+  {
+    "name": "/my_nodesub/describe_parameters",
+    "type": "rcl_interfaces/srv/DescribeParameters"
+  },
+  {
+    "name": "/my_nodesub/get_parameter_types",
+    "type": "rcl_interfaces/srv/GetParameterTypes"
+  },
+  {
+    "name": "/my_nodesub/get_parameters",
+    "type": "rcl_interfaces/srv/GetParameters"
+  },
+  {
+    "name": "/my_nodesub/list_parameters",
+    "type": "rcl_interfaces/srv/ListParameters"
+  },
+  {
+    "name": "/my_nodesub/set_parameters",
+    "type": "rcl_interfaces/srv/SetParameters"
+  },
+  {
+    "name": "/my_nodesub/set_parameters_atomically",
+    "type": "rcl_interfaces/srv/SetParametersAtomically"
+  },
+  {
+    "name": "/my_nodesub_2/describe_parameters",
+    "type": "rcl_interfaces/srv/DescribeParameters"
+  },
+  {
+    "name": "/my_nodesub_2/get_parameter_types",
+    "type": "rcl_interfaces/srv/GetParameterTypes"
+  },
+  {
+    "name": "/my_nodesub_2/get_parameters",
+    "type": "rcl_interfaces/srv/GetParameters"
+  },
+  {
+    "name": "/my_nodesub_2/list_parameters",
+    "type": "rcl_interfaces/srv/ListParameters"
+  },
+  {
+    "name": "/my_nodesub_2/set_parameters",
+    "type": "rcl_interfaces/srv/SetParameters"
+  },
+  {
+    "name": "/my_nodesub_2/set_parameters_atomically",
+    "type": "rcl_interfaces/srv/SetParametersAtomically"
+  },
+  {
+    "name": "/my_pub/describe_parameters",
+    "type": "rcl_interfaces/srv/DescribeParameters"
+  },
+  {
+    "name": "/my_pub/get_parameter_types",
+    "type": "rcl_interfaces/srv/GetParameterTypes"
+  },
+  {
+    "name": "/my_pub/get_parameters",
+    "type": "rcl_interfaces/srv/GetParameters"
+  },
+  {
+    "name": "/my_pub/list_parameters",
+    "type": "rcl_interfaces/srv/ListParameters"
+  },
+  {
+    "name": "/my_pub/set_parameters",
+    "type": "rcl_interfaces/srv/SetParameters"
+  },
+  {
+    "name": "/my_pub/set_parameters_atomically",
+    "type": "rcl_interfaces/srv/SetParametersAtomically"
+  },
+  {
+    "name": "/my_pub_polling/describe_parameters",
+    "type": "rcl_interfaces/srv/DescribeParameters"
+  },
+  {
+    "name": "/my_pub_polling/get_parameter_types",
+    "type": "rcl_interfaces/srv/GetParameterTypes"
+  },
+  {
+    "name": "/my_pub_polling/get_parameters",
+    "type": "rcl_interfaces/srv/GetParameters"
+  },
+  {
+    "name": "/my_pub_polling/list_parameters",
+    "type": "rcl_interfaces/srv/ListParameters"
+  },
+  {
+    "name": "/my_pub_polling/set_parameters",
+    "type": "rcl_interfaces/srv/SetParameters"
+  },
+  {
+    "name": "/my_pub_polling/set_parameters_atomically",
+    "type": "rcl_interfaces/srv/SetParametersAtomically"
+  },
+  {
+    "name": "/my_sub/describe_parameters",
+    "type": "rcl_interfaces/srv/DescribeParameters"
+  },
+  {
+    "name": "/my_sub/get_parameter_types",
+    "type": "rcl_interfaces/srv/GetParameterTypes"
+  },
+  {
+    "name": "/my_sub/get_parameters",
+    "type": "rcl_interfaces/srv/GetParameters"
+  },
+  {
+    "name": "/my_sub/list_parameters",
+    "type": "rcl_interfaces/srv/ListParameters"
+  },
+  {
+    "name": "/my_sub/set_parameters",
+    "type": "rcl_interfaces/srv/SetParameters"
+  },
+  {
+    "name": "/my_sub/set_parameters_atomically",
+    "type": "rcl_interfaces/srv/SetParametersAtomically"
+  },
+  {
+    "name": "/my_sub_2/describe_parameters",
+    "type": "rcl_interfaces/srv/DescribeParameters"
+  },
+  {
+    "name": "/my_sub_2/get_parameter_types",
+    "type": "rcl_interfaces/srv/GetParameterTypes"
+  },
+  {
+    "name": "/my_sub_2/get_parameters",
+    "type": "rcl_interfaces/srv/GetParameters"
+  },
+  {
+    "name": "/my_sub_2/list_parameters",
+    "type": "rcl_interfaces/srv/ListParameters"
+  },
+  {
+    "name": "/my_sub_2/set_parameters",
+    "type": "rcl_interfaces/srv/SetParameters"
+  },
+  {
+    "name": "/my_sub_2/set_parameters_atomically",
+    "type": "rcl_interfaces/srv/SetParametersAtomically"
+  },
+  {
+    "name": "/om_node/describe_parameters",
+    "type": "rcl_interfaces/srv/DescribeParameters"
+  },
+  {
+    "name": "/om_node/get_parameter_types",
+    "type": "rcl_interfaces/srv/GetParameterTypes"
+  },
+  {
+    "name": "/om_node/get_parameters",
+    "type": "rcl_interfaces/srv/GetParameters"
+  },
+  {
+    "name": "/om_node/list_parameters",
+    "type": "rcl_interfaces/srv/ListParameters"
+  },
+  {
+    "name": "/om_node/set_parameters",
+    "type": "rcl_interfaces/srv/SetParameters"
+  },
+  {
+    "name": "/om_node/set_parameters_atomically",
+    "type": "rcl_interfaces/srv/SetParametersAtomically"
+  },
+  {
+    "name": "/read_write_node/describe_parameters",
+    "type": "rcl_interfaces/srv/DescribeParameters"
+  },
+  {
+    "name": "/read_write_node/get_parameter_types",
+    "type": "rcl_interfaces/srv/GetParameterTypes"
+  },
+  {
+    "name": "/read_write_node/get_parameters",
+    "type": "rcl_interfaces/srv/GetParameters"
+  },
+  {
+    "name": "/read_write_node/list_parameters",
+    "type": "rcl_interfaces/srv/ListParameters"
+  },
+  {
+    "name": "/read_write_node/set_parameters",
+    "type": "rcl_interfaces/srv/SetParameters"
+  },
+  {
+    "name": "/read_write_node/set_parameters_atomically",
+    "type": "rcl_interfaces/srv/SetParametersAtomically"
+  },
+  {
+    "name": "/robot_odom_node/describe_parameters",
+    "type": "rcl_interfaces/srv/DescribeParameters"
+  },
+  {
+    "name": "/robot_odom_node/get_parameter_types",
+    "type": "rcl_interfaces/srv/GetParameterTypes"
+  },
+  {
+    "name": "/robot_odom_node/get_parameters",
+    "type": "rcl_interfaces/srv/GetParameters"
+  },
+  {
+    "name": "/robot_odom_node/list_parameters",
+    "type": "rcl_interfaces/srv/ListParameters"
+  },
+  {
+    "name": "/robot_odom_node/set_parameters",
+    "type": "rcl_interfaces/srv/SetParameters"
+  },
+  {
+    "name": "/robot_odom_node/set_parameters_atomically",
+    "type": "rcl_interfaces/srv/SetParametersAtomically"
+  },
+  {
+    "name": "/steer_motor_node/describe_parameters",
+    "type": "rcl_interfaces/srv/DescribeParameters"
+  },
+  {
+    "name": "/steer_motor_node/get_parameter_types",
+    "type": "rcl_interfaces/srv/GetParameterTypes"
+  },
+  {
+    "name": "/steer_motor_node/get_parameters",
+    "type": "rcl_interfaces/srv/GetParameters"
+  },
+  {
+    "name": "/steer_motor_node/list_parameters",
+    "type": "rcl_interfaces/srv/ListParameters"
+  },
+  {
+    "name": "/steer_motor_node/set_parameters",
+    "type": "rcl_interfaces/srv/SetParameters"
+  },
+  {
+    "name": "/steer_motor_node/set_parameters_atomically",
+    "type": "rcl_interfaces/srv/SetParametersAtomically"
+  },
+  {
+    "name": "/teleop_twist_joy_node/describe_parameters",
+    "type": "rcl_interfaces/srv/DescribeParameters"
+  },
+  {
+    "name": "/teleop_twist_joy_node/get_parameter_types",
+    "type": "rcl_interfaces/srv/GetParameterTypes"
+  },
+  {
+    "name": "/teleop_twist_joy_node/get_parameters",
+    "type": "rcl_interfaces/srv/GetParameters"
+  },
+  {
+    "name": "/teleop_twist_joy_node/list_parameters",
+    "type": "rcl_interfaces/srv/ListParameters"
+  },
+  {
+    "name": "/teleop_twist_joy_node/set_parameters",
+    "type": "rcl_interfaces/srv/SetParameters"
+  },
+  {
+    "name": "/teleop_twist_joy_node/set_parameters_atomically",
+    "type": "rcl_interfaces/srv/SetParametersAtomically"
+  }
+]

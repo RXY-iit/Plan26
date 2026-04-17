@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Todo List | FY2026 Robot Harness System</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #f8fafc;
+  --surface: #ffffff;
+  --surface2:#f1f5f9;
+  --border:  #e2e8f0;
+  --border2: #cbd5e1;
+  --accent:  #2563eb;
+  --accent-l:#eff6ff;
+  --accent-m:#bfdbfe;
+  --green:   #059669;
+  --green-l: #ecfdf5;
+  --amber:   #d97706;
+  --amber-l: #fffbeb;
+  --red:     #dc2626;
+  --red-l:   #fef2f2;
+  --purple:  #7c3aed;
+  --purple-l:#f5f3ff;
+  --text:    #0f172a;
+  --text2:   #334155;
+  --muted:   #64748b;
+  --mono:    'JetBrains Mono','Fira Code','Courier New',monospace;
+  --r: 12px;
+  --sh-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --sh:    0 4px 12px rgba(0,0,0,.07);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Meiryo',-apple-system,sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.75;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+  height: 56px; background: rgba(255,255,255,.97);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  padding: 0 28px; display: flex; align-items: center; gap: 2px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none; margin-right: 16px; flex-shrink: 0;
+}
+.nav-logo-icon {
+  width: 30px; height: 30px; background: var(--text); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.nav-logo-sep { font-size: 20px; color: var(--border2); font-weight: 300; }
+.nav-logo-text { font-size: 12px; color: var(--muted); font-weight: 600; }
+.nav-item { position: relative; }
+.nav-btn {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--muted); text-decoration: none;
+  padding: 6px 11px; border-radius: 7px;
+  border: none; background: none; cursor: pointer; font-family: inherit;
+  transition: background .12s, color .12s; white-space: nowrap;
+}
+.nav-btn:hover, .nav-item:hover > .nav-btn { background: var(--surface2); color: var(--text); }
+.nav-btn.cur { color: var(--accent); }
+.nav-caret { font-size: 8px; opacity: .5; transition: transform .15s; }
+.nav-item:hover .nav-caret { transform: rotate(180deg); }
+.nav-drop {
+  position: absolute; top: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  min-width: 240px; background: #fff;
+  border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.11), 0 2px 8px rgba(0,0,0,.05);
+  padding: 8px; z-index: 999;
+  opacity: 0; pointer-events: none;
+  transition: opacity .15s, transform .15s;
+}
+.nav-item:hover .nav-drop { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.nav-drop-label {
+  font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em;
+  color: #94a3b8; padding: 6px 10px 3px; display: block;
+}
+.nav-drop-link {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; padding: 9px 10px; border-radius: 9px; transition: background .1s;
+}
+.nav-drop-link:hover { background: var(--surface2); }
+.nav-dl-icon { font-size: 18px; flex-shrink: 0; }
+.nav-dl-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.nav-dl-sub { font-size: 11px; color: var(--muted); }
+.nav-drop-sep { height: 1px; background: var(--border); margin: 5px 6px; }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.nav-badge-pill {
+  font-size: 11px; font-weight: 700;
+  background: var(--green-l); color: var(--green);
+  border: 1px solid rgba(5,150,105,.25);
+  padding: 4px 12px; border-radius: 99px; white-space: nowrap;
+}
+.nav-pulse {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--green);
+  animation: npulse 2s infinite; flex-shrink: 0;
+}
+@keyframes npulse {
+  0%,100%{ box-shadow: 0 0 0 0 rgba(5,150,105,.4); }
+  50%     { box-shadow: 0 0 0 5px rgba(5,150,105,0); }
+}
+
+/* HERO */
+.page-hero {
+  padding: 88px 24px 52px;
+  background: linear-gradient(135deg, #fff 0%, #f0f7ff 60%, #f5f3ff 100%);
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.page-hero::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(37,99,235,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37,99,235,.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.hero-inner { max-width: 960px; margin: 0 auto; position: relative; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: .05em;
+  color: var(--accent); background: var(--accent-l);
+  border: 1px solid var(--accent-m);
+  padding: 3px 12px; border-radius: 99px; margin-bottom: 12px;
+}
+h1 { font-size: clamp(24px, 5vw, 38px); font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.hero-desc { font-size: 15px; color: var(--muted); margin-bottom: 24px; }
+
+/* Stats */
+.stats-row { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 24px; }
+.stat-chip {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 16px; box-shadow: var(--sh-sm);
+}
+.stat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.stat-num { font-size: 18px; font-weight: 800; color: var(--text); font-family: var(--mono); }
+.stat-lbl { font-size: 11px; color: var(--muted); }
+
+/* Progress bar */
+.prog-wrap {}
+.prog-label {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; color: var(--muted); margin-bottom: 6px;
+}
+.prog-bar { height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.prog-fill {
+  height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, var(--accent), var(--green));
+  transition: width .8s cubic-bezier(.4,0,.2,1);
+}
+
+/* MAIN */
+main { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+
+/* Category */
+.category { margin-bottom: 44px; }
+.cat-header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.cat-icon {
+  width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 22px;
+  border: 1px solid var(--border); box-shadow: var(--sh-sm);
+}
+.cat-icon.sw { background: var(--accent-l); }
+.cat-icon.hw { background: var(--amber-l); }
+.cat-icon.sys { background: var(--green-l); }
+.cat-title { font-size: 17px; font-weight: 800; color: var(--text); }
+.cat-sub   { font-size: 13px; color: var(--muted); }
+
+/* Todo items */
+.todo-item {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 16px 18px; margin-bottom: 8px;
+  display: flex; align-items: flex-start; gap: 14px;
+  box-shadow: var(--sh-sm); transition: all .2s; position: relative; overflow: hidden;
+}
+.todo-item::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; border-radius: 3px 0 0 3px; opacity: 0; transition: opacity .2s;
+}
+.todo-item:hover { box-shadow: var(--sh); }
+.todo-item:hover::before { opacity: 1; background: var(--accent); }
+
+.todo-item.new-add { border-color: rgba(217,119,6,.3); }
+.todo-item.new-add::before { opacity: 1; background: var(--amber); }
+
+/* done items: keep text color/weight, just tint the background */
+
+/* Checkbox — 閲覧専用（編集不可） */
+.todo-cb {
+  width: 22px; height: 22px; border-radius: 7px; border: 2px solid var(--border2);
+  flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center;
+  cursor: default; font-size: 13px; color: #fff;
+}
+.todo-cb.checked { background: var(--green); border-color: var(--green); }
+
+.todo-body { flex: 1; min-width: 0; }
+.todo-text { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.todo-note { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.todo-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.tag {
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+  font-family: var(--mono);
+}
+.tag.sw { background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m); }
+.tag.hw { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.2); }
+.tag.ai { background: var(--purple-l); color: var(--purple); border: 1px solid rgba(124,58,237,.2); }
+.tag.new{ background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.3); font-weight: 800; }
+
+/* Sub items */
+.sub-items {
+  margin-top: 10px; padding: 10px 14px;
+  background: var(--surface2); border-radius: 8px; border: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.sub-item {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--text2); cursor: default;
+}
+.sub-cb {
+  width: 15px; height: 15px; border-radius: 4px; border: 2px solid var(--border2);
+  flex-shrink: 0;
+}
+.sub-cb.checked { background: var(--green); border-color: var(--green); }
+.sub-item.checked span { text-decoration: line-through; color: var(--muted); }
+
+/* Status badge */
+.todo-status {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+  font-family: var(--mono); margin-top: 4px;
+}
+.todo-status.done     { background: var(--green-l); color: var(--green); border: 1px solid rgba(5,150,105,.2); }
+.todo-status.progress { background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m); }
+.todo-status.pending  { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+
+/* Date */
+.todo-date { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 3px; }
+
+/* Log links */
+.log-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.log-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600; color: var(--accent);
+  text-decoration: none; padding: 3px 9px; border-radius: 6px;
+  background: var(--accent-l); border: 1px solid var(--accent-m);
+  transition: all .15s;
+}
+.log-link:hover { background: var(--accent); color: #fff; }
+.log-link.vid { color: var(--purple); background: var(--purple-l); border-color: rgba(124,58,237,.2); }
+.log-link.vid:hover { background: var(--purple); color: #fff; }
+.log-link.issue { color: var(--red); background: var(--red-l); border-color: rgba(220,38,38,.2); }
+.log-link.issue:hover { background: var(--red); color: #fff; }
+
+/* Item checked with done style */
+.todo-item.done-item {
+  border-left: 3px solid var(--green);
+  background: linear-gradient(135deg, #f0fdf9 0%, #ecfdf5 100%);
+  border-color: rgba(5,150,105,.25);
+}
+.todo-item.inprogress-item { border-left: 3px solid var(--accent); }
+
+/* FOOTER */
+footer {
+  background: var(--text); color: rgba(255,255,255,.5);
+  text-align: center; padding: 28px; font-size: 13px;
+}
+footer a { color: rgba(255,255,255,.75); text-decoration: none; }
+
+@media (max-width: 640px) { main { padding: 28px 14px 60px; } }
+
+/* ── 動画モーダル ── */
+.vid-modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,.92); align-items: center; justify-content: center;
+}
+.vid-modal-overlay.open { display: flex; }
+.vid-modal-box {
+  width: 90vw; max-width: 900px; border-radius: 14px;
+  overflow: hidden; background: #0f172a;
+  box-shadow: 0 20px 60px rgba(0,0,0,.6);
+}
+.vid-modal-hd {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 18px; background: #1e293b;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.vid-modal-ttl { font-size: 13px; font-weight: 700; color: rgba(255,255,255,.85); }
+.vid-modal-close {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
+  color: #fff; font-size: 14px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: all .15s;
+}
+.vid-modal-close:hover { background: rgba(255,255,255,.25); }
+.vid-modal-box video { width: 100%; max-height: 75vh; display: block; background: #000; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="plan-fy26.html">
+      <div class="nav-logo-icon">🧠</div>
+      <span class="nav-logo-sep">/</span>
+      <span class="nav-logo-text">FY26 Plan</span>
+    </a>
+
+    <div class="nav-item">
+      <button class="nav-btn" onclick="location.href='plan-fy26.html'">プラン <span class="nav-caret">▾</span></button>
+      <div class="nav-drop">
+        <span class="nav-drop-label">メインページ</span>
+        <a class="nav-drop-link" href="plan-fy26.html#background">
+          <span class="nav-dl-icon">📖</span>
+          <div><div class="nav-dl-name">研究背景</div><div class="nav-dl-sub">現状の課題と研究目的</div></div>
+        </a>
+        <a class="nav-drop-link" href="plan-fy26.html#figures">
+          <span class="nav-dl-icon">📐</span>
+          <div><div class="nav-dl-name">設計資料</div><div class="nav-dl-sub">アーキテクチャ図・スライド</div></div>
+        </a>
+        <a class="nav-drop-link" href="plan-fy26.html#schedule">
+          <span class="nav-dl-icon">📅</span>
+          <div><div class="nav-dl-name">スケジュール</div><div class="nav-dl-sub">フェーズ・ガントチャート</div></div>
+        </a>
+        <a class="nav-drop-link" href="plan-fy26.html#demo">
+          <span class="nav-dl-icon">🎯</span>
+          <div><div class="nav-dl-name">デモ概要</div><div class="nav-dl-sub">デモ要件レーダー</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-item">
+      <a class="nav-btn cur" href="todo.html">Todo</a>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-btn" onclick="location.href='demo.html'">デモ詳細 <span class="nav-caret">▾</span></button>
+      <div class="nav-drop">
+        <span class="nav-drop-label">デモページ</span>
+        <a class="nav-drop-link" href="demo.html#req-map">
+          <span class="nav-dl-icon">🗺️</span>
+          <div><div class="nav-dl-name">要件マップ</div><div class="nav-dl-sub">9カテゴリ・技術要素</div></div>
+        </a>
+        <a class="nav-drop-link" href="demo.html#scenarios">
+          <span class="nav-dl-icon">🎬</span>
+          <div><div class="nav-dl-name">デモシナリオ</div><div class="nav-dl-sub">3カテゴリ × Level 1/2/3</div></div>
+        </a>
+        <a class="nav-drop-link" href="demo.html#usecases">
+          <span class="nav-dl-icon">💡</span>
+          <div><div class="nav-dl-name">活用シーン</div><div class="nav-dl-sub">14のユースケース</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-btn" onclick="location.href='issues/arm-vertical/arm-vertical.html'">Issues <span class="nav-caret">▾</span></button>
+      <div class="nav-drop">
+        <span class="nav-drop-label">問題対処記録</span>
+        <a class="nav-drop-link" href="issues/arm-vertical/arm-vertical.html">
+          <span class="nav-dl-icon">🔧</span>
+          <div><div class="nav-dl-name">アーム上下機構</div><div class="nav-dl-sub">コネクタ破損 → 再設計（解決済み）</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-btn" onclick="location.href='disscussion/arm-demo-level123-ja.html'">Discussion <span class="nav-caret">▾</span></button>
+      <div class="nav-drop">
+        <span class="nav-drop-label">議論・検討ドキュメント</span>
+        <a class="nav-drop-link" href="disscussion/arm-demo-level123-ja.html">
+          <span class="nav-dl-icon">🦾</span>
+          <div><div class="nav-dl-name">マニピュレーション実証ロードマップ</div><div class="nav-dl-sub">アーム単体 Demo Level 1-3 分類</div></div>
+        </a>
+        <a class="nav-drop-link" href="disscussion/move-base-level123-ja.html">
+          <span class="nav-dl-icon">🤖</span>
+          <div><div class="nav-dl-name">ナビゲーション Level 1-3 分類基準</div><div class="nav-dl-sub">自律移動システム設計方針</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <span class="nav-pulse"></span>
+      <div class="nav-badge-pill">Phase 0 進行中</div>
+    </div>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="hero-inner">
+    <div class="hero-tag">Phase 0 → 1 進行中</div>
+    <h1>📋 Todo List</h1>
+    <p class="hero-desc">タスクの完了状態は Markdown ファイルを編集して管理します。このページは閲覧専用です。</p>
+    <div class="stats-row">
+      <div class="stat-chip">
+        <div class="stat-dot" style="background:var(--green)"></div>
+        <div>
+          <div class="stat-num" id="doneCount">0</div>
+          <div class="stat-lbl">完了</div>
+        </div>
+      </div>
+      <div class="stat-chip">
+        <div class="stat-dot" style="background:var(--border2)"></div>
+        <div>
+          <div class="stat-num" id="todoCount">0</div>
+          <div class="stat-lbl">未着手</div>
+        </div>
+      </div>
+      <div class="stat-chip">
+        <div class="stat-dot" style="background:var(--accent)"></div>
+        <div>
+          <div class="stat-num" id="pctNum">0%</div>
+          <div class="stat-lbl">達成率</div>
+        </div>
+      </div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-label">
+        <span>Phase 0 & 1 進捗</span>
+        <span id="pctLabel" style="font-weight:700; color:var(--accent)">0%</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ── 最終験収目標 ── -->
+  <div style="margin-bottom:32px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <div style="flex:1;height:1px;background:var(--border);"></div>
+      <div style="display:flex;align-items:center;gap:8px;padding:6px 16px;background:linear-gradient(135deg,var(--accent-l),var(--purple-l));border:1px solid var(--accent-m);border-radius:99px;font-size:12px;font-weight:700;color:var(--accent);">🎯 最終験収目標</div>
+      <div style="flex:1;height:1px;background:var(--border);"></div>
+    </div>
+
+    <!-- Phase 0 -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:10px;box-shadow:var(--sh-sm);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span style="font-size:12px;font-weight:800;background:var(--accent-l);color:var(--accent);border:1px solid var(--accent-m);padding:2px 10px;border-radius:6px;font-family:var(--mono);">Phase 0</span>
+        <span style="font-size:13px;font-weight:700;color:var(--text);">ロボット基盤の安定化 — Done Definition</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--green);font-weight:700;flex-shrink:0;">✅</span>
+          <span>ロボットが安定して動作する（壊れない状態）</span>
+          <span class="tag sw" style="margin-left:auto;">Hardware</span>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--green);font-weight:700;flex-shrink:0;">✅</span>
+          <span>Joy-Con による手動操縦が安定動作（teleop → cmd_vel → motor チェーン確認）</span>
+          <span class="tag sw" style="margin-left:auto;">Software</span>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--green);font-weight:700;flex-shrink:0;">✅</span>
+          <span>SOARM101 アームの基本動作・Teleoperator・VLA 確認済み</span>
+          <span class="tag hw" style="margin-left:auto;">Hardware</span>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--green);font-weight:700;flex-shrink:0;">✅</span>
+          <span>Livox MID360 LiDAR 搭載・ROS2 ドライバ接続・点群データ取得可能</span>
+          <span class="tag hw" style="margin-left:auto;">Hardware</span>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>全センサー（Camera / IMU / Encoder / LiDAR）データ取得・TF 整合確認</span>
+          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>LLM 基礎実装：自然言語コマンドで移動 / アーム操作をトリガー可能</span>
+          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag sw">Software</span><span class="tag ai">AI/LLM</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 1 -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh-sm);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span style="font-size:12px;font-weight:800;background:var(--surface2);color:var(--muted);border:1px solid var(--border);padding:2px 10px;border-radius:6px;font-family:var(--mono);">Phase 1</span>
+        <span style="font-size:13px;font-weight:700;color:var(--text);">自律移動 LiDAR SLAM + Nav2 — Done Definition</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>安定した地図生成が可能（FAST-LIO / SLAM 動作確認）</span>
+          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag sw">Software</span><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>地図を読み込んでの自己位置推定が安定動作</span>
+          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag sw">Software</span><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>RViz で目標地点指定 → 自動ナビゲーション成功</span>
+          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag sw">Software</span><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>基本的な静的障害物の回避が可能</span>
+          <span class="tag ai" style="margin-left:auto;background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>Isaac Sim 仿真環境でも同等のナビゲーションが動作可能</span>
+          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag sw">Software</span><span class="tag new">New</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 完了セクションヘッダー ── -->
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+    <div style="flex:1;height:1px;background:var(--border);"></div>
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 16px;background:var(--green-l);border:1px solid rgba(5,150,105,.25);border-radius:99px;font-size:12px;font-weight:700;color:var(--green);">✅ 完了済み（〜2026-04-11）</div>
+    <div style="flex:1;height:1px;background:var(--border);"></div>
+  </div>
+
+  <!-- 1. ROS2 ワークスペース構成の確認 -->
+  <div class="todo-item done-item">
+    <div class="todo-cb checked">✓</div>
+    <div class="todo-body">
+      <div class="todo-text">ROS2 ワークスペース構成の確認</div>
+      <div class="todo-note">ワークスペース全体の把握・ノード依存関係の整理・トピック一覧作成</div>
+      <div class="todo-tags">
+        <span class="tag sw">Software</span>
+        <span class="todo-status done">✅ 完了</span>
+      </div>
+      <div class="todo-date">完了: 2026-04-11</div>
+    </div>
+  </div>
+
+  <!-- 2. 移動系ノード・トピックの確認 -->
+  <div class="todo-item done-item">
+    <div class="todo-cb checked">✓</div>
+    <div class="todo-body">
+      <div class="todo-text">移動系ノード・トピックの確認</div>
+      <div class="todo-note">移動関連の各ノード・トピックを一覧化し、依存関係を特定</div>
+      <div class="todo-tags">
+        <span class="tag sw">Software</span>
+        <span class="todo-status done">✅ 完了</span>
+      </div>
+      <div class="todo-date">完了: 2026-04-11</div>
+      <div class="log-links">
+        <a class="log-link" href="logs/20260407_joycon-demo/snapshot.html" target="_blank">📊 joycon-demo</a>
+        <a class="log-link" href="logs/test-motor-driver/20260407_205057/snapshot.html" target="_blank">📊 motor-driver</a>
+        <a class="log-link" href="logs/test-motor-softarm/20260407_165340/snapshot.html" target="_blank">📊 motor-softarm</a>
+        <a class="log-link" href="logs/test-motor-steer/20260407_210512/snapshot.html" target="_blank">📊 motor-steer</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. 手動操作（Joy-Con）の確認 -->
+  <div class="todo-item done-item">
+    <div class="todo-cb checked">✓</div>
+    <div class="todo-body">
+      <div class="todo-text">手動操作（Joy-Con）の確認</div>
+      <div class="todo-note">Joy-Con によるリアルタイム操縦テスト完了。teleop_twist_joy → cmd_vel → motor の制御チェーンが正常動作することを確認。</div>
+      <div class="todo-tags">
+        <span class="tag sw">Software</span>
+        <span class="tag hw">Hardware</span>
+        <span class="todo-status done">✅ 完了</span>
+      </div>
+      <div class="todo-date">完了: 2026-04-11</div>
+      <div class="log-links">
+        <a class="log-link" href="logs/20260407_joycon-demo/snapshot.html" target="_blank">📊 joycon-demo snapshot</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. SOARM101 アームの動作確認 -->
+  <div class="todo-item done-item">
+    <div class="todo-cb checked">✓</div>
+    <div class="todo-body">
+      <div class="todo-text">SOARM101 アームの動作確認（Teleoperator / VLA）</div>
+      <div class="todo-note">新ロボット機体上でアーム動作テストを実施。CPU が機械臂を正常に駆動できることを確認。テレオペレーション（手動遠隔操作）および VLA（既存サンプル実装）を新 OS 上で実行・動作確認。</div>
+      <div class="todo-tags">
+        <span class="tag hw">Hardware</span>
+        <span class="todo-status done">✅ 完了</span>
+      </div>
+      <div class="todo-date">完了: 2026-04-11</div>
+      <div class="log-links">
+        <a class="log-link vid" href="media/VLA.MOV" onclick="event.preventDefault(); openVidModal('media/VLA.MOV','🎬 VLA.MOV — アーム動作確認')">🎬 VLA.MOV — アーム動作確認</a>
+        <a class="log-link vid" href="media/teleoperate.MOV" onclick="event.preventDefault(); openVidModal('media/teleoperate.MOV','🎬 teleoperate.MOV — 手動テレオペ')">🎬 teleoperate.MOV — 手動テレオペ</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. 上下機構への実アーム搭載テスト -->
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">上下機構への実アーム搭載テスト</div>
+      <div class="todo-note">スライドレール方式の上下機構に実アームを搭載し、重量支持・上下駆動動作を確認。コネクタ破損（3Dプリント製）→ ネジ（金属製）＋ 3Dプリントベース構造に再設計し解決。</div>
+      <div class="todo-tags">
+        <span class="tag hw">Hardware</span>
+        <span class="todo-status pending">保留中</span>
+      </div>
+      <div class="todo-date">更新: 2026-04-16</div>
+      <div class="log-links">
+        <a class="log-link issue" href="issues/arm-vertical/arm-vertical.html" target="_blank">🔧 問題対処記録 — コネクタ再設計</a>
+        <a class="log-link vid" href="media/chuoku1.MOV" onclick="event.preventDefault(); openVidModal('media/chuoku1.MOV','🎬 chuoku1.MOV — 上下動作テスト①')">🎬 chuoku1.MOV — 上下動作テスト①</a>
+        <a class="log-link vid" href="media/chuoku2.MOV" onclick="event.preventDefault(); openVidModal('media/chuoku2.MOV','🎬 chuoku2.MOV — 上下動作テスト②')">🎬 chuoku2.MOV — 上下動作テスト②</a>
+      </div>
+      <div class="sub-items">
+        <div class="sub-item">
+          <div class="sub-cb"></div>
+          <span>直線軌道軸 T8 リードスクリュー 2mm → 8mm 変更検討（上下移動スピード改善のため）・合わせてモーター変更検討</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 6. Lidar 追加 -->
+  <div class="todo-item done-item">
+    <div class="todo-cb checked">✓</div>
+    <div class="todo-body">
+      <div class="todo-text">Lidar 追加 — Livox MID360</div>
+      <div class="todo-note">3D LiDAR のマウント・ROS2 ドライバ導入・点群データ確認（LiDAR SLAM への布石）</div>
+      <div class="todo-tags"><span class="tag hw">Hardware</span><span class="todo-status done">✅ 完了</span></div>
+      <div class="todo-date">完了: 2026-04-13</div>
+      <div class="sub-items">
+        <div class="sub-item checked"><div class="sub-cb checked"></div><span>LiDAR ハード搭載・USB 接続確認</span></div>
+        <div class="sub-item checked"><div class="sub-cb checked"></div><span>ROS2 ドライバ起動・/livox/lidar トピック確認</span></div>
+        <div class="sub-item checked"><div class="sub-cb checked"></div><span>点群データ安定出力（Hz 正常）</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6-2. 通信テスト -->
+  <div class="todo-item done-item">
+    <div class="todo-cb checked">✓</div>
+    <div class="todo-body">
+      <div class="todo-text">通信テスト — LiDAR 追加後のシステム全体疎通確認</div>
+      <div class="todo-note">Lidar 追加後のシステム全体の通信状態・トピック疎通を確認。全センサー（Camera / IMU / Encoder / LiDAR）の並行動作・ROS2 topic 流通・ノード間の通信遅延・バッファリング異常がないことを検証。</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag hw">Hardware</span><span class="todo-status done">✅ 完了</span></div>
+      <div class="todo-date">完了: 2026-04-17</div>
+      <div class="sub-items">
+        <div class="sub-item checked"><div class="sub-cb checked"></div><span>全ノード起動・エラーログなし</span></div>
+        <div class="sub-item checked"><div class="sub-cb checked"></div><span>トピック一覧・Hz 確認（/scan / /pointcloud / /imu / /odom / /camera/* 等）</span></div>
+        <div class="sub-item checked"><div class="sub-cb checked"></div><span>通信レイテンシ・ジッター測定・正常範囲内</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. 全センサーデータ取得・TF 整合確認 -->
+  <div class="todo-item done-item">
+    <div class="todo-cb checked">✓</div>
+    <div class="todo-body">
+      <div class="todo-text">全センサー（Camera / IMU / Encoder / LiDAR）データ取得・TF 整合確認</div>
+      <div class="todo-note">Lidar 追加後のシステム全体における全センサーデータの安定出力・座標系（TF）の整合性・トピック疎通を確認。URDF・TF ツリーの整合性を rviz2 で目視確認済み。</div>
+      <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag sw">Software</span><span class="todo-status done">✅ 完了</span></div>
+      <div class="todo-date">完了: 2026-04-17</div>
+      <div class="log-links">
+        <a class="log-link vid" href="media/urdf-tf-sensor-check.webm" onclick="event.preventDefault(); openVidModal('media/urdf-tf-sensor-check.webm','🎬 urdf-tf-sensor-check.webm — 全センサー TF 整合確認')">🎬 urdf-tf-sensor-check.webm — 全センサー TF 整合確認</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. LLM システム実装 -->
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">LLM システム実装</div>
+      <div class="todo-note">GPT / Claude API をロボットに接続し、自然言語コマンドによる基礎的な移動・操作の制御を初期実験</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai">AI / LLM</span></div>
+      <div class="todo-date">更新: 2026-04-13</div>
+      <div class="sub-items">
+        <div class="sub-item"><div class="sub-cb"></div><span>テキストコマンド制御 UI の実装（デモ選択・実行）</span></div>
+        <div class="sub-item"><div class="sub-cb"></div><span>自然言語指令でデモを個別トリガーできることを確認</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Phase 1 セクションヘッダー ── -->
+  <div style="display:flex;align-items:center;gap:12px;margin:40px 0 20px;">
+    <div style="flex:1;height:1px;background:var(--border);"></div>
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 16px;background:linear-gradient(135deg,var(--accent-l),var(--green-l));border:1px solid var(--accent-m);border-radius:99px;font-size:12px;font-weight:700;color:var(--accent);">🔹 Phase 1 — 自律移動（LiDAR SLAM + Nav2）</div>
+    <div style="flex:1;height:1px;background:var(--border);"></div>
+  </div>
+
+  <!-- ① システム設計・データリンク -->
+  <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 8px;padding-left:4px;">① システム設計・データリンク</div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">システム分層設計・データリンク確立</div>
+      <div class="todo-note">伝感器層（Mid360 / RealSense / IMU / 里程計）・基礎処理層（ドライバ + TF + 時刻同期）・空間認識層（SLAM / 測位）・（予定）LLM 層インタフェース</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
+      <div class="todo-date">更新: 2026-04-16</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">センサー接続確認（Phase 1 向け）</div>
+      <div class="todo-note">Mid360 点群安定出力・IMU / odom 動作確認・ROS2 topic &amp; Hz 正常</div>
+      <div class="todo-tags"><span class="tag hw">Hardware</span></div>
+      <div class="todo-date">更新: 2026-04-16</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">TF・座標系構築</div>
+      <div class="todo-note"><code style="font-family:var(--mono);font-size:11px;background:var(--surface2);padding:1px 5px;border-radius:3px;">map → odom → base_link → sensors</code> 構築・外参校正（LiDAR / IMU / Camera）・座標方向整合・タイムスタンプ同期確認</div>
+      <div class="todo-tags"><span class="tag sw">Software</span></div>
+      <div class="todo-date">更新: 2026-04-16</div>
+    </div>
+  </div>
+
+  <!-- ② 運動・測位基礎 -->
+  <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 8px;padding-left:4px;">② 運動・測位基礎</div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">底盤制御確認</div>
+      <div class="todo-note">/cmd_vel 正常動作・前進 / 回転方向確認・速度スケール検証</div>
+      <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
+      <div class="todo-date">更新: 2026-04-16</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">測位ルート決定・SLAM 検証</div>
+      <div class="todo-note">推奨: C（里程計安定）→ B（SLAM）→ A（測位ナビゲーション）。地図生成（FAST-LIO / その他）・地図品質確認・測位安定性検証（ドリフトなし）</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
+      <div class="todo-date">更新: 2026-04-16</div>
+    </div>
+  </div>
+
+  <!-- ③ Nav2 -->
+  <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 8px;padding-left:4px;">③ Nav2 ナビゲーション能力</div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">Nav2 設定</div>
+      <div class="todo-note">global planner / local planner・costmap（local + global）・footprint / inflation 設定</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
+      <div class="todo-date">更新: 2026-04-16</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">基本ナビゲーションテスト</div>
+      <div class="todo-note">RViz で 2D Goal 送信・自動目標地点到達・静的障害物回避確認</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
+      <div class="todo-date">更新: 2026-04-16</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">安定性チューニング</div>
+      <div class="todo-note">速度 / 加速度・避障パラメータ・goal tolerance 調整・ナビゲーション成功率向上</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
+      <div class="todo-date">更新: 2026-04-16</div>
+    </div>
+  </div>
+
+  <!-- ④ シナリオ・検証 -->
+  <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 8px;padding-left:4px;">④ シナリオ・検証</div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">ターゲットシナリオ設定</div>
+      <div class="todo-note">室内廊下往復 / 実験室→入口 / 部屋内障害物回避（いずれかひとつを選定）</div>
+      <div class="todo-tags"><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
+      <div class="todo-date">更新: 2026-04-16</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">地図・タスク検証</div>
+      <div class="todo-note">建図 → 保存 → 再ロード・複数回ナビゲーション成功・異なる起点での安定動作確認</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
+      <div class="todo-date">更新: 2026-04-16</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">簡易環境認識ノード（Phase 2 準備）</div>
+      <div class="todo-note">点群前処理ノード（任意先行実装）：前方障害物距離・通路幅・free space 推定・JSON 構造化データ出力</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
+      <div class="todo-date">更新: 2026-04-16</div>
+    </div>
+  </div>
+
+  <!-- ⑤ Isaac Sim -->
+  <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 8px;padding-left:4px;">⑤ Isaac Sim 仿真検証</div>
+
+  <div class="todo-item new-add">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">仿真環境構築</div>
+      <div class="todo-note">ロボット URDF の Isaac Sim 取り込み・LiDAR / Camera 追加・簡易シーン（廊下 / 障害物）構築</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag new">New</span></div>
+      <div class="todo-date">更新: 2026-04-16</div>
+    </div>
+  </div>
+
+  <div class="todo-item new-add">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">ROS2 Bridge 接続</div>
+      <div class="todo-note">/tf /cmd_vel /scan /pointcloud 対応・実機インタフェースとの一致確認</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag new">New</span></div>
+      <div class="todo-date">更新: 2026-04-16</div>
+    </div>
+  </div>
+
+  <div class="todo-item new-add">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">仿真上でのナビゲーション検証</div>
+      <div class="todo-note">SLAM / 測位（任意）・Nav2 動作確認・RViz → Goal → 自動ナビゲーション</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span><span class="tag new">New</span></div>
+      <div class="todo-date">更新: 2026-04-16</div>
+    </div>
+  </div>
+
+  <div class="todo-item new-add">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">Sim2Real 基本対応</div>
+      <div class="todo-note">統一座標系・統一話題インタフェース・パラメータ最大限一致</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag new">New</span></div>
+      <div class="todo-date">更新: 2026-04-16</div>
+    </div>
+  </div>
+
+  <!-- ── 低優先セクションヘッダー ── -->
+  <div style="display:flex;align-items:center;gap:12px;margin:32px 0 20px;">
+    <div style="flex:1;height:1px;background:var(--border);"></div>
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:99px;font-size:12px;font-weight:700;color:var(--muted);">🔮 中長期タスク</div>
+    <div style="flex:1;height:1px;background:var(--border);"></div>
+  </div>
+
+  <!-- 外装設計 -->
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">外装設計</div>
+      <div class="todo-note">テーマ：可愛さ / テクノロジー感 / 公式感・フォーマル。清潔感のあるホワイト or ライトグレー基調にメタリックブルー / ネオン系アクセント。センサー配置が自然に見えるデザイン・配線カバー・ロゴ・ステータス表示・TTS スピーカー配置を含む。</div>
+      <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
+      <div class="todo-date">更新: 2026-04-16</div>
+    </div>
+  </div>
+
+  <!-- ブランド・キャラクター設計 -->
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">ブランド・キャラクター設計</div>
+      <div class="todo-note">Logo（簡潔で公式感のあるマーク / タイポグラフィ）・プロダクト名 / ロボット名の候補検討・TTS モデル（音声の性格を決める）・性格 / キャラ定義（公式感 or 親しみやすいサポートキャラ軸）</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai">AI / LLM</span></div>
+      <div class="todo-date">更新: 2026-04-16</div>
+    </div>
+  </div>
+
+  <!-- Harness システム -->
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">Harness システムの構築</div>
+      <div class="todo-note">最新トレンドを参考にアーキテクチャを更新・整備</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai">AI / LLM</span></div>
+      <div class="todo-date">更新: 2026-04-16</div>
+    </div>
+  </div>
+
+</main>
+
+<!-- 動画モーダル -->
+<div id="todoVidModal" class="vid-modal-overlay" onclick="closeVidModal()">
+  <div class="vid-modal-box" onclick="event.stopPropagation()">
+    <div class="vid-modal-hd">
+      <span class="vid-modal-ttl" id="todoVidTitle"></span>
+      <button class="vid-modal-close" onclick="closeVidModal()">✕</button>
+    </div>
+    <video id="todoVid" controls playsinline></video>
+  </div>
+</div>
+
+<footer>
+  <a href="plan-fy26.html">← メインページへ戻る</a> &nbsp;|&nbsp;
+  FY2026 Robot Harness System &nbsp;|&nbsp; 最終更新: 2026-04-16
+</footer>
+
+<script>
+// ── 進捗統計（done-item クラスを基準に集計） ──
+function updateStats() {
+  const items = document.querySelectorAll('.todo-item');
+  const total = items.length;
+  const done  = [...items].filter(i => i.classList.contains('done-item')).length;
+  const pct   = Math.round(done / total * 100);
+  document.getElementById('doneCount').textContent = done;
+  document.getElementById('todoCount').textContent  = total - done;
+  document.getElementById('pctNum').textContent     = pct + '%';
+  document.getElementById('pctLabel').textContent   = pct + '%';
+  document.getElementById('progFill').style.width   = pct + '%';
+}
+
+// ── 動画モーダル ──
+function openVidModal(src, title) {
+  const vid = document.getElementById('todoVid');
+  document.getElementById('todoVidTitle').textContent = title;
+  vid.src = src;
+  vid.load();
+  document.getElementById('todoVidModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  vid.play().catch(() => {});
+}
+function closeVidModal() {
+  const vid = document.getElementById('todoVid');
+  vid.pause();
+  vid.src = '';
+  document.getElementById('todoVidModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── キーボード ──
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeVidModal();
+});
+
+updateStats();
+</script>
+</body>
+</html>

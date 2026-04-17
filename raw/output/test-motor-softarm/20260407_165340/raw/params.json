@@ -1,0 +1,15 @@
+{
+  "/angle_chokudo_node": {
+    "angle_change_threshold": "0.1",
+    "log_only_on_change": "True",
+    "use_sim_time": "False"
+  },
+  "/angle_serial_manual_node": {
+    "use_sim_time": "False"
+  },
+  "/angle_serial_node": {
+    "angle_change_threshold": "0.1",
+    "log_only_on_change": "True",
+    "use_sim_time": "False"
+  }
+}

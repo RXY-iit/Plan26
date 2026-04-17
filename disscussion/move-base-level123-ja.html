@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ナビゲーション Level 1-3 分類基準 | FY2026 Robot Harness System</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #f8fafc;
+  --surface: #ffffff;
+  --surface2:#f1f5f9;
+  --border:  #e2e8f0;
+  --border2: #cbd5e1;
+  --accent:  #2563eb;
+  --accent-l:#eff6ff;
+  --accent-m:#bfdbfe;
+  --green:   #059669;
+  --green-l: #ecfdf5;
+  --green-m: #a7f3d0;
+  --amber:   #d97706;
+  --amber-l: #fffbeb;
+  --amber-m: #fde68a;
+  --red:     #dc2626;
+  --red-l:   #fef2f2;
+  --purple:  #7c3aed;
+  --purple-l:#f5f3ff;
+  --purple-m:#ddd6fe;
+  --text:    #0f172a;
+  --text2:   #334155;
+  --muted:   #64748b;
+  --mono:    'JetBrains Mono','Fira Code','Courier New',monospace;
+  --r: 12px;
+  --sh-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --sh:    0 4px 12px rgba(0,0,0,.07);
+  --sh-lg: 0 10px 32px rgba(0,0,0,.09);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Meiryo',-apple-system,sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.75;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+  height: 56px; background: rgba(255,255,255,.97);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  padding: 0 28px; display: flex; align-items: center; gap: 2px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none; margin-right: 16px; flex-shrink: 0;
+}
+.nav-logo-icon {
+  width: 30px; height: 30px; background: var(--text); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.nav-logo-sep { font-size: 20px; color: var(--border2); font-weight: 300; }
+.nav-logo-text { font-size: 12px; color: var(--muted); font-weight: 600; }
+.nav-item { position: relative; }
+.nav-btn {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--muted); text-decoration: none;
+  padding: 6px 11px; border-radius: 7px;
+  border: none; background: none; cursor: pointer; font-family: inherit;
+  transition: background .12s, color .12s; white-space: nowrap;
+}
+.nav-btn:hover, .nav-item:hover > .nav-btn { background: var(--surface2); color: var(--text); }
+.nav-btn.cur { color: var(--accent); }
+.nav-caret { font-size: 8px; opacity: .5; transition: transform .15s; }
+.nav-item:hover .nav-caret { transform: rotate(180deg); }
+.nav-drop {
+  position: absolute; top: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  min-width: 240px; background: #fff;
+  border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.11), 0 2px 8px rgba(0,0,0,.05);
+  padding: 8px; z-index: 999;
+  opacity: 0; pointer-events: none;
+  transition: opacity .15s, transform .15s;
+}
+.nav-item:hover .nav-drop { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.nav-drop-label {
+  font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em;
+  color: #94a3b8; padding: 6px 10px 3px; display: block;
+}
+.nav-drop-link {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; padding: 9px 10px; border-radius: 9px; transition: background .1s;
+}
+.nav-drop-link:hover { background: var(--surface2); }
+.nav-dl-icon { font-size: 18px; flex-shrink: 0; }
+.nav-dl-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.nav-dl-sub { font-size: 11px; color: var(--muted); }
+.nav-drop-sep { height: 1px; background: var(--border); margin: 5px 6px; }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.nav-badge-pill {
+  font-size: 11px; font-weight: 700;
+  background: var(--accent-l); color: var(--accent);
+  border: 1px solid rgba(37,99,235,.25);
+  padding: 4px 12px; border-radius: 99px; white-space: nowrap;
+}
+.nav-pulse {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+  animation: npulse 2s infinite; flex-shrink: 0;
+}
+@keyframes npulse {
+  0%,100%{ box-shadow: 0 0 0 0 rgba(37,99,235,.4); }
+  50%     { box-shadow: 0 0 0 5px rgba(37,99,235,0); }
+}
+
+/* ── HERO ── */
+.page-hero {
+  padding: 88px 24px 52px;
+  background: linear-gradient(135deg, #fff 0%, #f0f7ff 50%, #ecfdf5 100%);
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.page-hero::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(37,99,235,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37,99,235,.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.hero-inner { max-width: 1000px; margin: 0 auto; position: relative; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: .05em;
+  color: var(--accent); background: var(--accent-l);
+  border: 1px solid var(--accent-m);
+  padding: 3px 12px; border-radius: 99px; margin-bottom: 12px;
+}
+h1 { font-size: clamp(24px, 5vw, 36px); font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.hero-desc { font-size: 15px; color: var(--muted); margin-bottom: 28px; max-width: 680px; line-height: 1.8; }
+
+/* ── LEVEL ROADMAP ── */
+.level-roadmap {
+  display: flex; align-items: stretch; gap: 0; margin-bottom: 0;
+  border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+  box-shadow: var(--sh-sm);
+}
+.roadmap-level {
+  flex: 1; padding: 16px 18px; background: var(--surface);
+  position: relative; cursor: pointer; transition: background .15s;
+  text-decoration: none; display: block;
+}
+.roadmap-level:hover { background: var(--surface2); }
+.roadmap-level + .roadmap-level { border-left: 1px solid var(--border); }
+.rm-num {
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em;
+  margin-bottom: 4px; font-family: var(--mono);
+}
+.rm-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; line-height: 1.4; }
+.rm-phase { font-size: 11px; color: var(--muted); }
+.rm-arrow {
+  position: absolute; right: -13px; top: 50%;
+  transform: translateY(-50%);
+  width: 24px; height: 24px; border-radius: 50%; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 800; background: var(--surface); border: 1px solid var(--border);
+  color: var(--muted); box-shadow: var(--sh-sm);
+}
+.roadmap-level:last-child .rm-arrow { display: none; }
+
+.rm-lv1 .rm-num { color: var(--accent); }
+.rm-lv1 { border-top: 3px solid var(--accent); }
+.rm-lv2 .rm-num { color: var(--amber); }
+.rm-lv2 { border-top: 3px solid var(--amber); }
+.rm-lv3 .rm-num { color: var(--purple); }
+.rm-lv3 { border-top: 3px solid var(--purple); }
+
+/* ── MAIN ── */
+main { max-width: 1000px; margin: 0 auto; padding: 48px 24px 80px; }
+
+/* ── LEVEL SECTION ── */
+.level-section { margin-bottom: 56px; scroll-margin-top: 72px; }
+
+.level-header {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 24px;
+}
+.level-badge {
+  width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; font-family: var(--mono);
+  letter-spacing: .05em;
+}
+.lv1 .level-badge { background: var(--accent-l); color: var(--accent); border: 1.5px solid var(--accent-m); }
+.lv2 .level-badge { background: var(--amber-l); color: var(--amber); border: 1.5px solid var(--amber-m); }
+.lv3 .level-badge { background: var(--purple-l); color: var(--purple); border: 1.5px solid var(--purple-m); }
+
+.level-title-block {}
+.level-title { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 2px; }
+.level-subtitle { font-size: 12px; color: var(--muted); }
+
+.level-status {
+  margin-left: auto; display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 99px;
+  font-family: var(--mono);
+}
+.status-active  { background: var(--green-l); color: var(--green); border: 1px solid var(--green-m); }
+.status-planned { background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m); }
+.status-future  { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+
+/* ── WHY → WHAT ── */
+.why-what-row {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 0;
+  align-items: stretch; margin-bottom: 16px;
+}
+.why-card, .what-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 20px 22px;
+  box-shadow: var(--sh-sm);
+}
+.card-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em;
+  margin-bottom: 12px;
+}
+.lv1 .why-card .card-label { color: var(--accent); }
+.lv1 .what-card .card-label { color: var(--green); }
+.lv2 .why-card .card-label { color: var(--amber); }
+.lv2 .what-card .card-label { color: var(--green); }
+.lv3 .why-card .card-label { color: var(--purple); }
+.lv3 .what-card .card-label { color: var(--green); }
+
+.lv1 .why-card { border-top: 3px solid var(--accent); }
+.lv2 .why-card { border-top: 3px solid var(--amber); }
+.lv3 .why-card { border-top: 3px solid var(--purple); }
+.why-card, .what-card { border-top-width: 3px; }
+.what-card { border-top: 3px solid var(--green); }
+
+.card-text { font-size: 14px; color: var(--text2); line-height: 1.8; }
+.card-text strong { color: var(--text); font-weight: 700; }
+
+.connect-arrow {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 0 12px; gap: 4px;
+}
+.connect-arrow-line {
+  width: 2px; flex: 1; min-height: 20px;
+  background: linear-gradient(to bottom, var(--border2), var(--border2));
+}
+.connect-arrow-icon {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--surface); border: 1.5px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--muted); box-shadow: var(--sh-sm);
+  flex-shrink: 0;
+}
+
+/* ── 痛点 + 価値 ── */
+.pain-value-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;
+}
+.pain-card {
+  background: var(--red-l); border: 1px solid rgba(220,38,38,.15);
+  border-radius: var(--r); padding: 16px 18px;
+}
+.value-card {
+  border-radius: var(--r); padding: 16px 18px; border: 1px solid var(--border);
+  background: var(--surface);
+}
+.lv1 .value-card { background: linear-gradient(135deg, var(--accent-l), #fff); border-color: var(--accent-m); }
+.lv2 .value-card { background: linear-gradient(135deg, var(--amber-l), #fff); border-color: var(--amber-m); }
+.lv3 .value-card { background: linear-gradient(135deg, var(--purple-l), #fff); border-color: var(--purple-m); }
+
+.sub-label {
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em;
+  margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+}
+.pain-card .sub-label { color: var(--red); }
+
+.pain-list { display: flex; flex-direction: column; gap: 7px; }
+.pain-item {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 13px; color: var(--text2); line-height: 1.6;
+}
+.pain-dot { color: var(--red); font-weight: 800; flex-shrink: 0; line-height: 1.6; }
+
+.value-text { font-size: 13px; color: var(--text2); line-height: 1.8; }
+.value-text strong { color: var(--text); font-weight: 700; }
+
+/* ── フロー ── */
+.flow-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 18px 20px; margin-bottom: 16px;
+  box-shadow: var(--sh-sm);
+}
+.flow-steps {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 4px;
+  margin-top: 10px;
+}
+.flow-step {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 12px; font-weight: 600; color: var(--text2);
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 5px 10px; white-space: nowrap;
+}
+.flow-sep { font-size: 12px; color: var(--border2); font-weight: 700; }
+
+/* ── 技術タグ ── */
+.tech-row { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+.tech-tag {
+  font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 5px;
+  font-family: var(--mono); background: var(--surface2); color: var(--text2);
+  border: 1px solid var(--border);
+}
+.lv1 .tech-tag { background: var(--accent-l); color: var(--accent); border-color: var(--accent-m); }
+.lv2 .tech-tag { background: var(--amber-l); color: var(--amber); border-color: var(--amber-m); }
+.lv3 .tech-tag { background: var(--purple-l); color: var(--purple); border-color: var(--purple-m); }
+
+/* ── 3段階のつながり ── */
+.progression-section {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 32px 36px; margin-bottom: 56px;
+  box-shadow: var(--sh);
+}
+.prog-title {
+  font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 24px;
+  display: flex; align-items: center; gap: 10px;
+}
+.prog-steps { display: flex; flex-direction: column; gap: 0; }
+.prog-step { display: flex; align-items: stretch; gap: 0; }
+.prog-step + .prog-step { margin-top: 0; }
+.prog-step-left {
+  display: flex; flex-direction: column; align-items: center; width: 40px; flex-shrink: 0;
+}
+.prog-node {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; font-family: var(--mono);
+  border: 2px solid transparent;
+}
+.prog-node.lv1 { background: var(--accent-l); color: var(--accent); border-color: var(--accent); }
+.prog-node.lv2 { background: var(--amber-l); color: var(--amber); border-color: var(--amber); }
+.prog-node.lv3 { background: var(--purple-l); color: var(--purple); border-color: var(--purple); }
+.prog-line { width: 2px; flex: 1; min-height: 20px; background: var(--border2); margin: 0 auto; }
+.prog-step:last-child .prog-line { display: none; }
+.prog-step-content { flex: 1; padding: 0 0 28px 18px; }
+.prog-step-title { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.prog-step-desc { font-size: 13px; color: var(--text2); line-height: 1.7; }
+.prog-step-tag {
+  display: inline-block; font-size: 11px; font-weight: 700; font-family: var(--mono);
+  padding: 2px 8px; border-radius: 4px; margin-top: 6px;
+}
+.prog-step-tag.lv1 { background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m); }
+.prog-step-tag.lv2 { background: var(--amber-l); color: var(--amber); border: 1px solid var(--amber-m); }
+.prog-step-tag.lv3 { background: var(--purple-l); color: var(--purple); border: 1px solid var(--purple-m); }
+
+/* ── セクション区切り ── */
+.section-divider {
+  display: flex; align-items: center; gap: 12px; margin: 0 0 32px;
+}
+.section-divider-line { flex: 1; height: 1px; background: var(--border); }
+.section-divider-label {
+  font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--muted); padding: 4px 14px; border: 1px solid var(--border);
+  border-radius: 99px; background: var(--surface2); white-space: nowrap;
+}
+
+/* ── 実装例カード ── */
+.impl-section { margin-top: 22px; }
+.impl-header {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+}
+.impl-header-icon {
+  width: 22px; height: 22px; border-radius: 6px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 12px;
+  background: var(--surface2); border: 1px solid var(--border);
+}
+.impl-header-label {
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em;
+  color: var(--muted);
+}
+.impl-grid { display: grid; gap: 14px; }
+.impl-grid.one  { grid-template-columns: 1fr; }
+.impl-grid.two  { grid-template-columns: 1fr 1fr; }
+.impl-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); overflow: hidden;
+  box-shadow: var(--sh-sm); transition: box-shadow .2s, transform .15s;
+}
+.impl-card:hover { box-shadow: var(--sh); transform: translateY(-1px); }
+.impl-card-top {
+  padding: 14px 18px 13px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; gap: 11px;
+}
+.impl-num {
+  width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; font-family: var(--mono);
+}
+.impl-num.lv1 { background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m); }
+.impl-num.lv2 { background: var(--amber-l);  color: var(--amber);  border: 1px solid var(--amber-m); }
+.impl-num.lv3 { background: var(--purple-l); color: var(--purple); border: 1px solid var(--purple-m); }
+.impl-card-title { font-size: 14px; font-weight: 800; color: var(--text); line-height: 1.4; margin-bottom: 2px; }
+.impl-card-sub   { font-size: 11px; color: var(--muted); line-height: 1.5; }
+.impl-card-body  { padding: 14px 18px; display: flex; flex-direction: column; gap: 12px; }
+.impl-block { display: flex; flex-direction: column; gap: 5px; }
+.impl-block-label {
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .09em; color: var(--muted);
+}
+.impl-scenario { font-size: 13px; color: var(--text2); line-height: 1.75; }
+.impl-scenario strong { color: var(--text); font-weight: 700; }
+.impl-challenges { display: flex; flex-direction: column; gap: 5px; }
+.impl-challenge {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 12px; color: var(--text2); line-height: 1.65;
+}
+.impl-challenge-dot { flex-shrink: 0; line-height: 1.65; }
+.impl-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.impl-tag {
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+  font-family: var(--mono); background: var(--surface2);
+  color: var(--text2); border: 1px solid var(--border);
+}
+
+/* inline flow mini */
+.mini-flow {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 3px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 12px; margin-top: 2px;
+}
+.mini-step  { font-size: 11px; color: var(--text2); font-weight: 600; white-space: nowrap; }
+.mini-arrow { font-size: 10px; color: var(--border2); }
+
+/* ── 比較テーブル ── */
+.compare-section {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 32px 36px; margin-bottom: 56px;
+  box-shadow: var(--sh);
+}
+.compare-table { width: 100%; border-collapse: collapse; margin-top: 18px; }
+.compare-table th {
+  padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 800;
+  font-family: var(--mono); border-bottom: 2px solid var(--border);
+}
+.compare-table th:first-child { color: var(--muted); }
+.compare-table th.lv1-h { color: var(--accent); }
+.compare-table th.lv2-h { color: var(--amber); }
+.compare-table th.lv3-h { color: var(--purple); }
+.compare-table td {
+  padding: 10px 14px; font-size: 13px; color: var(--text2);
+  border-bottom: 1px solid var(--border); line-height: 1.6; vertical-align: top;
+}
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:hover td { background: var(--surface2); }
+.compare-table td:first-child { font-weight: 700; color: var(--text); font-size: 12px; }
+
+@media (max-width: 720px) {
+  .impl-grid.two { grid-template-columns: 1fr; }
+  .why-what-row { grid-template-columns: 1fr; }
+  .connect-arrow { flex-direction: row; padding: 8px 0; }
+  .connect-arrow-line { width: auto; height: 2px; flex: 1; }
+  .pain-value-row { grid-template-columns: 1fr; }
+  .level-roadmap { flex-direction: column; }
+  .roadmap-level + .roadmap-level { border-left: none; border-top: 1px solid var(--border); }
+  .rm-arrow { display: none; }
+  main { padding: 28px 14px 60px; }
+  .progression-section, .compare-section { padding: 22px 18px; }
+  .compare-table { font-size: 11px; }
+}
+
+/* ── FOOTER ── */
+footer {
+  background: var(--text); color: rgba(255,255,255,.5);
+  text-align: center; padding: 28px; font-size: 13px;
+}
+footer a { color: rgba(255,255,255,.75); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="../plan-fy26.html">
+      <div class="nav-logo-icon">🧠</div>
+      <span class="nav-logo-sep">/</span>
+      <span class="nav-logo-text">FY26 Plan</span>
+    </a>
+
+    <div class="nav-item">
+      <button class="nav-btn" onclick="location.href='../plan-fy26.html'">プラン <span class="nav-caret">▾</span></button>
+      <div class="nav-drop">
+        <span class="nav-drop-label">メインページ</span>
+        <a class="nav-drop-link" href="../plan-fy26.html#background">
+          <span class="nav-dl-icon">📖</span>
+          <div><div class="nav-dl-name">研究背景</div><div class="nav-dl-sub">現状の課題と研究目的</div></div>
+        </a>
+        <a class="nav-drop-link" href="../plan-fy26.html#schedule">
+          <span class="nav-dl-icon">📅</span>
+          <div><div class="nav-dl-name">スケジュール</div><div class="nav-dl-sub">フェーズ・ガントチャート</div></div>
+        </a>
+        <a class="nav-drop-link" href="../plan-fy26.html#demo">
+          <span class="nav-dl-icon">🎯</span>
+          <div><div class="nav-dl-name">デモ概要</div><div class="nav-dl-sub">デモ要件レーダー</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-item">
+      <a class="nav-btn" href="../todo.html">Todo</a>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-btn" onclick="location.href='../demo.html'">デモ詳細 <span class="nav-caret">▾</span></button>
+      <div class="nav-drop">
+        <span class="nav-drop-label">デモページ</span>
+        <a class="nav-drop-link" href="../demo.html#req-map">
+          <span class="nav-dl-icon">🗺️</span>
+          <div><div class="nav-dl-name">要件マップ</div><div class="nav-dl-sub">9カテゴリ・技術要素</div></div>
+        </a>
+        <a class="nav-drop-link" href="../demo.html#scenarios">
+          <span class="nav-dl-icon">🎬</span>
+          <div><div class="nav-dl-name">デモシナリオ</div><div class="nav-dl-sub">3カテゴリ × Level 1/2/3</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-btn cur">Discussion <span class="nav-caret">▾</span></button>
+      <div class="nav-drop">
+        <span class="nav-drop-label">議論・検討ドキュメント</span>
+        <a class="nav-drop-link" href="arm-demo-level123-ja.html">
+          <span class="nav-dl-icon">🦾</span>
+          <div><div class="nav-dl-name">アームDemo Level 1-3 分類基準</div><div class="nav-dl-sub">アーム単体 Demo Level 1-3 分類</div></div>
+        </a>
+        <a class="nav-drop-link" href="move-base-level123-ja.html">
+          <span class="nav-dl-icon">🤖</span>
+          <div><div class="nav-dl-name">自律移動 Level 1-3 分類基準</div><div class="nav-dl-sub">自律移動システム設計方針（現在のページ）</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-btn" onclick="location.href='../issues/arm-vertical/arm-vertical.html'">Issues <span class="nav-caret">▾</span></button>
+      <div class="nav-drop">
+        <span class="nav-drop-label">問題対処記録</span>
+        <a class="nav-drop-link" href="../issues/arm-vertical/arm-vertical.html">
+          <span class="nav-dl-icon">🔧</span>
+          <div><div class="nav-dl-name">アーム上下機構</div><div class="nav-dl-sub">コネクタ破損 → 再設計（解決済み）</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <span class="nav-pulse"></span>
+      <div class="nav-badge-pill">Phase 1–3 ロードマップ</div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="hero-inner">
+    <div class="hero-tag">🤖 カテゴリ A — 自律移動 Navigation</div>
+    <h1>ロボット自律移動 Level 1-3 分類基準</h1>
+    <p class="hero-desc">
+      単なる「目標地点へ移動する」ナビゲーションではなく、<br>
+      <strong>環境を認識し、経験を記憶し、不確実な状況でも自律的にタスクを推進できること</strong>を<br>
+      3段階で段階的に示す。ROS2 + Mid360 LiDAR + Nav2 を基盤に、
+      記憶・判断・協働能力を積み上げ、Physical AI 的な自律移動を検証する。
+    </p>
+
+    <div class="level-roadmap">
+      <a class="roadmap-level rm-lv1" href="#level1">
+        <div class="rm-num">Level 1 · Phase 0–1</div>
+        <div class="rm-title">現在を見て<br>認識力を活用</div>
+        <div class="rm-phase">例：配達・巡回・障害物回避</div>
+        <div class="rm-arrow">→</div>
+      </a>
+      <a class="roadmap-level rm-lv2" href="#level2">
+        <div class="rm-num">Level 2 · Phase 2–3</div>
+        <div class="rm-title">記憶を活用して<br>賢く移動</div>
+        <div class="rm-phase">例：経験ベース経路選択・失敗回避</div>
+        <div class="rm-arrow">→</div>
+      </a>
+      <a class="roadmap-level rm-lv3" href="#level3">
+        <div class="rm-num">Level 3 · Phase 4–5</div>
+        <div class="rm-title">思考し主動的に<br>タスクを解決</div>
+        <div class="rm-phase">例：閉ドア対処・マルチステップ自動化</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- 3段階のつながり -->
+  <div class="progression-section">
+    <div class="prog-title">🗺️ 3段階のつながり — 能力の積み上げ構造</div>
+    <div class="prog-steps">
+      <div class="prog-step">
+        <div class="prog-step-left">
+          <div class="prog-node lv1">L1</div>
+          <div class="prog-line"></div>
+        </div>
+        <div class="prog-step-content">
+          <div class="prog-step-title">世界を見る → その場で認識する</div>
+          <div class="prog-step-desc">LiDAR + Camera でリアルタイムに環境を認識し、Nav2 が障害物を回避しながら目標へ移動する最小パイプラインを確立する。現在地から指定地点への移動・障害物検知・基本巡回を実現する。</div>
+          <span class="prog-step-tag lv1">安定したナビゲーション基盤の構築</span>
+        </div>
+      </div>
+      <div class="prog-step">
+        <div class="prog-step-left">
+          <div class="prog-node lv2">L2</div>
+          <div class="prog-line"></div>
+        </div>
+        <div class="prog-step-content">
+          <div class="prog-step-title">過去の経験 → 今の判断に活かす</div>
+          <div class="prog-step-desc">セマンティックマップに経験を記録し、「この通路は混雑する」「あのドアは引き戸」といった蓄積した知識で経路計画・障害物対処を改善する。RAG + LLM による柔軟な記憶参照を実装する。</div>
+          <span class="prog-step-tag lv2">タスク文脈を持った賢いナビゲーション</span>
+        </div>
+      </div>
+      <div class="prog-step">
+        <div class="prog-step-left">
+          <div class="prog-node lv3">L3</div>
+        </div>
+        <div class="prog-step-content">
+          <div class="prog-step-title">異常を判断 → 主動的に解決してタスクを継続</div>
+          <div class="prog-step-desc">ブロッキング・認識失敗・計画不能を検知し、再計画・ツール呼び出し・人間への支援要求を自律判断する。目標タスクの完了まで主動的に手順を再構成し、停止しない自律エージェントとして機能する。</div>
+          <span class="prog-step-tag lv3">不確実環境でも停止しない自律エージェント</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ LEVEL 1 ═══ -->
+  <div class="level-section lv1" id="level1">
+    <div class="section-divider">
+      <div class="section-divider-line"></div>
+      <div class="section-divider-label">Level 1</div>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <div class="level-header">
+      <div class="level-badge">L1</div>
+      <div class="level-title-block">
+        <div class="level-title">環境理解駆動型リアルタイム自動ナビゲーション</div>
+        <div class="level-subtitle">例：室内配達 / 施設巡回 / 障害物回避 / 音声ナビゲーション指示</div>
+      </div>
+      <div class="level-status status-active">● 現在進行中 · Phase 0–1</div>
+    </div>
+
+    <div class="why-what-row">
+      <div class="why-card">
+        <div class="card-label">💡 望ましいこと（Why）</div>
+        <p class="card-text">
+          研究室・施設内での物品配達や定期巡回は、<strong>単純だが人手依存のルーティン業務</strong>が多く残っている。<br><br>
+          毎回ルートを手動でプログラムすることへの依存を減らし、
+          <strong>「行き先を言うだけで動く」「邪魔があっても自動で回避する」</strong>
+          基礎的な移動自動化を実現したい。<br><br>
+          まず、センサーフュージョン・TF整合・Nav2 の安定動作という
+          <strong>揺るぎない基盤</strong>を確立することが全ての出発点となる。
+        </p>
+      </div>
+      <div class="connect-arrow">
+        <div class="connect-arrow-line"></div>
+        <div class="connect-arrow-icon">→</div>
+        <div class="connect-arrow-line"></div>
+      </div>
+      <div class="what-card">
+        <div class="card-label">🎯 このLevelで実証すること（What）</div>
+        <p class="card-text">
+          「3号室に行って」のような<strong>自然言語指示または指定座標</strong>を受け、
+          LiDAR SLAM によるローカライゼーション・Nav2 グローバル/ローカルプランナーを組み合わせ、
+          <strong>静的・動的障害物を回避しながら目標地点に到達する</strong>。<br><br>
+          全センサー（Camera / IMU / Encoder / LiDAR）の
+          <strong>TFツリー整合 + EKF オドメトリ</strong>が正常に機能していることを確認済みで、
+          この Level の実装基盤は整った状態にある。
+        </p>
+      </div>
+    </div>
+
+    <div class="pain-value-row">
+      <div class="pain-card">
+        <div class="sub-label">⚠ 解決したい痛点</div>
+        <div class="pain-list">
+          <div class="pain-item"><span class="pain-dot">✕</span><span>固定ルートスクリプトは環境変化（人・物の移動）に対応できない</span></div>
+          <div class="pain-item"><span class="pain-dot">✕</span><span>毎回人が介在しなければ次の行動を起こせない</span></div>
+          <div class="pain-item"><span class="pain-dot">✕</span><span>センサー不整合によるオドメトリドリフトで位置推定が破綻する</span></div>
+        </div>
+      </div>
+      <div class="value-card">
+        <div class="sub-label" style="color:var(--accent)">✨ このデモの価値</div>
+        <p class="value-text">
+          <strong>「ロボットが自律的に空間を移動できる」という最も基礎的な能力</strong>を確立する。<br><br>
+          Level 2・3 の記憶・判断能力はすべてこの安定した移動基盤の上に成立する。
+          <strong>FAST-LIO / ORB-SLAM3 によるマップ作成・Nav2 による自律移動</strong>が
+          本プロジェクト全体の技術的土台である。
+        </p>
+      </div>
+    </div>
+
+    <div class="flow-card">
+      <div class="sub-label" style="color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;">⚡ 実行フロー</div>
+      <div class="flow-steps">
+        <div class="flow-step">🗣️ 目標指定（音声 / 座標）</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">🗺️ SLAM マップ参照</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">📍 EKF 自己位置推定</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">🔀 Nav2 グローバル経路計画</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">⚡ DWB ローカル障害物回避</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">🚗 ロボット駆動</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">✅ 目標到達確認</div>
+      </div>
+    </div>
+
+    <div class="tech-row">
+      <span style="font-size:11px;color:var(--muted);font-weight:700;margin-right:4px;">技術：</span>
+      <span class="tech-tag">FAST-LIO</span>
+      <span class="tech-tag">Nav2</span>
+      <span class="tech-tag">EKF (robot_localization)</span>
+      <span class="tech-tag">Mid360 LiDAR</span>
+      <span class="tech-tag">DWB Planner</span>
+      <span class="tech-tag">TF2</span>
+      <span class="tech-tag">Whisper</span>
+      <span class="tech-tag">ROS2 Humble</span>
+    </div>
+
+    <div class="impl-section">
+      <div class="impl-header">
+        <div class="impl-header-icon">🔬</div>
+        <div class="impl-header-label">実装例</div>
+      </div>
+      <div class="impl-grid two">
+
+        <!-- 1-A: 室内ポイントツーポイント配達 -->
+        <div class="impl-card">
+          <div class="impl-card-top">
+            <div class="impl-num lv1">1-A</div>
+            <div>
+              <div class="impl-card-title">室内ポイント配達ナビゲーション</div>
+              <div class="impl-card-sub">音声または座標指定で部屋間を自律移動、動的障害物を回避して到達</div>
+            </div>
+          </div>
+          <div class="impl-card-body">
+            <div class="impl-block">
+              <div class="impl-block-label">シナリオ</div>
+              <p class="impl-scenario">
+                「3L402 に荷物を届けて」「研究室の端まで行って」といった指示を受け、
+                FAST-LIO でビルドしたマップ上に自己位置を推定しながら、
+                廊下・ドア前・狭い通路を通って目標地点へ到達する。<br><br>
+                <strong>移動中に人や椅子などの動的障害物が出現しても、
+                ローカルプランナーが即座に回避経路を生成</strong>し、停止せずに進む。
+                到達後、音声またはログで完了を通知する。
+              </p>
+              <div class="mini-flow">
+                <span class="mini-step">🗣️「3L402 に行って」</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🤖 LLM: 目的地="3L402" → 座標変換</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🗺️ Nav2: 最短経路を生成</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">⚡ DWB: 動的回避を継続</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">✅ 到達 → 完了通知</span>
+              </div>
+            </div>
+            <div class="impl-block">
+              <div class="impl-block-label">技術的なポイント</div>
+              <div class="impl-challenges">
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--accent)">▸</span>
+                  <span><strong>TF 整合性の確保：</strong>map → odom → base_link → センサーフレーム の TFツリーが正常で、EKF によってオドメトリドリフトを抑制。今回 urdf-tf-sensor-check.webm で全センサー整合を確認済み</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--accent)">▸</span>
+                  <span><strong>狭所通行：</strong>コストマップの inflation_radius を廊下幅に合わせて調整し、壁際通過・ドア前停止→再計画 を安定化させる</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--accent)">▸</span>
+                  <span><strong>目的地の意味解釈：</strong>Whisper で音声をテキスト化し、LLM が部屋名/人名 → マップ座標 へ変換するセマンティックマッピングとの連携で自然な指示を処理</span>
+                </div>
+              </div>
+            </div>
+            <div class="impl-block">
+              <div class="impl-block-label">想定ロケーション例</div>
+              <div class="impl-tags">
+                <span class="impl-tag">研究室 (3L402 等)</span>
+                <span class="impl-tag">廊下・エレベーター前</span>
+                <span class="impl-tag">実験室間の搬送</span>
+                <span class="impl-tag">受付・ロビー</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1-B: 施設自動巡回 -->
+        <div class="impl-card">
+          <div class="impl-card-top">
+            <div class="impl-num lv1">1-B</div>
+            <div>
+              <div class="impl-card-title">施設自動巡回・安全確認</div>
+              <div class="impl-card-sub">ウェイポイントを順番に巡回し、各地点でセンサーデータを収集・記録する</div>
+            </div>
+          </div>
+          <div class="impl-card-body">
+            <div class="impl-block">
+              <div class="impl-block-label">シナリオ</div>
+              <p class="impl-scenario">
+                事前に登録した<strong>巡回ウェイポイント（廊下端 × 3 + 各部屋前 × 5 など）</strong>を
+                一定時間ごとに自動巡回し、各地点で LiDAR / Camera データをキャプチャ・記録する。
+                異常（想定外の障害物・侵入者検知）があれば即座にアラートを送信し、
+                担当者に通知しながら次のウェイポイントへ進む。<br><br>
+                <strong>固定ルートに依存せず、コストマップを更新しながら毎回最短経路で移動</strong>するため、
+                家具の配置替えや一時的な障害物にも対応する。
+              </p>
+              <div class="mini-flow">
+                <span class="mini-step">📋 ウェイポイントリスト読込</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🔁 各 WP へ Nav2 移動</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">📸 センサーデータ記録</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">⚠️ 異常検知 → アラート</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🔁 次の WP へ継続</span>
+              </div>
+            </div>
+            <div class="impl-block">
+              <div class="impl-block-label">技術的なポイント</div>
+              <div class="impl-challenges">
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--accent)">▸</span>
+                  <span><strong>Nav2 Waypoint Follower：</strong>BehaviorTree.CPP ベースの状態機械で複数ウェイポイントを管理。各 WP での停止時間・センサーキャプチャをアクションサーバーとして実装</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--accent)">▸</span>
+                  <span><strong>異常検知：</strong>直前の巡回マップと現在のスキャンを比較し、新規障害物（コストマップのセル変化）を差分検出。Camera + YOLO で人物・物体の種別を追加判定</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--accent)">▸</span>
+                  <span><strong>電池管理：</strong>バッテリー残量を監視し、残量が閾値以下になったらドッキングステーションへ自動帰還してから巡回を再開する Recovery ビヘイビアを組み込む</span>
+                </div>
+              </div>
+            </div>
+            <div class="impl-block">
+              <div class="impl-block-label">応用シナリオ</div>
+              <div class="impl-tags">
+                <span class="impl-tag">夜間セキュリティ巡回</span>
+                <span class="impl-tag">定点環境モニタリング</span>
+                <span class="impl-tag">設備点検（ランプ確認）</span>
+                <span class="impl-tag">研究室内自動データ収集</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ LEVEL 2 ═══ -->
+  <div class="level-section lv2" id="level2">
+    <div class="section-divider">
+      <div class="section-divider-line"></div>
+      <div class="section-divider-label">Level 2</div>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <div class="level-header">
+      <div class="level-badge">L2</div>
+      <div class="level-title-block">
+        <div class="level-title">記憶強化型経験ナビゲーション</div>
+        <div class="level-subtitle">例：経験ベース経路選択 / 混雑回避 / ユーザー習慣学習 / 失敗からの復帰</div>
+      </div>
+      <div class="level-status status-planned">● planned · Phase 2–3</div>
+    </div>
+
+    <div class="why-what-row">
+      <div class="why-card">
+        <div class="card-label">💡 望ましいこと（Why）</div>
+        <p class="card-text">
+          Level 1 のロボットは毎回「現在の状態だけ」で判断するため、
+          <strong>同じ失敗を繰り返し、経験を活かすことができない</strong>。<br><br>
+          「朝 9 時はあの廊下が混む」「B棟の自動ドアは反応が遅い」
+          「田中さんはいつもエレベーター優先を希望する」といった
+          <strong>環境の動的特性やユーザーの習慣</strong>を記憶として蓄積することで、
+          判断品質を継続的に高めることができる。<br><br>
+          過去の経験を参照するだけで、<strong>再プログラムなしに行動が賢くなっていく</strong>ナビゲーションを実現したい。
+        </p>
+      </div>
+      <div class="connect-arrow">
+        <div class="connect-arrow-line"></div>
+        <div class="connect-arrow-icon">→</div>
+        <div class="connect-arrow-line"></div>
+      </div>
+      <div class="what-card">
+        <div class="card-label">🎯 このLevelで実証すること（What）</div>
+        <p class="card-text">
+          セマンティックマップに<strong>空間記憶・失敗記憶・ユーザー好み</strong>を重ねて記録し、
+          経路計画時に RAG + LLM でそれらを参照する。<br><br>
+          「3L402 に行って」という同じ指示でも、
+          <strong>時間帯・過去の経路成功率・ユーザー設定</strong>に基づいて
+          異なる最適経路を選択できることを示す。<br><br>
+          失敗（スタック・計画不能）の記録を次回の計画に反映し、
+          <strong>経験を積むほど移動品質が上がる</strong>仕組みを実証する。
+        </p>
+      </div>
+    </div>
+
+    <div class="pain-value-row">
+      <div class="pain-card">
+        <div class="sub-label">⚠ 解決したい痛点</div>
+        <div class="pain-list">
+          <div class="pain-item"><span class="pain-dot">✕</span><span>毎回同じ失敗ルートを試みてしまう</span></div>
+          <div class="pain-item"><span class="pain-dot">✕</span><span>時間帯・曜日による混雑変化を考慮できない</span></div>
+          <div class="pain-item"><span class="pain-dot">✕</span><span>ユーザーごとの好みや優先条件を記憶できない</span></div>
+        </div>
+      </div>
+      <div class="value-card">
+        <div class="sub-label" style="color:var(--amber)">✨ このデモの価値</div>
+        <p class="value-text">
+          <strong>「使えば使うほど賢くなるロボット」</strong>を実証する。<br><br>
+          単純な移動能力ではなく、<strong>文脈・経験・ユーザー情報を考慮した
+          タスク支援エージェント</strong>としてのナビゲーションを示す点が
+          研究的にも産業的にも大きな差別化になる。
+        </p>
+      </div>
+    </div>
+
+    <div class="flow-card">
+      <div class="sub-label" style="color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;">⚡ 実行フロー</div>
+      <div class="flow-steps">
+        <div class="flow-step">🗣️ タスク指示</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">🧠 記憶DB検索（RAG）</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">🤖 LLM: 文脈込み経路戦略立案</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">🗺️ Nav2: 重み付き経路計画</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">🚗 移動実行</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">📝 結果を記憶に記録</div>
+      </div>
+    </div>
+
+    <div class="tech-row">
+      <span style="font-size:11px;color:var(--muted);font-weight:700;margin-right:4px;">技術：</span>
+      <span class="tech-tag">Semantic Map</span>
+      <span class="tech-tag">RAG</span>
+      <span class="tech-tag">LLM</span>
+      <span class="tech-tag">Vector DB (ChromaDB)</span>
+      <span class="tech-tag">Nav2 Costmap Plugins</span>
+      <span class="tech-tag">JSON / SQLite 記憶DB</span>
+      <span class="tech-tag">FAST-LIO</span>
+    </div>
+
+    <div class="impl-section">
+      <div class="impl-header">
+        <div class="impl-header-icon">🔬</div>
+        <div class="impl-header-label">実装例</div>
+      </div>
+      <div class="impl-grid two">
+
+        <!-- 2-A: オフィスサービスロボット -->
+        <div class="impl-card">
+          <div class="impl-card-top">
+            <div class="impl-num lv2">2-A</div>
+            <div>
+              <div class="impl-card-title">オフィスサービスロボット（記憶ベース）</div>
+              <div class="impl-card-sub">経験・ユーザー好み・空間特性を記憶して最適な配達経路を自律選択</div>
+            </div>
+          </div>
+          <div class="impl-card-body">
+            <div class="impl-block">
+              <div class="impl-block-label">シナリオ</div>
+              <p class="impl-scenario">
+                「田中さんに資料を届けて」という指示を受けたとき、ロボットは記憶DBに問い合わせる。
+                すると<strong>「田中さんはエレベーター優先」「東廊下は 10-11 時に混む（現在 10:30）」
+                「C棟のドアは自動ではなく手動」</strong>という記憶が見つかり、
+                これらを加味した経路（エレベーター経由・西廊下迂回）を自律生成する。<br><br>
+                この配達が完了（または失敗）した結果も記憶に追記され、
+                次回はさらに精度の高い判断ができるようになる。
+              </p>
+              <div class="mini-flow">
+                <span class="mini-step">🗣️「田中さんに届けて」</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🧠 RAG: 過去の配達記憶 + ユーザー好み取得</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🤖 LLM: 記憶を考慮した経路方針を立案</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🗺️ Nav2: 重み付きコストマップで計画</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🚗 移動 → 📝 結果を記憶に追記</span>
+              </div>
+            </div>
+            <div class="impl-block">
+              <div class="impl-block-label">技術的なポイント</div>
+              <div class="impl-challenges">
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--amber)">▸</span>
+                  <span><strong>記憶タイプの分類：</strong>空間記憶（混雑・ドア状態）/ 失敗記憶（スタック地点・計画失敗経路）/ 対話記憶（ユーザーの優先順位・習慣）の3種類をそれぞれ異なるスキーマで JSON/DB に保存</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--amber)">▸</span>
+                  <span><strong>RAG によるコンテキスト検索：</strong>タスク説明をクエリとして ChromaDB に埋め込み検索し、関連する過去記憶を Top-K 件取得。LLM プロンプトに差し込んで経路判断を行わせる</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--amber)">▸</span>
+                  <span><strong>Nav2 への記憶反映：</strong>「混雑エリア」として記憶された区域は Costmap の inflation コストを一時的に引き上げ、自然にそのエリアを避けた経路を生成させる</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2-B: 経験ベース経路最適化 -->
+        <div class="impl-card">
+          <div class="impl-card-top">
+            <div class="impl-num lv2">2-B</div>
+            <div>
+              <div class="impl-card-title">失敗記憶による経路継続最適化</div>
+              <div class="impl-card-sub">スタック・計画失敗の経験を蓄積し、同じ過ちを繰り返さない学習型ナビゲーション</div>
+            </div>
+          </div>
+          <div class="impl-card-body">
+            <div class="impl-block">
+              <div class="impl-block-label">シナリオ</div>
+              <p class="impl-scenario">
+                ロボットが<strong>廊下の角でスタック（計画失敗 × 3 回連続）</strong>した経験を記録したとする。
+                次回、同じ目的地への移動時に記憶検索で「地点 X 付近で繰り返しスタック」が見つかると、
+                LLM が「この経由を避ける」か「アプローチ角度を変える」かを判断し、
+                代替経路を生成する。<br><br>
+                また、「月曜午前は会議室 A 前が混む」といった<strong>時間パターン記憶</strong>も持ち、
+                時刻によって動的に経路重みを変化させる。
+              </p>
+              <div class="mini-flow">
+                <span class="mini-step">🔴 スタック検出</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">📝 失敗地点・時刻・状況を記憶DB に追記</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🧠 次回: RAG で失敗記憶を参照</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🤖 LLM: 回避戦略を決定</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🗺️ コストマップにペナルティを反映</span>
+              </div>
+            </div>
+            <div class="impl-block">
+              <div class="impl-block-label">技術的なポイント</div>
+              <div class="impl-challenges">
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--amber)">▸</span>
+                  <span><strong>失敗の定量化：</strong>スタック時間・再計画回数・目的地到達失敗を記録。同一エリアでの連続失敗をトリガーに記憶の重みを上げる</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--amber)">▸</span>
+                  <span><strong>時間パターン学習：</strong>失敗・遅延の発生時刻を統計処理し、「時間帯×場所」のリスクマトリクスを生成。Nav2 コストマッププラグインとして時刻依存の障害コストを動的注入</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--amber)">▸</span>
+                  <span><strong>記憶の陳腐化対処：</strong>古い記憶には減衰係数を掛けて重みを下げ、環境変化（家具移動・改装）後に古い記憶が邪魔をしないよう時間窓を設定</span>
+                </div>
+              </div>
+            </div>
+            <div class="impl-block">
+              <div class="impl-block-label">記憶タイプ</div>
+              <div class="impl-tags">
+                <span class="impl-tag">空間記憶（混雑・狭所）</span>
+                <span class="impl-tag">失敗記憶（スタック地点）</span>
+                <span class="impl-tag">時間パターン記憶</span>
+                <span class="impl-tag">対話記憶（ユーザー習慣）</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ LEVEL 3 ═══ -->
+  <div class="level-section lv3" id="level3">
+    <div class="section-divider">
+      <div class="section-divider-line"></div>
+      <div class="section-divider-label">Level 3</div>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <div class="level-header">
+      <div class="level-badge">L3</div>
+      <div class="level-title-block">
+        <div class="level-title">予測・協働・自己最適化（タスクレベルの自動化）</div>
+        <div class="level-subtitle">例：閉ドア対処 / マルチステップタスク推進 / 主動的な状況探索と人間協働</div>
+      </div>
+      <div class="level-status status-future">◌ future · Phase 4–5</div>
+    </div>
+
+    <div class="why-what-row">
+      <div class="why-card">
+        <div class="card-label">💡 望ましいこと（Why）</div>
+        <p class="card-text">
+          Level 1・2 のロボットは「障害に直面したとき停止するか簡単に再計画する」だけで、
+          <strong>自分から状況を調べて解決しようとしない</strong>。<br><br>
+          実際の高価値シナリオ（ドアが閉じている・エレベーターが来ない・
+          目標物が見つからない）では、<strong>異常を認識し、
+          どのツールを使うか・人間に聞くかを自分で判断し、
+          メインタスクを継続推進する能力</strong>が必要になる。<br><br>
+          望まれているのは<strong>「ナビゲーションを実行するシステム」ではなく、
+          「タスクを完了させる自律エージェント」</strong>である。
+        </p>
+      </div>
+      <div class="connect-arrow">
+        <div class="connect-arrow-line"></div>
+        <div class="connect-arrow-icon">→</div>
+        <div class="connect-arrow-line"></div>
+      </div>
+      <div class="what-card">
+        <div class="card-label">🎯 このLevelで実証すること（What）</div>
+        <p class="card-text">
+          閉ドア・混雑・認識失敗といった<strong>予期せぬ状況を検知</strong>し、
+          主動的に接近・視点変更・ツール呼び出し・人間への確認要求を判断する。<br><br>
+          タスクを<strong>前提ステップに分解</strong>し、
+          途中で失敗が発生しても代替手段に切り替えながら最終目標まで推進する。<br><br>
+          これにより、<strong>ナビゲーション単体ではなく
+          タスク完了を主軸とした自律ループ</strong>の実現を示す。
+        </p>
+      </div>
+    </div>
+
+    <div class="pain-value-row">
+      <div class="pain-card">
+        <div class="sub-label">⚠ 解決したい痛点</div>
+        <div class="pain-list">
+          <div class="pain-item"><span class="pain-dot">✕</span><span>ドアが閉じているだけで完全に停止してしまう</span></div>
+          <div class="pain-item"><span class="pain-dot">✕</span><span>複数手順が必要なタスクを単独で遂行できない</span></div>
+          <div class="pain-item"><span class="pain-dot">✕</span><span>状況が不確定なとき人が常に介在しなければならない</span></div>
+        </div>
+      </div>
+      <div class="value-card">
+        <div class="sub-label" style="color:var(--purple)">✨ このデモの価値</div>
+        <p class="value-text">
+          <strong>「論文トピック + 展示会デモ + 商用価値」</strong>の三拍子が揃う。<br><br>
+          「人間のように問題を自分で解決しようとするロボット」という
+          <strong>インタラクティブ自律性（Interactive Adaptive Autonomy）</strong>は、
+          Human-Robot Interaction 研究・産業サービスロボットの両観点で高い訴求力を持つ。
+        </p>
+      </div>
+    </div>
+
+    <div class="flow-card">
+      <div class="sub-label" style="color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;">⚡ 実行フロー（閉ドア対処の例）</div>
+      <div class="flow-steps">
+        <div class="flow-step">🎯 タスク: 3L402 へ行ってタスク完了</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">⚠️ ドア前でパスブロック検出</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">🔍 主動的にドアへ接近・視点変更</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">🤖 LLM: ドア種別判定・対処策決定</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">🦾 スキル呼び出し or 人間に支援要求</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">✅ タスク継続推進 → 完了</div>
+      </div>
+    </div>
+
+    <div class="tech-row">
+      <span style="font-size:11px;color:var(--muted);font-weight:700;margin-right:4px;">技術：</span>
+      <span class="tech-tag">LLM Agent</span>
+      <span class="tech-tag">Tool Use (Claude API)</span>
+      <span class="tech-tag">BehaviorTree.CPP</span>
+      <span class="tech-tag">VLM (Vision-Language)</span>
+      <span class="tech-tag">Task Planning</span>
+      <span class="tech-tag">Human-in-the-loop</span>
+      <span class="tech-tag">Nav2 Recovery</span>
+    </div>
+
+    <div class="impl-section">
+      <div class="impl-header">
+        <div class="impl-header-icon">🔬</div>
+        <div class="impl-header-label">実装例</div>
+      </div>
+      <div class="impl-grid two">
+
+        <!-- 3-A: 閉ドア・障害対処 -->
+        <div class="impl-card">
+          <div class="impl-card-top">
+            <div class="impl-num lv3">3-A</div>
+            <div>
+              <div class="impl-card-title">閉ドア・経路障害への主動的対処</div>
+              <div class="impl-card-sub">状況を主動的に調査し、ドア種別を判断して対処策を選択・実行する</div>
+            </div>
+          </div>
+          <div class="impl-card-body">
+            <div class="impl-block">
+              <div class="impl-block-label">シナリオ</div>
+              <p class="impl-scenario">
+                目的地への経路上でドアが閉じている状況を検知。
+                Level 1 のロボットは停止・再計画のみだが、Level 3 では<strong>主動的にドアへ接近し、
+                VLM でドア種別（自動 / 手動引き戸 / 手動押し戸 / 施錠）を判断</strong>する。<br><br>
+                「自動ドア → センサー範囲に入って待機」「手動ドア →
+                アームスキルを呼び出して開扉」「施錠ドア → 人間に解錠要請」というように、
+                <strong>状況に応じて適切なツール・スキルを自律選択</strong>し、
+                あくまでもメインタスク（部屋到達）の完了を最優先で推進する。
+              </p>
+              <div class="mini-flow">
+                <span class="mini-step">⚠️ パスブロック検出</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🔍 ドアへ接近・視点変更</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">👁️ VLM: ドア種別 + 状態認識</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🤖 LLM: 対処策選択（自動待機 / アーム / 人間要請）</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">✅ ドア突破 → タスク継続</span>
+              </div>
+            </div>
+            <div class="impl-block">
+              <div class="impl-block-label">技術的なポイント</div>
+              <div class="impl-challenges">
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--purple)">▸</span>
+                  <span><strong>主動的視点変更：</strong>正面からでは判別困難なときに横移動 / 接近 / 頭部角度変更をロボット自身が決定し、認識品質が上がるまでアクションを繰り返す</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--purple)">▸</span>
+                  <span><strong>ツール呼び出しアーキテクチャ：</strong>LLM の Tool Use (Claude API) として「アーム開扉スキル」「人間通知 API」「迂回経路計算」を登録し、自律的に適切なものを呼び出す</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--purple)">▸</span>
+                  <span><strong>タスク継続推進：</strong>ドア処理は「前提ステップ」として管理し、解決後に即メインタスク（部屋到達）を再開。ドア前で全体が止まることはない</span>
+                </div>
+              </div>
+            </div>
+            <div class="impl-block">
+              <div class="impl-block-label">対処パターン</div>
+              <div class="impl-tags">
+                <span class="impl-tag">自動ドア（センサー待機）</span>
+                <span class="impl-tag">手動ドア（アームスキル）</span>
+                <span class="impl-tag">施錠ドア（人間要請）</span>
+                <span class="impl-tag">通路ブロック（迂回判断）</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3-B: マルチステップタスクチェーン -->
+        <div class="impl-card">
+          <div class="impl-card-top">
+            <div class="impl-num lv3">3-B</div>
+            <div>
+              <div class="impl-card-title">マルチステップタスクチェーン自動化</div>
+              <div class="impl-card-sub">複合指示をステップに分解し、失敗しても代替手段で最終目標まで完遂する</div>
+            </div>
+          </div>
+          <div class="impl-card-body">
+            <div class="impl-block">
+              <div class="impl-block-label">シナリオ</div>
+              <p class="impl-scenario">
+                「A棟の山田さんから書類を受け取り、B棟の鈴木さんに届けて」という
+                <strong>複合タスク</strong>を受けると、ロボットは内部でタスクを分解する。<br><br>
+                ① A棟へ移動 → ② 山田さんを人物認識で特定 →
+                ③ 受け取り確認 → ④ B棟へ移動 → ⑤ 鈴木さんへ手渡し、
+                というチェーンを自律的に計画・実行し、<strong>各ステップで失敗が起きた場合は
+                代替手段（別経路・代替受渡し場所・電話確認）に自動切り替え</strong>する。
+              </p>
+              <div class="mini-flow">
+                <span class="mini-step">🗣️ 複合指示を受信</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🤖 LLM: ステップに分解・依存関係を整理</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🔁 各ステップを順次実行</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">⚠️ 失敗検出 → 代替案に切り替え</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">✅ 最終目標を完遂 → 全記憶に記録</span>
+              </div>
+            </div>
+            <div class="impl-block">
+              <div class="impl-block-label">技術的なポイント</div>
+              <div class="impl-challenges">
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--purple)">▸</span>
+                  <span><strong>タスク分解と依存グラフ：</strong>LLM が複合指示を DAG（有向非循環グラフ）として分解し、前提条件が満たされたステップから優先実行。失敗ノードは代替サブグラフに置換</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--purple)">▸</span>
+                  <span><strong>人物認識との統合：</strong>カメラ + VLM で廊下・部屋内の人物を特定し、指名された人物に接近・確認・インタラクションを行うサブスキルをツールとして登録</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--purple)">▸</span>
+                  <span><strong>進捗の対話的報告：</strong>タスク完了・失敗・支援要求をリアルタイムでユーザーに通知（音声 / スマホ通知）し、最終完了後に実行サマリーを記憶DBに保存</span>
+                </div>
+              </div>
+            </div>
+            <div class="impl-block">
+              <div class="impl-block-label">応用シナリオ</div>
+              <div class="impl-tags">
+                <span class="impl-tag">書類回収・転送</span>
+                <span class="impl-tag">複数部屋への順次配達</span>
+                <span class="impl-tag">人物特定 + メッセージ伝達</span>
+                <span class="impl-tag">収集 + 仕分け + 格納</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 比較テーブル -->
+  <div class="compare-section">
+    <div class="prog-title">🔥 3つの Level の完全比較</div>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>項目</th>
+          <th class="lv1-h">Level 1</th>
+          <th class="lv2-h">Level 2</th>
+          <th class="lv3-h">Level 3</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>本質</td>
+          <td>現在を見て反応する</td>
+          <td>記憶を活かして賢く動く</td>
+          <td>思考してタスクを完遂する</td>
+        </tr>
+        <tr>
+          <td>コアループ</td>
+          <td>感知 → 計画 → 制御</td>
+          <td>+ 記憶検索 + 経験反映</td>
+          <td>+ 異常判定 + ツール選択 + 継続推進</td>
+        </tr>
+        <tr>
+          <td>障害対応</td>
+          <td>簡単な回避 or 停止</td>
+          <td>記憶ベースで高リスク区域を回避</td>
+          <td>主動的に調査・対処・突破</td>
+        </tr>
+        <tr>
+          <td>失敗時</td>
+          <td>停止または再計画</td>
+          <td>記憶参照 → 戦略変更</td>
+          <td>retry / replan / ツール変更 / 人間要請</td>
+        </tr>
+        <tr>
+          <td>経験学習</td>
+          <td>なし（毎回ゼロベース）</td>
+          <td>失敗・混雑・好みを記憶</td>
+          <td>主動的に記憶を構築・更新</td>
+        </tr>
+        <tr>
+          <td>人間相互作用</td>
+          <td>なし</td>
+          <td>ユーザー好みを参照可能</td>
+          <td>問題を自己認識して支援を要請</td>
+        </tr>
+        <tr>
+          <td>タスク複雑性</td>
+          <td>単点移動・定ルート巡回</td>
+          <td>コンテキスト付き配達・経路最適化</td>
+          <td>複合マルチステップ・依存タスク</td>
+        </tr>
+        <tr>
+          <td>適用シナリオ</td>
+          <td>工場巡回・清掃・定形配達</td>
+          <td>オフィスサービス・施設管理</td>
+          <td>不確定環境・高付加価値タスク</td>
+        </tr>
+        <tr>
+          <td>現在の進捗</td>
+          <td style="color:var(--green);font-weight:700;">✅ 基盤構築済（Phase 0）</td>
+          <td style="color:var(--amber);font-weight:700;">● Phase 2–3 予定</td>
+          <td style="color:var(--muted);font-weight:700;">◌ Phase 4–5 研究ハイライト</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 締め文 -->
+  <div style="background:linear-gradient(135deg,var(--accent-l),var(--green-l));border:1px solid var(--accent-m);border-radius:16px;padding:28px 32px;text-align:center;">
+    <div style="font-size:13px;color:var(--accent);font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">このカテゴリで示すこと</div>
+    <p style="font-size:15px;color:var(--text);line-height:1.9;max-width:660px;margin:0 auto;">
+      「ロボットが目的地へ移動できること」ではなく、<br>
+      <strong>環境を理解し、経験を記憶し、不確実な状況でも<br>
+      自律的にタスクを推進・完遂するナビゲーションエージェント</strong>
+    </p>
+  </div>
+
+</main>
+
+<footer>
+  <a href="../plan-fy26.html">← メインページへ戻る</a> &nbsp;|&nbsp;
+  <a href="arm-demo-level123-ja.html">アームデモ Level 1-3</a> &nbsp;|&nbsp;
+  <a href="../todo.html">Todo</a> &nbsp;|&nbsp;
+  FY2026 Robot Harness System &nbsp;|&nbsp; 更新: 2026-04-17
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,74 @@
+[
+  {
+    "name": "/angle_chokudo_node/describe_parameters",
+    "type": "rcl_interfaces/srv/DescribeParameters"
+  },
+  {
+    "name": "/angle_chokudo_node/get_parameter_types",
+    "type": "rcl_interfaces/srv/GetParameterTypes"
+  },
+  {
+    "name": "/angle_chokudo_node/get_parameters",
+    "type": "rcl_interfaces/srv/GetParameters"
+  },
+  {
+    "name": "/angle_chokudo_node/list_parameters",
+    "type": "rcl_interfaces/srv/ListParameters"
+  },
+  {
+    "name": "/angle_chokudo_node/set_parameters",
+    "type": "rcl_interfaces/srv/SetParameters"
+  },
+  {
+    "name": "/angle_chokudo_node/set_parameters_atomically",
+    "type": "rcl_interfaces/srv/SetParametersAtomically"
+  },
+  {
+    "name": "/angle_serial_manual_node/describe_parameters",
+    "type": "rcl_interfaces/srv/DescribeParameters"
+  },
+  {
+    "name": "/angle_serial_manual_node/get_parameter_types",
+    "type": "rcl_interfaces/srv/GetParameterTypes"
+  },
+  {
+    "name": "/angle_serial_manual_node/get_parameters",
+    "type": "rcl_interfaces/srv/GetParameters"
+  },
+  {
+    "name": "/angle_serial_manual_node/list_parameters",
+    "type": "rcl_interfaces/srv/ListParameters"
+  },
+  {
+    "name": "/angle_serial_manual_node/set_parameters",
+    "type": "rcl_interfaces/srv/SetParameters"
+  },
+  {
+    "name": "/angle_serial_manual_node/set_parameters_atomically",
+    "type": "rcl_interfaces/srv/SetParametersAtomically"
+  },
+  {
+    "name": "/angle_serial_node/describe_parameters",
+    "type": "rcl_interfaces/srv/DescribeParameters"
+  },
+  {
+    "name": "/angle_serial_node/get_parameter_types",
+    "type": "rcl_interfaces/srv/GetParameterTypes"
+  },
+  {
+    "name": "/angle_serial_node/get_parameters",
+    "type": "rcl_interfaces/srv/GetParameters"
+  },
+  {
+    "name": "/angle_serial_node/list_parameters",
+    "type": "rcl_interfaces/srv/ListParameters"
+  },
+  {
+    "name": "/angle_serial_node/set_parameters",
+    "type": "rcl_interfaces/srv/SetParameters"
+  },
+  {
+    "name": "/angle_serial_node/set_parameters_atomically",
+    "type": "rcl_interfaces/srv/SetParametersAtomically"
+  }
+]

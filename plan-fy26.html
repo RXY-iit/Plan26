@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FY2026 研究年間プラン | Robot Harness System</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #f8fafc;
+  --surface: #ffffff;
+  --surface2:#f1f5f9;
+  --border:  #e2e8f0;
+  --border2: #cbd5e1;
+  --accent:  #2563eb;
+  --accent-l:#eff6ff;
+  --accent-m:#bfdbfe;
+  --green:   #059669;
+  --green-l: #ecfdf5;
+  --amber:   #d97706;
+  --amber-l: #fffbeb;
+  --red:     #dc2626;
+  --red-l:   #fef2f2;
+  --purple:  #7c3aed;
+  --purple-l:#f5f3ff;
+  --text:    #0f172a;
+  --text2:   #334155;
+  --muted:   #64748b;
+  --mono:    'JetBrains Mono','Fira Code','Courier New',monospace;
+  --r:       12px;
+  --sh-sm:   0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --sh:      0 4px 12px rgba(0,0,0,.07);
+  --sh-lg:   0 10px 32px rgba(0,0,0,.09);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Meiryo',-apple-system,sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.75;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+  height: 56px; background: rgba(255,255,255,.97);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  padding: 0 28px; display: flex; align-items: center; gap: 2px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none; margin-right: 16px; flex-shrink: 0;
+}
+.nav-logo-icon {
+  width: 30px; height: 30px; background: var(--text); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.nav-logo-sep { font-size: 20px; color: var(--border2); font-weight: 300; }
+.nav-logo-text { font-size: 12px; color: var(--muted); font-weight: 600; }
+.nav-item { position: relative; }
+.nav-btn {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--muted); text-decoration: none;
+  padding: 6px 11px; border-radius: 7px;
+  border: none; background: none; cursor: pointer; font-family: inherit;
+  transition: background .12s, color .12s; white-space: nowrap;
+}
+.nav-btn:hover, .nav-item:hover > .nav-btn { background: var(--surface2); color: var(--text); }
+.nav-btn.cur { color: var(--accent); }
+.nav-caret { font-size: 8px; opacity: .5; transition: transform .15s; }
+.nav-item:hover .nav-caret { transform: rotate(180deg); }
+.nav-drop {
+  position: absolute; top: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  min-width: 240px; background: #fff;
+  border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.11), 0 2px 8px rgba(0,0,0,.05);
+  padding: 8px; z-index: 999;
+  opacity: 0; pointer-events: none;
+  transition: opacity .15s, transform .15s;
+}
+.nav-item:hover .nav-drop { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.nav-drop-label {
+  font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em;
+  color: var(--muted2,#94a3b8); padding: 6px 10px 3px; display: block;
+}
+.nav-drop-link {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; padding: 9px 10px; border-radius: 9px; transition: background .1s;
+}
+.nav-drop-link:hover { background: var(--surface2); }
+.nav-dl-icon { font-size: 18px; flex-shrink: 0; }
+.nav-dl-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.nav-dl-sub { font-size: 11px; color: var(--muted); }
+.nav-drop-sep { height: 1px; background: var(--border); margin: 5px 6px; }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.nav-badge-pill {
+  font-size: 11px; font-weight: 700;
+  background: var(--green-l); color: var(--green);
+  border: 1px solid rgba(5,150,105,.25);
+  padding: 4px 12px; border-radius: 99px; white-space: nowrap;
+}
+.nav-pulse {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--green);
+  animation: npulse 2s infinite; flex-shrink: 0;
+}
+@keyframes npulse {
+  0%,100%{ box-shadow: 0 0 0 0 rgba(5,150,105,.4); }
+  50%     { box-shadow: 0 0 0 5px rgba(5,150,105,0); }
+}
+
+/* ── HERO ── */
+#hero {
+  min-height: 100vh; display: flex; align-items: center;
+  padding: 80px 28px 64px;
+  background: linear-gradient(135deg, #fff 0%, #f0f7ff 50%, #f5f3ff 100%);
+  position: relative; overflow: hidden;
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(37,99,235,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37,99,235,.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.hero-glow-a {
+  position: absolute; top: 10%; right: -5%;
+  width: 500px; height: 500px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(37,99,235,.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-glow-b {
+  position: absolute; bottom: 10%; left: -5%;
+  width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(124,58,237,.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-inner {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  display: grid; grid-template-columns: 1fr 400px; gap: 60px; align-items: center;
+  position: relative;
+}
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 700; letter-spacing: .05em;
+  color: var(--accent); background: var(--accent-l);
+  border: 1px solid var(--accent-m);
+  padding: 4px 12px; border-radius: 99px; margin-bottom: 16px;
+}
+h1 {
+  font-size: clamp(30px, 5vw, 52px);
+  font-weight: 800; letter-spacing: -.02em; line-height: 1.1;
+  color: var(--text); margin-bottom: 10px;
+}
+h1 .hi { color: var(--accent); }
+.hero-sub {
+  font-family: var(--mono); font-size: clamp(13px, 2vw, 16px);
+  color: var(--green); font-weight: 600; margin-bottom: 16px;
+}
+.hero-concept {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  margin-bottom: 20px; font-size: 13px; color: var(--muted);
+}
+.concept-node {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 5px 12px; color: var(--text2); font-weight: 600;
+  box-shadow: var(--sh-sm);
+}
+.concept-arrow { color: var(--border2); font-size: 16px; }
+.hero-desc { font-size: 15px; color: var(--muted); max-width: 520px; margin-bottom: 32px; }
+.hero-stats { display: flex; gap: 16px; flex-wrap: wrap; }
+.stat-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 18px; box-shadow: var(--sh-sm);
+  min-width: 110px;
+}
+.stat-value { font-size: 20px; font-weight: 800; color: var(--text); font-family: var(--mono); }
+.stat-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* Progress Widget */
+.progress-widget {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 18px; padding: 28px; box-shadow: var(--sh);
+}
+.ring-container { position: relative; width: 160px; height: 160px; margin: 0 auto 24px; }
+.ring-svg { transform: rotate(-90deg); }
+.ring-track { fill: none; stroke: var(--border); stroke-width: 10; }
+.ring-fill {
+  fill: none; stroke: url(#ringGradL); stroke-width: 10;
+  stroke-linecap: round;
+  stroke-dasharray: 439; stroke-dashoffset: 417;
+  transition: stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1);
+}
+.ring-label {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.ring-pct { font-family: var(--mono); font-size: 26px; font-weight: 800; color: var(--text); }
+.ring-sub { font-size: 10px; color: var(--muted); }
+
+.phase-mini-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+.phase-mini { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.phase-mini-label { color: var(--muted); min-width: 52px; font-family: var(--mono); }
+.phase-mini-bar { flex: 1; height: 4px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.phase-mini-fill { height: 100%; border-radius: 99px; transition: width 1.5s ease; }
+.phase-mini-pct { color: var(--muted); font-family: var(--mono); font-size: 10px; min-width: 28px; text-align: right; }
+
+.slider-wrap { margin-top: 4px; }
+.slider-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 5px; }
+input[type="range"] {
+  -webkit-appearance: none; width: 100%; height: 4px;
+  background: var(--border); border-radius: 2px; outline: none; cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 16px; height: 16px;
+  background: var(--accent); border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(37,99,235,.15); cursor: grab;
+}
+
+/* ── SECTIONS ── */
+section { padding: 80px 28px; }
+.container { max-width: 1200px; margin: 0 auto; }
+.sec-tag {
+  display: inline-block; font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .08em;
+  color: var(--accent); background: var(--accent-l);
+  padding: 3px 10px; border-radius: 4px; margin-bottom: 8px;
+}
+h2 { font-size: clamp(22px, 4vw, 32px); font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.sec-desc { font-size: 15px; color: var(--muted); margin-bottom: 36px; }
+
+.callout {
+  border-left: 3px solid var(--accent); padding: 14px 20px;
+  background: var(--accent-l); border-radius: 0 8px 8px 0;
+  font-size: 14px; margin: 24px 0; color: var(--text2);
+}
+.callout strong { color: var(--accent); }
+
+/* ── WIDGET ── */
+.widget {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 24px; margin: 32px 0;
+  box-shadow: var(--sh-sm); position: relative;
+}
+.widget::before {
+  content: attr(data-label);
+  position: absolute; top: -10px; left: 16px;
+  background: var(--accent); color: #fff;
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  padding: 2px 10px; border-radius: 4px;
+  text-transform: uppercase; letter-spacing: .08em;
+}
+
+/* ── BACKGROUND ── */
+#background { background: var(--surface); }
+.motiv-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+.motiv-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 22px;
+  transition: all .2s; cursor: default; position: relative; overflow: hidden;
+}
+.motiv-card::before {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  transform: scaleX(0); transform-origin: left; transition: transform .3s;
+}
+.motiv-card.blue::before { background: var(--accent); }
+.motiv-card.green::before { background: var(--green); }
+.motiv-card.purple::before { background: var(--purple); }
+.motiv-card:hover { box-shadow: var(--sh); transform: translateY(-2px); }
+.motiv-card:hover::before { transform: scaleX(1); }
+.motiv-icon { font-size: 28px; margin-bottom: 10px; }
+.motiv-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+.motiv-desc  { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+.nervous-box {
+  margin-top: 32px;
+  background: linear-gradient(135deg, var(--accent-l), var(--purple-l));
+  border: 1px solid var(--accent-m); border-radius: 16px;
+  padding: 32px; text-align: center;
+}
+.nervous-flow {
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 8px; margin: 16px 0 10px;
+}
+.nf-node {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 7px 14px; font-size: 13px; font-weight: 600;
+  box-shadow: var(--sh-sm); color: var(--text2);
+}
+.nf-arrow { color: var(--muted); font-size: 18px; }
+.nervous-name {
+  font-family: var(--mono); font-size: clamp(18px, 3vw, 24px);
+  font-weight: 800; color: var(--text); margin-bottom: 6px;
+}
+.nervous-tag {
+  display: inline-block; font-family: var(--mono); font-size: 11px;
+  background: var(--accent); color: #fff;
+  padding: 2px 10px; border-radius: 4px; margin-bottom: 8px;
+}
+.nervous-desc { font-size: 14px; color: var(--muted); }
+
+/* Priority banner */
+.priority-banner {
+  margin-top: 20px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 20px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+}
+.priority-label { font-size: 12px; font-weight: 700; color: var(--muted); flex-shrink: 0; }
+.priority-chain { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.priority-item {
+  font-family: var(--mono); font-size: 12px; font-weight: 700;
+  padding: 4px 12px; border-radius: 6px;
+}
+.priority-item.p1 { background: var(--red-l); color: var(--red); border: 1px solid rgba(220,38,38,.2); }
+.priority-item.p2 { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.2); }
+.priority-item.p3 { background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m); }
+.priority-item.p4 { background: var(--green-l); color: var(--green); border: 1px solid rgba(5,150,105,.2); }
+.priority-arrow { color: var(--border2); }
+
+/* ── FIGURES ── */
+#figures { background: var(--bg); padding-top: 48px; padding-bottom: 56px; }
+.figures-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+.fig-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); overflow: hidden; cursor: pointer;
+  transition: all .2s; box-shadow: var(--sh-sm);
+}
+.fig-card:hover { box-shadow: var(--sh); transform: translateY(-3px); border-color: var(--accent-m); }
+.fig-img-wrap { position: relative; overflow: hidden; background: var(--bg); height: 140px; }
+.fig-img-wrap img { width: 100%; height: 100%; object-fit: contain; padding: 8px; display: block; }
+.fig-overlay {
+  position: absolute; inset: 0; background: rgba(37,99,235,.08);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .2s;
+  font-size: 24px;
+}
+.fig-card:hover .fig-overlay { opacity: 1; }
+.fig-caption {
+  padding: 10px 12px 12px;
+  font-size: 12px; font-weight: 600; color: var(--text2);
+  border-top: 1px solid var(--border);
+}
+.fig-num {
+  font-family: var(--mono); font-size: 10px; color: var(--muted); margin-bottom: 2px;
+}
+
+/* Lightbox */
+#lightbox {
+  display: none; position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,.88); backdrop-filter: blur(4px);
+  align-items: center; justify-content: center; flex-direction: column;
+}
+#lightbox.open { display: flex; }
+#lightbox img {
+  max-width: 90vw; max-height: 80vh; border-radius: 8px;
+  object-fit: contain; box-shadow: 0 20px 60px rgba(0,0,0,.5);
+}
+.lb-caption { color: rgba(255,255,255,.8); font-size: 13px; margin-top: 14px; }
+.lb-close {
+  position: absolute; top: 20px; right: 24px;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
+  color: #fff; width: 38px; height: 38px; border-radius: 50%;
+  font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.lb-close:hover { background: rgba(255,255,255,.2); }
+.lb-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
+  color: #fff; width: 46px; height: 46px; border-radius: 50%;
+  font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.lb-nav:hover { background: var(--accent); border-color: var(--accent); }
+.lb-prev { left: 20px; }
+.lb-next { right: 20px; }
+.lb-counter { position: absolute; bottom: 20px; color: rgba(255,255,255,.6); font-size: 12px; font-family: var(--mono); }
+
+/* ── SCHEDULE ── */
+#schedule { background: var(--surface); }
+
+/* Gantt */
+.gantt-wrap { overflow-x: auto; padding-bottom: 4px; }
+.gantt-grid {
+  display: grid; grid-template-columns: 128px repeat(12,1fr);
+  min-width: 780px; gap: 2px;
+}
+.gantt-header { padding: 5px 4px; font-family: var(--mono); font-size: 10px; color: var(--muted); text-align: center; }
+.gantt-label { padding: 6px 8px; font-size: 12px; font-weight: 600; color: var(--text2); display: flex; align-items: center; gap: 5px; }
+.gantt-cell { height: 28px; border-radius: 4px; }
+.gantt-cell.fill { background: var(--accent); opacity: .2; }
+.gantt-cell.fill.active { opacity: 1; box-shadow: 0 0 0 2px var(--accent-m); }
+.gantt-cell.fill.done { background: var(--green); opacity: .8; }
+.gantt-cell.fill.long { background: linear-gradient(90deg, var(--accent), var(--purple)); opacity: .7; }
+
+/* Phase timeline */
+.phase-timeline { display: flex; flex-direction: column; gap: 8px; }
+.phase-item {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); overflow: hidden; cursor: pointer;
+  transition: border-color .2s, box-shadow .2s;
+}
+.phase-item:hover { border-color: var(--border2); box-shadow: var(--sh-sm); }
+.phase-item.active { border-color: var(--accent); border-left: 3px solid var(--accent); }
+.phase-item.done   { border-color: var(--green); border-left: 3px solid var(--green); }
+.phase-summary {
+  display: flex; align-items: center; gap: 12px; padding: 14px 18px;
+}
+.phase-num {
+  font-family: var(--mono); font-size: 11px; font-weight: 700;
+  padding: 3px 8px; border-radius: 6px; flex-shrink: 0;
+}
+.phase-num.active { background: var(--accent-l); color: var(--accent); }
+.phase-num.done   { background: var(--green-l); color: var(--green); }
+.phase-num.upcoming{ background: var(--surface2); color: var(--muted); }
+.phase-name { font-size: 14px; font-weight: 700; color: var(--text); flex: 1; }
+.phase-month { font-family: var(--mono); font-size: 11px; color: var(--muted); flex-shrink: 0; }
+.phase-bar-wrap { flex: 1; max-width: 150px; }
+.phase-bar { height: 4px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.phase-bar-fill { height: 100%; border-radius: 99px; transition: width 1s ease; }
+.phase-bar-fill.active { background: var(--accent); }
+.phase-bar-fill.done   { background: var(--green); }
+.phase-bar-fill.upcoming { background: var(--border2); }
+.phase-pct { font-family: var(--mono); font-size: 11px; color: var(--muted); width: 32px; text-align: right; }
+.phase-chevron { color: var(--muted); font-size: 12px; transition: transform .25s; }
+.phase-item.open .phase-chevron { transform: rotate(180deg); }
+.phase-detail { max-height: 0; overflow: hidden; transition: max-height .4s cubic-bezier(.4,0,.2,1); }
+.phase-item.open .phase-detail { max-height: 260px; border-top: 1px solid var(--border); }
+.phase-detail-inner { padding: 16px 18px 18px; background: var(--surface2); }
+.phase-tasks { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.task-chip {
+  font-size: 12px; background: var(--surface); border: 1px solid var(--border);
+  color: var(--text2); padding: 3px 10px; border-radius: 20px;
+}
+.phase-output { font-size: 13px; color: var(--green); display: flex; align-items: center; gap: 5px; }
+.phase-output::before { content: '→'; font-weight: 700; }
+
+/* ── DEMO ── */
+#demo { background: var(--bg); }
+
+/* Core flow */
+.flow-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 0 0 32px; }
+.flow-node {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 16px; font-size: 13px; font-weight: 600;
+  box-shadow: var(--sh-sm); color: var(--text2);
+}
+.flow-node .fn { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+.flow-node.last { background: var(--green-l); border-color: rgba(5,150,105,.25); color: var(--green); }
+.flow-arrow { color: var(--border2); font-size: 18px; }
+
+/* Radar */
+.req-radar-wrap { display: grid; grid-template-columns: 360px 1fr; gap: 36px; align-items: start; }
+#radarSvg { width: 100%; max-width: 360px; }
+.req-list { display: flex; flex-direction: column; gap: 8px; }
+.req-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 10px;
+  background: var(--surface); border: 1px solid var(--border);
+  transition: all .2s; cursor: default; box-shadow: var(--sh-sm);
+}
+.req-row:hover, .req-row.highlight {
+  border-color: var(--accent); background: var(--accent-l);
+  box-shadow: 0 2px 8px rgba(37,99,235,.1);
+}
+.req-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.req-row-label { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; }
+.req-badge {
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 20px;
+}
+.req-badge.crit { background: var(--red-l); color: var(--red); }
+.req-badge.high { background: var(--accent-l); color: var(--accent); }
+.req-badge.med  { background: var(--green-l); color: var(--green); }
+
+/* Scenario switcher */
+.scenario-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.sc-tab {
+  font-size: 12px; font-weight: 600; padding: 6px 14px;
+  border-radius: 8px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--muted);
+  cursor: pointer; transition: all .15s;
+}
+.sc-tab:hover { border-color: var(--accent-m); color: var(--accent); }
+.sc-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.scenario-display {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 22px; min-height: 240px;
+}
+.sc-content { display: none; animation: fadeUp .3s ease; }
+.sc-content.active { display: block; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none} }
+.sc-title { font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.sc-desc  { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+.sc-flow  {
+  font-family: var(--mono); font-size: 13px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px 16px; line-height: 2.2; margin-bottom: 12px;
+}
+.sf { color: var(--green); font-weight: 700; }
+.sc-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.sc-chip { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+.sc-chip.t { background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m); }
+.sc-chip.a { background: var(--purple-l); color: var(--purple); border: 1px solid rgba(124,58,237,.2); }
+.sc-chip.h { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.2); }
+.sc-chip.g { background: var(--green-l); color: var(--green); border: 1px solid rgba(5,150,105,.2); }
+
+/* ── SUB PAGES ── */
+#subpages { background: var(--surface); }
+.subpage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+.subpage-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px; text-decoration: none; color: var(--text);
+  display: block; transition: all .25s; box-shadow: var(--sh-sm); position: relative;
+}
+.subpage-card:hover { border-color: var(--accent-m); box-shadow: var(--sh-lg); transform: translateY(-3px); }
+.sp-icon { font-size: 34px; margin-bottom: 14px; }
+.sp-title { font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.sp-desc  { font-size: 13px; color: var(--muted); margin-bottom: 16px; line-height: 1.7; }
+.sp-tags  { display: flex; flex-wrap: wrap; gap: 6px; }
+.sp-tag   {
+  font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 20px;
+  background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m);
+}
+.sp-arrow {
+  position: absolute; right: 22px; top: 50%; transform: translateY(-50%);
+  font-size: 18px; color: var(--accent); opacity: 0; transition: all .2s;
+}
+.subpage-card:hover .sp-arrow { opacity: 1; transform: translateY(-50%) translateX(4px); }
+
+/* FOOTER */
+footer {
+  background: var(--text); color: rgba(255,255,255,.5);
+  text-align: center; padding: 28px; font-size: 13px;
+}
+footer strong { color: rgba(255,255,255,.9); }
+
+/* REVEAL */
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .hero-inner { grid-template-columns: 1fr; }
+  .progress-widget { display: none; }
+  .req-radar-wrap { grid-template-columns: 1fr; }
+  #radarSvg { max-width: 260px; margin: 0 auto; }
+}
+@media (max-width: 640px) {
+  section { padding: 56px 16px; }
+  .nav-drop { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="if(event.target===this)closeLightbox()">
+  <button class="lb-close" onclick="closeLightbox()">✕</button>
+  <button class="lb-nav lb-prev" onclick="lbPrev()">‹</button>
+  <img id="lbImg" src="" alt="" />
+  <div class="lb-caption" id="lbCaption"></div>
+  <div class="lb-counter" id="lbCounter"></div>
+  <button class="lb-nav lb-next" onclick="lbNext()">›</button>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="plan-fy26.html">
+      <div class="nav-logo-icon">🧠</div>
+      <span class="nav-logo-sep">/</span>
+      <span class="nav-logo-text">FY26 Plan</span>
+    </a>
+
+    <div class="nav-item">
+      <button class="nav-btn cur">プラン <span class="nav-caret">▾</span></button>
+      <div class="nav-drop">
+        <span class="nav-drop-label">メインページ</span>
+        <a class="nav-drop-link" href="#background">
+          <span class="nav-dl-icon">📖</span>
+          <div><div class="nav-dl-name">研究背景</div><div class="nav-dl-sub">現状の課題と研究目的</div></div>
+        </a>
+        <a class="nav-drop-link" href="#figures">
+          <span class="nav-dl-icon">📐</span>
+          <div><div class="nav-dl-name">設計資料</div><div class="nav-dl-sub">アーキテクチャ図・スライド</div></div>
+        </a>
+        <a class="nav-drop-link" href="#schedule">
+          <span class="nav-dl-icon">📅</span>
+          <div><div class="nav-dl-name">スケジュール</div><div class="nav-dl-sub">フェーズ・ガントチャート</div></div>
+        </a>
+        <a class="nav-drop-link" href="#demo">
+          <span class="nav-dl-icon">🎯</span>
+          <div><div class="nav-dl-name">デモ概要</div><div class="nav-dl-sub">デモ要件レーダー</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-item">
+      <a class="nav-btn" href="todo.html">Todo</a>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-btn" onclick="location.href='demo.html'">デモ詳細 <span class="nav-caret">▾</span></button>
+      <div class="nav-drop">
+        <span class="nav-drop-label">デモページ</span>
+        <a class="nav-drop-link" href="demo.html#req-map">
+          <span class="nav-dl-icon">🗺️</span>
+          <div><div class="nav-dl-name">要件マップ</div><div class="nav-dl-sub">9カテゴリ・技術要素</div></div>
+        </a>
+        <a class="nav-drop-link" href="demo.html#scenarios">
+          <span class="nav-dl-icon">🎬</span>
+          <div><div class="nav-dl-name">デモシナリオ</div><div class="nav-dl-sub">3カテゴリ × Level 1/2/3</div></div>
+        </a>
+        <a class="nav-drop-link" href="demo.html#usecases">
+          <span class="nav-dl-icon">💡</span>
+          <div><div class="nav-dl-name">活用シーン</div><div class="nav-dl-sub">14のユースケース</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-btn" onclick="location.href='issues/arm-vertical/arm-vertical.html'">Issues <span class="nav-caret">▾</span></button>
+      <div class="nav-drop">
+        <span class="nav-drop-label">問題対処記録</span>
+        <a class="nav-drop-link" href="issues/arm-vertical/arm-vertical.html">
+          <span class="nav-dl-icon">🔧</span>
+          <div><div class="nav-dl-name">アーム上下機構</div><div class="nav-dl-sub">コネクタ破損 → 再設計（解決済み）</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-btn" onclick="location.href='disscussion/arm-demo-level123-ja.html'">Discussion <span class="nav-caret">▾</span></button>
+      <div class="nav-drop">
+        <span class="nav-drop-label">議論・検討ドキュメント</span>
+        <a class="nav-drop-link" href="disscussion/arm-demo-level123-ja.html">
+          <span class="nav-dl-icon">🦾</span>
+          <div><div class="nav-dl-name">マニピュレーション実証ロードマップ</div><div class="nav-dl-sub">アーム単体 Demo Level 1-3 分類</div></div>
+        </a>
+        <a class="nav-drop-link" href="disscussion/move-base-level123-ja.html">
+          <span class="nav-dl-icon">🤖</span>
+          <div><div class="nav-dl-name">ナビゲーション Level 1-3 分類基準</div><div class="nav-dl-sub">自律移動システム設計方針</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <span class="nav-pulse"></span>
+      <div class="nav-badge-pill">Phase 0 進行中</div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow-a"></div>
+  <div class="hero-glow-b"></div>
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <linearGradient id="ringGradL" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#2563eb"/>
+        <stop offset="100%" stop-color="#059669"/>
+      </linearGradient>
+    </defs>
+  </svg>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-tag">FY2026 Research Annual Plan</div>
+      <h1>移動<span class="hi">マニピュレーター</span><br>研究プラン</h1>
+      <div class="hero-sub">Robot Harness System — FY2026</div>
+      <div class="hero-concept">
+        <div class="concept-node">👁️ 知覚</div><div class="concept-arrow">→</div>
+        <div class="concept-node">🧠 記憶</div><div class="concept-arrow">→</div>
+        <div class="concept-node">🤖 判断</div><div class="concept-arrow">→</div>
+        <div class="concept-node">⚙️ スキル</div><div class="concept-arrow">→</div>
+        <div class="concept-node">🦾 行動</div>
+      </div>
+      <p class="hero-desc">
+        知覚・記憶・判断・スキル実行・行動という生物の神経系を模倣した
+        AI ロボットシステムを構築。
+        LLM × ROS2 × VLA を統合した10フェーズ・12ヶ月のロードマップ。
+      </p>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <div class="stat-value" style="color:var(--accent)">Ph.0</div>
+          <div class="stat-label">現在のフェーズ</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">10</div>
+          <div class="stat-label">総フェーズ数</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color:var(--green)">Apr'27</div>
+          <div class="stat-label">最終目標</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="progress-widget reveal">
+      <div class="ring-container">
+        <svg class="ring-svg" width="160" height="160" viewBox="0 0 160 160">
+          <circle class="ring-track" cx="80" cy="80" r="70"/>
+          <circle class="ring-fill" id="mainRing" cx="80" cy="80" r="70"/>
+        </svg>
+        <div class="ring-label">
+          <div class="ring-pct" id="ringPct">5%</div>
+          <div class="ring-sub">全体進捗</div>
+        </div>
+      </div>
+
+      <div class="phase-mini-list">
+        <div class="phase-mini">
+          <span class="phase-mini-label">Phase 0</span>
+          <div class="phase-mini-bar"><div class="phase-mini-fill" style="width:0%;background:var(--accent)" data-pct="50"></div></div>
+          <span class="phase-mini-pct">50%</span>
+        </div>
+        <div class="phase-mini">
+          <span class="phase-mini-label">Phase 1</span>
+          <div class="phase-mini-bar"><div class="phase-mini-fill" style="width:0%;background:var(--border2)" data-pct="0"></div></div>
+          <span class="phase-mini-pct">0%</span>
+        </div>
+        <div class="phase-mini">
+          <span class="phase-mini-label">Phase 2</span>
+          <div class="phase-mini-bar"><div class="phase-mini-fill" style="width:0%;background:var(--border2)" data-pct="0"></div></div>
+          <span class="phase-mini-pct">0%</span>
+        </div>
+        <div class="phase-mini">
+          <span class="phase-mini-label" style="color:var(--muted);font-size:10px">Ph 3–9</span>
+          <div class="phase-mini-bar"><div class="phase-mini-fill" style="width:0%;background:var(--border2)"></div></div>
+          <span class="phase-mini-pct" style="color:var(--muted)">—</span>
+        </div>
+      </div>
+
+      <div class="slider-wrap">
+        <div class="slider-row"><span>全体進捗を調整</span><span id="sliderVal" style="color:var(--accent);font-weight:700">5%</span></div>
+        <input type="range" min="0" max="100" value="5" id="progressSlider" oninput="updateProgress(this.value)">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BACKGROUND -->
+<section id="background">
+  <div class="container">
+    <span class="sec-tag">Research Context</span>
+    <h2>研究の背景と価値</h2>
+    <p class="sec-desc">なぜ今、このシステムを作るのか</p>
+
+    <div class="motiv-grid reveal">
+      <div class="motiv-card blue">
+        <div class="motiv-icon">🏭</div>
+        <div class="motiv-title">社会的背景</div>
+        <div class="motiv-desc">高齢化・人手不足が加速し、工場・病院・家庭で自律ロボットのニーズが急増。単純な移動だけでなく「判断できるロボット」が求められている。</div>
+      </div>
+      <div class="motiv-card green">
+        <div class="motiv-icon">🧠</div>
+        <div class="motiv-title">技術的挑戦</div>
+        <div class="motiv-desc">記憶・文脈理解・マルチモーダル認識を統合した AI OS はまだ黎明期。Perception→Memory→Agent→Skill→Robot という神経系アーキテクチャの実装。</div>
+      </div>
+      <div class="motiv-card purple">
+        <div class="motiv-icon">🎯</div>
+        <div class="motiv-title">実現したいこと</div>
+        <div class="motiv-desc">音声指示・過去記憶・視覚情報を統合し、屋外〜屋内をシームレスに移動して物体操作できる「実用レベル」のロボット神経系を構築する。</div>
+      </div>
+    </div>
+
+    <div class="nervous-box reveal">
+      <div class="nervous-tag">System Architecture</div>
+      <div class="nervous-name">Robot Harness System</div>
+      <div class="nervous-flow">
+        <div class="nf-node">👁️ Perception</div>
+        <div class="nf-arrow">→</div>
+        <div class="nf-node">🧠 Memory</div>
+        <div class="nf-arrow">→</div>
+        <div class="nf-node">🤖 Agent (LLM)</div>
+        <div class="nf-arrow">→</div>
+        <div class="nf-node">⚙️ Skill System</div>
+        <div class="nf-arrow">→</div>
+        <div class="nf-node">🦾 Robot</div>
+      </div>
+      <div class="nervous-desc">知覚・記憶・判断・スキル実行・行動を <strong style="color:var(--accent)">ひとつのハーネスとして束ねる</strong> AI ロボットアーキテクチャ。<br><span style="font-size:12px;opacity:.75">Harness の詳細定義は後ほど補完予定。</span></div>
+      <div class="priority-banner" style="margin-top:20px;justify-content:center;">
+        <span class="priority-label">⚠️ 実装優先度</span>
+        <div class="priority-chain">
+          <span class="priority-item p1">SLAM</span>
+          <span class="priority-arrow">›</span>
+          <span class="priority-item p2">Skill System</span>
+          <span class="priority-arrow">›</span>
+          <span class="priority-item p3">AI Agent</span>
+          <span class="priority-arrow">›</span>
+          <span class="priority-item p4">VLA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FIGURES -->
+<section id="figures" style="background:var(--bg);padding:48px 28px 56px;">
+  <div class="container">
+    <span class="sec-tag">Reference Figures</span>
+    <h2>関連図・設計資料</h2>
+    <p class="sec-desc">クリックすると拡大表示されます</p>
+
+    <div class="figures-grid reveal">
+      <div class="fig-card" onclick="openLightbox(0)">
+        <div class="fig-img-wrap">
+          <img src="figure/fy26-plan.png" alt="FY2026 研究プラン概要">
+          <div class="fig-overlay">🔍</div>
+        </div>
+        <div class="fig-caption">
+          <div class="fig-num">01</div>
+          FY2026 研究プラン概要
+        </div>
+      </div>
+      <div class="fig-card" onclick="openLightbox(1)">
+        <div class="fig-img-wrap">
+          <img src="figure/robot-arch-ver1.png" alt="ロボットアーキテクチャ v1">
+          <div class="fig-overlay">🔍</div>
+        </div>
+        <div class="fig-caption">
+          <div class="fig-num">02</div>
+          ロボットアーキテクチャ v1
+        </div>
+      </div>
+      <div class="fig-card" onclick="openLightbox(2)">
+        <div class="fig-img-wrap">
+          <img src="figure/schedual-1.png" alt="スケジュール詳細 (1)">
+          <div class="fig-overlay">🔍</div>
+        </div>
+        <div class="fig-caption">
+          <div class="fig-num">03</div>
+          スケジュール詳細 (1)
+        </div>
+      </div>
+      <div class="fig-card" onclick="openLightbox(3)">
+        <div class="fig-img-wrap">
+          <img src="figure/schedual-2.png" alt="スケジュール詳細 (2)">
+          <div class="fig-overlay">🔍</div>
+        </div>
+        <div class="fig-caption">
+          <div class="fig-num">04</div>
+          スケジュール詳細 (2)
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCHEDULE -->
+<section id="schedule">
+  <div class="container">
+    <span class="sec-tag">Annual Schedule</span>
+    <h2>年間スケジュール</h2>
+    <p class="sec-desc">Phase 0〜9 ― クリックで詳細を展開</p>
+
+    <div class="widget reveal" data-label="GANTT VIEW">
+      <div class="gantt-wrap">
+        <div class="gantt-grid">
+          <div class="gantt-header"></div>
+          <div class="gantt-header">4月</div><div class="gantt-header">5月</div><div class="gantt-header">6月</div>
+          <div class="gantt-header">7月</div><div class="gantt-header">8月</div><div class="gantt-header">9月</div>
+          <div class="gantt-header">10月</div><div class="gantt-header">11月</div><div class="gantt-header">12月</div>
+          <div class="gantt-header">1月</div><div class="gantt-header">2月</div><div class="gantt-header">3月</div>
+
+          <div class="gantt-label"><span style="color:var(--accent)">●</span> Ph0 基盤</div>
+          <div class="gantt-cell fill active"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-label"><span style="color:var(--muted)">●</span> Ph1 SLAM</div>
+          <div class="gantt-cell"></div><div class="gantt-cell fill"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-label"><span style="color:var(--muted)">●</span> Ph2 Skill</div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell fill"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-label"><span style="color:var(--muted)">●</span> Ph3 AI OS</div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell fill"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-label"><span style="color:var(--muted)">●</span> Ph4 Agent</div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell fill"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-label"><span style="color:var(--muted)">●</span> Ph5 Arm</div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell fill"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-label"><span style="color:var(--muted)">●</span> Ph6 VLA</div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell fill"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-label"><span style="color:var(--muted)">●</span> Ph7 統合</div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell fill"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-label"><span style="color:var(--muted)">●</span> Ph8 デモ</div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell fill"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-label"><span style="color:var(--green)">●</span> Ph9 論文</div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell fill long"></div><div class="gantt-cell fill long"></div><div class="gantt-cell fill long"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-timeline reveal">
+      <div class="phase-item active open" onclick="togglePhase(this)">
+        <div class="phase-summary">
+          <span class="phase-num active">Phase 0</span>
+          <span class="phase-name">ロボット基盤の安定化</span>
+          <span class="phase-month">Apr 2026</span>
+          <div class="phase-bar-wrap"><div class="phase-bar"><div class="phase-bar-fill active" style="width:60%"></div></div></div>
+          <span class="phase-pct">60%</span>
+          <span class="phase-chevron">▾</span>
+        </div>
+        <div class="phase-detail"><div class="phase-detail-inner">
+          <div class="phase-tasks">
+            <span class="task-chip" style="background:var(--green-l);border-color:rgba(5,150,105,.25);color:var(--green)">✅ 配線整理</span>
+            <span class="task-chip" style="background:var(--green-l);border-color:rgba(5,150,105,.25);color:var(--green)">✅ ROS2ノード確認</span>
+            <span class="task-chip" style="background:var(--green-l);border-color:rgba(5,150,105,.25);color:var(--green)">✅ Joy-Con手動操作</span>
+            <span class="task-chip" style="background:var(--green-l);border-color:rgba(5,150,105,.25);color:var(--green)">✅ SOARM101動作確認</span>
+            <span class="task-chip" style="background:var(--green-l);border-color:rgba(5,150,105,.25);color:var(--green)">✅ アーム上下機構</span>
+            <span class="task-chip" style="background:var(--green-l);border-color:rgba(5,150,105,.25);color:var(--green)">✅ Livox MID360 LiDAR</span>
+            <span class="task-chip" style="background:var(--green-l);border-color:rgba(5,150,105,.25);color:var(--green)">✅ センサーTF整合確認</span>
+            <span class="task-chip" style="background:var(--green-l);border-color:rgba(5,150,105,.25);color:var(--green)">✅センサー全体確認 (EKF)</span>
+            <span class="task-chip">T8 リードスクリュー 2mm→8mm 変更検討</span>
+            <span class="task-chip">LLM基礎実装</span>
+            <span class="task-chip">外装・配線整理</span>
+          </div>
+          <div style="margin:10px 0 6px;font-size:11px;font-weight:700;color:var(--muted);">🎯 最終験収目標</div>
+          <div style="font-size:12px;color:var(--text2);line-height:2;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:8px;">
+            <span style="color:var(--green)">✅</span> ロボット安定動作 &nbsp;
+            <span style="color:var(--green)">✅</span> Joy-Con操縦 &nbsp;
+            <span style="color:var(--green)">✅</span> SOARM101確認 &nbsp;
+            <span style="color:var(--green)">✅</span> LiDAR接続 &nbsp;
+            <span style="color:var(--green)">✅</span> センサーTF整合 &nbsp;
+            <span style="color:var(--muted)">○</span> LLM基礎接続
+          </div>
+          <div class="phase-output">安定して動くロボット + 全センサー接続 + LLM基礎接続</div>
+        </div></div>
+      </div>
+      <div class="phase-item" onclick="togglePhase(this)">
+        <div class="phase-summary"><span class="phase-num upcoming">Phase 1</span><span class="phase-name">自律移動（LiDAR SLAM + Nav2）</span><span class="phase-month">May 2026</span><div class="phase-bar-wrap"><div class="phase-bar"><div class="phase-bar-fill upcoming" style="width:0%"></div></div></div><span class="phase-pct">0%</span><span class="phase-chevron">▾</span></div>
+        <div class="phase-detail"><div class="phase-detail-inner">
+          <div class="phase-tasks">
+            <span class="task-chip">システム分層設計</span>
+            <span class="task-chip">TF・座標系構築</span>
+            <span class="task-chip">FAST-LIO / ORB-SLAM3</span>
+            <span class="task-chip">マップ作成・保存・再ロード</span>
+            <span class="task-chip">Nav2 設定 (global+local)</span>
+            <span class="task-chip">障害物回避チューニング</span>
+            <span class="task-chip">簡易環境認識ノード</span>
+            <span class="task-chip" style="background:var(--amber-l);border-color:rgba(217,119,6,.2);color:var(--amber)">★ Isaac Sim 仿真環境</span>
+            <span class="task-chip">ROS2 Bridge</span>
+            <span class="task-chip">Sim2Real 対応</span>
+          </div>
+          <div style="margin:10px 0 6px;font-size:11px;font-weight:700;color:var(--muted);">🎯 最終験収目標</div>
+          <div style="font-size:12px;color:var(--text2);line-height:2;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:8px;">
+            <span style="color:var(--muted)">○</span> 安定した地図生成（FAST-LIO / SLAM）&nbsp;
+            <span style="color:var(--muted)">○</span> 自己位置推定 &nbsp;
+            <span style="color:var(--muted)">○</span> RViz→自動ナビゲーション成功 &nbsp;
+            <span style="color:var(--muted)">○</span> 静的障害物回避 &nbsp;
+            <span style="color:var(--muted)">○</span> Isaac Sim でも同等動作
+          </div>
+          <div class="phase-output">A→B の自律移動が可能（実機 + Isaac Sim 両対応）</div>
+        </div></div>
+      </div>
+      <div class="phase-item" onclick="togglePhase(this)">
+        <div class="phase-summary"><span class="phase-num upcoming">Phase 2</span><span class="phase-name">Skill System 構築</span><span class="phase-month">Jun 2026</span><div class="phase-bar-wrap"><div class="phase-bar"><div class="phase-bar-fill upcoming" style="width:0%"></div></div></div><span class="phase-pct">0%</span><span class="phase-chevron">▾</span></div>
+        <div class="phase-detail"><div class="phase-detail-inner"><div class="phase-tasks"><span class="task-chip">Skill API設計</span><span class="task-chip">JSON schema</span><span class="task-chip">ROS2→API抽象化</span><span class="task-chip">Retry / Timeout</span><span class="task-chip">Safety constraint</span></div><div class="phase-output">ROS機能をAIが使える形に変換</div></div></div>
+      </div>
+      <div class="phase-item" onclick="togglePhase(this)">
+        <div class="phase-summary"><span class="phase-num upcoming">Phase 3</span><span class="phase-name">AI OS 導入（Agent System）</span><span class="phase-month">Jul 2026</span><div class="phase-bar-wrap"><div class="phase-bar"><div class="phase-bar-fill upcoming" style="width:0%"></div></div></div><span class="phase-pct">0%</span><span class="phase-chevron">▾</span></div>
+        <div class="phase-detail"><div class="phase-detail-inner"><div class="phase-tasks"><span class="task-chip">Planner Agent</span><span class="task-chip">Ops Agent</span><span class="task-chip">Safety Agent</span><span class="task-chip">Event Bus</span><span class="task-chip">Memory（簡易）</span></div><div class="phase-output">Always-on AI システム稼働</div></div></div>
+      </div>
+      <div class="phase-item" onclick="togglePhase(this)">
+        <div class="phase-summary"><span class="phase-num upcoming">Phase 4</span><span class="phase-name">移動タスクの AI 化</span><span class="phase-month">Aug 2026</span><div class="phase-bar-wrap"><div class="phase-bar"><div class="phase-bar-fill upcoming" style="width:0%"></div></div></div><span class="phase-pct">0%</span><span class="phase-chevron">▾</span></div>
+        <div class="phase-detail"><div class="phase-detail-inner"><div class="phase-tasks"><span class="task-chip">巡回タスク</span><span class="task-chip">Planner→Skill実行</span><span class="task-chip">成功/失敗判定</span><span class="task-chip">RAG 記憶統合</span></div><div class="phase-output">AI による自律移動タスク実行</div></div></div>
+      </div>
+      <div class="phase-item" onclick="togglePhase(this)">
+        <div class="phase-summary"><span class="phase-num upcoming">Phase 5</span><span class="phase-name">アーム統合（Manipulation）</span><span class="phase-month">Sep 2026</span><div class="phase-bar-wrap"><div class="phase-bar"><div class="phase-bar-fill upcoming" style="width:0%"></div></div></div><span class="phase-pct">0%</span><span class="phase-chevron">▾</span></div>
+        <div class="phase-detail"><div class="phase-detail-inner"><div class="phase-tasks"><span class="task-chip">SOARM101 ROS統合</span><span class="task-chip">IK / FK</span><span class="task-chip">YOLO物体検出</span><span class="task-chip">pick &amp; place</span><span class="task-chip">Depth estimation</span></div><div class="phase-output">移動＋操作が可能</div></div></div>
+      </div>
+      <div class="phase-item" onclick="togglePhase(this)">
+        <div class="phase-summary"><span class="phase-num upcoming">Phase 6</span><span class="phase-name">VLA 導入</span><span class="phase-month">Oct 2026</span><div class="phase-bar-wrap"><div class="phase-bar"><div class="phase-bar-fill upcoming" style="width:0%"></div></div></div><span class="phase-pct">0%</span><span class="phase-chevron">▾</span></div>
+        <div class="phase-detail"><div class="phase-detail-inner"><div class="phase-tasks"><span class="task-chip">LeRobotデータ収集</span><span class="task-chip">Imitation Learning</span><span class="task-chip">VLA モデル適用</span></div><div class="phase-output">「見て→動く」動作実現</div></div></div>
+      </div>
+      <div class="phase-item" onclick="togglePhase(this)">
+        <div class="phase-summary"><span class="phase-num upcoming">Phase 7</span><span class="phase-name">システム統合</span><span class="phase-month">Nov 2026</span><div class="phase-bar-wrap"><div class="phase-bar"><div class="phase-bar-fill upcoming" style="width:0%"></div></div></div><span class="phase-pct">0%</span><span class="phase-chevron">▾</span></div>
+        <div class="phase-detail"><div class="phase-detail-inner"><div class="phase-tasks"><span class="task-chip">Navigation + Arm + AI</span><span class="task-chip">Multi-agent</span><span class="task-chip">Health monitoring</span><span class="task-chip">Fail-safe</span></div><div class="phase-output">Robot Harness System 完成</div></div></div>
+      </div>
+      <div class="phase-item" onclick="togglePhase(this)">
+        <div class="phase-summary"><span class="phase-num upcoming">Phase 8</span><span class="phase-name">デモ完成</span><span class="phase-month">Dec 2026</span><div class="phase-bar-wrap"><div class="phase-bar"><div class="phase-bar-fill upcoming" style="width:0%"></div></div></div><span class="phase-pct">0%</span><span class="phase-chevron">▾</span></div>
+        <div class="phase-detail"><div class="phase-detail-inner"><div class="phase-tasks"><span class="task-chip">E2E タスク設計</span><span class="task-chip">シナリオ作成</span><span class="task-chip">安定化調整</span><span class="task-chip">デモ検証</span></div><div class="phase-output">完成デモ（実用レベル）</div></div></div>
+      </div>
+      <div class="phase-item" onclick="togglePhase(this)">
+        <div class="phase-summary"><span class="phase-num upcoming">Phase 9</span><span class="phase-name">研究化・論文・発表</span><span class="phase-month">Jan–Apr 2027</span><div class="phase-bar-wrap"><div class="phase-bar"><div class="phase-bar-fill upcoming" style="width:0%"></div></div></div><span class="phase-pct">0%</span><span class="phase-chevron">▾</span></div>
+        <div class="phase-detail"><div class="phase-detail-inner"><div class="phase-tasks"><span class="task-chip">システム改善</span><span class="task-chip">ログ分析</span><span class="task-chip">論文化</span><span class="task-chip">発表準備</span></div><div class="phase-output">論文・完成プロジェクト</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section id="demo">
+  <div class="container">
+    <span class="sec-tag">Demonstration</span>
+    <h2>デモンストレーション</h2>
+    <p class="sec-desc">コア行動フローとデモ要件の可視化</p>
+
+    <div class="flow-bar reveal">
+      <div class="flow-node"><span class="fn">01</span>環境理解</div><div class="flow-arrow">→</div>
+      <div class="flow-node"><span class="fn">02</span>プランニング</div><div class="flow-arrow">→</div>
+      <div class="flow-node"><span class="fn">03</span>認識</div><div class="flow-arrow">→</div>
+      <div class="flow-node"><span class="fn">04</span>行動実行</div><div class="flow-arrow">→</div>
+      <div class="flow-node last"><span class="fn" style="color:rgba(5,150,105,.6)">05</span>記憶更新</div>
+    </div>
+
+    <div class="widget reveal" data-label="REQUIREMENT RADAR">
+      <div class="req-radar-wrap">
+        <svg id="radarSvg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#2563eb" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#059669" stop-opacity="0.15"/>
+            </linearGradient>
+          </defs>
+          <g id="radarGrid"></g>
+          <g id="radarAxes"></g>
+          <polygon id="radarData" fill="url(#rg)" stroke="#2563eb" stroke-width="2" points=""/>
+          <g id="radarLabels" font-size="11" fill="#64748b" text-anchor="middle"></g>
+          <g id="radarDots"></g>
+        </svg>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;">デモ要件マップ</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:18px;">各項目にカーソルを合わせると連動してハイライト</div>
+          <div class="req-list" id="reqList">
+            <div class="req-row" data-idx="0"><div class="req-dot" style="background:#dc2626"></div><span class="req-row-label">🌳 屋外・屋内シームレス走行（GNSS + SLAM）</span><span class="req-badge crit">最重要</span></div>
+            <div class="req-row" data-idx="1"><div class="req-dot" style="background:#2563eb"></div><span class="req-row-label">🧠 記憶システム活用（Episodic / RAG + Vector DB）</span><span class="req-badge high">重要</span></div>
+            <div class="req-row" data-idx="2"><div class="req-dot" style="background:#7c3aed"></div><span class="req-row-label">🤖 マルチエージェント（Planner / Ops / Safety）</span><span class="req-badge high">重要</span></div>
+            <div class="req-row" data-idx="3"><div class="req-dot" style="background:#d97706"></div><span class="req-row-label">🦾 精密マニピュレーション（SOARM101 + Closed-loop）</span><span class="req-badge med">必須</span></div>
+            <div class="req-row" data-idx="4"><div class="req-dot" style="background:#059669"></div><span class="req-row-label">🎤 音声指令 UI（Whisper + TTS）</span><span class="req-badge med">必須</span></div>
+            <div class="req-row" data-idx="5"><div class="req-dot" style="background:#0891b2"></div><span class="req-row-label">👁️ マルチモーダル認識（VLM + YOLO + OCR）</span><span class="req-badge med">必須</span></div>
+            <div class="req-row" data-idx="6"><div class="req-dot" style="background:#475569"></div><span class="req-row-label">🛡️ 安全システム（Safety Agent + Fail-safe）</span><span class="req-badge high">重要</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="widget reveal" data-label="SCENARIO EXPLORER" style="margin-top:40px">
+      <div style="font-size:14px;color:var(--muted);margin-bottom:14px;">デモシナリオを選択</div>
+      <div class="scenario-tabs">
+        <button class="sc-tab active" onclick="switchSc(0,this)">🔴⭐ 統合最終</button>
+        <button class="sc-tab" onclick="switchSc(1,this)">🟢 SLAM+ボタン</button>
+        <button class="sc-tab" onclick="switchSc(2,this)">🔵 移動+操作</button>
+        <button class="sc-tab" onclick="switchSc(3,this)">🟡 記憶活用</button>
+        <button class="sc-tab" onclick="switchSc(4,this)">🟠 自律デリバリー</button>
+        <button class="sc-tab" onclick="switchSc(5,this)">🔴 屋内外+精密</button>
+      </div>
+      <div class="scenario-display">
+        <div class="sc-content active" id="sc-0">
+          <div class="sc-title">⑥ 屋外・屋内 × 精密操作 × 安全 × 記憶 — 統合最終デモ ⭐（C-L3）</div>
+          <div class="sc-desc">全要素統合。屋外・屋内シームレス走行＋Safety Agent＋記憶システム＋精密フィードバック操作が連携する集大成デモ。</div>
+          <div class="sc-flow">🗣️ <span class="sf">複合指示</span><br>&nbsp;↓ 🧠 Memory 参照（RAG + Vector DB）<br>&nbsp;↓ 🌳 屋外走行（GNSS+SLAM）→ 🏢 屋内移動（Nav2）<br>&nbsp;↓ ⚠️ Safety Agent 監視 → 👁️ VLM 認識<br>&nbsp;↓ 🦾 精密操作（Closed-loop）→ 📝 Memory 更新・報告</div>
+          <div class="sc-chips"><span class="sc-chip t">GNSS+SLAM</span><span class="sc-chip a">Safety Agent</span><span class="sc-chip a">RAG Memory</span><span class="sc-chip h">SOARM101</span><span class="sc-chip a">Closed-loop</span><span class="sc-chip g">Whisper</span></div>
+        </div>
+        <div class="sc-content" id="sc-1">
+          <div class="sc-title">① SLAM 自律移動 & エレベーターボタン押下（A-L1 / B-L1）</div>
+          <div class="sc-desc">音声指令で SLAM 自律移動＋走行ログ記録（A-L1）と、指示によるエレベーターボタン押下（B-L1）を実証する最初の実用デモ群。</div>
+          <div class="sc-flow">【A-L1】 🗣️ 音声指示 → <span class="sf">LLM 解釈</span> → 🗺️ SLAM+Nav2 走行 → <span class="sf">📝 走行ログ記録</span> → ✅ 到達<br>【B-L1】 🗣️「3階を押して」→ <span class="sf">YOLO/VLM 認識</span> → 📐 IK → <span class="sf">🦾 押下</span> → ✅</div>
+          <div class="sc-chips"><span class="sc-chip t">ORB-SLAM3</span><span class="sc-chip t">Nav2</span><span class="sc-chip a">LLM</span><span class="sc-chip g">Whisper</span><span class="sc-chip h">SOARM101</span><span class="sc-chip g">YOLO</span></div>
+        </div>
+        <div class="sc-content" id="sc-2">
+          <div class="sc-title">② 移動 & 操作 複合デモ（C-L1）</div>
+          <div class="sc-desc">「〇〇に移動してボタンを押して」を1つの音声指示で実行。LLM がタスク分解し、SLAM移動とアーム操作を連続実行。</div>
+          <div class="sc-flow">🗣️ 音声指示 → <span class="sf">🤖 LLM 分解（移動 + アーム）</span><br>&nbsp;↓ 🗺️ SLAM+Nav2 移動 → <span class="sf">📝 走行ログ</span><br>&nbsp;↓ 👁️ ターゲット認識 → 🦾 アーム操作 → ✅</div>
+          <div class="sc-chips"><span class="sc-chip t">Nav2</span><span class="sc-chip t">SLAM</span><span class="sc-chip h">SOARM101</span><span class="sc-chip a">LLM Planner</span><span class="sc-chip g">Whisper</span></div>
+        </div>
+        <div class="sc-content" id="sc-3">
+          <div class="sc-title">③ 記憶システム活用 & 文字スペリング（A-L2 / B-L2）</div>
+          <div class="sc-desc">走行ログを Vector DB に蓄積し文脈ある移動指示に対応（A-L2）。物品名から文字ブロックをスペルアウト（B-L2）。</div>
+          <div class="sc-flow">【A-L2】 🗣️ 文脈指示 → <span class="sf">🧠 RAG 記憶検索</span> → 📍 位置推定 → 🗺️ 移動 → 📝 Memory 更新<br>【B-L2】 🗣️ 物品名 → <span class="sf">LLM 計画</span> → 👁️ OCR+YOLO → 🦾 把持×N → ✅</div>
+          <div class="sc-chips"><span class="sc-chip a">RAG</span><span class="sc-chip a">Episodic Memory</span><span class="sc-chip a">OCR</span><span class="sc-chip g">YOLO</span><span class="sc-chip t">SLAM</span></div>
+        </div>
+        <div class="sc-content" id="sc-4">
+          <div class="sc-title">④ 記憶 × 自律デリバリー（C-L2）</div>
+          <div class="sc-desc">「前に置いてあった〇〇を取ってきて」など Episodic Memory を参照した文脈指示に対応。移動→把持→搬送→配置を一貫実行。</div>
+          <div class="sc-flow">🗣️ 文脈指示 → <span class="sf">🧠 Memory 検索（RAG+Vector DB）</span><br>&nbsp;↓ 🗺️ SLAM+Nav2 移動 → 👁️ YOLO<br>&nbsp;↓ 🦾 把持・搬送・配置 → <span class="sf">🧠 Memory 更新</span> → ✅</div>
+          <div class="sc-chips"><span class="sc-chip a">Episodic Memory</span><span class="sc-chip a">RAG</span><span class="sc-chip t">Nav2</span><span class="sc-chip h">SOARM101</span><span class="sc-chip g">TTS</span></div>
+        </div>
+        <div class="sc-content" id="sc-5">
+          <div class="sc-title">⑤ 屋外・屋内シームレス走行 & 精密操作（A-L3 / B-L3）</div>
+          <div class="sc-desc">GNSS+SLAM で屋外→屋内を安定走行し Safety Agent が自律判断（A-L3）。プラグ挿入など視覚フィードバック精密操作（B-L3）。</div>
+          <div class="sc-flow">【A-L3】 🌳 屋外（GNSS+SLAM）→ 🏢 屋内（Nav2）→ <span class="sf">⚠️ Safety Agent</span> → 🧠 記憶参照<br>【B-L3】 👁️ 挿入口認識 → 📐 精密 IK → <span class="sf">🔄 視覚 Feedback ループ</span> → ✅</div>
+          <div class="sc-chips"><span class="sc-chip t">GNSS</span><span class="sc-chip t">ORB-SLAM3</span><span class="sc-chip a">Safety Agent</span><span class="sc-chip h">SOARM101</span><span class="sc-chip a">Closed-loop</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SUB PAGES -->
+<section id="subpages" style="background:var(--surface);">
+  <div class="container">
+    <span class="sec-tag">Sub Pages</span>
+    <h2>詳細ページ</h2>
+    <p class="sec-desc">各テーマの詳細はサブページで確認できます</p>
+    <div class="subpage-grid reveal">
+      <a href="todo.html" class="subpage-card">
+        <span class="sp-arrow">→</span>
+        <div class="sp-icon">📋</div>
+        <div class="sp-title">Todo List</div>
+        <div class="sp-desc">Phase 0 の全タスク一覧。進捗・日付・テスト記録リンク付き。</div>
+        <div class="sp-tags"><span class="sp-tag">ソフトウェア</span><span class="sp-tag">ハードウェア</span><span class="sp-tag" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">✅ 完了済みあり</span></div>
+      </a>
+      <a href="demo.html" class="subpage-card">
+        <span class="sp-arrow">→</span>
+        <div class="sp-icon">🤖</div>
+        <div class="sp-title">デモ詳細・要件マップ・活用シーン</div>
+        <div class="sp-desc">9カテゴリーの要件マップ・3カテゴリ × Level 1/2/3 シナリオ・活用シーン12例以上。</div>
+        <div class="sp-tags"><span class="sp-tag" style="background:var(--red-l);color:var(--red);border-color:rgba(220,38,38,.2)">屋外対応</span><span class="sp-tag">要件マップ</span><span class="sp-tag" style="background:var(--accent-l);color:var(--accent);border-color:var(--accent-m)">Level 1/2/3</span></div>
+      </a>
+      <a href="issues/arm-vertical/arm-vertical.html" class="subpage-card">
+        <span class="sp-arrow">→</span>
+        <div class="sp-icon">🔧</div>
+        <div class="sp-title">問題対処記録</div>
+        <div class="sp-desc">アーム上下機構のコネクタ破損を再設計で解決。修正前後の比較画像・動画付き。</div>
+        <div class="sp-tags"><span class="sp-tag" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">解決済み</span><span class="sp-tag" style="background:var(--amber-l);color:var(--amber);border-color:rgba(217,119,6,.2)">Hardware</span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <strong>FY2026 研究年間プラン</strong> &nbsp;|&nbsp;
+  Robot Harness System &nbsp;|&nbsp;
+  筑波大学 知能ロボット研究室 &nbsp;|&nbsp;
+  最終更新: 2026-04-16
+</footer>
+
+<script>
+/* ── Lightbox ── */
+const figures = [
+  { src:'figure/fy26-plan.png',       cap:'01 — FY2026 研究プラン概要' },
+  { src:'figure/robot-arch-ver1.png', cap:'02 — ロボットアーキテクチャ v1' },
+  { src:'figure/schedual-1.png',      cap:'03 — スケジュール詳細 (1)' },
+  { src:'figure/schedual-2.png',      cap:'04 — スケジュール詳細 (2)' },
+];
+let lbIdx = 0;
+
+function openLightbox(n) {
+  lbIdx = n;
+  renderLb();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function lbPrev() { lbIdx = (lbIdx - 1 + figures.length) % figures.length; renderLb(); }
+function lbNext() { lbIdx = (lbIdx + 1) % figures.length; renderLb(); }
+function renderLb() {
+  document.getElementById('lbImg').src = figures[lbIdx].src;
+  document.getElementById('lbCaption').textContent = figures[lbIdx].cap;
+  document.getElementById('lbCounter').textContent = `${lbIdx+1} / ${figures.length}`;
+}
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'ArrowRight') lbNext();
+  if (e.key === 'ArrowLeft')  lbPrev();
+  if (e.key === 'Escape')     closeLightbox();
+});
+
+/* ── Progress Ring ── */
+function updateProgress(v) {
+  v = parseInt(v);
+  const c = 2 * Math.PI * 70; // 439.8
+  document.getElementById('mainRing').style.strokeDashoffset = c * (1 - v/100);
+  document.getElementById('ringPct').textContent = v + '%';
+  document.getElementById('sliderVal').textContent = v + '%';
+}
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.querySelectorAll('.phase-mini-fill[data-pct]').forEach(el => {
+      el.style.width = el.dataset.pct + '%';
+    });
+    updateProgress(5);
+  }, 400);
+});
+
+/* ── Phase Toggle ── */
+function togglePhase(el) {
+  const open = el.classList.contains('open');
+  document.querySelectorAll('.phase-item.open').forEach(p => p.classList.remove('open'));
+  if (!open) el.classList.add('open');
+}
+
+/* ── Scenario Switcher ── */
+function switchSc(n, btn) {
+  document.querySelectorAll('.sc-content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.sc-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sc-'+n).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ── Radar Chart ── */
+(function(){
+  const cx=200,cy=200,maxR=140;
+  const axes=[
+    {label:'屋内外走行',  val:1.0, color:'#dc2626'},
+    {label:'記憶活用',   val:0.82,color:'#2563eb'},
+    {label:'マルチAI',   val:0.78,color:'#7c3aed'},
+    {label:'精密Manip', val:0.68,color:'#d97706'},
+    {label:'音声UI',    val:0.65,color:'#059669'},
+    {label:'マルチモーダル',val:0.72,color:'#0891b2'},
+    {label:'安全Sys',   val:0.70,color:'#475569'},
+  ];
+  const n=axes.length;
+  const ang=i=>(i*2*Math.PI/n)-Math.PI/2;
+  const pt=(r,i)=>({x:cx+r*Math.cos(ang(i)),y:cy+r*Math.sin(ang(i))});
+
+  const grid=document.getElementById('radarGrid');
+  const axesG=document.getElementById('radarAxes');
+  const data=document.getElementById('radarData');
+  const labels=document.getElementById('radarLabels');
+  const dots=document.getElementById('radarDots');
+
+  [.2,.4,.6,.8,1].forEach(f=>{
+    const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    poly.setAttribute('points',axes.map((_,i)=>{const p=pt(maxR*f,i);return`${p.x},${p.y}`}).join(' '));
+    poly.setAttribute('fill','none'); poly.setAttribute('stroke','#e2e8f0'); poly.setAttribute('stroke-width','1');
+    grid.appendChild(poly);
+  });
+  axes.forEach((_,i)=>{
+    const p=pt(maxR,i);
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',cx);line.setAttribute('y1',cy);
+    line.setAttribute('x2',p.x);line.setAttribute('y2',p.y);
+    line.setAttribute('stroke','#e2e8f0');line.setAttribute('stroke-width','1');
+    axesG.appendChild(line);
+  });
+  data.setAttribute('points',axes.map((a,i)=>{const p=pt(maxR*a.val,i);return`${p.x},${p.y}`}).join(' '));
+  axes.forEach((a,i)=>{
+    const p=pt(maxR*a.val,i);
+    const lp=pt(maxR+24,i);
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',p.x);c.setAttribute('cy',p.y);c.setAttribute('r','5');
+    c.setAttribute('fill',a.color);c.setAttribute('data-idx',i);c.style.cursor='pointer';
+    c.addEventListener('mouseenter',()=>highlightReq(i));
+    c.addEventListener('mouseleave',()=>highlightReq(-1));
+    dots.appendChild(c);
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',lp.x);t.setAttribute('y',lp.y);
+    t.setAttribute('dominant-baseline','middle');t.setAttribute('fill','#64748b');t.setAttribute('font-size','11');
+    t.textContent=a.label;
+    labels.appendChild(t);
+  });
+  data.style.opacity='0'; data.style.transition='opacity .8s';
+  setTimeout(()=>{data.style.opacity='1';},500);
+})();
+
+function highlightReq(n){
+  document.querySelectorAll('.req-row').forEach((r,i)=>r.classList.toggle('highlight',i===n));
+}
+document.querySelectorAll('.req-row').forEach((r,i)=>{
+  r.addEventListener('mouseenter',()=>highlightReq(i));
+  r.addEventListener('mouseleave',()=>highlightReq(-1));
+});
+
+/* ── Scroll Reveal ── */
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+/* ── Active Nav scroll highlight ── */
+const secs=document.querySelectorAll('section[id]');
+window.addEventListener('scroll',()=>{
+  let cur='';
+  secs.forEach(s=>{if(window.scrollY>=s.offsetTop-80)cur=s.id;});
+  document.querySelectorAll('.nav-drop-link[href^="#"]').forEach(a=>{
+    a.style.background=a.getAttribute('href')==='#'+cur?'var(--accent-l)':'';
+    a.style.color=a.getAttribute('href')==='#'+cur?'var(--accent)':'';
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>カテゴリ B — アーム単体 Demo | FY2026 Robot Harness System</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #f8fafc;
+  --surface: #ffffff;
+  --surface2:#f1f5f9;
+  --border:  #e2e8f0;
+  --border2: #cbd5e1;
+  --accent:  #2563eb;
+  --accent-l:#eff6ff;
+  --accent-m:#bfdbfe;
+  --green:   #059669;
+  --green-l: #ecfdf5;
+  --amber:   #d97706;
+  --amber-l: #fffbeb;
+  --amber-m: #fde68a;
+  --red:     #dc2626;
+  --red-l:   #fef2f2;
+  --purple:  #7c3aed;
+  --purple-l:#f5f3ff;
+  --purple-m:#ddd6fe;
+  --text:    #0f172a;
+  --text2:   #334155;
+  --muted:   #64748b;
+  --mono:    'JetBrains Mono','Fira Code','Courier New',monospace;
+  --r: 12px;
+  --sh-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --sh:    0 4px 12px rgba(0,0,0,.07);
+  --sh-lg: 0 10px 32px rgba(0,0,0,.09);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Meiryo',-apple-system,sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.75;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+  height: 56px; background: rgba(255,255,255,.97);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  padding: 0 28px; display: flex; align-items: center; gap: 2px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none; margin-right: 16px; flex-shrink: 0;
+}
+.nav-logo-icon {
+  width: 30px; height: 30px; background: var(--text); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.nav-logo-sep { font-size: 20px; color: var(--border2); font-weight: 300; }
+.nav-logo-text { font-size: 12px; color: var(--muted); font-weight: 600; }
+.nav-item { position: relative; }
+.nav-btn {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--muted); text-decoration: none;
+  padding: 6px 11px; border-radius: 7px;
+  border: none; background: none; cursor: pointer; font-family: inherit;
+  transition: background .12s, color .12s; white-space: nowrap;
+}
+.nav-btn:hover, .nav-item:hover > .nav-btn { background: var(--surface2); color: var(--text); }
+.nav-btn.cur { color: var(--accent); }
+.nav-caret { font-size: 8px; opacity: .5; transition: transform .15s; }
+.nav-item:hover .nav-caret { transform: rotate(180deg); }
+.nav-drop {
+  position: absolute; top: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  min-width: 240px; background: #fff;
+  border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.11), 0 2px 8px rgba(0,0,0,.05);
+  padding: 8px; z-index: 999;
+  opacity: 0; pointer-events: none;
+  transition: opacity .15s, transform .15s;
+}
+.nav-item:hover .nav-drop { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.nav-drop-label {
+  font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em;
+  color: #94a3b8; padding: 6px 10px 3px; display: block;
+}
+.nav-drop-link {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; padding: 9px 10px; border-radius: 9px; transition: background .1s;
+}
+.nav-drop-link:hover { background: var(--surface2); }
+.nav-dl-icon { font-size: 18px; flex-shrink: 0; }
+.nav-dl-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.nav-dl-sub { font-size: 11px; color: var(--muted); }
+.nav-drop-sep { height: 1px; background: var(--border); margin: 5px 6px; }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.nav-badge-pill {
+  font-size: 11px; font-weight: 700;
+  background: var(--green-l); color: var(--green);
+  border: 1px solid rgba(5,150,105,.25);
+  padding: 4px 12px; border-radius: 99px; white-space: nowrap;
+}
+.nav-pulse {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--green);
+  animation: npulse 2s infinite; flex-shrink: 0;
+}
+@keyframes npulse {
+  0%,100%{ box-shadow: 0 0 0 0 rgba(5,150,105,.4); }
+  50%     { box-shadow: 0 0 0 5px rgba(5,150,105,0); }
+}
+
+/* ── HERO ── */
+.page-hero {
+  padding: 88px 24px 52px;
+  background: linear-gradient(135deg, #fff 0%, #fdf4ff 50%, #f5f3ff 100%);
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.page-hero::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(124,58,237,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,58,237,.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.hero-inner { max-width: 1000px; margin: 0 auto; position: relative; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: .05em;
+  color: var(--purple); background: var(--purple-l);
+  border: 1px solid var(--purple-m);
+  padding: 3px 12px; border-radius: 99px; margin-bottom: 12px;
+}
+h1 { font-size: clamp(24px, 5vw, 36px); font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.hero-desc { font-size: 15px; color: var(--muted); margin-bottom: 28px; max-width: 680px; line-height: 1.8; }
+
+/* ── LEVEL ROADMAP ── */
+.level-roadmap {
+  display: flex; align-items: stretch; gap: 0; margin-bottom: 0;
+  border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+  box-shadow: var(--sh-sm);
+}
+.roadmap-level {
+  flex: 1; padding: 16px 18px; background: var(--surface);
+  position: relative; cursor: pointer; transition: background .15s;
+  text-decoration: none; display: block;
+}
+.roadmap-level:hover { background: var(--surface2); }
+.roadmap-level + .roadmap-level { border-left: 1px solid var(--border); }
+.rm-num {
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em;
+  margin-bottom: 4px; font-family: var(--mono);
+}
+.rm-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; line-height: 1.4; }
+.rm-phase { font-size: 11px; color: var(--muted); }
+.rm-arrow {
+  position: absolute; right: -13px; top: 50%;
+  transform: translateY(-50%);
+  width: 24px; height: 24px; border-radius: 50%; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 800; background: var(--surface); border: 1px solid var(--border);
+  color: var(--muted); box-shadow: var(--sh-sm);
+}
+.roadmap-level:last-child .rm-arrow { display: none; }
+
+.rm-lv1 .rm-num { color: var(--accent); }
+.rm-lv1 { border-top: 3px solid var(--accent); }
+.rm-lv2 .rm-num { color: var(--amber); }
+.rm-lv2 { border-top: 3px solid var(--amber); }
+.rm-lv3 .rm-num { color: var(--purple); }
+.rm-lv3 { border-top: 3px solid var(--purple); }
+
+/* ── MAIN ── */
+main { max-width: 1000px; margin: 0 auto; padding: 48px 24px 80px; }
+
+/* ── LEVEL SECTION ── */
+.level-section { margin-bottom: 56px; scroll-margin-top: 72px; }
+
+.level-header {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 24px;
+}
+.level-badge {
+  width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; font-family: var(--mono);
+  letter-spacing: .05em;
+}
+.lv1 .level-badge { background: var(--accent-l); color: var(--accent); border: 1.5px solid var(--accent-m); }
+.lv2 .level-badge { background: var(--amber-l); color: var(--amber); border: 1.5px solid var(--amber-m); }
+.lv3 .level-badge { background: var(--purple-l); color: var(--purple); border: 1.5px solid var(--purple-m); }
+
+.level-title-block {}
+.level-title { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 2px; }
+.level-subtitle { font-size: 12px; color: var(--muted); }
+
+.level-status {
+  margin-left: auto; display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 99px;
+  font-family: var(--mono);
+}
+.status-planned { background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m); }
+.status-future  { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+
+/* ── WHY → WHAT 接続カード ── */
+.why-what-row {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 0;
+  align-items: stretch; margin-bottom: 16px;
+}
+.why-card, .what-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 20px 22px;
+  box-shadow: var(--sh-sm);
+}
+.card-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em;
+  margin-bottom: 12px;
+}
+.lv1 .why-card .card-label { color: var(--accent); }
+.lv1 .what-card .card-label { color: var(--green); }
+.lv2 .why-card .card-label { color: var(--amber); }
+.lv2 .what-card .card-label { color: var(--green); }
+.lv3 .why-card .card-label { color: var(--purple); }
+.lv3 .what-card .card-label { color: var(--green); }
+
+.lv1 .why-card { border-top: 3px solid var(--accent); }
+.lv2 .why-card { border-top: 3px solid var(--amber); }
+.lv3 .why-card { border-top: 3px solid var(--purple); }
+.why-card, .what-card { border-top-width: 3px; }
+.what-card { border-top: 3px solid var(--green); }
+
+.card-text { font-size: 14px; color: var(--text2); line-height: 1.8; }
+.card-text strong { color: var(--text); font-weight: 700; }
+
+.connect-arrow {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 0 12px; gap: 4px;
+}
+.connect-arrow-line {
+  width: 2px; flex: 1; min-height: 20px;
+  background: linear-gradient(to bottom, var(--border2), var(--border2));
+}
+.connect-arrow-icon {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--surface); border: 1.5px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--muted); box-shadow: var(--sh-sm);
+  flex-shrink: 0;
+}
+
+/* ── 痛点 + 価値 row ── */
+.pain-value-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;
+}
+.pain-card {
+  background: var(--red-l); border: 1px solid rgba(220,38,38,.15);
+  border-radius: var(--r); padding: 16px 18px;
+}
+.value-card {
+  border-radius: var(--r); padding: 16px 18px; border: 1px solid var(--border);
+  background: var(--surface);
+}
+.lv1 .value-card { background: linear-gradient(135deg, var(--accent-l), #fff); border-color: var(--accent-m); }
+.lv2 .value-card { background: linear-gradient(135deg, var(--amber-l), #fff); border-color: var(--amber-m); }
+.lv3 .value-card { background: linear-gradient(135deg, var(--purple-l), #fff); border-color: var(--purple-m); }
+
+.sub-label {
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em;
+  margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+}
+.pain-card .sub-label { color: var(--red); }
+
+.pain-list { display: flex; flex-direction: column; gap: 7px; }
+.pain-item {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 13px; color: var(--text2); line-height: 1.6;
+}
+.pain-dot { color: var(--red); font-weight: 800; flex-shrink: 0; line-height: 1.6; }
+
+.value-text { font-size: 13px; color: var(--text2); line-height: 1.8; }
+.value-text strong { color: var(--text); font-weight: 700; }
+
+/* ── フロー ── */
+.flow-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 18px 20px; margin-bottom: 16px;
+  box-shadow: var(--sh-sm);
+}
+.flow-steps {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 4px;
+  margin-top: 10px;
+}
+.flow-step {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 12px; font-weight: 600; color: var(--text2);
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 5px 10px; white-space: nowrap;
+}
+.flow-sep { font-size: 12px; color: var(--border2); font-weight: 700; }
+
+/* ── 技術タグ ── */
+.tech-row { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+.tech-tag {
+  font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 5px;
+  font-family: var(--mono); background: var(--surface2); color: var(--text2);
+  border: 1px solid var(--border);
+}
+.lv1 .tech-tag { background: var(--accent-l); color: var(--accent); border-color: var(--accent-m); }
+.lv2 .tech-tag { background: var(--amber-l); color: var(--amber); border-color: var(--amber-m); }
+.lv3 .tech-tag { background: var(--purple-l); color: var(--purple); border-color: var(--purple-m); }
+
+/* ── 3段階のつながり ── */
+.progression-section {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 32px 36px; margin-bottom: 56px;
+  box-shadow: var(--sh);
+}
+.prog-title {
+  font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 24px;
+  display: flex; align-items: center; gap: 10px;
+}
+.prog-steps { display: flex; flex-direction: column; gap: 0; }
+.prog-step {
+  display: flex; align-items: stretch; gap: 0;
+}
+.prog-step + .prog-step { margin-top: 0; }
+.prog-step-left {
+  display: flex; flex-direction: column; align-items: center; width: 40px; flex-shrink: 0;
+}
+.prog-node {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; font-family: var(--mono);
+  border: 2px solid transparent;
+}
+.prog-node.lv1 { background: var(--accent-l); color: var(--accent); border-color: var(--accent); }
+.prog-node.lv2 { background: var(--amber-l); color: var(--amber); border-color: var(--amber); }
+.prog-node.lv3 { background: var(--purple-l); color: var(--purple); border-color: var(--purple); }
+.prog-line { width: 2px; flex: 1; min-height: 20px; background: var(--border2); margin: 0 auto; }
+.prog-step:last-child .prog-line { display: none; }
+.prog-step-content { flex: 1; padding: 0 0 28px 18px; }
+.prog-step-title { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.prog-step-desc { font-size: 13px; color: var(--text2); line-height: 1.7; }
+.prog-step-tag {
+  display: inline-block; font-size: 11px; font-weight: 700; font-family: var(--mono);
+  padding: 2px 8px; border-radius: 4px; margin-top: 6px;
+}
+.prog-step-tag.lv1 { background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m); }
+.prog-step-tag.lv2 { background: var(--amber-l); color: var(--amber); border: 1px solid var(--amber-m); }
+.prog-step-tag.lv3 { background: var(--purple-l); color: var(--purple); border: 1px solid var(--purple-m); }
+
+/* ── セクション区切り ── */
+.section-divider {
+  display: flex; align-items: center; gap: 12px; margin: 0 0 32px;
+}
+.section-divider-line { flex: 1; height: 1px; background: var(--border); }
+.section-divider-label {
+  font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--muted); padding: 4px 14px; border: 1px solid var(--border);
+  border-radius: 99px; background: var(--surface2); white-space: nowrap;
+}
+
+/* ── 実装例カード ── */
+.impl-section { margin-top: 22px; }
+.impl-header {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+}
+.impl-header-icon {
+  width: 22px; height: 22px; border-radius: 6px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 12px;
+  background: var(--surface2); border: 1px solid var(--border);
+}
+.impl-header-label {
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em;
+  color: var(--muted);
+}
+.impl-grid { display: grid; gap: 14px; }
+.impl-grid.one  { grid-template-columns: 1fr; }
+.impl-grid.two  { grid-template-columns: 1fr 1fr; }
+.impl-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); overflow: hidden;
+  box-shadow: var(--sh-sm); transition: box-shadow .2s, transform .15s;
+}
+.impl-card:hover { box-shadow: var(--sh); transform: translateY(-1px); }
+.impl-card-top {
+  padding: 14px 18px 13px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; gap: 11px;
+}
+.impl-num {
+  width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; font-family: var(--mono);
+}
+.impl-num.lv1 { background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m); }
+.impl-num.lv2 { background: var(--amber-l);  color: var(--amber);  border: 1px solid var(--amber-m); }
+.impl-num.lv3 { background: var(--purple-l); color: var(--purple); border: 1px solid var(--purple-m); }
+.impl-card-title { font-size: 14px; font-weight: 800; color: var(--text); line-height: 1.4; margin-bottom: 2px; }
+.impl-card-sub   { font-size: 11px; color: var(--muted); line-height: 1.5; }
+.impl-card-body  { padding: 14px 18px; display: flex; flex-direction: column; gap: 12px; }
+.impl-figure {
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--surface2);
+}
+.impl-figure img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background: #e5e7eb;
+}
+.impl-figure figcaption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.impl-figure a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.impl-figure a:hover { text-decoration: underline; }
+.impl-block { display: flex; flex-direction: column; gap: 5px; }
+.impl-block-label {
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .09em; color: var(--muted);
+}
+.impl-scenario { font-size: 13px; color: var(--text2); line-height: 1.75; }
+.impl-scenario strong { color: var(--text); font-weight: 700; }
+.impl-challenges { display: flex; flex-direction: column; gap: 5px; }
+.impl-challenge {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 12px; color: var(--text2); line-height: 1.65;
+}
+.impl-challenge-dot { flex-shrink: 0; line-height: 1.65; }
+.impl-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.impl-tag {
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+  font-family: var(--mono); background: var(--surface2);
+  color: var(--text2); border: 1px solid var(--border);
+}
+
+/* 実装例 inline flow mini */
+.mini-flow {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 3px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 12px; margin-top: 2px;
+}
+.mini-step  { font-size: 11px; color: var(--text2); font-weight: 600; white-space: nowrap; }
+.mini-arrow { font-size: 10px; color: var(--border2); }
+
+@media (max-width: 720px) {
+  .impl-grid.two { grid-template-columns: 1fr; }
+  .impl-figure figcaption {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ── FOOTER ── */
+footer {
+  background: var(--text); color: rgba(255,255,255,.5);
+  text-align: center; padding: 28px; font-size: 13px;
+}
+footer a { color: rgba(255,255,255,.75); text-decoration: none; }
+
+@media (max-width: 720px) {
+  .why-what-row { grid-template-columns: 1fr; }
+  .connect-arrow { flex-direction: row; padding: 8px 0; }
+  .connect-arrow-line { width: auto; height: 2px; flex: 1; }
+  .pain-value-row { grid-template-columns: 1fr; }
+  .level-roadmap { flex-direction: column; }
+  .roadmap-level + .roadmap-level { border-left: none; border-top: 1px solid var(--border); }
+  .rm-arrow { display: none; }
+  main { padding: 28px 14px 60px; }
+  .progression-section { padding: 22px 18px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="../plan-fy26.html">
+      <div class="nav-logo-icon">🧠</div>
+      <span class="nav-logo-sep">/</span>
+      <span class="nav-logo-text">FY26 Plan</span>
+    </a>
+
+    <div class="nav-item">
+      <button class="nav-btn" onclick="location.href='../plan-fy26.html'">プラン <span class="nav-caret">▾</span></button>
+      <div class="nav-drop">
+        <span class="nav-drop-label">メインページ</span>
+        <a class="nav-drop-link" href="../plan-fy26.html#background">
+          <span class="nav-dl-icon">📖</span>
+          <div><div class="nav-dl-name">研究背景</div><div class="nav-dl-sub">現状の課題と研究目的</div></div>
+        </a>
+        <a class="nav-drop-link" href="../plan-fy26.html#schedule">
+          <span class="nav-dl-icon">📅</span>
+          <div><div class="nav-dl-name">スケジュール</div><div class="nav-dl-sub">フェーズ・ガントチャート</div></div>
+        </a>
+        <a class="nav-drop-link" href="../plan-fy26.html#demo">
+          <span class="nav-dl-icon">🎯</span>
+          <div><div class="nav-dl-name">デモ概要</div><div class="nav-dl-sub">デモ要件レーダー</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-item">
+      <a class="nav-btn" href="../todo.html">Todo</a>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-btn" onclick="location.href='../demo.html'">デモ詳細 <span class="nav-caret">▾</span></button>
+      <div class="nav-drop">
+        <span class="nav-drop-label">デモページ</span>
+        <a class="nav-drop-link" href="../demo.html#req-map">
+          <span class="nav-dl-icon">🗺️</span>
+          <div><div class="nav-dl-name">要件マップ</div><div class="nav-dl-sub">9カテゴリ・技術要素</div></div>
+        </a>
+        <a class="nav-drop-link" href="../demo.html#scenarios">
+          <span class="nav-dl-icon">🎬</span>
+          <div><div class="nav-dl-name">デモシナリオ</div><div class="nav-dl-sub">3カテゴリ × Level 1/2/3</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-btn cur">Discussion <span class="nav-caret">▾</span></button>
+      <div class="nav-drop">
+        <span class="nav-drop-label">議論・検討ドキュメント</span>
+        <a class="nav-drop-link" href="arm-demo-level123-ja.html">
+          <span class="nav-dl-icon">🦾</span>
+          <div><div class="nav-dl-name">アームDemo Level 1-3 分類基準</div><div class="nav-dl-sub">アーム単体 Demo Level 1-3 分類（現在のページ）</div></div>
+        </a>
+        <a class="nav-drop-link" href="move-base-level123-ja.html">
+          <span class="nav-dl-icon">🤖</span>
+          <div><div class="nav-dl-name">自律移動 Level 1-3 分類基準</div><div class="nav-dl-sub">自律移動システム設計方針</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-btn" onclick="location.href='../issues/arm-vertical/arm-vertical.html'">Issues <span class="nav-caret">▾</span></button>
+      <div class="nav-drop">
+        <span class="nav-drop-label">問題対処記録</span>
+        <a class="nav-drop-link" href="../issues/arm-vertical/arm-vertical.html">
+          <span class="nav-dl-icon">🔧</span>
+          <div><div class="nav-dl-name">アーム上下機構</div><div class="nav-dl-sub">コネクタ破損 → 再設計（解決済み）</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <span class="nav-pulse"></span>
+      <div class="nav-badge-pill">Phase 1–2 予定</div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="hero-inner">
+    <div class="hero-tag">🦾 カテゴリ B — アーム単体 Demo</div>
+    <h1>マニピュレーション Level 1-3</h1>
+    <p class="hero-desc">
+      単なる「アームが動く」デモではなく、
+      <strong>人が自然に指示した作業を、環境改造なし・専用治具なしで実行できること</strong>を
+      3段階で段階的に示す。<br>
+      LLM・視覚認識・動作計画を組み合わせ、Physical AI 的マニピュレーションを検証する。
+    </p>
+
+    <!-- レベル俯瞰ロードマップ -->
+    <div class="level-roadmap">
+      <a class="roadmap-level rm-lv1" href="#level1">
+        <div class="rm-num">Level 1 · Phase 1–2</div>
+        <div class="rm-title">音声指令による<br>単発操作実行</div>
+        <div class="rm-phase">例：ボタン押下・スイッチ操作</div>
+        <div class="rm-arrow">→</div>
+      </a>
+      <a class="roadmap-level rm-lv2" href="#level2">
+        <div class="rm-num">Level 2 · Phase 3–4</div>
+        <div class="rm-title">指示に基づく<br>多段タスク実行</div>
+        <div class="rm-phase">例：文字ブロック並べ・順序配置</div>
+        <div class="rm-arrow">→</div>
+      </a>
+      <a class="roadmap-level rm-lv3" href="#level3">
+        <div class="rm-num">Level 3 · Phase 5–6</div>
+        <div class="rm-title">視覚フィードバックを用いた<br>精密操作</div>
+        <div class="rm-phase">例：プラグ挿入・コネクタ接続</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- 3段階のつながり（先に概観） -->
+  <div class="progression-section">
+    <div class="prog-title">🗺️ 3段階のつながり — 能力の積み上げ構造</div>
+    <div class="prog-steps">
+      <div class="prog-step">
+        <div class="prog-step-left">
+          <div class="prog-node lv1">L1</div>
+          <div class="prog-line"></div>
+        </div>
+        <div class="prog-step-content">
+          <div class="prog-step-title">人の言葉 → 単発の物理操作</div>
+          <div class="prog-step-desc">自然言語指示を視覚認識と組み合わせ、単回の操作を実行する最小パイプラインを実証する。</div>
+          <span class="prog-step-tag lv1">低コスト・非侵襲な自動化の入口</span>
+        </div>
+      </div>
+      <div class="prog-step">
+        <div class="prog-step-left">
+          <div class="prog-node lv2">L2</div>
+          <div class="prog-line"></div>
+        </div>
+        <div class="prog-step-content">
+          <div class="prog-step-title">手順書 → 複数手順の自律構成・実行</div>
+          <div class="prog-step-desc">単発動作ではなく、目標から内部で手順を計画し継続して実行する能力を示す。</div>
+          <span class="prog-step-tag lv2">タスク単位の自律化</span>
+        </div>
+      </div>
+      <div class="prog-step">
+        <div class="prog-step-left">
+          <div class="prog-node lv3">L3</div>
+        </div>
+        <div class="prog-step-content">
+          <div class="prog-step-title">誤差・不確実性 → 補正しながら作業完遂</div>
+          <div class="prog-step-desc">視覚と接触フィードバックを使い、ミリ単位の精度が必要な作業を閉ループで成功まで持っていく。</div>
+          <span class="prog-step-tag lv3">実運用に耐えるロバスト操作</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ LEVEL 1 ═══ -->
+  <div class="level-section lv1" id="level1">
+    <div class="section-divider">
+      <div class="section-divider-line"></div>
+      <div class="section-divider-label">Level 1</div>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <div class="level-header">
+      <div class="level-badge">L1</div>
+      <div class="level-title-block">
+        <div class="level-title">音声指令による単発操作実行</div>
+        <div class="level-subtitle">例：エレベーターボタン押下 / 設備スタートボタン / スイッチ操作</div>
+      </div>
+      <div class="level-status status-planned">● planned · Phase 1–2</div>
+    </div>
+
+    <!-- 望ましいこと → できること -->
+    <div class="why-what-row">
+      <div class="why-card">
+        <div class="card-label">💡 望ましいこと（Why）</div>
+        <p class="card-text">
+          研究室・工場・施設内には、「ボタンを押す」「スイッチを入れる」といった
+          <strong>単純だが人手依存の操作</strong>が多く残っている。<br><br>
+          既存設備とシステム連携しようとすると改修コストが高く、
+          従来の自動化では見合わないことが多い。<br><br>
+          つまり、<strong>"人がその場で行っている簡単な物理操作を、
+          設備改造なしで代替したい"</strong>というニーズがある。
+        </p>
+      </div>
+      <div class="connect-arrow">
+        <div class="connect-arrow-line"></div>
+        <div class="connect-arrow-icon">→</div>
+        <div class="connect-arrow-line"></div>
+      </div>
+      <div class="what-card">
+        <div class="card-label">🎯 このLevelで実証すること（What）</div>
+        <p class="card-text">
+          「3階のボタンを押して」のような<strong>自然言語指示</strong>を受け、
+          対象を視覚的に認識し、位置を推定し、アームで正確に押下する。<br><br>
+          これにより、<strong>言語理解 → 対象認識 → 物理操作</strong>
+          の最小パイプラインを実証する。<br><br>
+          環境改造なし、固定座標スクリプトなしで動作することがポイントである。
+        </p>
+      </div>
+    </div>
+
+    <!-- 痛点 + 価値 -->
+    <div class="pain-value-row">
+      <div class="pain-card">
+        <div class="sub-label">⚠ 解決したい痛点</div>
+        <div class="pain-list">
+          <div class="pain-item"><span class="pain-dot">✕</span><span>設備側を改造しないと自動化できない</span></div>
+          <div class="pain-item"><span class="pain-dot">✕</span><span>座標固定スクリプトでは環境変化に弱い</span></div>
+          <div class="pain-item"><span class="pain-dot">✕</span><span>人の指示をそのままロボット動作に変換できない</span></div>
+        </div>
+      </div>
+      <div class="value-card">
+        <div class="sub-label" style="color:var(--accent)">✨ このデモの価値</div>
+        <p class="value-text">
+          <strong>「環境改造なしの低コスト自動化」</strong>の可能性を示す。<br><br>
+          ボタン押下自体が重要なのではなく、
+          <strong>人の言葉で指示された単発作業を、
+          視覚を使ってその場で実行できること</strong>が重要である。
+        </p>
+      </div>
+    </div>
+
+    <!-- フロー -->
+    <div class="flow-card">
+      <div class="sub-label" style="color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;">⚡ 実行フロー</div>
+      <div class="flow-steps">
+        <div class="flow-step">🗣️ 音声指示</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">🤖 LLM解釈（対象・属性抽出）</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">📸 カメラ入力</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">👁️ ボタン検出（YOLO/VLM）</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">📐 Depth推定 + IK計算</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">🦾 SOARM101 押下</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">✅ 動作確認</div>
+      </div>
+    </div>
+
+    <!-- 技術タグ -->
+    <div class="tech-row">
+      <span style="font-size:11px;color:var(--muted);font-weight:700;margin-right:4px;">技術：</span>
+      <span class="tech-tag">SOARM101</span>
+      <span class="tech-tag">YOLO</span>
+      <span class="tech-tag">VLM</span>
+      <span class="tech-tag">IK</span>
+      <span class="tech-tag">Depth estimation</span>
+      <span class="tech-tag">LLM</span>
+      <span class="tech-tag">Whisper</span>
+    </div>
+
+    <!-- 実装例 L1 -->
+    <div class="impl-section">
+      <div class="impl-header">
+        <div class="impl-header-icon">🔬</div>
+        <div class="impl-header-label">実装例</div>
+      </div>
+      <div class="impl-grid two">
+
+        <!-- 1-A: パネル操作 -->
+        <div class="impl-card">
+          <div class="impl-card-top">
+            <div class="impl-num lv1">1-A</div>
+            <div>
+              <div class="impl-card-title">指令ベースの各種パネル操作</div>
+              <div class="impl-card-sub">仕様の異なるパネルを視覚認識で汎用的に操作する</div>
+            </div>
+          </div>
+          <div class="impl-card-body">
+            <figure class="impl-figure">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuTNB628RrcKsvxi_rhVoaKcrItthHhjZwAQ&s" alt="エレベーターパネルのボタンを写した参考画像" loading="lazy" />
+                <figcaption>
+                <span>参考画像: ボタン操作対象のイメージ</span>
+                <a href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuTNB628RrcKsvxi_rhVoaKcrItthHhjZwAQ&s" target="_blank" rel="noreferrer">Image source</a>
+              </figcaption>
+            </figure>
+            <div class="impl-block">
+              <div class="impl-block-label">シナリオ</div>
+              <p class="impl-scenario">
+                「エレベーターの3階ボタンを押して」「機器のスタートを押して」「照明を消して」といった
+                音声コマンドを受け、その場にあるパネルを視覚的に認識して目標ボタンを特定・押下する。<br><br>
+                <strong>各パネルの仕様（ボタン配置・サイズ・ラベル・素材）はそれぞれ異なる</strong>ため、
+                固定座標スクリプトは使えず、VLM + LLM による汎用認識が必要となる。
+              </p>
+              <div class="mini-flow">
+                <span class="mini-step">🗣️ 音声「3階ボタン押して」</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🤖 LLM: target="3", panel="elevator"</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">📸 カメラでパネル全体撮影</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">👁️ VLM でボタン一覧 + ラベル認識</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">📐 "3" ボタンの Depth 推定 → IK</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🦾 押下 → LED点灯確認</span>
+              </div>
+            </div>
+            <div class="impl-block">
+              <div class="impl-block-label">技術的なポイント</div>
+              <div class="impl-challenges">
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--accent)">▸</span>
+                  <span><strong>パネル多様性への対応：</strong>エレベーター（数字配列）/ 機器パネル（機能ラベル）/ 壁スイッチ（ON/OFF）を統一パイプラインで処理。VLM がパネル種別を自動判定し、LLM がコマンドと対応付ける</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--accent)">▸</span>
+                  <span><strong>Depth 精度：</strong>RealSense の点群 or ステレオ深度で押下点の Z 距離を推定。ボタンの出っ張り・埋め込みによる ±5 mm 誤差を IK で吸収</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--accent)">▸</span>
+                  <span><strong>押下確認：</strong>力センサー（電流変化）または映像（LED/ランプ点灯・表示変化）で成否を判定し、フィードバック</span>
+                </div>
+              </div>
+            </div>
+            <div class="impl-block">
+              <div class="impl-block-label">対象パネル例</div>
+              <div class="impl-tags">
+                <span class="impl-tag">エレベーターパネル（数字配列）</span>
+                <span class="impl-tag">機器操作パネル（スタート/ストップ）</span>
+                <span class="impl-tag">壁面照明スイッチ</span>
+                <span class="impl-tag">設備緊急停止ボタン</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1-B: ねじの片付け -->
+        <div class="impl-card">
+          <div class="impl-card-top">
+            <div class="impl-num lv1">1-B</div>
+            <div>
+              <div class="impl-card-title">音声指示によるねじの片付け</div>
+              <div class="impl-card-sub">散らばったねじを認識し、指示された回収先へ順次ピック＆プレースする</div>
+            </div>
+          </div>
+          <div class="impl-card-body">
+            <figure class="impl-figure">
+              <img src="https://jp.images-monotaro.com/etc/merchandising/mc_2049/plus2-small_parts02.png" alt="散らばったねじや小物部品を写した参考画像" loading="lazy" />
+              <figcaption>
+              <span>参考画像: 音声指示に従ってねじを回収箱へ片付ける</span>
+              <a href="https://jp.images-monotaro.com/etc/merchandising/mc_2049/plus2-small_parts02.png" target="_blank" rel="noreferrer">Image source</a>
+              </figcaption>
+            </figure>
+            </figure>
+            <div class="impl-block">
+              <div class="impl-block-label">シナリオ</div>
+              <p class="impl-scenario">
+                「机の上のねじを片付けて」「こぼれたねじをトレイに戻して」といった
+                音声コマンドを受け、作業台上に散らばったねじを検出し、1本ずつ把持して回収箱や部品トレイへ移載する。<br><br>
+                <strong>小さく似た形状の物体を見分けながら、散在した複数個を順番に回収する</strong>ことがポイントで、
+                単発のピックだけでなく「軽い片付け作業」まで自動化できることを示せる。
+              </p>
+              <div class="mini-flow">
+                <span class="mini-step">🗣️ 音声「ねじを片付けて」</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🎙️ Whisper で文字起こし</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🤖 LLM: object="screw", action="tidy"</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">👁️ YOLO/VLM でねじ候補抽出</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">📐 Depth + IK で把持位置決定</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🦾 ピック → トレイへ移載 → 残数確認</span>
+              </div>
+            </div>
+            <div class="impl-block">
+              <div class="impl-block-label">技術的なポイント</div>
+              <div class="impl-challenges">
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--accent)">▸</span>
+                  <span><strong>音声から作業意図を抽出：</strong>Whisper で音声をテキスト化し、LLM が「対象=ねじ」「動作=回収」「回収先=トレイ」のようにタスクへ変換。自然な片付け指示をそのまま扱える</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--accent)">▸</span>
+                  <span><strong>小物認識と選別：</strong>ねじ・ワッシャ・ナットのような似た部品が混在していても、YOLO/VLM でねじだけを抽出。頭部形状や長さ差を使って誤把持を減らす</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--accent)">▸</span>
+                  <span><strong>連続回収の安定化：</strong>小さな金属部品は滑りやすいため、把持点を毎回再計算し、持ち上げ高さの変化やトレイ投入後の見え方で1本ずつ回収完了を確認する</span>
+                </div>
+              </div>
+            </div>
+            <div class="impl-block">
+              <div class="impl-block-label">対象部品・回収先例</div>
+              <div class="impl-tags">
+                <span class="impl-tag">ねじ・ビス類</span>
+                <span class="impl-tag">部品トレイ</span>
+                <span class="impl-tag">小物回収箱</span>
+                <span class="impl-tag">作業台上の散在部品</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ LEVEL 2 ═══ -->
+  <div class="level-section lv2" id="level2">
+    <div class="section-divider">
+      <div class="section-divider-line"></div>
+      <div class="section-divider-label">Level 2</div>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <div class="level-header">
+      <div class="level-badge">L2</div>
+      <div class="level-title-block">
+        <div class="level-title">指示に基づく多段タスク実行</div>
+        <div class="level-subtitle">例：文字ブロックのスペリング / 物品の並べ替え / 指定順序での配置</div>
+      </div>
+      <div class="level-status status-planned">● planned · Phase 3–4</div>
+    </div>
+
+    <!-- 望ましいこと → できること -->
+    <div class="why-what-row">
+      <div class="why-card">
+        <div class="card-label">💡 望ましいこと（Why）</div>
+        <p class="card-text">
+          実際の現場では、ロボットに求められるのは
+          「1回動くこと」ではなく、<strong>目的に応じて複数ステップを継続実行すること</strong>である。<br><br>
+          指定順に物を並べる・必要な部品を集めて配置する・ラベルに基づいて選別するといった作業は、
+          ロボットにとっては<strong>認識・記憶・順序計画・反復操作</strong>が必要になる。<br><br>
+          「1回ごとに人が次の指示を出す」ことへの依存を減らしたい。
+        </p>
+      </div>
+      <div class="connect-arrow">
+        <div class="connect-arrow-line"></div>
+        <div class="connect-arrow-icon">→</div>
+        <div class="connect-arrow-line"></div>
+      </div>
+      <div class="what-card">
+        <div class="card-label">🎯 このLevelで実証すること（What）</div>
+        <p class="card-text">
+          「CAT を並べて」「APPLE を作って」といった指示を受け、
+          対応する文字ブロックを認識し、順序を計画し、
+          <strong>複数回の把持・配置を継続して行う</strong>。<br><br>
+          これにより、<strong>単発操作ではなく、目的に対して自律的に
+          手順を展開する能力</strong>を示す。
+        </p>
+      </div>
+    </div>
+
+    <!-- 痛点 + 価値 -->
+    <div class="pain-value-row">
+      <div class="pain-card">
+        <div class="sub-label">⚠ 解決したい痛点</div>
+        <div class="pain-list">
+          <div class="pain-item"><span class="pain-dot">✕</span><span>既存ロボットは固定シーケンスに依存しやすい</span></div>
+          <div class="pain-item"><span class="pain-dot">✕</span><span>目標が変わるたびに人がプログラムし直す必要がある</span></div>
+          <div class="pain-item"><span class="pain-dot">✕</span><span>複数ステップ作業を柔軟に扱えない</span></div>
+        </div>
+      </div>
+      <div class="value-card">
+        <div class="sub-label" style="color:var(--amber)">✨ このデモの価値</div>
+        <p class="value-text">
+          <strong>「動作の自動化」ではなく「タスクの自動化」</strong>に進む点にある。<br><br>
+          人が逐一「次はこれ」と教えなくても、
+          <strong>目標だけ与えればロボットが内部で手順を構成して実行できること</strong>を示す。
+        </p>
+      </div>
+    </div>
+
+    <!-- フロー -->
+    <div class="flow-card">
+      <div class="sub-label" style="color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;">⚡ 実行フロー</div>
+      <div class="flow-steps">
+        <div class="flow-step">🗣️ 物品名・文字列指示</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">🤖 LLM解釈（スペリング・配置計画）</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">👁️ OCR + YOLO 対象認識</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">📋 順序計画</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">🦾 ブロック把持 × N回</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">📍 指定位置に配置</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">✅ 完成確認</div>
+      </div>
+    </div>
+
+    <!-- 技術タグ -->
+    <div class="tech-row">
+      <span style="font-size:11px;color:var(--muted);font-weight:700;margin-right:4px;">技術：</span>
+      <span class="tech-tag">YOLO</span>
+      <span class="tech-tag">OCR</span>
+      <span class="tech-tag">IK</span>
+      <span class="tech-tag">FK</span>
+      <span class="tech-tag">LLM Planner</span>
+      <span class="tech-tag">Sequential manipulation</span>
+      <span class="tech-tag">Depth estimation</span>
+    </div>
+
+    <!-- 実装例 L2 -->
+    <div class="impl-section">
+      <div class="impl-header">
+        <div class="impl-header-icon">🔬</div>
+        <div class="impl-header-label">実装例</div>
+      </div>
+      <div class="impl-grid two">
+
+        <!-- 2-A: 手順書通りに積み木 -->
+        <div class="impl-card">
+          <div class="impl-card-top">
+            <div class="impl-num lv2">2-A</div>
+            <div>
+              <div class="impl-card-title">手順書通りに積み木を積む</div>
+              <div class="impl-card-sub">ステップ記述を読み、色・サイズで認識して順序通りに積み上げる</div>
+            </div>
+          </div>
+            <div class="impl-card-body">
+            <figure class="impl-figure">
+              <img src="https://www.icom-giken.com/wp/wp-content/uploads/2025/08/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88-2025-08-08-133018.png" alt="積み上げ可能なカラフルなブロックを写した参考画像" loading="lazy" />
+              <figcaption>
+              <span>参考画像: 積み木の認識と順序組み立てのイメージ</span>
+              <a href="https://www.icom-giken.com/wp/wp-content/uploads/2025/08/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88-2025-08-08-133018.png" target="_blank" rel="noreferrer">Image source</a>
+              </figcaption>
+            </figure>
+            <div class="impl-block">
+              <div class="impl-block-label">シナリオ</div>
+              <p class="impl-scenario">
+                「赤→青→黄の順に積んで」「大きい順に3つ重ねて」などの指示を受け、
+                散乱した積み木をカメラで認識し、<strong>LLM が手順を解釈</strong>して
+                正しい順序で把持・配置を繰り返す。
+                積み上げ中は<strong>スタックの傾き・ずれをカメラで監視</strong>し、
+                補正しながら次のブロックを置く。
+              </p>
+              <div class="mini-flow">
+                <span class="mini-step">📋 手順指示を LLM 解釈</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">👁️ YOLO: 色・サイズ認識</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">📋 積み順を計画リストに変換</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🔁 [把持 → 配置 → 確認] × N回</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">✅ 完成判定</span>
+              </div>
+            </div>
+            <div class="impl-block">
+              <div class="impl-block-label">技術的なポイント</div>
+              <div class="impl-challenges">
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--amber)">▸</span>
+                  <span><strong>ステップ管理：</strong>LLM が生成した手順リストを状態機械として管理。各ステップ完了後に画像確認し、次ステップへ遷移</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--amber)">▸</span>
+                  <span><strong>安定把持・配置：</strong>ブロック上面の中心を Depth で取得し、置く際の高さオフセットを積み上げ段数から動的に計算</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--amber)">▸</span>
+                  <span><strong>失敗リカバリー：</strong>ブロックが崩れた場合、カメラ確認後にリスト先頭から再試行</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2-B: 認識した物体で文字を並べる -->
+        <div class="impl-card">
+          <div class="impl-card-top">
+            <div class="impl-num lv2">2-B</div>
+            <div>
+              <div class="impl-card-title">認識した物体で文字を並べる</div>
+              <div class="impl-card-sub">文字ブロックを OCR で読み取り、目標の単語になるよう配置する</div>
+            </div>
+          </div>
+          <div class="impl-card-body">
+            <figure class="impl-figure">
+              <img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/A_pile_of_alphabet_wooden_blocks.jpg?width=1200" alt="アルファベット入りの木製ブロックを写した参考画像" loading="lazy" />
+              <figcaption>
+                <span>参考画像: 文字ブロックの読み取りと並べ替えのイメージ</span>
+                <a href="https://commons.wikimedia.org/wiki/File:A_pile_of_alphabet_wooden_blocks.jpg" target="_blank" rel="noreferrer">Wikimedia Commons</a>
+              </figcaption>
+            </figure>
+            <div class="impl-block">
+              <div class="impl-block-label">シナリオ</div>
+              <p class="impl-scenario">
+                「ROS と並べて」「CAT を作って」と指示すると、
+                卓上に散らばった<strong>文字ラベル付きブロック</strong>をカメラで認識し、
+                必要な文字を選別・収集し、指定した単語の順に左から並べる。
+                ブロックには英字、数字、記号が混在しており、
+                <strong>OCR + VLM で文字を読み取ってから選択判断</strong>する。
+              </p>
+              <div class="mini-flow">
+                <span class="mini-step">🗣️「CAT を作って」</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🤖 LLM: ['C','A','T'] に分解</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">📸 全ブロックをスキャン</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">👁️ OCR: 各ブロック文字 + 座標</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">📋 配置計画（左→右順）</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🦾 C→A→T 順に把持・配置</span>
+              </div>
+            </div>
+            <div class="impl-block">
+              <div class="impl-block-label">技術的なポイント</div>
+              <div class="impl-challenges">
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--amber)">▸</span>
+                  <span><strong>文字認識精度：</strong>ブロックの傾き・照明変化に対して OCR が頑健に機能するよう、複数角度から再撮影 or VLM で補完</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--amber)">▸</span>
+                  <span><strong>欠字対応：</strong>必要な文字ブロックが見つからない場合、LLM が「C が見つかりません」とフィードバックし、人に追加依頼</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--amber)">▸</span>
+                  <span><strong>配置精度：</strong>揃って見えるよう、指定した仮想グリッド座標（列 × 行）に基づいて IK を計算</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ LEVEL 3 ═══ -->
+  <div class="level-section lv3" id="level3">
+    <div class="section-divider">
+      <div class="section-divider-line"></div>
+      <div class="section-divider-label">Level 3</div>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <div class="level-header">
+      <div class="level-badge">L3</div>
+      <div class="level-title-block">
+        <div class="level-title">視覚フィードバックを用いた精密操作</div>
+        <div class="level-subtitle">例：プラグ挿入 / コネクタ接続 / 穴合わせを伴う組付け</div>
+      </div>
+      <div class="level-status status-future">◌ future · Phase 5–6</div>
+    </div>
+
+    <!-- 望ましいこと → できること -->
+    <div class="why-what-row">
+      <div class="why-card">
+        <div class="card-label">💡 望ましいこと（Why）</div>
+        <p class="card-text">
+          現実の高価値作業の多くが、<strong>ミリ単位のズレで失敗する精密操作</strong>である。<br><br>
+          プラグ・USB挿入、コネクタ接続、穴位置合わせ、接触を伴う精密作業は、
+          単純な位置決めだけでは不十分で、
+          誤差・たわみ・視点変化・個体差が常に存在する。<br><br>
+          望まれているのは<strong>"一回で正確に動くロボット"ではなく、
+          "ずれても自分で修正できるロボット"</strong>である。
+        </p>
+      </div>
+      <div class="connect-arrow">
+        <div class="connect-arrow-line"></div>
+        <div class="connect-arrow-icon">→</div>
+        <div class="connect-arrow-line"></div>
+      </div>
+      <div class="what-card">
+        <div class="card-label">🎯 このLevelで実証すること（What）</div>
+        <p class="card-text">
+          対象を認識して初期位置合わせを行うだけでなく、
+          <strong>作業中の映像や接触状態を使ってリアルタイムに補正しながら挿入を完了する</strong>。<br><br>
+          これにより、<strong>open-loop な再生動作ではなく、
+          閉ループで成功に到達する能力</strong>を示す。
+        </p>
+      </div>
+    </div>
+
+    <!-- 痛点 + 価値 -->
+    <div class="pain-value-row">
+      <div class="pain-card">
+        <div class="sub-label">⚠ 解決したい痛点</div>
+        <div class="pain-list">
+          <div class="pain-item"><span class="pain-dot">✕</span><span>高精度な事前調整がないと作業が成立しない</span></div>
+          <div class="pain-item"><span class="pain-dot">✕</span><span>少しの誤差で失敗する</span></div>
+          <div class="pain-item"><span class="pain-dot">✕</span><span>環境変化に弱く、実運用で安定しない</span></div>
+        </div>
+      </div>
+      <div class="value-card">
+        <div class="sub-label" style="color:var(--purple)">✨ このデモの価値</div>
+        <p class="value-text">
+          <strong>不確実環境でも成功まで持っていけるロボット操作</strong>を示す。<br><br>
+          「プラグを挿せた」ことそのものではなく、
+          <strong>認識・接触・補正を組み合わせて、
+          失敗しやすい作業をやり切れること</strong>が、実環境導入に向けた大きな一歩となる。
+        </p>
+      </div>
+    </div>
+
+    <!-- フロー -->
+    <div class="flow-card">
+      <div class="sub-label" style="color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;">⚡ 実行フロー</div>
+      <div class="flow-steps">
+        <div class="flow-step">🗣️ 操作指示</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">👁️ VLM/YOLO 挿入口認識</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">📐 初期IK計算</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">🦾 挿入アプローチ</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">🔄 視覚/接触フィードバック補正ループ</div>
+        <div class="flow-sep">›</div>
+        <div class="flow-step">✅ 挿入確認（電流/映像）</div>
+      </div>
+    </div>
+
+    <!-- 技術タグ -->
+    <div class="tech-row">
+      <span style="font-size:11px;color:var(--muted);font-weight:700;margin-right:4px;">技術：</span>
+      <span class="tech-tag">SOARM101</span>
+      <span class="tech-tag">IK</span>
+      <span class="tech-tag">VLM</span>
+      <span class="tech-tag">Visual Feedback</span>
+      <span class="tech-tag">Current sensing</span>
+      <span class="tech-tag">Closed-loop control</span>
+    </div>
+
+    <!-- 実装例 L3 -->
+    <div class="impl-section">
+      <div class="impl-header">
+        <div class="impl-header-icon">🔬</div>
+        <div class="impl-header-label">実装例</div>
+      </div>
+      <div class="impl-grid two">
+
+        <!-- 3-A: 差し込みプレートへの挿入 -->
+        <div class="impl-card">
+          <div class="impl-card-top">
+            <div class="impl-num lv3">3-A</div>
+            <div>
+              <div class="impl-card-title">差し込みプレートへの挿入</div>
+              <div class="impl-card-sub">穴位置を視覚認識し、接触フィードバックで誘導しながら挿入完了する</div>
+            </div>
+          </div>
+          <div class="impl-card-body">
+            <figure class="impl-figure">
+              <img src="https://thumb.ac-illust.com/9d/9dee14121dbe56e8696874a6fdee579b_t.jpeg" alt="ペグボードへのピン挿入を写した参考画像" loading="lazy" />
+              <figcaption>
+              <span>参考画像: ペグボード穴への精密挿入のイメージ</span>
+              <a href="https://thumb.ac-illust.com/9d/9dee14121dbe56e8696874a6fdee579b_t.jpeg" target="_blank" rel="noreferrer">Image source</a>
+              </figcaption>
+            </figure>
+            <div class="impl-block">
+              <div class="impl-block-label">シナリオ</div>
+              <p class="impl-scenario">
+                複数の穴が格子状に配置された<strong>差し込みプレート（ペグボード）</strong>に対し、
+                「左上の穴に赤いピンを挿して」などの指示に従い、
+                目標穴を視覚認識して接近し、<strong>接触を感知しながら挿入を完了</strong>する。
+                穴径とピン径の余裕は ±1 mm 程度で、正確な軸合わせが必要。
+              </p>
+              <div class="mini-flow">
+                <span class="mini-step">🗣️ 挿入位置を指定</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">👁️ VLM: 穴位置 + 深度推定</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">📐 初期 IK: 穴上方 30 mm へ</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🦾 垂直降下アプローチ</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🔄 接触検知 → 軸ずれ補正ループ</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">✅ 挿入完了（電流 / 映像）</span>
+              </div>
+            </div>
+            <div class="impl-block">
+              <div class="impl-block-label">技術的なポイント</div>
+              <div class="impl-challenges">
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--purple)">▸</span>
+                  <span><strong>穴検出精度：</strong>カメラ画像でエッジ検出 + Depth で穴中心の 3D 座標を ±0.5 mm 精度で取得</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--purple)">▸</span>
+                  <span><strong>挿入時の補正：</strong>ピンがプレート面に接触した後、電流上昇パターンと視覚の位置ずれから「どの方向にずれているか」を推定し、微小移動で補正</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--purple)">▸</span>
+                  <span><strong>挿入完了判定：</strong>指定深度まで到達（電流正常 + 位置センサ）で完了とし、失敗時は引き抜いて再試行</span>
+                </div>
+              </div>
+            </div>
+            <div class="impl-block">
+              <div class="impl-block-label">難易度を上げる発展</div>
+              <div class="impl-tags">
+                <span class="impl-tag">複数穴への連続挿入</span>
+                <span class="impl-tag">パターン指定（図形・文字）</span>
+                <span class="impl-tag">USB / 電源プラグへの拡張</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3-B: 工具の操作 -->
+        <div class="impl-card">
+          <div class="impl-card-top">
+            <div class="impl-num lv3">3-B</div>
+            <div>
+              <div class="impl-card-title">工具を使った作業</div>
+              <div class="impl-card-sub">ドライバー・レンチを把持し、適切な力・方向で対象に作用させる</div>
+            </div>
+          </div>
+          <div class="impl-card-body">
+            <figure class="impl-figure">
+              <img src="https://rerise.shop/wp-content/uploads/2022/11/24491314_s.jpg" alt="ドライバーを写した参考画像" loading="lazy" />
+              <figcaption>
+              <span>参考画像: 工具把持と締結作業のイメージ</span>
+              <a href="https://rerise.shop/wp-content/uploads/2022/11/24491314_s.jpg" target="_blank" rel="noreferrer">Image source</a>
+              </figcaption>
+            </figure>
+            <div class="impl-block">
+              <div class="impl-block-label">シナリオ</div>
+              <p class="impl-scenario">
+                作業台に置かれたドライバーを把持し、
+                「このネジを締めて」と指示されたネジ頭に位置合わせし、
+                <strong>垂直に押し付けながら回転動作</strong>でネジを締める。
+                ネジ頭の十字溝にビットが正確に嵌合しないと空転するため、
+                <strong>視覚 + 接触 + トルクの三重フィードバック</strong>が必要。
+              </p>
+              <div class="mini-flow">
+                <span class="mini-step">🗣️「このネジを締めて」</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🦾 工具を把持</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">👁️ ネジ頭 + 溝方向を認識</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">📐 嵌合アプローチ IK</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">🔄 押付け + 回転 + ずれ補正ループ</span>
+                <span class="mini-arrow">›</span>
+                <span class="mini-step">✅ トルク上昇で締め完了</span>
+              </div>
+            </div>
+            <div class="impl-block">
+              <div class="impl-block-label">技術的なポイント</div>
+              <div class="impl-challenges">
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--purple)">▸</span>
+                  <span><strong>工具把持：</strong>グリップ位置・角度をカメラで認識し、滑らずに保持できる把持計画を生成。作業中の工具ずれを電流で検知</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--purple)">▸</span>
+                  <span><strong>溝嵌合：</strong>ドライバー先端をネジ溝に合わせるため、VLM で溝方向を認識し初期位置合わせ。接触後は微振動 + 押付けで溝を探索</span>
+                </div>
+                <div class="impl-challenge">
+                  <span class="impl-challenge-dot" style="color:var(--purple)">▸</span>
+                  <span><strong>締め完了判定：</strong>関節トルクの急上昇でネジ着底を判定し、過締めを防ぐ（力制御モード）</span>
+                </div>
+              </div>
+            </div>
+            <div class="impl-block">
+              <div class="impl-block-label">対象工具・作業例</div>
+              <div class="impl-tags">
+                <span class="impl-tag">プラスドライバーでネジ締め</span>
+                <span class="impl-tag">レンチでナット回転</span>
+                <span class="impl-tag">ハサミで紙カット</span>
+                <span class="impl-tag">スタンプ押印</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 締め文 -->
+  <div style="background:linear-gradient(135deg,var(--purple-l),var(--accent-l));border:1px solid var(--purple-m);border-radius:16px;padding:28px 32px;text-align:center;">
+    <div style="font-size:13px;color:var(--purple);font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">このカテゴリで示すこと</div>
+    <p style="font-size:15px;color:var(--text);line-height:1.9;max-width:640px;margin:0 auto;">
+      「アームが動くこと」ではなく、<br>
+      <strong>人の指示を理解し、環境を認識し、必要な手順を構成し、<br>
+      不確実性の中でも物理作業をやり遂げる能力</strong>
+    </p>
+  </div>
+
+</main>
+
+<footer>
+  <a href="../plan-fy26.html">← メインページへ戻る</a> &nbsp;|&nbsp;
+  <a href="../demo.html">デモ詳細</a> &nbsp;|&nbsp;
+  FY2026 Robot Harness System &nbsp;|&nbsp; 最終更新: 2026-04-16
+</footer>
+
+</body>
+</html>

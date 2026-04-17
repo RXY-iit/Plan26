@@ -1,0 +1,34 @@
+{
+  "/cmd_vel_to_motor_node": {
+    "qos_overrides./parameter_events.publisher.depth": "1000",
+    "qos_overrides./parameter_events.publisher.durability": "volatile",
+    "qos_overrides./parameter_events.publisher.history": "keep_last",
+    "qos_overrides./parameter_events.publisher.reliability": "reliable",
+    "use_sim_time": "False"
+  },
+  "/read_write_node": {
+    "qos_overrides./parameter_events.publisher.depth": "1000",
+    "qos_overrides./parameter_events.publisher.durability": "volatile",
+    "qos_overrides./parameter_events.publisher.history": "keep_last",
+    "qos_overrides./parameter_events.publisher.reliability": "reliable",
+    "use_sim_time": "False"
+  },
+  "/robot_odom_node": {
+    "qos_overrides./parameter_events.publisher.depth": "1000",
+    "qos_overrides./parameter_events.publisher.durability": "volatile",
+    "qos_overrides./parameter_events.publisher.history": "keep_last",
+    "qos_overrides./parameter_events.publisher.reliability": "reliable",
+    "qos_overrides./tf.publisher.depth": "100",
+    "qos_overrides./tf.publisher.durability": "volatile",
+    "qos_overrides./tf.publisher.history": "keep_last",
+    "qos_overrides./tf.publisher.reliability": "reliable",
+    "use_sim_time": "False"
+  },
+  "/steer_motor_node": {
+    "qos_overrides./parameter_events.publisher.depth": "1000",
+    "qos_overrides./parameter_events.publisher.durability": "volatile",
+    "qos_overrides./parameter_events.publisher.history": "keep_last",
+    "qos_overrides./parameter_events.publisher.reliability": "reliable",
+    "use_sim_time": "False"
+  }
+}
