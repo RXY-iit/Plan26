@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ROS2 Snapshot — 20260407_143156</title>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #22263a;
+    --border: #2e3250; --text: #e2e8f0; --muted: #8892b0;
+    --node: #63b3ed; --topic: #68d391; --svc: #f6ad55; --act: #b794f4;
+    --accent: #4a9eff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; }
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px;
+            display: flex; align-items: center; justify-content: space-between; }
+  header h1 { font-size: 1.2rem; color: var(--accent); }
+  header .meta { color: var(--muted); font-size: 12px; }
+  .stats { display: flex; gap: 12px; padding: 16px 24px; flex-wrap: wrap; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+                padding: 12px 20px; min-width: 120px; text-align: center; }
+  .stat-num { font-size: 2rem; font-weight: 700; color: var(--accent); }
+  .stat-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+  .tabs { display: flex; gap: 4px; padding: 0 24px; border-bottom: 1px solid var(--border); background: var(--surface); }
+  .tab { padding: 10px 18px; cursor: pointer; border-bottom: 3px solid transparent;
+          color: var(--muted); transition: all .2s; user-select: none; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-content { display: none; padding: 16px 24px; }
+  .tab-content.active { display: block; }
+  .search-bar { width: 100%; padding: 8px 12px; background: var(--surface2); border: 1px solid var(--border);
+                 border-radius: 6px; color: var(--text); margin-bottom: 12px; font-size: 13px; }
+  .search-bar:focus { outline: none; border-color: var(--accent); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; overflow: hidden; }
+  .card-header { display: flex; align-items: center; gap: 8px; padding: 10px 14px; cursor: pointer; }
+  .card-header:hover { background: var(--surface2); }
+  .card-body { padding: 12px 16px; background: var(--surface2); border-top: 1px solid var(--border); }
+  .card-body.collapsed { display: none; }
+  .chevron { margin-left: auto; font-size: 10px; color: var(--muted); transition: transform .2s; }
+  .chevron.open { transform: rotate(90deg); }
+  .badge { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; letter-spacing: .5px; flex-shrink: 0; }
+  .node-badge  { background: #1a3a5c; color: var(--node); }
+  .topic-badge { background: #1a3d2a; color: var(--topic); }
+  .svc-badge   { background: #3d2e1a; color: var(--svc); }
+  .act-badge   { background: #2e1a3d; color: var(--act); }
+  .type { color: var(--muted); font-size: 12px; }
+  .ml  { margin-left: auto; margin-right: 24px; }
+  ul   { list-style: none; padding-left: 8px; }
+  li   { padding: 3px 0; }
+  li code { color: var(--node); }
+  li .type { margin-left: 8px; }
+  li.empty { color: var(--muted); font-style: italic; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  h4   { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .ptable { width: 100%; border-collapse: collapse; }
+  .ptable th, .ptable td { padding: 6px 10px; border: 1px solid var(--border); text-align: left; }
+  .ptable th { background: var(--bg); color: var(--muted); font-size: 11px; text-transform: uppercase; }
+  .ptable td code { color: var(--topic); }
+  td.empty { color: var(--muted); font-style: italic; text-align: center; }
+  .tf-pre { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 14px;
+             font-size: 12px; overflow-x: auto; white-space: pre; color: var(--muted); max-height: 70vh; overflow-y: auto; }
+  #graph-container { width: 100%; height: 600px; background: var(--surface2); border: 1px solid var(--border);
+                      border-radius: 8px; position: relative; }
+  .graph-legend { display: flex; gap: 16px; margin-bottom: 10px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+  @media (max-width: 700px) { .grid2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ROS2 System Snapshot</h1>
+  <div class="meta">ROS_DISTRO: humble &nbsp;|&nbsp; 20260407_143156</div>
+</header>
+
+<div class="stats"><div class="stat-card"><div class="stat-num">15</div><div class="stat-label">Nodes</div></div><div class="stat-card"><div class="stat-num">17</div><div class="stat-label">Topics</div></div><div class="stat-card"><div class="stat-num">85</div><div class="stat-label">Services</div></div><div class="stat-card"><div class="stat-num">0</div><div class="stat-label">Actions</div></div><div class="stat-card"><div class="stat-num">11</div><div class="stat-label">Param nodes</div></div></div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('nodes')">Nodes</div>
+  <div class="tab" onclick="showTab('topics')">Topics</div>
+  <div class="tab" onclick="showTab('services')">Services</div>
+  <div class="tab" onclick="showTab('actions')">Actions</div>
+  <div class="tab" onclick="showTab('params')">Parameters</div>
+  <div class="tab" onclick="showTab('tf')">TF Tree</div>
+  <div class="tab" onclick="showTab('graph')">Graph</div>
+  <div class="tab" onclick="showTab('joyconjp')">JoyCon JP</div>
+</div>
+
+<!-- NODES -->
+<div id="tab-nodes" class="tab-content active">
+  <input class="search-bar" type="text" placeholder="Filter nodes..." oninput="filter(this,'tab-nodes')">
+  
+        <div class="card" data-search="/cmd_vel_to_motor_node">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/cmd_vel_to_motor_node</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <div class="grid2">
+              <div><h4>Publishers (4)</h4><ul><li><code>/drive_vel</code> <span class="type">my_messages/msg/DriveMotor</span></li><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li><li><code>/rosout</code> <span class="type">rcl_interfaces/msg/Log</span></li><li><code>/steer_angle</code> <span class="type">my_messages/msg/SteerMotor</span></li></ul></div>
+              <div><h4>Subscribers (2)</h4><ul><li><code>/cmd_vel</code> <span class="type">geometry_msgs/msg/Twist</span></li><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li></ul></div>
+              <div><h4>Service Servers (6)</h4><ul><li><code>/cmd_vel_to_motor_node/describe_parameters</code> <span class="type">rcl_interfaces/srv/DescribeParameters</span></li><li><code>/cmd_vel_to_motor_node/get_parameter_types</code> <span class="type">rcl_interfaces/srv/GetParameterTypes</span></li><li><code>/cmd_vel_to_motor_node/get_parameters</code> <span class="type">rcl_interfaces/srv/GetParameters</span></li><li><code>/cmd_vel_to_motor_node/list_parameters</code> <span class="type">rcl_interfaces/srv/ListParameters</span></li><li><code>/cmd_vel_to_motor_node/set_parameters</code> <span class="type">rcl_interfaces/srv/SetParameters</span></li><li><code>/cmd_vel_to_motor_node/set_parameters_atomically</code> <span class="type">rcl_interfaces/srv/SetParametersAtomically</span></li></ul></div>
+              <div><h4>Action Servers (0)</h4><ul><li class="empty">none</li></ul></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" data-search="/cmd_vel_to_motor_node">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/cmd_vel_to_motor_node</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <div class="grid2">
+              <div><h4>Publishers (4)</h4><ul><li><code>/drive_vel</code> <span class="type">my_messages/msg/DriveMotor</span></li><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li><li><code>/rosout</code> <span class="type">rcl_interfaces/msg/Log</span></li><li><code>/steer_angle</code> <span class="type">my_messages/msg/SteerMotor</span></li></ul></div>
+              <div><h4>Subscribers (2)</h4><ul><li><code>/cmd_vel</code> <span class="type">geometry_msgs/msg/Twist</span></li><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li></ul></div>
+              <div><h4>Service Servers (6)</h4><ul><li><code>/cmd_vel_to_motor_node/describe_parameters</code> <span class="type">rcl_interfaces/srv/DescribeParameters</span></li><li><code>/cmd_vel_to_motor_node/get_parameter_types</code> <span class="type">rcl_interfaces/srv/GetParameterTypes</span></li><li><code>/cmd_vel_to_motor_node/get_parameters</code> <span class="type">rcl_interfaces/srv/GetParameters</span></li><li><code>/cmd_vel_to_motor_node/list_parameters</code> <span class="type">rcl_interfaces/srv/ListParameters</span></li><li><code>/cmd_vel_to_motor_node/set_parameters</code> <span class="type">rcl_interfaces/srv/SetParameters</span></li><li><code>/cmd_vel_to_motor_node/set_parameters_atomically</code> <span class="type">rcl_interfaces/srv/SetParametersAtomically</span></li></ul></div>
+              <div><h4>Action Servers (0)</h4><ul><li class="empty">none</li></ul></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" data-search="/joy_node">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/joy_node</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <div class="grid2">
+              <div><h4>Publishers (3)</h4><ul><li><code>/joy</code> <span class="type">sensor_msgs/msg/Joy</span></li><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li><li><code>/rosout</code> <span class="type">rcl_interfaces/msg/Log</span></li></ul></div>
+              <div><h4>Subscribers (2)</h4><ul><li><code>/joy/set_feedback</code> <span class="type">sensor_msgs/msg/JoyFeedback</span></li><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li></ul></div>
+              <div><h4>Service Servers (6)</h4><ul><li><code>/joy_node/describe_parameters</code> <span class="type">rcl_interfaces/srv/DescribeParameters</span></li><li><code>/joy_node/get_parameter_types</code> <span class="type">rcl_interfaces/srv/GetParameterTypes</span></li><li><code>/joy_node/get_parameters</code> <span class="type">rcl_interfaces/srv/GetParameters</span></li><li><code>/joy_node/list_parameters</code> <span class="type">rcl_interfaces/srv/ListParameters</span></li><li><code>/joy_node/set_parameters</code> <span class="type">rcl_interfaces/srv/SetParameters</span></li><li><code>/joy_node/set_parameters_atomically</code> <span class="type">rcl_interfaces/srv/SetParametersAtomically</span></li></ul></div>
+              <div><h4>Action Servers (0)</h4><ul><li class="empty">none</li></ul></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" data-search="/my_nodepub">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/my_nodepub</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <div class="grid2">
+              <div><h4>Publishers (2)</h4><ul><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li><li><code>/rosout</code> <span class="type">rcl_interfaces/msg/Log</span></li></ul></div>
+              <div><h4>Subscribers (0)</h4><ul><li class="empty">none</li></ul></div>
+              <div><h4>Service Servers (6)</h4><ul><li><code>/my_nodepub/describe_parameters</code> <span class="type">rcl_interfaces/srv/DescribeParameters</span></li><li><code>/my_nodepub/get_parameter_types</code> <span class="type">rcl_interfaces/srv/GetParameterTypes</span></li><li><code>/my_nodepub/get_parameters</code> <span class="type">rcl_interfaces/srv/GetParameters</span></li><li><code>/my_nodepub/list_parameters</code> <span class="type">rcl_interfaces/srv/ListParameters</span></li><li><code>/my_nodepub/set_parameters</code> <span class="type">rcl_interfaces/srv/SetParameters</span></li><li><code>/my_nodepub/set_parameters_atomically</code> <span class="type">rcl_interfaces/srv/SetParametersAtomically</span></li></ul></div>
+              <div><h4>Action Servers (0)</h4><ul><li class="empty">none</li></ul></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" data-search="/my_nodesub">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/my_nodesub</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <div class="grid2">
+              <div><h4>Publishers (2)</h4><ul><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li><li><code>/rosout</code> <span class="type">rcl_interfaces/msg/Log</span></li></ul></div>
+              <div><h4>Subscribers (0)</h4><ul><li class="empty">none</li></ul></div>
+              <div><h4>Service Servers (6)</h4><ul><li><code>/my_nodesub/describe_parameters</code> <span class="type">rcl_interfaces/srv/DescribeParameters</span></li><li><code>/my_nodesub/get_parameter_types</code> <span class="type">rcl_interfaces/srv/GetParameterTypes</span></li><li><code>/my_nodesub/get_parameters</code> <span class="type">rcl_interfaces/srv/GetParameters</span></li><li><code>/my_nodesub/list_parameters</code> <span class="type">rcl_interfaces/srv/ListParameters</span></li><li><code>/my_nodesub/set_parameters</code> <span class="type">rcl_interfaces/srv/SetParameters</span></li><li><code>/my_nodesub/set_parameters_atomically</code> <span class="type">rcl_interfaces/srv/SetParametersAtomically</span></li></ul></div>
+              <div><h4>Action Servers (0)</h4><ul><li class="empty">none</li></ul></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" data-search="/my_nodesub_2">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/my_nodesub_2</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <div class="grid2">
+              <div><h4>Publishers (2)</h4><ul><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li><li><code>/rosout</code> <span class="type">rcl_interfaces/msg/Log</span></li></ul></div>
+              <div><h4>Subscribers (0)</h4><ul><li class="empty">none</li></ul></div>
+              <div><h4>Service Servers (6)</h4><ul><li><code>/my_nodesub_2/describe_parameters</code> <span class="type">rcl_interfaces/srv/DescribeParameters</span></li><li><code>/my_nodesub_2/get_parameter_types</code> <span class="type">rcl_interfaces/srv/GetParameterTypes</span></li><li><code>/my_nodesub_2/get_parameters</code> <span class="type">rcl_interfaces/srv/GetParameters</span></li><li><code>/my_nodesub_2/list_parameters</code> <span class="type">rcl_interfaces/srv/ListParameters</span></li><li><code>/my_nodesub_2/set_parameters</code> <span class="type">rcl_interfaces/srv/SetParameters</span></li><li><code>/my_nodesub_2/set_parameters_atomically</code> <span class="type">rcl_interfaces/srv/SetParametersAtomically</span></li></ul></div>
+              <div><h4>Action Servers (0)</h4><ul><li class="empty">none</li></ul></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" data-search="/my_pub">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/my_pub</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <div class="grid2">
+              <div><h4>Publishers (3)</h4><ul><li><code>/om_query0</code> <span class="type">om_msgs/msg/Query</span></li><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li><li><code>/rosout</code> <span class="type">rcl_interfaces/msg/Log</span></li></ul></div>
+              <div><h4>Subscribers (0)</h4><ul><li class="empty">none</li></ul></div>
+              <div><h4>Service Servers (6)</h4><ul><li><code>/my_pub/describe_parameters</code> <span class="type">rcl_interfaces/srv/DescribeParameters</span></li><li><code>/my_pub/get_parameter_types</code> <span class="type">rcl_interfaces/srv/GetParameterTypes</span></li><li><code>/my_pub/get_parameters</code> <span class="type">rcl_interfaces/srv/GetParameters</span></li><li><code>/my_pub/list_parameters</code> <span class="type">rcl_interfaces/srv/ListParameters</span></li><li><code>/my_pub/set_parameters</code> <span class="type">rcl_interfaces/srv/SetParameters</span></li><li><code>/my_pub/set_parameters_atomically</code> <span class="type">rcl_interfaces/srv/SetParametersAtomically</span></li></ul></div>
+              <div><h4>Action Servers (0)</h4><ul><li class="empty">none</li></ul></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" data-search="/my_pub_polling">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/my_pub_polling</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <div class="grid2">
+              <div><h4>Publishers (3)</h4><ul><li><code>/om_query0</code> <span class="type">om_msgs/msg/Query</span></li><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li><li><code>/rosout</code> <span class="type">rcl_interfaces/msg/Log</span></li></ul></div>
+              <div><h4>Subscribers (0)</h4><ul><li class="empty">none</li></ul></div>
+              <div><h4>Service Servers (6)</h4><ul><li><code>/my_pub_polling/describe_parameters</code> <span class="type">rcl_interfaces/srv/DescribeParameters</span></li><li><code>/my_pub_polling/get_parameter_types</code> <span class="type">rcl_interfaces/srv/GetParameterTypes</span></li><li><code>/my_pub_polling/get_parameters</code> <span class="type">rcl_interfaces/srv/GetParameters</span></li><li><code>/my_pub_polling/list_parameters</code> <span class="type">rcl_interfaces/srv/ListParameters</span></li><li><code>/my_pub_polling/set_parameters</code> <span class="type">rcl_interfaces/srv/SetParameters</span></li><li><code>/my_pub_polling/set_parameters_atomically</code> <span class="type">rcl_interfaces/srv/SetParametersAtomically</span></li></ul></div>
+              <div><h4>Action Servers (0)</h4><ul><li class="empty">none</li></ul></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" data-search="/my_sub">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/my_sub</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <div class="grid2">
+              <div><h4>Publishers (5)</h4><ul><li><code>/drive_odom</code> <span class="type">my_messages/msg/DriveMotor</span></li><li><code>/localization/twist_estimator/twist_with_covariance</code> <span class="type">geometry_msgs/msg/TwistWithCovarianceStamped</span></li><li><code>/odom</code> <span class="type">nav_msgs/msg/Odometry</span></li><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li><li><code>/rosout</code> <span class="type">rcl_interfaces/msg/Log</span></li></ul></div>
+              <div><h4>Subscribers (2)</h4><ul><li><code>/om_response0</code> <span class="type">om_msgs/msg/Response</span></li><li><code>/om_state0</code> <span class="type">om_msgs/msg/State</span></li></ul></div>
+              <div><h4>Service Servers (6)</h4><ul><li><code>/my_sub/describe_parameters</code> <span class="type">rcl_interfaces/srv/DescribeParameters</span></li><li><code>/my_sub/get_parameter_types</code> <span class="type">rcl_interfaces/srv/GetParameterTypes</span></li><li><code>/my_sub/get_parameters</code> <span class="type">rcl_interfaces/srv/GetParameters</span></li><li><code>/my_sub/list_parameters</code> <span class="type">rcl_interfaces/srv/ListParameters</span></li><li><code>/my_sub/set_parameters</code> <span class="type">rcl_interfaces/srv/SetParameters</span></li><li><code>/my_sub/set_parameters_atomically</code> <span class="type">rcl_interfaces/srv/SetParametersAtomically</span></li></ul></div>
+              <div><h4>Action Servers (0)</h4><ul><li class="empty">none</li></ul></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" data-search="/my_sub_2">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/my_sub_2</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <div class="grid2">
+              <div><h4>Publishers (2)</h4><ul><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li><li><code>/rosout</code> <span class="type">rcl_interfaces/msg/Log</span></li></ul></div>
+              <div><h4>Subscribers (1)</h4><ul><li><code>/drive_vel</code> <span class="type">my_messages/msg/DriveMotor</span></li></ul></div>
+              <div><h4>Service Servers (6)</h4><ul><li><code>/my_sub_2/describe_parameters</code> <span class="type">rcl_interfaces/srv/DescribeParameters</span></li><li><code>/my_sub_2/get_parameter_types</code> <span class="type">rcl_interfaces/srv/GetParameterTypes</span></li><li><code>/my_sub_2/get_parameters</code> <span class="type">rcl_interfaces/srv/GetParameters</span></li><li><code>/my_sub_2/list_parameters</code> <span class="type">rcl_interfaces/srv/ListParameters</span></li><li><code>/my_sub_2/set_parameters</code> <span class="type">rcl_interfaces/srv/SetParameters</span></li><li><code>/my_sub_2/set_parameters_atomically</code> <span class="type">rcl_interfaces/srv/SetParametersAtomically</span></li></ul></div>
+              <div><h4>Action Servers (0)</h4><ul><li class="empty">none</li></ul></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" data-search="/om_node">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/om_node</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <div class="grid2">
+              <div><h4>Publishers (4)</h4><ul><li><code>/om_response0</code> <span class="type">om_msgs/msg/Response</span></li><li><code>/om_state0</code> <span class="type">om_msgs/msg/State</span></li><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li><li><code>/rosout</code> <span class="type">rcl_interfaces/msg/Log</span></li></ul></div>
+              <div><h4>Subscribers (2)</h4><ul><li><code>/om_query0</code> <span class="type">om_msgs/msg/Query</span></li><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li></ul></div>
+              <div><h4>Service Servers (6)</h4><ul><li><code>/om_node/describe_parameters</code> <span class="type">rcl_interfaces/srv/DescribeParameters</span></li><li><code>/om_node/get_parameter_types</code> <span class="type">rcl_interfaces/srv/GetParameterTypes</span></li><li><code>/om_node/get_parameters</code> <span class="type">rcl_interfaces/srv/GetParameters</span></li><li><code>/om_node/list_parameters</code> <span class="type">rcl_interfaces/srv/ListParameters</span></li><li><code>/om_node/set_parameters</code> <span class="type">rcl_interfaces/srv/SetParameters</span></li><li><code>/om_node/set_parameters_atomically</code> <span class="type">rcl_interfaces/srv/SetParametersAtomically</span></li></ul></div>
+              <div><h4>Action Servers (0)</h4><ul><li class="empty">none</li></ul></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" data-search="/read_write_node">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/read_write_node</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <div class="grid2">
+              <div><h4>Publishers (2)</h4><ul><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li><li><code>/rosout</code> <span class="type">rcl_interfaces/msg/Log</span></li></ul></div>
+              <div><h4>Subscribers (2)</h4><ul><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li><li><code>/set_position</code> <span class="type">dynamixel_sdk_custom_interfaces/msg/SetPosition</span></li></ul></div>
+              <div><h4>Service Servers (7)</h4><ul><li><code>/get_position</code> <span class="type">dynamixel_sdk_custom_interfaces/srv/GetPosition</span></li><li><code>/read_write_node/describe_parameters</code> <span class="type">rcl_interfaces/srv/DescribeParameters</span></li><li><code>/read_write_node/get_parameter_types</code> <span class="type">rcl_interfaces/srv/GetParameterTypes</span></li><li><code>/read_write_node/get_parameters</code> <span class="type">rcl_interfaces/srv/GetParameters</span></li><li><code>/read_write_node/list_parameters</code> <span class="type">rcl_interfaces/srv/ListParameters</span></li><li><code>/read_write_node/set_parameters</code> <span class="type">rcl_interfaces/srv/SetParameters</span></li><li><code>/read_write_node/set_parameters_atomically</code> <span class="type">rcl_interfaces/srv/SetParametersAtomically</span></li></ul></div>
+              <div><h4>Action Servers (0)</h4><ul><li class="empty">none</li></ul></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" data-search="/robot_odom_node">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/robot_odom_node</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <div class="grid2">
+              <div><h4>Publishers (4)</h4><ul><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li><li><code>/rosout</code> <span class="type">rcl_interfaces/msg/Log</span></li><li><code>/tf</code> <span class="type">tf2_msgs/msg/TFMessage</span></li><li><code>/wheel_odom</code> <span class="type">nav_msgs/msg/Odometry</span></li></ul></div>
+              <div><h4>Subscribers (3)</h4><ul><li><code>/drive_odom</code> <span class="type">my_messages/msg/DriveMotor</span></li><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li><li><code>/steer_odom</code> <span class="type">my_messages/msg/SteerMotor</span></li></ul></div>
+              <div><h4>Service Servers (6)</h4><ul><li><code>/robot_odom_node/describe_parameters</code> <span class="type">rcl_interfaces/srv/DescribeParameters</span></li><li><code>/robot_odom_node/get_parameter_types</code> <span class="type">rcl_interfaces/srv/GetParameterTypes</span></li><li><code>/robot_odom_node/get_parameters</code> <span class="type">rcl_interfaces/srv/GetParameters</span></li><li><code>/robot_odom_node/list_parameters</code> <span class="type">rcl_interfaces/srv/ListParameters</span></li><li><code>/robot_odom_node/set_parameters</code> <span class="type">rcl_interfaces/srv/SetParameters</span></li><li><code>/robot_odom_node/set_parameters_atomically</code> <span class="type">rcl_interfaces/srv/SetParametersAtomically</span></li></ul></div>
+              <div><h4>Action Servers (0)</h4><ul><li class="empty">none</li></ul></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" data-search="/steer_motor_node">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/steer_motor_node</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <div class="grid2">
+              <div><h4>Publishers (4)</h4><ul><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li><li><code>/rosout</code> <span class="type">rcl_interfaces/msg/Log</span></li><li><code>/set_position</code> <span class="type">dynamixel_sdk_custom_interfaces/msg/SetPosition</span></li><li><code>/steer_odom</code> <span class="type">my_messages/msg/SteerMotor</span></li></ul></div>
+              <div><h4>Subscribers (2)</h4><ul><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li><li><code>/steer_angle</code> <span class="type">my_messages/msg/SteerMotor</span></li></ul></div>
+              <div><h4>Service Servers (6)</h4><ul><li><code>/steer_motor_node/describe_parameters</code> <span class="type">rcl_interfaces/srv/DescribeParameters</span></li><li><code>/steer_motor_node/get_parameter_types</code> <span class="type">rcl_interfaces/srv/GetParameterTypes</span></li><li><code>/steer_motor_node/get_parameters</code> <span class="type">rcl_interfaces/srv/GetParameters</span></li><li><code>/steer_motor_node/list_parameters</code> <span class="type">rcl_interfaces/srv/ListParameters</span></li><li><code>/steer_motor_node/set_parameters</code> <span class="type">rcl_interfaces/srv/SetParameters</span></li><li><code>/steer_motor_node/set_parameters_atomically</code> <span class="type">rcl_interfaces/srv/SetParametersAtomically</span></li></ul></div>
+              <div><h4>Action Servers (0)</h4><ul><li class="empty">none</li></ul></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" data-search="/teleop_twist_joy_node">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/teleop_twist_joy_node</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <div class="grid2">
+              <div><h4>Publishers (3)</h4><ul><li><code>/cmd_vel</code> <span class="type">geometry_msgs/msg/Twist</span></li><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li><li><code>/rosout</code> <span class="type">rcl_interfaces/msg/Log</span></li></ul></div>
+              <div><h4>Subscribers (2)</h4><ul><li><code>/joy</code> <span class="type">sensor_msgs/msg/Joy</span></li><li><code>/parameter_events</code> <span class="type">rcl_interfaces/msg/ParameterEvent</span></li></ul></div>
+              <div><h4>Service Servers (6)</h4><ul><li><code>/teleop_twist_joy_node/describe_parameters</code> <span class="type">rcl_interfaces/srv/DescribeParameters</span></li><li><code>/teleop_twist_joy_node/get_parameter_types</code> <span class="type">rcl_interfaces/srv/GetParameterTypes</span></li><li><code>/teleop_twist_joy_node/get_parameters</code> <span class="type">rcl_interfaces/srv/GetParameters</span></li><li><code>/teleop_twist_joy_node/list_parameters</code> <span class="type">rcl_interfaces/srv/ListParameters</span></li><li><code>/teleop_twist_joy_node/set_parameters</code> <span class="type">rcl_interfaces/srv/SetParameters</span></li><li><code>/teleop_twist_joy_node/set_parameters_atomically</code> <span class="type">rcl_interfaces/srv/SetParametersAtomically</span></li></ul></div>
+              <div><h4>Action Servers (0)</h4><ul><li class="empty">none</li></ul></div>
+            </div>
+          </div>
+        </div>
+</div>
+
+<!-- TOPICS -->
+<div id="tab-topics" class="tab-content">
+  <input class="search-bar" type="text" placeholder="Filter topics / types..." oninput="filter(this,'tab-topics')">
+  
+        <div class="card" data-search="/cmd_vel geometry_msgs/msg/twist">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge topic-badge">TOPIC</span>
+            <strong>/cmd_vel</strong>
+            <span class="type ml">geometry_msgs/msg/Twist</span>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <p><b>Publishers:</b> teleop_twist_joy_node</p>
+            <p><b>Subscribers:</b> cmd_vel_to_motor_node, cmd_vel_to_motor_node</p>
+          </div>
+        </div>
+        <div class="card" data-search="/drive_odom my_messages/msg/drivemotor">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge topic-badge">TOPIC</span>
+            <strong>/drive_odom</strong>
+            <span class="type ml">my_messages/msg/DriveMotor</span>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <p><b>Publishers:</b> my_sub</p>
+            <p><b>Subscribers:</b> robot_odom_node</p>
+          </div>
+        </div>
+        <div class="card" data-search="/drive_vel my_messages/msg/drivemotor">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge topic-badge">TOPIC</span>
+            <strong>/drive_vel</strong>
+            <span class="type ml">my_messages/msg/DriveMotor</span>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <p><b>Publishers:</b> cmd_vel_to_motor_node, cmd_vel_to_motor_node</p>
+            <p><b>Subscribers:</b> my_sub_2</p>
+          </div>
+        </div>
+        <div class="card" data-search="/joy sensor_msgs/msg/joy">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge topic-badge">TOPIC</span>
+            <strong>/joy</strong>
+            <span class="type ml">sensor_msgs/msg/Joy</span>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <p><b>Publishers:</b> joy_node</p>
+            <p><b>Subscribers:</b> teleop_twist_joy_node</p>
+          </div>
+        </div>
+        <div class="card" data-search="/joy/set_feedback sensor_msgs/msg/joyfeedback">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge topic-badge">TOPIC</span>
+            <strong>/joy/set_feedback</strong>
+            <span class="type ml">sensor_msgs/msg/JoyFeedback</span>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <p><b>Publishers:</b> <em>none</em></p>
+            <p><b>Subscribers:</b> joy_node</p>
+          </div>
+        </div>
+        <div class="card" data-search="/localization/twist_estimator/twist_with_covariance geometry_msgs/msg/twistwithcovariancestamped">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge topic-badge">TOPIC</span>
+            <strong>/localization/twist_estimator/twist_with_covariance</strong>
+            <span class="type ml">geometry_msgs/msg/TwistWithCovarianceStamped</span>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <p><b>Publishers:</b> my_sub</p>
+            <p><b>Subscribers:</b> <em>none</em></p>
+          </div>
+        </div>
+        <div class="card" data-search="/odom nav_msgs/msg/odometry">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge topic-badge">TOPIC</span>
+            <strong>/odom</strong>
+            <span class="type ml">nav_msgs/msg/Odometry</span>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <p><b>Publishers:</b> my_sub</p>
+            <p><b>Subscribers:</b> <em>none</em></p>
+          </div>
+        </div>
+        <div class="card" data-search="/om_query0 om_msgs/msg/query">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge topic-badge">TOPIC</span>
+            <strong>/om_query0</strong>
+            <span class="type ml">om_msgs/msg/Query</span>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <p><b>Publishers:</b> my_pub, my_pub_polling</p>
+            <p><b>Subscribers:</b> om_node</p>
+          </div>
+        </div>
+        <div class="card" data-search="/om_response0 om_msgs/msg/response">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge topic-badge">TOPIC</span>
+            <strong>/om_response0</strong>
+            <span class="type ml">om_msgs/msg/Response</span>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <p><b>Publishers:</b> om_node</p>
+            <p><b>Subscribers:</b> my_sub</p>
+          </div>
+        </div>
+        <div class="card" data-search="/om_state0 om_msgs/msg/state">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge topic-badge">TOPIC</span>
+            <strong>/om_state0</strong>
+            <span class="type ml">om_msgs/msg/State</span>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <p><b>Publishers:</b> om_node</p>
+            <p><b>Subscribers:</b> my_sub</p>
+          </div>
+        </div>
+        <div class="card" data-search="/parameter_events rcl_interfaces/msg/parameterevent">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge topic-badge">TOPIC</span>
+            <strong>/parameter_events</strong>
+            <span class="type ml">rcl_interfaces/msg/ParameterEvent</span>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <p><b>Publishers:</b> joy_node, teleop_twist_joy_node, om_node, my_pub, my_nodepub, my_pub_polling, my_sub_2, my_nodesub_2, my_sub, my_nodesub, read_write_node, steer_motor_node, cmd_vel_to_motor_node, cmd_vel_to_motor_node, robot_odom_node, _ros2cli_daemon_0_27746d52429247b385adbc52a32a56e2</p>
+            <p><b>Subscribers:</b> joy_node, teleop_twist_joy_node, om_node, read_write_node, steer_motor_node, cmd_vel_to_motor_node, cmd_vel_to_motor_node, robot_odom_node</p>
+          </div>
+        </div>
+        <div class="card" data-search="/rosout rcl_interfaces/msg/log">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge topic-badge">TOPIC</span>
+            <strong>/rosout</strong>
+            <span class="type ml">rcl_interfaces/msg/Log</span>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <p><b>Publishers:</b> joy_node, teleop_twist_joy_node, om_node, my_pub, my_nodepub, my_pub_polling, my_sub_2, my_nodesub_2, my_sub, my_nodesub, read_write_node, steer_motor_node, cmd_vel_to_motor_node, robot_odom_node, _ros2cli_daemon_0_27746d52429247b385adbc52a32a56e2</p>
+            <p><b>Subscribers:</b> <em>none</em></p>
+          </div>
+        </div>
+        <div class="card" data-search="/set_position dynamixel_sdk_custom_interfaces/msg/setposition">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge topic-badge">TOPIC</span>
+            <strong>/set_position</strong>
+            <span class="type ml">dynamixel_sdk_custom_interfaces/msg/SetPosition</span>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <p><b>Publishers:</b> steer_motor_node</p>
+            <p><b>Subscribers:</b> read_write_node</p>
+          </div>
+        </div>
+        <div class="card" data-search="/steer_angle my_messages/msg/steermotor">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge topic-badge">TOPIC</span>
+            <strong>/steer_angle</strong>
+            <span class="type ml">my_messages/msg/SteerMotor</span>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <p><b>Publishers:</b> cmd_vel_to_motor_node, cmd_vel_to_motor_node</p>
+            <p><b>Subscribers:</b> steer_motor_node</p>
+          </div>
+        </div>
+        <div class="card" data-search="/steer_odom my_messages/msg/steermotor">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge topic-badge">TOPIC</span>
+            <strong>/steer_odom</strong>
+            <span class="type ml">my_messages/msg/SteerMotor</span>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <p><b>Publishers:</b> steer_motor_node</p>
+            <p><b>Subscribers:</b> robot_odom_node</p>
+          </div>
+        </div>
+        <div class="card" data-search="/tf tf2_msgs/msg/tfmessage">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge topic-badge">TOPIC</span>
+            <strong>/tf</strong>
+            <span class="type ml">tf2_msgs/msg/TFMessage</span>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <p><b>Publishers:</b> robot_odom_node</p>
+            <p><b>Subscribers:</b> <em>none</em></p>
+          </div>
+        </div>
+        <div class="card" data-search="/wheel_odom nav_msgs/msg/odometry">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge topic-badge">TOPIC</span>
+            <strong>/wheel_odom</strong>
+            <span class="type ml">nav_msgs/msg/Odometry</span>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <p><b>Publishers:</b> robot_odom_node</p>
+            <p><b>Subscribers:</b> <em>none</em></p>
+          </div>
+        </div>
+</div>
+
+<!-- SERVICES -->
+<div id="tab-services" class="tab-content">
+  <input class="search-bar" type="text" placeholder="Filter services..." oninput="filter(this,'tab-services')">
+  
+        <div class="card" data-search="/cmd_vel_to_motor_node/describe_parameters rcl_interfaces/srv/describeparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/cmd_vel_to_motor_node/describe_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/DescribeParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/cmd_vel_to_motor_node/get_parameter_types rcl_interfaces/srv/getparametertypes">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/cmd_vel_to_motor_node/get_parameter_types</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameterTypes</span>
+          </div>
+        </div>
+        <div class="card" data-search="/cmd_vel_to_motor_node/get_parameters rcl_interfaces/srv/getparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/cmd_vel_to_motor_node/get_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/cmd_vel_to_motor_node/list_parameters rcl_interfaces/srv/listparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/cmd_vel_to_motor_node/list_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/ListParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/cmd_vel_to_motor_node/set_parameters rcl_interfaces/srv/setparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/cmd_vel_to_motor_node/set_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/cmd_vel_to_motor_node/set_parameters_atomically rcl_interfaces/srv/setparametersatomically">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/cmd_vel_to_motor_node/set_parameters_atomically</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParametersAtomically</span>
+          </div>
+        </div>
+        <div class="card" data-search="/get_position dynamixel_sdk_custom_interfaces/srv/getposition">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/get_position</strong>
+            <span class="type ml">dynamixel_sdk_custom_interfaces/srv/GetPosition</span>
+          </div>
+        </div>
+        <div class="card" data-search="/joy_node/describe_parameters rcl_interfaces/srv/describeparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/joy_node/describe_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/DescribeParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/joy_node/get_parameter_types rcl_interfaces/srv/getparametertypes">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/joy_node/get_parameter_types</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameterTypes</span>
+          </div>
+        </div>
+        <div class="card" data-search="/joy_node/get_parameters rcl_interfaces/srv/getparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/joy_node/get_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/joy_node/list_parameters rcl_interfaces/srv/listparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/joy_node/list_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/ListParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/joy_node/set_parameters rcl_interfaces/srv/setparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/joy_node/set_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/joy_node/set_parameters_atomically rcl_interfaces/srv/setparametersatomically">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/joy_node/set_parameters_atomically</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParametersAtomically</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_nodepub/describe_parameters rcl_interfaces/srv/describeparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_nodepub/describe_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/DescribeParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_nodepub/get_parameter_types rcl_interfaces/srv/getparametertypes">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_nodepub/get_parameter_types</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameterTypes</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_nodepub/get_parameters rcl_interfaces/srv/getparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_nodepub/get_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_nodepub/list_parameters rcl_interfaces/srv/listparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_nodepub/list_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/ListParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_nodepub/set_parameters rcl_interfaces/srv/setparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_nodepub/set_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_nodepub/set_parameters_atomically rcl_interfaces/srv/setparametersatomically">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_nodepub/set_parameters_atomically</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParametersAtomically</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_nodesub/describe_parameters rcl_interfaces/srv/describeparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_nodesub/describe_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/DescribeParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_nodesub/get_parameter_types rcl_interfaces/srv/getparametertypes">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_nodesub/get_parameter_types</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameterTypes</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_nodesub/get_parameters rcl_interfaces/srv/getparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_nodesub/get_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_nodesub/list_parameters rcl_interfaces/srv/listparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_nodesub/list_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/ListParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_nodesub/set_parameters rcl_interfaces/srv/setparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_nodesub/set_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_nodesub/set_parameters_atomically rcl_interfaces/srv/setparametersatomically">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_nodesub/set_parameters_atomically</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParametersAtomically</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_nodesub_2/describe_parameters rcl_interfaces/srv/describeparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_nodesub_2/describe_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/DescribeParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_nodesub_2/get_parameter_types rcl_interfaces/srv/getparametertypes">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_nodesub_2/get_parameter_types</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameterTypes</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_nodesub_2/get_parameters rcl_interfaces/srv/getparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_nodesub_2/get_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_nodesub_2/list_parameters rcl_interfaces/srv/listparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_nodesub_2/list_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/ListParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_nodesub_2/set_parameters rcl_interfaces/srv/setparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_nodesub_2/set_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_nodesub_2/set_parameters_atomically rcl_interfaces/srv/setparametersatomically">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_nodesub_2/set_parameters_atomically</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParametersAtomically</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_pub/describe_parameters rcl_interfaces/srv/describeparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_pub/describe_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/DescribeParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_pub/get_parameter_types rcl_interfaces/srv/getparametertypes">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_pub/get_parameter_types</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameterTypes</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_pub/get_parameters rcl_interfaces/srv/getparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_pub/get_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_pub/list_parameters rcl_interfaces/srv/listparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_pub/list_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/ListParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_pub/set_parameters rcl_interfaces/srv/setparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_pub/set_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_pub/set_parameters_atomically rcl_interfaces/srv/setparametersatomically">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_pub/set_parameters_atomically</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParametersAtomically</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_pub_polling/describe_parameters rcl_interfaces/srv/describeparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_pub_polling/describe_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/DescribeParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_pub_polling/get_parameter_types rcl_interfaces/srv/getparametertypes">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_pub_polling/get_parameter_types</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameterTypes</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_pub_polling/get_parameters rcl_interfaces/srv/getparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_pub_polling/get_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_pub_polling/list_parameters rcl_interfaces/srv/listparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_pub_polling/list_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/ListParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_pub_polling/set_parameters rcl_interfaces/srv/setparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_pub_polling/set_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_pub_polling/set_parameters_atomically rcl_interfaces/srv/setparametersatomically">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_pub_polling/set_parameters_atomically</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParametersAtomically</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_sub/describe_parameters rcl_interfaces/srv/describeparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_sub/describe_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/DescribeParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_sub/get_parameter_types rcl_interfaces/srv/getparametertypes">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_sub/get_parameter_types</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameterTypes</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_sub/get_parameters rcl_interfaces/srv/getparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_sub/get_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_sub/list_parameters rcl_interfaces/srv/listparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_sub/list_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/ListParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_sub/set_parameters rcl_interfaces/srv/setparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_sub/set_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_sub/set_parameters_atomically rcl_interfaces/srv/setparametersatomically">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_sub/set_parameters_atomically</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParametersAtomically</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_sub_2/describe_parameters rcl_interfaces/srv/describeparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_sub_2/describe_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/DescribeParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_sub_2/get_parameter_types rcl_interfaces/srv/getparametertypes">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_sub_2/get_parameter_types</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameterTypes</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_sub_2/get_parameters rcl_interfaces/srv/getparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_sub_2/get_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_sub_2/list_parameters rcl_interfaces/srv/listparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_sub_2/list_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/ListParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_sub_2/set_parameters rcl_interfaces/srv/setparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_sub_2/set_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/my_sub_2/set_parameters_atomically rcl_interfaces/srv/setparametersatomically">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/my_sub_2/set_parameters_atomically</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParametersAtomically</span>
+          </div>
+        </div>
+        <div class="card" data-search="/om_node/describe_parameters rcl_interfaces/srv/describeparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/om_node/describe_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/DescribeParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/om_node/get_parameter_types rcl_interfaces/srv/getparametertypes">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/om_node/get_parameter_types</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameterTypes</span>
+          </div>
+        </div>
+        <div class="card" data-search="/om_node/get_parameters rcl_interfaces/srv/getparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/om_node/get_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/om_node/list_parameters rcl_interfaces/srv/listparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/om_node/list_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/ListParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/om_node/set_parameters rcl_interfaces/srv/setparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/om_node/set_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/om_node/set_parameters_atomically rcl_interfaces/srv/setparametersatomically">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/om_node/set_parameters_atomically</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParametersAtomically</span>
+          </div>
+        </div>
+        <div class="card" data-search="/read_write_node/describe_parameters rcl_interfaces/srv/describeparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/read_write_node/describe_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/DescribeParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/read_write_node/get_parameter_types rcl_interfaces/srv/getparametertypes">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/read_write_node/get_parameter_types</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameterTypes</span>
+          </div>
+        </div>
+        <div class="card" data-search="/read_write_node/get_parameters rcl_interfaces/srv/getparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/read_write_node/get_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/read_write_node/list_parameters rcl_interfaces/srv/listparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/read_write_node/list_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/ListParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/read_write_node/set_parameters rcl_interfaces/srv/setparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/read_write_node/set_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/read_write_node/set_parameters_atomically rcl_interfaces/srv/setparametersatomically">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/read_write_node/set_parameters_atomically</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParametersAtomically</span>
+          </div>
+        </div>
+        <div class="card" data-search="/robot_odom_node/describe_parameters rcl_interfaces/srv/describeparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/robot_odom_node/describe_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/DescribeParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/robot_odom_node/get_parameter_types rcl_interfaces/srv/getparametertypes">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/robot_odom_node/get_parameter_types</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameterTypes</span>
+          </div>
+        </div>
+        <div class="card" data-search="/robot_odom_node/get_parameters rcl_interfaces/srv/getparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/robot_odom_node/get_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/robot_odom_node/list_parameters rcl_interfaces/srv/listparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/robot_odom_node/list_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/ListParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/robot_odom_node/set_parameters rcl_interfaces/srv/setparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/robot_odom_node/set_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/robot_odom_node/set_parameters_atomically rcl_interfaces/srv/setparametersatomically">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/robot_odom_node/set_parameters_atomically</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParametersAtomically</span>
+          </div>
+        </div>
+        <div class="card" data-search="/steer_motor_node/describe_parameters rcl_interfaces/srv/describeparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/steer_motor_node/describe_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/DescribeParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/steer_motor_node/get_parameter_types rcl_interfaces/srv/getparametertypes">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/steer_motor_node/get_parameter_types</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameterTypes</span>
+          </div>
+        </div>
+        <div class="card" data-search="/steer_motor_node/get_parameters rcl_interfaces/srv/getparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/steer_motor_node/get_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/steer_motor_node/list_parameters rcl_interfaces/srv/listparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/steer_motor_node/list_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/ListParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/steer_motor_node/set_parameters rcl_interfaces/srv/setparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/steer_motor_node/set_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/steer_motor_node/set_parameters_atomically rcl_interfaces/srv/setparametersatomically">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/steer_motor_node/set_parameters_atomically</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParametersAtomically</span>
+          </div>
+        </div>
+        <div class="card" data-search="/teleop_twist_joy_node/describe_parameters rcl_interfaces/srv/describeparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/teleop_twist_joy_node/describe_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/DescribeParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/teleop_twist_joy_node/get_parameter_types rcl_interfaces/srv/getparametertypes">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/teleop_twist_joy_node/get_parameter_types</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameterTypes</span>
+          </div>
+        </div>
+        <div class="card" data-search="/teleop_twist_joy_node/get_parameters rcl_interfaces/srv/getparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/teleop_twist_joy_node/get_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/GetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/teleop_twist_joy_node/list_parameters rcl_interfaces/srv/listparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/teleop_twist_joy_node/list_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/ListParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/teleop_twist_joy_node/set_parameters rcl_interfaces/srv/setparameters">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/teleop_twist_joy_node/set_parameters</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParameters</span>
+          </div>
+        </div>
+        <div class="card" data-search="/teleop_twist_joy_node/set_parameters_atomically rcl_interfaces/srv/setparametersatomically">
+          <div class="card-header">
+            <span class="badge svc-badge">SVC</span>
+            <strong>/teleop_twist_joy_node/set_parameters_atomically</strong>
+            <span class="type ml">rcl_interfaces/srv/SetParametersAtomically</span>
+          </div>
+        </div>
+</div>
+
+<!-- ACTIONS -->
+<div id="tab-actions" class="tab-content">
+  <input class="search-bar" type="text" placeholder="Filter actions..." oninput="filter(this,'tab-actions')">
+  <p style="color:var(--muted)">No actions found.</p>
+</div>
+
+<!-- PARAMS -->
+<div id="tab-params" class="tab-content">
+  <input class="search-bar" type="text" placeholder="Filter nodes..." oninput="filter(this,'tab-params')">
+  
+        <div class="card" data-search="/cmd_vel_to_motor_node">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/cmd_vel_to_motor_node</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <table class="ptable"><thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+            <tbody><tr><td><code>qos_overrides./parameter_events.publisher.depth</code></td><td><code>1000</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.durability</code></td><td><code>volatile</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.history</code></td><td><code>keep_last</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.reliability</code></td><td><code>reliable</code></td></tr><tr><td><code>use_sim_time</code></td><td><code>False</code></td></tr></tbody></table>
+          </div>
+        </div>
+        <div class="card" data-search="/joy_node">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/joy_node</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <table class="ptable"><thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+            <tbody><tr><td><code>autorepeat_rate</code></td><td><code>20.0</code></td></tr><tr><td><code>coalesce_interval_ms</code></td><td><code>1</code></td></tr><tr><td><code>deadzone</code></td><td><code>0.3</code></td></tr><tr><td><code>device_id</code></td><td><code>0</code></td></tr><tr><td><code>device_name</code></td><td><code></code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.depth</code></td><td><code>1000</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.durability</code></td><td><code>volatile</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.history</code></td><td><code>keep_last</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.reliability</code></td><td><code>reliable</code></td></tr><tr><td><code>sticky_buttons</code></td><td><code>False</code></td></tr><tr><td><code>use_sim_time</code></td><td><code>False</code></td></tr></tbody></table>
+          </div>
+        </div>
+        <div class="card" data-search="/my_pub">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/my_pub</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <table class="ptable"><thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+            <tbody><tr><td><code>use_sim_time</code></td><td><code>False</code></td></tr></tbody></table>
+          </div>
+        </div>
+        <div class="card" data-search="/my_pub_polling">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/my_pub_polling</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <table class="ptable"><thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+            <tbody><tr><td><code>use_sim_time</code></td><td><code>False</code></td></tr></tbody></table>
+          </div>
+        </div>
+        <div class="card" data-search="/my_sub">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/my_sub</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <table class="ptable"><thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+            <tbody><tr><td><code>use_sim_time</code></td><td><code>False</code></td></tr></tbody></table>
+          </div>
+        </div>
+        <div class="card" data-search="/my_sub_2">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/my_sub_2</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <table class="ptable"><thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+            <tbody><tr><td><code>use_sim_time</code></td><td><code>False</code></td></tr></tbody></table>
+          </div>
+        </div>
+        <div class="card" data-search="/om_node">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/om_node</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <table class="ptable"><thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+            <tbody><tr><td><code>axis_num</code></td><td><code>3</code></td></tr><tr><td><code>first_gen</code></td><td><code></code></td></tr><tr><td><code>global_id</code></td><td><code>10</code></td></tr><tr><td><code>init_baudrate</code></td><td><code>230400</code></td></tr><tr><td><code>init_com</code></td><td><code>/dev/serial/by-id/usb-FTDI_USB-RS485_Cable_FT7E9M3C-if00-port0</code></td></tr><tr><td><code>init_topicID</code></td><td><code>0</code></td></tr><tr><td><code>init_update_rate</code></td><td><code>100</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.depth</code></td><td><code>1000</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.durability</code></td><td><code>volatile</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.history</code></td><td><code>keep_last</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.reliability</code></td><td><code>reliable</code></td></tr><tr><td><code>second_gen</code></td><td><code>1,2,3</code></td></tr><tr><td><code>use_sim_time</code></td><td><code>False</code></td></tr></tbody></table>
+          </div>
+        </div>
+        <div class="card" data-search="/read_write_node">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/read_write_node</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <table class="ptable"><thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+            <tbody><tr><td><code>qos_overrides./parameter_events.publisher.depth</code></td><td><code>1000</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.durability</code></td><td><code>volatile</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.history</code></td><td><code>keep_last</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.reliability</code></td><td><code>reliable</code></td></tr><tr><td><code>use_sim_time</code></td><td><code>False</code></td></tr></tbody></table>
+          </div>
+        </div>
+        <div class="card" data-search="/robot_odom_node">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/robot_odom_node</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <table class="ptable"><thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+            <tbody><tr><td><code>qos_overrides./parameter_events.publisher.depth</code></td><td><code>1000</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.durability</code></td><td><code>volatile</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.history</code></td><td><code>keep_last</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.reliability</code></td><td><code>reliable</code></td></tr><tr><td><code>qos_overrides./tf.publisher.depth</code></td><td><code>100</code></td></tr><tr><td><code>qos_overrides./tf.publisher.durability</code></td><td><code>volatile</code></td></tr><tr><td><code>qos_overrides./tf.publisher.history</code></td><td><code>keep_last</code></td></tr><tr><td><code>qos_overrides./tf.publisher.reliability</code></td><td><code>reliable</code></td></tr><tr><td><code>use_sim_time</code></td><td><code>False</code></td></tr></tbody></table>
+          </div>
+        </div>
+        <div class="card" data-search="/steer_motor_node">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/steer_motor_node</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <table class="ptable"><thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+            <tbody><tr><td><code>qos_overrides./parameter_events.publisher.depth</code></td><td><code>1000</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.durability</code></td><td><code>volatile</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.history</code></td><td><code>keep_last</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.reliability</code></td><td><code>reliable</code></td></tr><tr><td><code>use_sim_time</code></td><td><code>False</code></td></tr></tbody></table>
+          </div>
+        </div>
+        <div class="card" data-search="/teleop_twist_joy_node">
+          <div class="card-header" onclick="toggle(this)">
+            <span class="badge node-badge">NODE</span>
+            <strong>/teleop_twist_joy_node</strong>
+            <span class="chevron">▶</span>
+          </div>
+          <div class="card-body collapsed">
+            <table class="ptable"><thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+            <tbody><tr><td><code>axis_angular.pitch</code></td><td><code>-1</code></td></tr><tr><td><code>axis_angular.roll</code></td><td><code>-1</code></td></tr><tr><td><code>axis_angular.yaw</code></td><td><code>3</code></td></tr><tr><td><code>axis_linear.x</code></td><td><code>1</code></td></tr><tr><td><code>axis_linear.y</code></td><td><code>0</code></td></tr><tr><td><code>axis_linear.z</code></td><td><code>-1</code></td></tr><tr><td><code>enable_button</code></td><td><code>4</code></td></tr><tr><td><code>enable_turbo_button</code></td><td><code>5</code></td></tr><tr><td><code>frame</code></td><td><code>teleop_twist_joy</code></td></tr><tr><td><code>inverted_reverse</code></td><td><code>False</code></td></tr><tr><td><code>publish_stamped_twist</code></td><td><code>False</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.depth</code></td><td><code>1000</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.durability</code></td><td><code>volatile</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.history</code></td><td><code>keep_last</code></td></tr><tr><td><code>qos_overrides./parameter_events.publisher.reliability</code></td><td><code>reliable</code></td></tr><tr><td><code>require_enable_button</code></td><td><code>True</code></td></tr><tr><td><code>scale_angular.pitch</code></td><td><code>0.0</code></td></tr><tr><td><code>scale_angular.roll</code></td><td><code>0.0</code></td></tr><tr><td><code>scale_angular.yaw</code></td><td><code>0.4</code></td></tr><tr><td><code>scale_angular_turbo.pitch</code></td><td><code>0.0</code></td></tr><tr><td><code>scale_angular_turbo.roll</code></td><td><code>0.0</code></td></tr><tr><td><code>scale_angular_turbo.yaw</code></td><td><code>0.6</code></td></tr><tr><td><code>scale_linear.x</code></td><td><code>0.4</code></td></tr><tr><td><code>scale_linear.y</code></td><td><code>0.4</code></td></tr><tr><td><code>scale_linear.z</code></td><td><code>0.0</code></td></tr><tr><td><code>scale_linear_turbo.x</code></td><td><code>1.0</code></td></tr><tr><td><code>scale_linear_turbo.y</code></td><td><code>1.0</code></td></tr><tr><td><code>scale_linear_turbo.z</code></td><td><code></code></td></tr><tr><td><code>use_sim_time</code></td><td><code>False</code></td></tr></tbody></table>
+          </div>
+        </div>
+</div>
+
+<!-- TF TREE -->
+<div id="tab-tf" class="tab-content">
+  <h4 style="margin-bottom:10px;color:var(--muted)">TF / TF_STATIC dump</h4>
+  <pre class="tf-pre">WARNING: topic [/tf_static] does not appear to be published yet</pre>
+</div>
+
+<!-- GRAPH -->
+<div id="tab-graph" class="tab-content">
+  <div class="graph-legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--node)"></div>Node</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--topic)"></div>Topic</div>
+  </div>
+  <div id="graph-container"><p style="padding:20px;color:var(--muted)">Loading graph (requires vis-network CDN)…</p></div>
+</div>
+
+<!-- JOYCON FLOW JP -->
+<div id="tab-joyconjp" class="tab-content">
+  <h3 style="margin-bottom:12px;color:var(--accent)">Joy-Con からモーター制御までの流れ</h3>
+  <div class="card">
+    <div class="card-body">
+      <p><b>全体フロー:</b> <code>/joy</code> -> <code>/cmd_vel</code> -> <code>/drive_vel</code> + <code>/steer_angle</code> -> <code>/set_position</code></p>
+      <p style="margin-top:8px;color:var(--muted)">このページは、今回のスナップショットに含まれるノード接続とパラメータを日本語で要約したものです。</p>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-top:10px;">
+    <div class="card">
+      <div class="card-header">
+        <span class="badge topic-badge">STEP 1</span>
+        <strong>Joy 入力</strong>
+      </div>
+      <div class="card-body">
+        <p><code>/joy_node</code> が <code>/joy</code> (<code>sensor_msgs/msg/Joy</code>) を publish。</p>
+        <pre class="tf-pre" style="max-height:none;margin-top:8px;">axes:    [0.0, 0.8, 0.0, -0.5, ...]
+buttons: [0, 0, 0, 0, 1, 0, ...]</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="badge topic-badge">STEP 2</span>
+        <strong>Twist 変換</strong>
+      </div>
+      <div class="card-body">
+        <p><code>/teleop_twist_joy_node</code> が <code>/joy</code> を受けて <code>/cmd_vel</code> (<code>geometry_msgs/msg/Twist</code>) を publish。</p>
+        <pre class="tf-pre" style="max-height:none;margin-top:8px;">linear.x  = axes[1] * 0.4
+angular.z = axes[3] * 0.4
+
+# turbo button(5) を押す場合
+linear.x  = axes[1] * 1.0
+angular.z = axes[3] * 0.6</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="badge topic-badge">STEP 3</span>
+        <strong>モーター用指令へ分解</strong>
+      </div>
+      <div class="card-body">
+        <p><code>/cmd_vel_to_motor_node</code> が <code>/cmd_vel</code> を受けて次を publish:</p>
+        <ul>
+          <li><code>/drive_vel</code> (<code>my_messages/msg/DriveMotor</code>)</li>
+          <li><code>/steer_angle</code> (<code>my_messages/msg/SteerMotor</code>)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="badge topic-badge">STEP 4</span>
+        <strong>サーボへ書き込み</strong>
+      </div>
+      <div class="card-body">
+        <p><code>/steer_motor_node</code> は <code>/steer_angle</code> を subscribe し、<code>/set_position</code> を publish。</p>
+        <p><code>/read_write_node</code> が <code>/set_position</code> を受け取り、実機モーターへ反映。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:10px;">
+    <div class="card-header">
+      <span class="badge svc-badge">NOTE</span>
+      <strong>今回のスナップショットで見えた点</strong>
+    </div>
+    <div class="card-body">
+      <ul>
+        <li><code>/cmd_vel_to_motor_node</code> が 2 回表示されているため、同名ノード重複起動または採取時重複の可能性があります。</li>
+        <li>このレポートはトポロジとパラメータ中心で、各トピックのリアルタイム payload ログは含みません。</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/vis-network@9.1.9/dist/vis-network.min.js"></script>
+<script>
+function showTab(name) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  const tabs = document.querySelectorAll('.tab');
+  const labels = ['nodes','topics','services','actions','params','tf','graph','joyconjp'];
+  tabs[labels.indexOf(name)].classList.add('active');
+  if (name === 'graph') initGraph();
+}
+
+function toggle(header) {
+  const body = header.nextElementSibling;
+  const chev = header.querySelector('.chevron');
+  body.classList.toggle('collapsed');
+  chev && chev.classList.toggle('open');
+}
+
+function filter(input, tabId) {
+  const q = input.value.toLowerCase();
+  document.querySelectorAll('#' + tabId + ' .card').forEach(card => {
+    const search = card.dataset.search || '';
+    card.style.display = search.includes(q) ? '' : 'none';
+  });
+}
+
+let graphInited = false;
+function initGraph() {
+  if (graphInited) return;
+  graphInited = true;
+  if (typeof vis === 'undefined') {
+    document.getElementById('graph-container').innerHTML =
+      '<p style="padding:20px;color:#f6ad55">vis-network CDN not available (offline). Raw JSON is in raw/ folder.</p>';
+    return;
+  }
+  const nodes = new vis.DataSet([{id:0,label:"cmd_vel_to_motor_node",group:"node",title:"/cmd_vel_to_motor_node"},{id:1,label:"cmd_vel_to_motor_node",group:"node",title:"/cmd_vel_to_motor_node"},{id:2,label:"joy_node",group:"node",title:"/joy_node"},{id:3,label:"my_nodepub",group:"node",title:"/my_nodepub"},{id:4,label:"my_nodesub",group:"node",title:"/my_nodesub"},{id:5,label:"my_nodesub_2",group:"node",title:"/my_nodesub_2"},{id:6,label:"my_pub",group:"node",title:"/my_pub"},{id:7,label:"my_pub_polling",group:"node",title:"/my_pub_polling"},{id:8,label:"my_sub",group:"node",title:"/my_sub"},{id:9,label:"my_sub_2",group:"node",title:"/my_sub_2"},{id:10,label:"om_node",group:"node",title:"/om_node"},{id:11,label:"read_write_node",group:"node",title:"/read_write_node"},{id:12,label:"robot_odom_node",group:"node",title:"/robot_odom_node"},{id:13,label:"steer_motor_node",group:"node",title:"/steer_motor_node"},{id:14,label:"teleop_twist_joy_node",group:"node",title:"/teleop_twist_joy_node"},{id:15,label:"cmd_vel",group:"topic",title:"/cmd_vel : geometry_msgs/msg/Twist"},{id:16,label:"drive_odom",group:"topic",title:"/drive_odom : my_messages/msg/DriveMotor"},{id:17,label:"drive_vel",group:"topic",title:"/drive_vel : my_messages/msg/DriveMotor"},{id:18,label:"joy",group:"topic",title:"/joy : sensor_msgs/msg/Joy"},{id:19,label:"set_feedback",group:"topic",title:"/joy/set_feedback : sensor_msgs/msg/JoyFeedback"},{id:20,label:"twist_with_covariance",group:"topic",title:"/localization/twist_estimator/twist_with_covariance : geometry_msgs/msg/TwistWithCovarianceStamped"},{id:21,label:"odom",group:"topic",title:"/odom : nav_msgs/msg/Odometry"},{id:22,label:"om_query0",group:"topic",title:"/om_query0 : om_msgs/msg/Query"},{id:23,label:"om_response0",group:"topic",title:"/om_response0 : om_msgs/msg/Response"},{id:24,label:"om_state0",group:"topic",title:"/om_state0 : om_msgs/msg/State"},{id:25,label:"parameter_events",group:"topic",title:"/parameter_events : rcl_interfaces/msg/ParameterEvent"},{id:26,label:"rosout",group:"topic",title:"/rosout : rcl_interfaces/msg/Log"},{id:27,label:"set_position",group:"topic",title:"/set_position : dynamixel_sdk_custom_interfaces/msg/SetPosition"},{id:28,label:"steer_angle",group:"topic",title:"/steer_angle : my_messages/msg/SteerMotor"},{id:29,label:"steer_odom",group:"topic",title:"/steer_odom : my_messages/msg/SteerMotor"},{id:30,label:"tf",group:"topic",title:"/tf : tf2_msgs/msg/TFMessage"},{id:31,label:"wheel_odom",group:"topic",title:"/wheel_odom : nav_msgs/msg/Odometry"}]);
+  const edges = new vis.DataSet([{from:1,to:17,arrows:"to"},{from:1,to:25,arrows:"to"},{from:1,to:26,arrows:"to"},{from:1,to:28,arrows:"to"},{from:15,to:1,arrows:"to"},{from:25,to:1,arrows:"to"},{from:1,to:17,arrows:"to"},{from:1,to:25,arrows:"to"},{from:1,to:26,arrows:"to"},{from:1,to:28,arrows:"to"},{from:15,to:1,arrows:"to"},{from:25,to:1,arrows:"to"},{from:2,to:18,arrows:"to"},{from:2,to:25,arrows:"to"},{from:2,to:26,arrows:"to"},{from:19,to:2,arrows:"to"},{from:25,to:2,arrows:"to"},{from:3,to:25,arrows:"to"},{from:3,to:26,arrows:"to"},{from:4,to:25,arrows:"to"},{from:4,to:26,arrows:"to"},{from:5,to:25,arrows:"to"},{from:5,to:26,arrows:"to"},{from:6,to:22,arrows:"to"},{from:6,to:25,arrows:"to"},{from:6,to:26,arrows:"to"},{from:7,to:22,arrows:"to"},{from:7,to:25,arrows:"to"},{from:7,to:26,arrows:"to"},{from:8,to:16,arrows:"to"},{from:8,to:20,arrows:"to"},{from:8,to:21,arrows:"to"},{from:8,to:25,arrows:"to"},{from:8,to:26,arrows:"to"},{from:23,to:8,arrows:"to"},{from:24,to:8,arrows:"to"},{from:9,to:25,arrows:"to"},{from:9,to:26,arrows:"to"},{from:17,to:9,arrows:"to"},{from:10,to:23,arrows:"to"},{from:10,to:24,arrows:"to"},{from:10,to:25,arrows:"to"},{from:10,to:26,arrows:"to"},{from:22,to:10,arrows:"to"},{from:25,to:10,arrows:"to"},{from:11,to:25,arrows:"to"},{from:11,to:26,arrows:"to"},{from:25,to:11,arrows:"to"},{from:27,to:11,arrows:"to"},{from:12,to:25,arrows:"to"},{from:12,to:26,arrows:"to"},{from:12,to:30,arrows:"to"},{from:12,to:31,arrows:"to"},{from:16,to:12,arrows:"to"},{from:25,to:12,arrows:"to"},{from:29,to:12,arrows:"to"},{from:13,to:25,arrows:"to"},{from:13,to:26,arrows:"to"},{from:13,to:27,arrows:"to"},{from:13,to:29,arrows:"to"},{from:25,to:13,arrows:"to"},{from:28,to:13,arrows:"to"},{from:14,to:15,arrows:"to"},{from:14,to:25,arrows:"to"},{from:14,to:26,arrows:"to"},{from:18,to:14,arrows:"to"},{from:25,to:14,arrows:"to"}]);
+  const options = {
+    nodes: { shape: 'dot', size: 14, font: { color: '#e2e8f0', size: 12 } },
+    edges: { color: { color: '#2e3250', highlight: '#4a9eff' }, smooth: { type: 'dynamic' } },
+    groups: {
+      node:  { color: { background: '#1a3a5c', border: '#63b3ed', highlight: { background: '#2a5a8c', border: '#63b3ed' } } },
+      topic: { color: { background: '#1a3d2a', border: '#68d391', highlight: { background: '#2a6d4a', border: '#68d391' } } }
+    },
+    physics: { stabilization: { iterations: 200 }, barnesHut: { gravitationalConstant: -3000 } },
+    interaction: { hover: true, tooltipDelay: 150 }
+  };
+  new vis.Network(document.getElementById('graph-container'), { nodes, edges }, options);
+}
+</script>
+</body>
+</html>

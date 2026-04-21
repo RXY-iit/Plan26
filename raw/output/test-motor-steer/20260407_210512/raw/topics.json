@@ -1,0 +1,106 @@
+[
+  {
+    "name": "/cmd_vel",
+    "type": "geometry_msgs/msg/Twist",
+    "publishers": [],
+    "subscribers": [
+      "cmd_vel_to_motor_node",
+      "cmd_vel_to_motor_node"
+    ]
+  },
+  {
+    "name": "/drive_odom",
+    "type": "my_messages/msg/DriveMotor",
+    "publishers": [],
+    "subscribers": [
+      "robot_odom_node"
+    ]
+  },
+  {
+    "name": "/drive_vel",
+    "type": "my_messages/msg/DriveMotor",
+    "publishers": [
+      "cmd_vel_to_motor_node",
+      "cmd_vel_to_motor_node"
+    ],
+    "subscribers": []
+  },
+  {
+    "name": "/parameter_events",
+    "type": "rcl_interfaces/msg/ParameterEvent",
+    "publishers": [
+      "read_write_node",
+      "steer_motor_node",
+      "cmd_vel_to_motor_node",
+      "cmd_vel_to_motor_node",
+      "robot_odom_node",
+      "_ros2cli_daemon_0_36ea6c2895864c2cbaecdafab9cd1cfe"
+    ],
+    "subscribers": [
+      "read_write_node",
+      "steer_motor_node",
+      "cmd_vel_to_motor_node",
+      "cmd_vel_to_motor_node",
+      "robot_odom_node"
+    ]
+  },
+  {
+    "name": "/rosout",
+    "type": "rcl_interfaces/msg/Log",
+    "publishers": [
+      "read_write_node",
+      "steer_motor_node",
+      "cmd_vel_to_motor_node",
+      "robot_odom_node",
+      "_ros2cli_daemon_0_36ea6c2895864c2cbaecdafab9cd1cfe"
+    ],
+    "subscribers": []
+  },
+  {
+    "name": "/set_position",
+    "type": "dynamixel_sdk_custom_interfaces/msg/SetPosition",
+    "publishers": [
+      "steer_motor_node"
+    ],
+    "subscribers": [
+      "read_write_node"
+    ]
+  },
+  {
+    "name": "/steer_angle",
+    "type": "my_messages/msg/SteerMotor",
+    "publishers": [
+      "cmd_vel_to_motor_node",
+      "cmd_vel_to_motor_node"
+    ],
+    "subscribers": [
+      "steer_motor_node"
+    ]
+  },
+  {
+    "name": "/steer_odom",
+    "type": "my_messages/msg/SteerMotor",
+    "publishers": [
+      "steer_motor_node"
+    ],
+    "subscribers": [
+      "robot_odom_node"
+    ]
+  },
+  {
+    "name": "/tf",
+    "type": "tf2_msgs/msg/TFMessage",
+    "publishers": [
+      "robot_odom_node"
+    ],
+    "subscribers": []
+  },
+  {
+    "name": "/wheel_odom",
+    "type": "nav_msgs/msg/Odometry",
+    "publishers": [
+      "robot_odom_node"
+    ],
+    "subscribers": []
+  }
+]

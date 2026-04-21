@@ -1,0 +1,317 @@
+[
+  {
+    "name": "/cmd_vel_to_motor_node",
+    "publishers": [
+      {
+        "name": "/drive_vel",
+        "type": "my_messages/msg/DriveMotor"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      },
+      {
+        "name": "/steer_angle",
+        "type": "my_messages/msg/SteerMotor"
+      }
+    ],
+    "subscribers": [
+      {
+        "name": "/cmd_vel",
+        "type": "geometry_msgs/msg/Twist"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      }
+    ],
+    "service_servers": [
+      {
+        "name": "/cmd_vel_to_motor_node/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/cmd_vel_to_motor_node/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/cmd_vel_to_motor_node/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/cmd_vel_to_motor_node/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/cmd_vel_to_motor_node/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/cmd_vel_to_motor_node/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [
+      {
+        "name": "/get_position",
+        "type": "dynamixel_sdk_custom_interfaces/srv/GetPosition"
+      }
+    ],
+    "action_servers": [],
+    "action_clients": []
+  },
+  {
+    "name": "/cmd_vel_to_motor_node",
+    "publishers": [
+      {
+        "name": "/drive_vel",
+        "type": "my_messages/msg/DriveMotor"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      },
+      {
+        "name": "/steer_angle",
+        "type": "my_messages/msg/SteerMotor"
+      }
+    ],
+    "subscribers": [
+      {
+        "name": "/cmd_vel",
+        "type": "geometry_msgs/msg/Twist"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      }
+    ],
+    "service_servers": [
+      {
+        "name": "/cmd_vel_to_motor_node/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/cmd_vel_to_motor_node/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/cmd_vel_to_motor_node/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/cmd_vel_to_motor_node/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/cmd_vel_to_motor_node/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/cmd_vel_to_motor_node/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [
+      {
+        "name": "/get_position",
+        "type": "dynamixel_sdk_custom_interfaces/srv/GetPosition"
+      }
+    ],
+    "action_servers": [],
+    "action_clients": []
+  },
+  {
+    "name": "/read_write_node",
+    "publishers": [
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      }
+    ],
+    "subscribers": [
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/set_position",
+        "type": "dynamixel_sdk_custom_interfaces/msg/SetPosition"
+      }
+    ],
+    "service_servers": [
+      {
+        "name": "/get_position",
+        "type": "dynamixel_sdk_custom_interfaces/srv/GetPosition"
+      },
+      {
+        "name": "/read_write_node/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/read_write_node/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/read_write_node/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/read_write_node/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/read_write_node/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/read_write_node/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [],
+    "action_servers": [],
+    "action_clients": []
+  },
+  {
+    "name": "/robot_odom_node",
+    "publishers": [
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      },
+      {
+        "name": "/tf",
+        "type": "tf2_msgs/msg/TFMessage"
+      },
+      {
+        "name": "/wheel_odom",
+        "type": "nav_msgs/msg/Odometry"
+      }
+    ],
+    "subscribers": [
+      {
+        "name": "/drive_odom",
+        "type": "my_messages/msg/DriveMotor"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/steer_odom",
+        "type": "my_messages/msg/SteerMotor"
+      }
+    ],
+    "service_servers": [
+      {
+        "name": "/robot_odom_node/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/robot_odom_node/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/robot_odom_node/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/robot_odom_node/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/robot_odom_node/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/robot_odom_node/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [],
+    "action_servers": [],
+    "action_clients": []
+  },
+  {
+    "name": "/steer_motor_node",
+    "publishers": [
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      },
+      {
+        "name": "/set_position",
+        "type": "dynamixel_sdk_custom_interfaces/msg/SetPosition"
+      },
+      {
+        "name": "/steer_odom",
+        "type": "my_messages/msg/SteerMotor"
+      }
+    ],
+    "subscribers": [
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/steer_angle",
+        "type": "my_messages/msg/SteerMotor"
+      }
+    ],
+    "service_servers": [
+      {
+        "name": "/steer_motor_node/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/steer_motor_node/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/steer_motor_node/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/steer_motor_node/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/steer_motor_node/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/steer_motor_node/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [
+      {
+        "name": "/get_position",
+        "type": "dynamixel_sdk_custom_interfaces/srv/GetPosition"
+      }
+    ],
+    "action_servers": [],
+    "action_clients": []
+  }
+]

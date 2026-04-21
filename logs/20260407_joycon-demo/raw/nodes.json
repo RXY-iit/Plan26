@@ -1,0 +1,834 @@
+[
+  {
+    "name": "/cmd_vel_to_motor_node",
+    "publishers": [
+      {
+        "name": "/drive_vel",
+        "type": "my_messages/msg/DriveMotor"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      },
+      {
+        "name": "/steer_angle",
+        "type": "my_messages/msg/SteerMotor"
+      }
+    ],
+    "subscribers": [
+      {
+        "name": "/cmd_vel",
+        "type": "geometry_msgs/msg/Twist"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      }
+    ],
+    "service_servers": [
+      {
+        "name": "/cmd_vel_to_motor_node/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/cmd_vel_to_motor_node/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/cmd_vel_to_motor_node/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/cmd_vel_to_motor_node/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/cmd_vel_to_motor_node/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/cmd_vel_to_motor_node/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [
+      {
+        "name": "/get_position",
+        "type": "dynamixel_sdk_custom_interfaces/srv/GetPosition"
+      }
+    ],
+    "action_servers": [],
+    "action_clients": []
+  },
+  {
+    "name": "/cmd_vel_to_motor_node",
+    "publishers": [
+      {
+        "name": "/drive_vel",
+        "type": "my_messages/msg/DriveMotor"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      },
+      {
+        "name": "/steer_angle",
+        "type": "my_messages/msg/SteerMotor"
+      }
+    ],
+    "subscribers": [
+      {
+        "name": "/cmd_vel",
+        "type": "geometry_msgs/msg/Twist"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      }
+    ],
+    "service_servers": [
+      {
+        "name": "/cmd_vel_to_motor_node/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/cmd_vel_to_motor_node/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/cmd_vel_to_motor_node/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/cmd_vel_to_motor_node/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/cmd_vel_to_motor_node/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/cmd_vel_to_motor_node/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [
+      {
+        "name": "/get_position",
+        "type": "dynamixel_sdk_custom_interfaces/srv/GetPosition"
+      }
+    ],
+    "action_servers": [],
+    "action_clients": []
+  },
+  {
+    "name": "/joy_node",
+    "publishers": [
+      {
+        "name": "/joy",
+        "type": "sensor_msgs/msg/Joy"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      }
+    ],
+    "subscribers": [
+      {
+        "name": "/joy/set_feedback",
+        "type": "sensor_msgs/msg/JoyFeedback"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      }
+    ],
+    "service_servers": [
+      {
+        "name": "/joy_node/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/joy_node/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/joy_node/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/joy_node/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/joy_node/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/joy_node/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [],
+    "action_servers": [],
+    "action_clients": []
+  },
+  {
+    "name": "/my_nodepub",
+    "publishers": [
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      }
+    ],
+    "subscribers": [],
+    "service_servers": [
+      {
+        "name": "/my_nodepub/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/my_nodepub/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/my_nodepub/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/my_nodepub/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/my_nodepub/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/my_nodepub/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [
+      {
+        "name": "/om_node/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      }
+    ],
+    "action_servers": [],
+    "action_clients": []
+  },
+  {
+    "name": "/my_nodesub",
+    "publishers": [
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      }
+    ],
+    "subscribers": [],
+    "service_servers": [
+      {
+        "name": "/my_nodesub/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/my_nodesub/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/my_nodesub/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/my_nodesub/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/my_nodesub/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/my_nodesub/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [
+      {
+        "name": "/om_node/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      }
+    ],
+    "action_servers": [],
+    "action_clients": []
+  },
+  {
+    "name": "/my_nodesub_2",
+    "publishers": [
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      }
+    ],
+    "subscribers": [],
+    "service_servers": [
+      {
+        "name": "/my_nodesub_2/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/my_nodesub_2/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/my_nodesub_2/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/my_nodesub_2/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/my_nodesub_2/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/my_nodesub_2/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [],
+    "action_servers": [],
+    "action_clients": []
+  },
+  {
+    "name": "/my_pub",
+    "publishers": [
+      {
+        "name": "/om_query0",
+        "type": "om_msgs/msg/Query"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      }
+    ],
+    "subscribers": [],
+    "service_servers": [
+      {
+        "name": "/my_pub/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/my_pub/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/my_pub/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/my_pub/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/my_pub/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/my_pub/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [],
+    "action_servers": [],
+    "action_clients": []
+  },
+  {
+    "name": "/my_pub_polling",
+    "publishers": [
+      {
+        "name": "/om_query0",
+        "type": "om_msgs/msg/Query"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      }
+    ],
+    "subscribers": [],
+    "service_servers": [
+      {
+        "name": "/my_pub_polling/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/my_pub_polling/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/my_pub_polling/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/my_pub_polling/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/my_pub_polling/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/my_pub_polling/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [],
+    "action_servers": [],
+    "action_clients": []
+  },
+  {
+    "name": "/my_sub",
+    "publishers": [
+      {
+        "name": "/drive_odom",
+        "type": "my_messages/msg/DriveMotor"
+      },
+      {
+        "name": "/localization/twist_estimator/twist_with_covariance",
+        "type": "geometry_msgs/msg/TwistWithCovarianceStamped"
+      },
+      {
+        "name": "/odom",
+        "type": "nav_msgs/msg/Odometry"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      }
+    ],
+    "subscribers": [
+      {
+        "name": "/om_response0",
+        "type": "om_msgs/msg/Response"
+      },
+      {
+        "name": "/om_state0",
+        "type": "om_msgs/msg/State"
+      }
+    ],
+    "service_servers": [
+      {
+        "name": "/my_sub/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/my_sub/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/my_sub/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/my_sub/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/my_sub/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/my_sub/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [],
+    "action_servers": [],
+    "action_clients": []
+  },
+  {
+    "name": "/my_sub_2",
+    "publishers": [
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      }
+    ],
+    "subscribers": [
+      {
+        "name": "/drive_vel",
+        "type": "my_messages/msg/DriveMotor"
+      }
+    ],
+    "service_servers": [
+      {
+        "name": "/my_sub_2/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/my_sub_2/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/my_sub_2/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/my_sub_2/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/my_sub_2/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/my_sub_2/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [],
+    "action_servers": [],
+    "action_clients": []
+  },
+  {
+    "name": "/om_node",
+    "publishers": [
+      {
+        "name": "/om_response0",
+        "type": "om_msgs/msg/Response"
+      },
+      {
+        "name": "/om_state0",
+        "type": "om_msgs/msg/State"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      }
+    ],
+    "subscribers": [
+      {
+        "name": "/om_query0",
+        "type": "om_msgs/msg/Query"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      }
+    ],
+    "service_servers": [
+      {
+        "name": "/om_node/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/om_node/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/om_node/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/om_node/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/om_node/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/om_node/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [],
+    "action_servers": [],
+    "action_clients": []
+  },
+  {
+    "name": "/read_write_node",
+    "publishers": [
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      }
+    ],
+    "subscribers": [
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/set_position",
+        "type": "dynamixel_sdk_custom_interfaces/msg/SetPosition"
+      }
+    ],
+    "service_servers": [
+      {
+        "name": "/get_position",
+        "type": "dynamixel_sdk_custom_interfaces/srv/GetPosition"
+      },
+      {
+        "name": "/read_write_node/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/read_write_node/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/read_write_node/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/read_write_node/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/read_write_node/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/read_write_node/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [],
+    "action_servers": [],
+    "action_clients": []
+  },
+  {
+    "name": "/robot_odom_node",
+    "publishers": [
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      },
+      {
+        "name": "/tf",
+        "type": "tf2_msgs/msg/TFMessage"
+      },
+      {
+        "name": "/wheel_odom",
+        "type": "nav_msgs/msg/Odometry"
+      }
+    ],
+    "subscribers": [
+      {
+        "name": "/drive_odom",
+        "type": "my_messages/msg/DriveMotor"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/steer_odom",
+        "type": "my_messages/msg/SteerMotor"
+      }
+    ],
+    "service_servers": [
+      {
+        "name": "/robot_odom_node/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/robot_odom_node/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/robot_odom_node/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/robot_odom_node/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/robot_odom_node/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/robot_odom_node/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [],
+    "action_servers": [],
+    "action_clients": []
+  },
+  {
+    "name": "/steer_motor_node",
+    "publishers": [
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      },
+      {
+        "name": "/set_position",
+        "type": "dynamixel_sdk_custom_interfaces/msg/SetPosition"
+      },
+      {
+        "name": "/steer_odom",
+        "type": "my_messages/msg/SteerMotor"
+      }
+    ],
+    "subscribers": [
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/steer_angle",
+        "type": "my_messages/msg/SteerMotor"
+      }
+    ],
+    "service_servers": [
+      {
+        "name": "/steer_motor_node/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/steer_motor_node/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/steer_motor_node/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/steer_motor_node/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/steer_motor_node/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/steer_motor_node/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [
+      {
+        "name": "/get_position",
+        "type": "dynamixel_sdk_custom_interfaces/srv/GetPosition"
+      }
+    ],
+    "action_servers": [],
+    "action_clients": []
+  },
+  {
+    "name": "/teleop_twist_joy_node",
+    "publishers": [
+      {
+        "name": "/cmd_vel",
+        "type": "geometry_msgs/msg/Twist"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      },
+      {
+        "name": "/rosout",
+        "type": "rcl_interfaces/msg/Log"
+      }
+    ],
+    "subscribers": [
+      {
+        "name": "/joy",
+        "type": "sensor_msgs/msg/Joy"
+      },
+      {
+        "name": "/parameter_events",
+        "type": "rcl_interfaces/msg/ParameterEvent"
+      }
+    ],
+    "service_servers": [
+      {
+        "name": "/teleop_twist_joy_node/describe_parameters",
+        "type": "rcl_interfaces/srv/DescribeParameters"
+      },
+      {
+        "name": "/teleop_twist_joy_node/get_parameter_types",
+        "type": "rcl_interfaces/srv/GetParameterTypes"
+      },
+      {
+        "name": "/teleop_twist_joy_node/get_parameters",
+        "type": "rcl_interfaces/srv/GetParameters"
+      },
+      {
+        "name": "/teleop_twist_joy_node/list_parameters",
+        "type": "rcl_interfaces/srv/ListParameters"
+      },
+      {
+        "name": "/teleop_twist_joy_node/set_parameters",
+        "type": "rcl_interfaces/srv/SetParameters"
+      },
+      {
+        "name": "/teleop_twist_joy_node/set_parameters_atomically",
+        "type": "rcl_interfaces/srv/SetParametersAtomically"
+      }
+    ],
+    "service_clients": [],
+    "action_servers": [],
+    "action_clients": []
+  }
+]

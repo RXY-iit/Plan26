@@ -1,0 +1,32 @@
+{
+  "/my_nodesub": {
+    "use_sim_time": "False"
+  },
+  "/my_pub": {
+    "use_sim_time": "False"
+  },
+  "/my_pub_polling": {
+    "use_sim_time": "False"
+  },
+  "/my_sub": {
+    "use_sim_time": "False"
+  },
+  "/my_sub_2": {
+    "use_sim_time": "False"
+  },
+  "/om_node": {
+    "axis_num": "3",
+    "first_gen": "",
+    "global_id": "10",
+    "init_baudrate": "230400",
+    "init_com": "/dev/serial/by-id/usb-FTDI_USB-RS485_Cable_FT7E9M3C-if00-port0",
+    "init_topicID": "0",
+    "init_update_rate": "100",
+    "qos_overrides./parameter_events.publisher.depth": "1000",
+    "qos_overrides./parameter_events.publisher.durability": "volatile",
+    "qos_overrides./parameter_events.publisher.history": "keep_last",
+    "qos_overrides./parameter_events.publisher.reliability": "reliable",
+    "second_gen": "1,2,3",
+    "use_sim_time": "False"
+  }
+}

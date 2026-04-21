@@ -437,7 +437,7 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
 <main>
 
   <!-- ── 最終験収目標 ── -->
-  <div style="margin-bottom:32px;">
+  <div id="acceptanceGoals" style="margin-bottom:32px;">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
       <div style="flex:1;height:1px;background:var(--border);"></div>
       <div style="display:flex;align-items:center;gap:8px;padding:6px 16px;background:linear-gradient(135deg,var(--accent-l),var(--purple-l));border:1px solid var(--accent-m);border-radius:99px;font-size:12px;font-weight:700;color:var(--accent);">🎯 最終験収目標</div>
@@ -472,7 +472,7 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
           <span class="tag hw" style="margin-left:auto;">Hardware</span>
         </div>
         <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
-          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span style="color:var(--green);font-weight:700;flex-shrink:0;">✅</span>
           <span>全センサー（Camera / IMU / Encoder / LiDAR）データ取得・TF 整合確認</span>
           <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
         </div>
@@ -915,12 +915,20 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
 </footer>
 
 <script>
-// ── 進捗統計（done-item クラスを基準に集計） ──
+// ── 進捗統計（最終験収目標の項目を基準に集計） ──
 function updateStats() {
-  const items = document.querySelectorAll('.todo-item');
+  const acceptance = document.getElementById('acceptanceGoals');
+  const items = acceptance
+    ? acceptance.querySelectorAll('div[style*="align-items:flex-start"]')
+    : document.querySelectorAll('.todo-item');
   const total = items.length;
-  const done  = [...items].filter(i => i.classList.contains('done-item')).length;
-  const pct   = Math.round(done / total * 100);
+  const done  = acceptance
+    ? [...items].filter(i => {
+      const mark = i.querySelector('span');
+      return mark && mark.getAttribute('style')?.includes('var(--green)');
+    }).length
+    : [...items].filter(i => i.classList.contains('done-item')).length;
+  const pct   = total ? Math.round(done / total * 100) : 0;
   document.getElementById('doneCount').textContent = done;
   document.getElementById('todoCount').textContent  = total - done;
   document.getElementById('pctNum').textContent     = pct + '%';
