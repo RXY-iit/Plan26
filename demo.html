@@ -345,33 +345,33 @@ footer a:hover{text-decoration:underline;}
   <section class="reveal">
     <span class="sec-tag">System Architecture</span>
     <h2>システムアーキテクチャ</h2>
-    <p class="sec-desc">知覚から行動まで — Robot Harness System の情報フロー</p>
+    <p class="sec-desc">ユーザー / クラウドから Gateway・Agent・Skill・ROS2 Runtime を経てロボットへ至る全体構成</p>
 
     <div class="arch-banner">
-      <div class="arch-title">コアフロー（処理パイプライン）</div>
+      <div class="arch-title">アーキテクチャ要約（reference）</div>
       <div class="arch-flow">
-        <div class="arch-node"><span class="num">1</span>👁️ 知覚</div>
+        <div class="arch-node"><span class="num">1</span>☁️ User / Cloud</div>
         <span class="arch-arrow">→</span>
-        <div class="arch-node"><span class="num">2</span>🧠 記憶</div>
+        <div class="arch-node"><span class="num">2</span>🧩 Gateway</div>
         <span class="arch-arrow">→</span>
-        <div class="arch-node"><span class="num">3</span>🤖 Agent (LLM)</div>
+        <div class="arch-node"><span class="num">3</span>🤖 Multi-Agent</div>
         <span class="arch-arrow">→</span>
-        <div class="arch-node"><span class="num">4</span>🔗 Skill System</div>
+        <div class="arch-node"><span class="num">4</span>🔗 Skill Layer</div>
         <span class="arch-arrow">→</span>
-        <div class="arch-node"><span class="num">5</span>🦾 Robot</div>
+        <div class="arch-node"><span class="num">5</span>🦾 ROS2 / Robot</div>
       </div>
     </div>
 
     <div class="priority-banner">
       <span class="prio-label">開発優先順位</span>
       <div class="prio-items">
-        <span class="prio-item p1">① SLAM</span>
+        <span class="prio-item p1">① ROS2基盤・SLAM</span>
         <span class="prio-gt">＞</span>
-        <span class="prio-item p2">② Skill System</span>
+        <span class="prio-item p2">② agent system</span>
         <span class="prio-gt">＞</span>
-        <span class="prio-item p3">③ AI Agent</span>
+        <span class="prio-item p3">③ Multi-Agent運用</span>
         <span class="prio-gt">＞</span>
-        <span class="prio-item p4">④ VLA</span>
+        <span class="prio-item p4">④ Harness</span>
       </div>
     </div>
   </section>
@@ -569,20 +569,27 @@ footer a:hover{text-decoration:underline;}
         </div>
       </div>
 
-      <!-- 9. World Model -->
+      <!-- 9. Physical AI & Simulation Environment -->
       <div class="req-card purple">
-        <div class="req-icon">🌍</div>
-        <div class="req-badge purple">⑨ World Model（将来）</div>
-        <div class="req-title">World Model</div>
+        <div class="req-icon">💻</div>
+        <div class="req-badge purple">⑨ Physical AI（将来）</div>
+        <div class="req-title">Physical AI & Simulation Environment</div>
         <div class="req-func">
-          <span class="req-func-tag">環境理解</span>
-          <span class="req-func-tag">長期推論</span>
+          <span class="req-func-tag">物理シミュレーション</span>
+          <span class="req-func-tag">実環境への転移学習</span>
+          <span class="req-func-tag">安全検証</span>
         </div>
-        <div class="req-tech-title">モデル / 空間</div>
+        <div class="req-tech-title">シミュレータ / 学習 / 応用</div>
         <div class="req-tech">
-          <span class="req-tech-tag">Scene Graph</span>
-          <span class="req-tech-tag">Spatial Memory</span>
-          <span class="req-tech-tag">JEPA系</span>
+          <span class="req-tech-tag">Isaac Sim</span>
+          <span class="req-tech-tag">Gazebo</span>
+          <span class="req-tech-tag">NVIDIA Omniverse</span>
+          <span class="req-tech-tag">Sim-to-Real transfer</span>
+          <span class="req-tech-tag">Domain randomization</span>
+          <span class="req-tech-tag">RL in simulation</span>
+          <span class="req-tech-tag">Sim-to-Real</span>
+          <span class="req-tech-tag">行動計画の事前検証</span>
+          <span class="req-tech-tag">Digital Twin</span>
         </div>
       </div>
 
@@ -592,8 +599,8 @@ footer a:hover{text-decoration:underline;}
   <!-- ③ DEMO REQUIREMENTS RADAR -->
   <section class="reveal">
     <span class="sec-tag">Demo Requirements</span>
-    <h2>デモ要件の優先度</h2>
-    <p class="sec-desc">要件マップ9カテゴリ全体のデモへの重要度・関連度を可視化（スコア 0–10）</p>
+    <h2>デモ要件カテゴリ</h2>
+    <p class="sec-desc">各シナリオがどの要件カテゴリを使うかを下のカード群で対応づけて確認できる構成</p>
 
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:28px;box-shadow:0 1px 3px rgba(0,0,0,.05);">
       <div class="radar-wrap">
@@ -608,7 +615,7 @@ footer a:hover{text-decoration:underline;}
           <div class="rl-item"><span class="rl-dot" style="background:#0891b2;"></span><span>⑥ Perception（知覚・VLM）</span></div>
           <div class="rl-item"><span class="rl-dot" style="background:#475569;"></span><span>⑦ System Infra（基盤）</span></div>
           <div class="rl-item"><span class="rl-dot" style="background:#0f172a;"></span><span>⑧ Skill System（核心）</span></div>
-          <div class="rl-item"><span class="rl-dot" style="background:#6d28d9;"></span><span>⑨ World Model（将来）</span></div>
+          <div class="rl-item"><span class="rl-dot" style="background:#6d28d9;"></span><span>⑨ Physical AI（将来）</span></div>
           <div style="height:10px;"></div>
           <div style="font-size:11px;color:var(--muted2);">各頂点は要件カテゴリ軸。塗り面積が広いほど重要度が高い。</div>
         </div>
@@ -616,57 +623,296 @@ footer a:hover{text-decoration:underline;}
     </div>
   </section>
 
+  <!-- ③.5 LEVEL CONTAINMENT -->
+  <section class="reveal" id="level-structure">
+    <span class="sec-tag">Level Structure</span>
+    <h2>Level 1–3 の包含関係</h2>
+    <p class="sec-desc">Level は線形の「段階」ではなく「包含」関係 — 上位 Level は下位 Level の全能力を内包し、さらに高階 Harness 機能を追加する</p>
+
+    <!-- Containment diagram -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px 28px;margin-bottom:24px;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+      <div style="display:flex;gap:24px;align-items:stretch;flex-wrap:wrap;">
+
+        <!-- Nested rings diagram -->
+        <div style="flex:0 0 auto;display:flex;align-items:center;justify-content:center;min-width:280px;">
+          <div style="position:relative;width:280px;height:244px;">
+            <!-- L3 outer -->
+            <div style="position:absolute;inset:0;border-radius:16px;background:rgba(124,58,237,.09);border:2.5px solid rgba(124,58,237,.55);display:flex;align-items:flex-start;justify-content:flex-start;padding:8px 12px;">
+              <span style="font-size:10px;font-weight:800;color:var(--purple);text-transform:uppercase;letter-spacing:.08em;">Level 3 — 高階 Harness</span>
+            </div>
+            <!-- L2 middle -->
+            <div style="position:absolute;top:34px;left:16px;right:16px;bottom:10px;border-radius:12px;background:rgba(217,119,6,.16);border:2.5px solid rgba(217,119,6,.7);display:flex;align-items:flex-start;justify-content:flex-start;padding:8px 12px;">
+              <span style="font-size:10px;font-weight:800;color:var(--accent3);text-transform:uppercase;letter-spacing:.08em;">Level 2 — Harness 中層</span>
+            </div>
+            <!-- L1 inner -->
+            <div style="position:absolute;top:72px;left:32px;right:32px;bottom:22px;border-radius:10px;background:rgba(37,99,235,.11);border:2.5px solid rgba(37,99,235,.55);display:flex;align-items:center;justify-content:center;">
+              <span style="font-size:10px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;">Level 1 — 基盤</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Level descriptions -->
+        <div style="flex:1;min-width:280px;display:flex;flex-direction:column;gap:12px;">
+
+          <div style="border-radius:10px;padding:14px 16px;background:rgba(37,99,235,.05);border:1px solid rgba(37,99,235,.2);">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="font-size:11px;font-weight:800;background:var(--accent);color:#fff;padding:2px 8px;border-radius:4px;">L1</span>
+              <span style="font-size:13px;font-weight:700;color:var(--text);">基盤 — 単発の物理操作</span>
+              <span style="font-size:10px;color:var(--muted);margin-left:auto;">Ph 0–1</span>
+            </div>
+            <p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0;">LLM + センサー + ROS2 の<strong>直接パイプライン</strong>。Harnessシステム不使用。音声指示 → 認識 → 単発動作実行。</p>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;">
+              <span style="font-size:10px;background:rgba(37,99,235,.08);color:var(--accent);border:1px solid rgba(37,99,235,.2);padding:2px 7px;border-radius:4px;">SLAM</span>
+              <span style="font-size:10px;background:rgba(37,99,235,.08);color:var(--accent);border:1px solid rgba(37,99,235,.2);padding:2px 7px;border-radius:4px;">LLM基盤</span>
+              <span style="font-size:10px;background:rgba(37,99,235,.08);color:var(--accent);border:1px solid rgba(37,99,235,.2);padding:2px 7px;border-radius:4px;">IK/FK</span>
+              <span style="font-size:10px;background:rgba(37,99,235,.08);color:var(--accent);border:1px solid rgba(37,99,235,.2);padding:2px 7px;border-radius:4px;">MCP</span>
+              <span style="font-size:10px;background:rgba(37,99,235,.08);color:var(--accent);border:1px solid rgba(37,99,235,.2);padding:2px 7px;border-radius:4px;">Isaac Sim基盤</span>
+            </div>
+          </div>
+
+          <div style="border-radius:10px;padding:14px 16px;background:rgba(217,119,6,.05);border:1px solid rgba(217,119,6,.2);">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="font-size:11px;font-weight:800;background:var(--accent3);color:#fff;padding:2px 8px;border-radius:4px;">L2</span>
+              <span style="font-size:13px;font-weight:700;color:var(--text);">Harness中層 — 複数手順の自律構成・実行</span>
+              <span style="font-size:10px;color:var(--muted);margin-left:auto;">Ph 2–5</span>
+            </div>
+            <p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0;"><strong>L1 を内包</strong>した上で Skill API・Planner Agent・Memory・Cron・Heartbeat が加わる。目標だけ与えれば手順を自律構成して実行。</p>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;">
+              <span style="font-size:10px;background:rgba(217,119,6,.08);color:var(--accent3);border:1px solid rgba(217,119,6,.2);padding:2px 7px;border-radius:4px;">Tool Use</span>
+              <span style="font-size:10px;background:rgba(217,119,6,.08);color:var(--accent3);border:1px solid rgba(217,119,6,.2);padding:2px 7px;border-radius:4px;">Agent</span>
+              <span style="font-size:10px;background:rgba(217,119,6,.08);color:var(--accent3);border:1px solid rgba(217,119,6,.2);padding:2px 7px;border-radius:4px;">Cron</span>
+              <span style="font-size:10px;background:rgba(217,119,6,.08);color:var(--accent3);border:1px solid rgba(217,119,6,.2);padding:2px 7px;border-radius:4px;">Heartbeat</span>
+              <span style="font-size:10px;background:rgba(217,119,6,.08);color:var(--accent3);border:1px solid rgba(217,119,6,.2);padding:2px 7px;border-radius:4px;">Memory</span>
+              <span style="font-size:10px;background:rgba(217,119,6,.08);color:var(--accent3);border:1px solid rgba(217,119,6,.2);padding:2px 7px;border-radius:4px;">VLA</span>
+              <span style="font-size:10px;background:rgba(217,119,6,.08);color:var(--accent3);border:1px solid rgba(217,119,6,.2);padding:2px 7px;border-radius:4px;">RL</span>
+              <span style="font-size:10px;background:rgba(217,119,6,.08);color:var(--accent3);border:1px solid rgba(217,119,6,.2);padding:2px 7px;border-radius:4px;">Isaac Lab</span>
+            </div>
+          </div>
+
+          <div style="border-radius:10px;padding:14px 16px;background:rgba(124,58,237,.05);border:1px solid rgba(124,58,237,.2);">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="font-size:11px;font-weight:800;background:var(--purple);color:#fff;padding:2px 8px;border-radius:4px;">L3</span>
+              <span style="font-size:13px;font-weight:700;color:var(--text);">高階 Harness — 自己診断・協調・人との対話</span>
+              <span style="font-size:10px;color:var(--muted);margin-left:auto;">Ph 6–8</span>
+            </div>
+            <p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0;"><strong>L1+L2 を内包</strong>した上で Self-Check・Multi-Agent・User-Interactive が加わる。異常を自律対処し、不確実なときは人に確認を求める。</p>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;">
+              <span style="font-size:10px;background:rgba(124,58,237,.08);color:var(--purple);border:1px solid rgba(124,58,237,.2);padding:2px 7px;border-radius:4px;">Self-Check</span>
+              <span style="font-size:10px;background:rgba(124,58,237,.08);color:var(--purple);border:1px solid rgba(124,58,237,.2);padding:2px 7px;border-radius:4px;">Self-Progress</span>
+              <span style="font-size:10px;background:rgba(124,58,237,.08);color:var(--purple);border:1px solid rgba(124,58,237,.2);padding:2px 7px;border-radius:4px;">Multi-Agent</span>
+              <span style="font-size:10px;background:rgba(124,58,237,.08);color:var(--purple);border:1px solid rgba(124,58,237,.2);padding:2px 7px;border-radius:4px;">User-Interactive</span>
+              <span style="font-size:10px;background:rgba(124,58,237,.08);color:var(--purple);border:1px solid rgba(124,58,237,.2);padding:2px 7px;border-radius:4px;">Digital Twin</span>
+              <span style="font-size:10px;background:rgba(124,58,237,.08);color:var(--purple);border:1px solid rgba(124,58,237,.2);padding:2px 7px;border-radius:4px;">Permission</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Expandable: Move-base Scenarios L1-3 -->
+    <div style="margin-top:32px;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+        <span style="font-size:18px;">🗺️</span>
+        <div style="font-size:15px;font-weight:700;color:var(--text);">Move-base シナリオ</div>
+        <div style="display:flex;gap:6px;margin-left:8px;">
+          <button onclick="toggleLvPanel('mb-l1',this)" style="font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px;border:2px solid var(--accent);background:var(--accent-l);color:var(--accent);cursor:pointer;">L1</button>
+          <button onclick="toggleLvPanel('mb-l2',this)" style="font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px;border:2px solid var(--accent3);background:var(--accent3-l);color:var(--accent3);cursor:pointer;">L2</button>
+          <button onclick="toggleLvPanel('mb-l3',this)" style="font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px;border:2px solid var(--purple);background:var(--purple-l);color:var(--purple);cursor:pointer;">L3</button>
+        </div>
+        <span style="font-size:11px;color:var(--muted);margin-left:4px;">タグをクリックで展開</span>
+      </div>
+
+      <!-- MB-L1 panel -->
+      <div id="mb-l1" class="lv-panel" style="display:none;">
+        <div class="sc-card" style="border-left:3px solid var(--accent);margin-bottom:0;">
+          <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(37,99,235,.08),transparent);color:var(--accent);">L1 基盤 — 単発の物理操作（Harness なし）</div>
+          <div class="sc-layout">
+            <div class="sc-content">
+              <div class="sc-head">
+                <span class="sc-rank">🗺️</span>
+                <div class="sc-meta">
+                  <div class="sc-title">SLAM 自律移動 &amp; 音声指令操縦 + 走行ログ記録</div>
+                  <div class="sc-sub">音声指示で SLAM + Nav2 自律走行し、走行ログを記録して記憶システムの基盤を構築</div>
+                </div>
+                <span class="sc-status" style="background:var(--accent-l);color:var(--accent);border:1px solid var(--accent-m);">L1</span>
+              </div>
+              <div class="sc-body">
+                <div class="sc-flow">🗣️ 音声/テキスト指示 → <span class="sf">🤖 LLM 解釈</span> → <span class="sf">📍 Waypoint 生成</span> → <span class="sf">🗺️ SLAM 自己位置推定</span> → <span class="sf">🚗 Nav2 自律走行</span> → <span class="sf">📝 走行ログ記録</span> → ✅ 到達確認</div>
+                <div class="chips"><span class="chip t">ORB-SLAM3</span><span class="chip t">Nav2</span><span class="chip a">LLM Planner</span><span class="chip g">Whisper</span><span class="chip t">ROS bag</span></div>
+                <div class="sc-req-row"><span class="sc-req-label">要件：</span><span class="req-rel nav">① Nav</span><span class="req-rel agent">③ Multi-Agent</span><span class="req-rel nlui">⑤ NL UI</span><span class="req-rel sys">⑦ System</span><span class="req-rel skill">⑧ Skill</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MB-L2 panel -->
+      <div id="mb-l2" class="lv-panel" style="display:none;">
+        <div class="sc-card" style="border-left:3px solid var(--accent3);margin-bottom:0;">
+          <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(217,119,6,.08),transparent);color:var(--accent3);">L2 Harness 中層（L1 内包）— Agent + Memory + Skill</div>
+          <div class="sc-layout">
+            <div class="sc-content">
+              <div class="sc-head">
+                <span class="sc-rank">🧠</span>
+                <div class="sc-meta">
+                  <div class="sc-title">地図意味理解に基づく自然言語ナビゲーション</div>
+                  <div class="sc-sub">地図上の場所の意味や役割を理解し、自然言語指示の意味解析と走行中の分析・記憶更新を伴って自律移動</div>
+                </div>
+                <span class="sc-status" style="background:var(--accent3-l);color:var(--accent3);border:1px solid rgba(217,119,6,.3);">L2</span>
+              </div>
+              <div class="sc-body">
+                <div class="sc-flow">🗣️ 自然言語指示 → <span class="sf">🤖 指示意味解析</span> → <span class="sf">🗺️ 地図上の場所意味・文脈を参照</span> → <span class="sf">🧠 Memory / 過去走行履歴検索</span> → <span class="sf">📍 目的地と経路を導出</span> → <span class="sf">🚗 走行しながら環境分析</span> → <span class="sf">🔄 必要に応じて経路調整</span> → <span class="sf">📝 記憶・地図理解を更新</span> → ✅ 完了報告</div>
+                <div class="chips"><span class="chip a">Semantic map</span><span class="chip a">RAG</span><span class="chip a">Vector DB</span><span class="chip t">SLAM</span><span class="chip t">Nav2</span><span class="chip a">Episodic Memory</span><span class="chip a">LLM Planner</span><span class="chip g">Online scene analysis</span></div>
+                <div class="sc-req-row"><span class="sc-req-label">要件：</span><span class="req-rel nav">① Nav</span><span class="req-rel mem">② Memory</span><span class="req-rel agent">③ Multi-Agent</span><span class="req-rel nlui">⑤ NL UI</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MB-L3 panel -->
+      <div id="mb-l3" class="lv-panel" style="display:none;">
+        <div class="sc-card" style="border-left:3px solid var(--purple);margin-bottom:0;">
+          <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(124,58,237,.08),transparent);color:var(--purple);">L3 高階 Harness（L1+L2 内包）— Self-Check + Multi-Agent + Human</div>
+          <div class="sc-layout">
+            <div class="sc-content">
+              <div class="sc-head">
+                <span class="sc-rank">🌳</span>
+                <div class="sc-meta">
+                  <div class="sc-title">自律異常対処 + Multi-Agent + 人へのインタラクション</div>
+                  <div class="sc-sub">閉ドア等の異常を Self-Check で検知し、Multi-Agent が自律判断。解決不能なら人に確認を求める</div>
+                </div>
+                <span class="sc-status" style="background:var(--purple-l);color:var(--purple);border:1px solid rgba(124,58,237,.3);">L3</span>
+              </div>
+              <div class="sc-body">
+                <div class="sc-flow">⏰ Cron 巡回 → <span class="sf">🌳 屋外走行（GNSS+SLAM）→ 🏢 屋内移動</span><br>→ <span class="sf">⚠️ Self-Check: 閉ドア・障害物を検知</span><br>→ Multi-Agent 判断: 別経路再計画 or <span class="sf">👤「ドアを開けてもらえますか？」</span><br>→ 解決後 タスク継続 → <span class="sf">🧠 Memory 参照・更新</span> → ✅ 到達・記録</div>
+                <div class="chips"><span class="chip t">GNSS</span><span class="chip t">ORB-SLAM3</span><span class="chip t">Nav2</span><span class="chip a">Multi-Agent</span><span class="chip a">Self-Check</span><span class="chip g">Human-in-the-loop</span><span class="chip a">Memory</span></div>
+                <div class="sc-req-row"><span class="sc-req-label">要件：</span><span class="req-rel nav">① Nav</span><span class="req-rel mem">② Memory</span><span class="req-rel agent">③ Multi-Agent</span><span class="req-rel nlui">⑤ NL UI</span><span class="req-rel sys">⑦ System</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expandable: Arm Scenarios L1-3 -->
+    <div style="margin-top:24px;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+        <span style="font-size:18px;">🦾</span>
+        <div style="font-size:15px;font-weight:700;color:var(--text);">Arm シナリオ</div>
+        <div style="display:flex;gap:6px;margin-left:8px;">
+          <button onclick="toggleLvPanel('arm-l1',this)" style="font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px;border:2px solid var(--accent);background:var(--accent-l);color:var(--accent);cursor:pointer;">L1</button>
+          <button onclick="toggleLvPanel('arm-l2',this)" style="font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px;border:2px solid var(--accent3);background:var(--accent3-l);color:var(--accent3);cursor:pointer;">L2</button>
+          <button onclick="toggleLvPanel('arm-l3',this)" style="font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px;border:2px solid var(--purple);background:var(--purple-l);color:var(--purple);cursor:pointer;">L3</button>
+        </div>
+        <span style="font-size:11px;color:var(--muted);margin-left:4px;">タグをクリックで展開</span>
+      </div>
+
+      <!-- Arm-L1 panel -->
+      <div id="arm-l1" class="lv-panel" style="display:none;">
+        <div class="sc-card" style="border-left:3px solid var(--accent);margin-bottom:0;">
+          <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(37,99,235,.08),transparent);color:var(--accent);">L1 基盤 — 単発の物理操作（Harness なし）</div>
+          <div class="sc-layout">
+            <div class="sc-content">
+              <div class="sc-head">
+                <span class="sc-rank">🔘</span>
+                <div class="sc-meta">
+                  <div class="sc-title">音声指令によるボタン押下</div>
+                  <div class="sc-sub">対象ボタンの指示を LLM が解釈し、YOLO/VLM でボタンを認識して SOARM101 で押下</div>
+                </div>
+                <span class="sc-status" style="background:var(--accent-l);color:var(--accent);border:1px solid var(--accent-m);">L1</span>
+              </div>
+              <div class="sc-body">
+                <div class="sc-flow">🗣️ 音声指示 → <span class="sf">🤖 LLM 解釈</span> → <span class="sf">📸 カメラ入力</span> → <span class="sf">👁️ ボタン検出（YOLO/VLM）</span> → <span class="sf">📐 Depth 推定 + IK 計算</span> → <span class="sf">🦾 SOARM101 押下</span> → ✅</div>
+                <div class="chips"><span class="chip h">SOARM101</span><span class="chip g">YOLO</span><span class="chip a">VLM</span><span class="chip g">IK</span><span class="chip t">Depth estimation</span><span class="chip a">LLM</span><span class="chip g">Whisper</span></div>
+                <div class="sc-req-row"><span class="sc-req-label">要件：</span><span class="req-rel manip">④ Manipulation</span><span class="req-rel nlui">⑤ NL UI</span><span class="req-rel perc">⑥ Perception</span><span class="req-rel skill">⑧ Skill System</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Arm-L2 panel -->
+      <div id="arm-l2" class="lv-panel" style="display:none;">
+        <div class="sc-card" style="border-left:3px solid var(--accent3);margin-bottom:0;">
+          <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(217,119,6,.08),transparent);color:var(--accent3);">L2 Harness 中層（L1 内包）— Skill API + Agent</div>
+          <div class="sc-layout">
+            <div class="sc-content">
+              <div class="sc-head">
+                <span class="sc-rank">🔤</span>
+                <div class="sc-meta">
+                  <div class="sc-title">Agent / Skill 活用による一連のボタン押下タスク完遂</div>
+                  <div class="sc-sub">「3階へ移動」などの目的から Planner Agent が必要なボタン系列を導出し、Skill を連鎖実行して最後まで完遂</div>
+                </div>
+                <span class="sc-status" style="background:var(--accent3-l);color:var(--accent3);border:1px solid rgba(217,119,6,.3);">L2</span>
+              </div>
+              <div class="sc-body">
+                <div class="sc-flow">🗣️ 目的指示（例: 3階へ移動）→ <span class="sf">🤖 LLM / Planner Agent が必要タスク列を導出</span> → <span class="sf">👁️ ボタン・表示認識</span> → <span class="sf">📋 押下順序計画</span> → <span class="sf">🔗 Skill 呼び出し（接近 / 位置合わせ / 押下 / 結果確認）× N</span> → ✅ 目的階到達またはタスク完了確認</div>
+                <div class="chips"><span class="chip a">Planner Agent</span><span class="chip a">Skill API</span><span class="chip g">Sequential task planning</span><span class="chip g">Button detection</span><span class="chip g">IK</span><span class="chip t">FK</span><span class="chip t">Closed-loop pressing</span><span class="chip a">Task decomposition</span></div>
+                <div class="sc-req-row"><span class="sc-req-label">要件：</span><span class="req-rel agent">③ Multi-Agent</span><span class="req-rel manip">④ Manipulation</span><span class="req-rel perc">⑥ Perception</span><span class="req-rel skill">⑧ Skill System</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Arm-L3 panel -->
+      <div id="arm-l3" class="lv-panel" style="display:none;">
+        <div class="sc-card" style="border-left:3px solid var(--purple);margin-bottom:0;">
+          <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(124,58,237,.08),transparent);color:var(--purple);">L3 高階 Harness（L1+L2 内包）— Self-Check + Human-in-the-loop</div>
+          <div class="sc-layout">
+            <div class="sc-content">
+              <div class="sc-head">
+                <span class="sc-rank">🤝</span>
+                <div class="sc-meta">
+                  <div class="sc-title">状況理解・身体性理解に基づく適応ボタン操作 + 人インタラクション</div>
+                  <div class="sc-sub">周囲状況とアームの能力範囲を理解し、押す・押さない・待機・再計画を判断。必要時は人ともやり取りする</div>
+                </div>
+                <span class="sc-status" style="background:var(--purple-l);color:var(--purple);border:1px solid rgba(124,58,237,.3);">L3</span>
+              </div>
+              <div class="sc-body">
+                <div class="sc-flow">🗣️ 指示受理 → <span class="sf">👁️ VLM が環境・人・ボタン状態・自機姿勢を認識</span><br>→ <span class="sf">🧠 能力範囲 / 干渉 / 既実行タスクを評価</span><br>→ <span class="sf">🤖 Agent が実行・待機・再計画を判断</span><br>→ <span class="sf">🦾 VLA / Skill による適応操作</span><br>→ <span class="sf">🔄 Self-Check と状況更新</span> → 🔊 必要時は人へ確認・通知 → ✅ 安全かつ妥当な完了</div>
+                <div class="chips"><span class="chip a">VLM</span><span class="chip a">VLA</span><span class="chip a">Embodiment awareness</span><span class="chip a">Human-aware planning</span><span class="chip a">Self-Check</span><span class="chip a">Replanning</span><span class="chip g">TTS</span><span class="chip g">Human-in-the-loop</span><span class="chip a">Memory 更新</span></div>
+                <div class="sc-req-row"><span class="sc-req-label">要件：</span><span class="req-rel agent">③ Multi-Agent</span><span class="req-rel manip">④ Manipulation</span><span class="req-rel nlui">⑤ NL UI</span><span class="req-rel perc">⑥ Perception</span><span class="req-rel sys">⑦ System</span><span class="req-rel skill">⑧ Skill System</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+    function toggleLvPanel(id, btn) {
+      const panel = document.getElementById(id);
+      const isOpen = panel.style.display !== 'none';
+      panel.style.display = isOpen ? 'none' : 'block';
+      btn.style.opacity = isOpen ? '1' : '0.6';
+      btn.style.fontWeight = isOpen ? '800' : '600';
+    }
+    </script>
+  </section>
+
   <!-- ④ DEMO SCENARIOS -->
   <section class="reveal" id="scenarios">
     <span class="sec-tag">Demo Scenarios</span>
     <h2>デモシナリオ一覧</h2>
-    <p class="sec-desc">3カテゴリ × Level 1/2/3 — 難易度順に段階的に実証。右端の円グラフは各シナリオが活用する要件カテゴリを示します。</p>
-
-    <!-- Category legend -->
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px;">
-      <div style="display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;background:rgba(37,99,235,.07);border:1px solid rgba(37,99,235,.2);font-size:12px;font-weight:700;color:var(--accent);">🚗 モバイルベース単体</div>
-      <div style="display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;background:rgba(217,119,6,.07);border:1px solid rgba(217,119,6,.2);font-size:12px;font-weight:700;color:var(--accent3);">🦾 アーム単体</div>
-      <div style="display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;background:rgba(5,150,105,.07);border:1px solid rgba(5,150,105,.2);font-size:12px;font-weight:700;color:var(--accent2);">🤝 モバイル + アーム 複合</div>
-    </div>
+    <p class="sec-desc">右端の円グラフは各シナリオが活用する要件カテゴリを示します。</p>
 
     <div class="scenario-list">
-
-    <!-- ====== CATEGORY A: MOBILE ONLY ====== -->
-    <div class="cat-header" style="background:linear-gradient(135deg,rgba(37,99,235,.08),rgba(37,99,235,.03));border-left:4px solid var(--accent);">
-      <div class="cat-header-inner">
-        <span class="cat-icon">🚗</span>
-        <div>
-          <div class="cat-title">カテゴリ A — モバイルベース 単体 Demo</div>
-          <div class="cat-desc">移動・自己位置推定・記憶を段階的に実証</div>
-        </div>
-        <div class="cat-levels">
-          <span class="cat-lv" style="background:rgba(217,119,6,.12);color:#d97706;">L1 予定</span>
-          <span class="cat-lv" style="background:rgba(217,119,6,.12);color:#d97706;">L2 予定</span>
-          <span class="cat-lv" style="background:rgba(217,119,6,.12);color:#d97706;">L3 予定</span>
-        </div>
-      </div>
-    </div>
-    <div class="scenario-list">
-
-      <!-- A prerequisite note -->
-      <div style="background:linear-gradient(90deg,rgba(5,150,105,.1),rgba(5,150,105,.04));border:1px solid rgba(5,150,105,.25);border-radius:10px;padding:12px 18px;margin-bottom:12px;font-size:12px;color:#059669;">
-        <strong>前提（完了済み 2026-04-11）：</strong> Joy-Con 手動操縦・モーター制御チェーン確認 &nbsp;→&nbsp;
-        <a href="logs/20260407_joycon-demo/snapshot.html" target="_blank" style="color:#059669;text-decoration:underline;">joycon-demo snapshot</a> /
-        <a href="media/teleoperate.MOV" style="color:#059669;text-decoration:underline;">teleoperate.MOV</a>
-      </div>
 
       <!-- A-Level 1 -->
       <div class="sc-card" style="border-left:3px solid var(--accent);">
-        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(37,99,235,.08),transparent);color:var(--accent);">Level 1 基礎 — Phase 1–2</div>
+        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(37,99,235,.08),transparent);color:var(--accent);">🚗 モバイルベース — L1 基盤（単発の物理操作）</div>
         <div class="sc-layout">
           <div class="sc-content">
             <div class="sc-head">
               <span class="sc-rank">🗺️</span>
               <div class="sc-meta">
-                <div class="sc-title">A-Level 1 — SLAM 自律移動 &amp; 音声指令操縦 + 走行ログ記録</div>
+                <div class="sc-title">SLAM 自律移動 &amp; 音声指令操縦 + 走行ログ記録</div>
                 <div class="sc-sub">音声指示で SLAM + Nav2 自律走行し、走行ログを記録して記憶システムの基盤を構築</div>
               </div>
-              <span class="sc-status plan">Phase 1–2</span>
+              <span class="sc-status" style="background:var(--accent-l);color:var(--accent);border:1px solid var(--accent-m);">L1</span>
             </div>
             <div class="sc-body">
               <div class="sc-flow">
@@ -706,28 +952,30 @@ footer a:hover{text-decoration:underline;}
 
       <!-- A-Level 2 -->
       <div class="sc-card" style="border-left:3px solid var(--accent);">
-        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(37,99,235,.08),transparent);color:var(--accent);">Level 2 応用 — Phase 3–4</div>
+        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(37,99,235,.08),transparent);color:var(--accent);">🚗 モバイルベース — L2 Harness 中層（L1 内包）</div>
         <div class="sc-layout">
           <div class="sc-content">
             <div class="sc-head">
               <span class="sc-rank">🧠</span>
               <div class="sc-meta">
-                <div class="sc-title">A-Level 2 — 記憶システム活用による文脈移動</div>
-                <div class="sc-sub">走行ログを Vector DB に蓄積し、「前に行った場所へ」という文脈指示で Memory 参照して自律移動</div>
+                <div class="sc-title">地図意味理解に基づく自然言語ナビゲーション</div>
+                <div class="sc-sub">場所の意味理解・自然言語解析・走行中の環境分析と記憶更新を伴う中層ナビゲーション</div>
               </div>
-              <span class="sc-status plan">Phase 3–4</span>
+              <span class="sc-status" style="background:var(--accent3-l);color:var(--accent3);border:1px solid rgba(217,119,6,.3);">L2</span>
             </div>
             <div class="sc-body">
               <div class="sc-flow">
-                🗣️ 文脈指示（「前に行った〇〇へ」）→ <span class="sf">🧠 Memory 検索（Vector DB + RAG）</span> → <span class="sf">📍 位置推定</span> → <span class="sf">🗺️ SLAM ナビゲーション</span> → <span class="sf">🚗 自律走行</span> → <span class="sf">📝 Memory 更新</span> → ✅ 完了報告
+                🗣️ 自然言語指示 → <span class="sf">🤖 指示意味解析</span> → <span class="sf">🗺️ 地図上の場所意味・文脈を参照</span> → <span class="sf">🧠 Memory / 過去走行履歴検索</span> → <span class="sf">📍 目的地と経路を導出</span> → <span class="sf">🚗 走行しながら環境分析</span> → <span class="sf">🔄 必要に応じて経路調整</span> → <span class="sf">📝 記憶・地図理解を更新</span> → ✅ 完了報告
               </div>
               <div class="chips">
+                <span class="chip a">Semantic map</span>
                 <span class="chip a">RAG</span>
                 <span class="chip a">Vector DB</span>
                 <span class="chip t">SLAM</span>
                 <span class="chip t">Nav2</span>
                 <span class="chip a">Episodic Memory</span>
                 <span class="chip a">LLM Planner</span>
+                <span class="chip g">Online scene analysis</span>
               </div>
               <div class="sc-req-row">
                 <span class="sc-req-label">要件カテゴリ：</span>
@@ -753,90 +1001,71 @@ footer a:hover{text-decoration:underline;}
 
       <!-- A-Level 3 -->
       <div class="sc-card" style="border-left:3px solid var(--accent);">
-        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(37,99,235,.08),transparent);color:var(--accent);">Level 3 発展 — Phase 5–6</div>
+        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(37,99,235,.08),transparent);color:var(--accent);">🚗 モバイルベース — L3 高階 Harness（L1+L2 内包）</div>
         <div class="sc-layout">
           <div class="sc-content">
             <div class="sc-head">
               <span class="sc-rank">🌳</span>
               <div class="sc-meta">
-                <div class="sc-title">A-Level 3 — 屋外・屋内シームレス走行 + 安全システム + 記憶統合</div>
-                <div class="sc-sub">GNSS+SLAM で屋外→屋内を安定走行し、Safety Agent が障害物・異常を自律判断。記憶システムと連携</div>
+                <div class="sc-title">自律異常対処 + Multi-Agent + 人へのインタラクション</div>
+                <div class="sc-sub">閉ドア等の異常を Self-Check で検知し、Multi-Agent が自律判断。解決不能なら人に確認を求める</div>
               </div>
-              <span class="sc-status plan">Phase 5–6</span>
+              <span class="sc-status" style="background:var(--purple-l);color:var(--purple);border:1px solid rgba(124,58,237,.3);">L3</span>
             </div>
             <div class="sc-body">
               <div class="sc-flow">
-                📋 ルート設定 → <span class="sf">🌳 屋外走行（GNSS+SLAM）</span> → <span class="sf">🏢 屋内移動（Nav2）</span> → <span class="sf">⚠️ Safety Agent 監視（障害物・段差・異常）</span> → <span class="sf">🔄 安定走行制御（EKF + IMU）</span> → <span class="sf">🧠 記憶参照・更新</span> → ✅ 到達・記録
+                ⏰ Cron 巡回タスク → <span class="sf">🌳 屋外走行（GNSS+SLAM）→ 🏢 屋内移動</span><br>
+                → <span class="sf">⚠️ Self-Check: 閉ドア・障害物を検知</span><br>
+                → Multi-Agent 判断: 別経路再計画 or <span class="sf">👤「ドアを開けてもらえますか？」と人に確認</span><br>
+                → 解決後 タスク継続 → <span class="sf">🧠 Memory 参照・更新</span> → ✅ 到達・記録
               </div>
               <div class="chips">
                 <span class="chip t">GNSS</span>
                 <span class="chip t">ORB-SLAM3</span>
                 <span class="chip t">Nav2</span>
+                <span class="chip a">Multi-Agent</span>
+                <span class="chip a">Self-Check</span>
                 <span class="chip a">Safety Agent</span>
-                <span class="chip t">EKF</span>
                 <span class="chip a">Memory</span>
-                <span class="chip h">IMU</span>
+                <span class="chip g">Human-in-the-loop</span>
               </div>
               <div class="sc-req-row">
                 <span class="sc-req-label">要件カテゴリ：</span>
                 <span class="req-rel nav">① Nav</span>
                 <span class="req-rel mem">② Memory</span>
                 <span class="req-rel agent">③ Multi-Agent</span>
+                <span class="req-rel nlui">⑤ NL UI</span>
                 <span class="req-rel sys">⑦ System</span>
               </div>
             </div>
           </div>
           <div class="sc-radar-col">
             <div class="sc-pie-title">関連要件</div>
-            <svg class="sc-pie" data-reqs="1,2,3,7" width="150" height="150" viewBox="-75 -75 150 150"></svg>
+            <svg class="sc-pie" data-reqs="1,2,3,5,7" width="150" height="150" viewBox="-75 -75 150 150"></svg>
             <div class="sc-radar-axes">
               <span class="sc-radar-ax" style="background:rgba(220,38,38,.08);color:#dc2626;">①Nav</span>
               <span class="sc-radar-ax" style="background:rgba(37,99,235,.08);color:#2563eb;">②Mem</span>
               <span class="sc-radar-ax" style="background:rgba(124,58,237,.08);color:#7c3aed;">③Agent</span>
+              <span class="sc-radar-ax" style="background:rgba(5,150,105,.08);color:#059669;">⑤NL</span>
               <span class="sc-radar-ax" style="background:rgba(71,85,105,.08);color:#475569;">⑦Sys</span>
             </div>
           </div>
         </div>
       </div>
 
-    </div><!-- /category-A -->
-
-    <!-- ====== CATEGORY B: ARM ONLY ====== -->
-    <div class="cat-header" style="background:linear-gradient(135deg,rgba(217,119,6,.08),rgba(217,119,6,.03));border-left:4px solid var(--accent3);">
-      <div class="cat-header-inner">
-        <span class="cat-icon">🦾</span>
-        <div>
-          <div class="cat-title">カテゴリ B — アーム単体 Demo</div>
-          <div class="cat-desc">SOARM101 アームの単体能力を段階的に実証</div>
-        </div>
-        <div class="cat-levels">
-          <span class="cat-lv" style="background:rgba(217,119,6,.12);color:#d97706;">L1 予定</span>
-          <span class="cat-lv" style="background:rgba(217,119,6,.12);color:#d97706;">L2 予定</span>
-          <span class="cat-lv" style="background:rgba(217,119,6,.12);color:#d97706;">L3 予定</span>
-        </div>
-      </div>
-    </div>
-    <div class="scenario-list">
-
-      <!-- B prerequisite note -->
-      <div style="background:linear-gradient(90deg,rgba(5,150,105,.1),rgba(5,150,105,.04));border:1px solid rgba(5,150,105,.25);border-radius:10px;padding:12px 18px;margin-bottom:12px;font-size:12px;color:#059669;">
-        <strong>前提（完了済み 2026-04-11）：</strong> SOARM101 基本動作確認・Teleoperator・VLA サンプル実行 &nbsp;→&nbsp;
-        <a href="media/VLA.MOV" style="color:#059669;text-decoration:underline;">VLA.MOV</a> /
-        <a href="media/teleoperate.MOV" style="color:#059669;text-decoration:underline;">teleoperate.MOV</a>
-      </div>
 
       <!-- B-Level 1 -->
       <div class="sc-card" style="border-left:3px solid var(--accent3);">
-        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(217,119,6,.08),transparent);color:var(--accent3);">Level 1 基礎 — Phase 1–2</div>
+        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(217,119,6,.08),transparent);color:var(--accent3);">🦾 アーム単体 — L1 基盤（単発の物理操作）</div>
         <div class="sc-layout">
           <div class="sc-content">
             <div class="sc-head">
               <span class="sc-rank">🔘</span>
               <div class="sc-meta">
-                <div class="sc-title">B-Level 1 — 音声指令によるエレベーターボタン押下</div>
-                <div class="sc-sub">「3階のボタンを押して」という音声指示を LLM が解釈し、YOLO/VLM でボタンを認識して SOARM101 で押下</div>
+                <div class="sc-title">音声指令によるボタン押下</div>
+                <div class="sc-sub">対象ボタンの指示を LLM が解釈し、YOLO/VLM でボタンを認識して SOARM101 で押下</div>
               </div>
-              <span class="sc-status plan">Phase 1–2</span>
+              <span class="sc-status" style="background:var(--accent-l);color:var(--accent);border:1px solid var(--accent-m);">L1</span>
             </div>
             <div class="sc-body">
               <div class="sc-flow">
@@ -875,28 +1104,30 @@ footer a:hover{text-decoration:underline;}
 
       <!-- B-Level 2 -->
       <div class="sc-card" style="border-left:3px solid var(--accent3);">
-        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(217,119,6,.08),transparent);color:var(--accent3);">Level 2 応用 — Phase 3–4</div>
+        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(217,119,6,.08),transparent);color:var(--accent3);">🦾 アーム単体 — L2 Harness 中層（L1 内包）</div>
         <div class="sc-layout">
           <div class="sc-content">
             <div class="sc-head">
               <span class="sc-rank">🔤</span>
               <div class="sc-meta">
-                <div class="sc-title">B-Level 2 — 物品名称指定 &amp; 文字ブロックスペリング</div>
-                <div class="sc-sub">物品名を指示すると LLM が順序を計画し、OCR+YOLO でブロックを認識して複数ステップで把持・配置</div>
+                <div class="sc-title">Agent / Skill 活用による一連のボタン押下タスク完遂</div>
+                <div class="sc-sub">Planner Agent が必要なボタン系列を導出し、Skill 呼び出しで一連のボタン押下タスクを最後まで完遂</div>
               </div>
-              <span class="sc-status plan">Phase 3–4</span>
+              <span class="sc-status" style="background:var(--accent3-l);color:var(--accent3);border:1px solid rgba(217,119,6,.3);">L2</span>
             </div>
             <div class="sc-body">
               <div class="sc-flow">
-                🗣️ 物品名指示 → <span class="sf">🤖 LLM 解釈（スペリング計画）</span> → <span class="sf">👁️ OCR+YOLO ブロック認識</span> → <span class="sf">📋 順序計画</span> → <span class="sf">🦾 ブロック把持 × N回</span> → <span class="sf">📍 指定位置に配置</span> → ✅ 完成確認
+                🗣️ 目的指示（例: 3階へ移動）→ <span class="sf">🤖 LLM / Planner Agent が必要タスク列を導出</span> → <span class="sf">👁️ ボタン・表示認識</span> → <span class="sf">📋 押下順序計画</span> → <span class="sf">🔗 Skill 呼び出し（接近 / 位置合わせ / 押下 / 結果確認）× N</span> → ✅ 目的階到達またはタスク完了確認
               </div>
               <div class="chips">
-                <span class="chip g">YOLO</span>
-                <span class="chip a">OCR</span>
+                <span class="chip a">Planner Agent</span>
+                <span class="chip a">Skill API</span>
+                <span class="chip g">Sequential task planning</span>
+                <span class="chip g">Button detection</span>
                 <span class="chip g">IK</span>
                 <span class="chip t">FK</span>
-                <span class="chip a">LLM Planner</span>
-                <span class="chip g">Sequential manipulation</span>
+                <span class="chip t">Closed-loop pressing</span>
+                <span class="chip a">Task decomposition</span>
               </div>
               <div class="sc-req-row">
                 <span class="sc-req-label">要件カテゴリ：</span>
@@ -922,32 +1153,41 @@ footer a:hover{text-decoration:underline;}
 
       <!-- B-Level 3 -->
       <div class="sc-card" style="border-left:3px solid var(--accent3);">
-        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(217,119,6,.08),transparent);color:var(--accent3);">Level 3 発展 — Phase 5–6</div>
+        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(217,119,6,.08),transparent);color:var(--accent3);">🦾 アーム単体 — L3 高階 Harness（L1+L2 内包）</div>
         <div class="sc-layout">
           <div class="sc-content">
             <div class="sc-head">
-              <span class="sc-rank">🔌</span>
+              <span class="sc-rank">🤝</span>
               <div class="sc-meta">
-                <div class="sc-title">B-Level 3 — 精密フィードバック制御操作（プラグ挿入）</div>
-                <div class="sc-sub">視覚フィードバックをリアルタイムに活用した精細操作。挿入口認識→位置補正ループ→電流/映像で完了検出</div>
+                <div class="sc-title">状況理解・身体性理解に基づく適応ボタン操作 + 人インタラクション</div>
+                <div class="sc-sub">状況と身体性を理解して押下・待機・再計画を判断し、必要時は人とやり取りしながら適応操作する</div>
               </div>
-              <span class="sc-status plan">Phase 5–6</span>
+              <span class="sc-status" style="background:var(--purple-l);color:var(--purple);border:1px solid rgba(124,58,237,.3);">L3</span>
             </div>
             <div class="sc-body">
               <div class="sc-flow">
-                🗣️ 操作指示 → <span class="sf">👁️ VLM/YOLO 挿入口認識</span> → <span class="sf">📐 精密 IK 計算</span> → <span class="sf">🦾 挿入アプローチ</span> → <span class="sf">🔄 視覚フィードバック補正ループ</span> → ✅ 挿入確認（電流/映像）
+                🗣️ 指示受理 → <span class="sf">👁️ VLM が環境・人・ボタン状態・自機姿勢を認識</span><br>
+                → <span class="sf">🧠 能力範囲 / 干渉 / 既実行タスクを評価</span><br>
+                → <span class="sf">🤖 Agent が実行・待機・再計画を判断</span><br>
+                → <span class="sf">🦾 VLA / Skill による適応操作</span><br>
+                → <span class="sf">🔄 Self-Check と状況更新</span> → 🔊 必要時は人へ確認・通知 → ✅ 安全かつ妥当な完了
               </div>
               <div class="chips">
-                <span class="chip h">SOARM101</span>
-                <span class="chip g">IK</span>
                 <span class="chip a">VLM</span>
-                <span class="chip a">Visual Feedback</span>
-                <span class="chip t">Current sensing</span>
-                <span class="chip g">Closed-loop</span>
+                <span class="chip a">VLA</span>
+                <span class="chip a">Embodiment awareness</span>
+                <span class="chip a">Human-aware planning</span>
+                <span class="chip a">Self-Check</span>
+                <span class="chip a">Replanning</span>
+                <span class="chip g">TTS</span>
+                <span class="chip g">Human-in-the-loop</span>
+                <span class="chip a">Memory 更新</span>
               </div>
               <div class="sc-req-row">
                 <span class="sc-req-label">要件カテゴリ：</span>
+                <span class="req-rel agent">③ Multi-Agent</span>
                 <span class="req-rel manip">④ Manipulation</span>
+                <span class="req-rel nlui">⑤ NL UI</span>
                 <span class="req-rel perc">⑥ Perception</span>
                 <span class="req-rel sys">⑦ System</span>
                 <span class="req-rel skill">⑧ Skill System</span>
@@ -956,9 +1196,11 @@ footer a:hover{text-decoration:underline;}
           </div>
           <div class="sc-radar-col">
             <div class="sc-pie-title">関連要件</div>
-            <svg class="sc-pie" data-reqs="4,6,7,8" width="150" height="150" viewBox="-75 -75 150 150"></svg>
+            <svg class="sc-pie" data-reqs="3,4,5,6,7,8" width="150" height="150" viewBox="-75 -75 150 150"></svg>
             <div class="sc-radar-axes">
+              <span class="sc-radar-ax" style="background:rgba(124,58,237,.08);color:#7c3aed;">③Agent</span>
               <span class="sc-radar-ax" style="background:rgba(217,119,6,.08);color:#d97706;">④Manip</span>
+              <span class="sc-radar-ax" style="background:rgba(5,150,105,.08);color:#059669;">⑤NL</span>
               <span class="sc-radar-ax" style="background:rgba(8,145,178,.08);color:#0891b2;">⑥Perc</span>
               <span class="sc-radar-ax" style="background:rgba(71,85,105,.08);color:#475569;">⑦Sys</span>
               <span class="sc-radar-ax" style="background:rgba(15,23,42,.07);color:#0f172a;">⑧Skill</span>
@@ -967,37 +1209,19 @@ footer a:hover{text-decoration:underline;}
         </div>
       </div>
 
-    </div><!-- /category-B -->
-
-    <!-- ====== CATEGORY C: COMBINED ====== -->
-    <div class="cat-header" style="background:linear-gradient(135deg,rgba(124,58,237,.08),rgba(124,58,237,.03));border-left:4px solid var(--purple);">
-      <div class="cat-header-inner">
-        <span class="cat-icon">🚀</span>
-        <div>
-          <div class="cat-title">カテゴリ C — モバイル ＋ アーム 複合 Demo</div>
-          <div class="cat-desc">移動・認識・操作を統合し、実用レベルのタスクを自律実行</div>
-        </div>
-        <div class="cat-levels">
-          <span class="cat-lv" style="background:rgba(217,119,6,.12);color:#d97706;">L1 予定</span>
-          <span class="cat-lv" style="background:rgba(217,119,6,.12);color:#d97706;">L2 予定</span>
-          <span class="cat-lv" style="background:rgba(220,38,38,.12);color:#dc2626;">L3 最終目標</span>
-        </div>
-      </div>
-    </div>
-    <div class="scenario-list">
 
       <!-- C-Level 1 -->
       <div class="sc-card" style="border-left:3px solid var(--purple);">
-        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(124,58,237,.08),transparent);color:var(--purple);">Level 1 基礎 — Phase 2–3</div>
+        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(124,58,237,.08),transparent);color:var(--purple);">🤝 モバイル＋アーム複合 — L1 基盤（単発の物理操作）</div>
         <div class="sc-layout">
           <div class="sc-content">
             <div class="sc-head">
               <span class="sc-rank">🎯</span>
               <div class="sc-meta">
-                <div class="sc-title">C-Level 1 — 音声指令による移動 &amp; ターゲット操作 + 走行ログ記録</div>
+                <div class="sc-title">音声指令による移動 &amp; ターゲット操作 + 走行ログ記録</div>
                 <div class="sc-sub">移動＋操作を1つの音声指示で実行。SLAM移動でターゲットに接近し、アーム操作を実行。走行ログも記録</div>
               </div>
-              <span class="sc-status plan">Phase 2–3</span>
+              <span class="sc-status" style="background:var(--accent-l);color:var(--accent);border:1px solid var(--accent-m);">L1</span>
             </div>
             <div class="sc-body">
               <div class="sc-flow">
@@ -1039,16 +1263,16 @@ footer a:hover{text-decoration:underline;}
 
       <!-- C-Level 2 -->
       <div class="sc-card" style="border-left:3px solid var(--purple);">
-        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(124,58,237,.08),transparent);color:var(--purple);">Level 2 応用 — Phase 4–5</div>
+        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(124,58,237,.08),transparent);color:var(--purple);">🤝 モバイル＋アーム複合 — L2 Harness 中層（L1 内包）</div>
         <div class="sc-layout">
           <div class="sc-content">
             <div class="sc-head">
               <span class="sc-rank">🏢</span>
               <div class="sc-meta">
-                <div class="sc-title">C-Level 2 — 記憶活用 × 移動 × 物品操作（自律デリバリー）</div>
+                <div class="sc-title">記憶活用 × 移動 × 物品操作（自律デリバリー）</div>
                 <div class="sc-sub">Episodic Memory を活用した文脈指示に対応。記憶から位置推定し、移動→把持→搬送→配置を一貫実行</div>
               </div>
-              <span class="sc-status plan">Phase 4–5</span>
+              <span class="sc-status" style="background:var(--accent3-l);color:var(--accent3);border:1px solid rgba(217,119,6,.3);">L2</span>
             </div>
             <div class="sc-body">
               <div class="sc-flow">
@@ -1091,31 +1315,36 @@ footer a:hover{text-decoration:underline;}
 
       <!-- C-Level 3: FINAL DEMO -->
       <div class="sc-card sc-featured" style="border:2px solid var(--danger);box-shadow:0 0 0 4px rgba(220,38,38,.08);">
-        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(220,38,38,.12),transparent);color:var(--danger);font-weight:800;font-size:12px;">⭐ FINAL GOAL — Level 3 統合最終デモ — Phase 7–8</div>
+        <div class="sc-featured-bar" style="background:linear-gradient(90deg,rgba(220,38,38,.12),transparent);color:var(--danger);font-weight:800;font-size:12px;">⭐ FINAL GOAL — 🤝 モバイル＋アーム複合 — L3 高階 Harness（L1+L2+L3 全包含）DDL: Dec 2026</div>
         <div class="sc-layout">
           <div class="sc-content">
             <div class="sc-head">
               <span class="sc-rank">🎯</span>
               <div class="sc-meta">
-                <div class="sc-title">C-Level 3 — 屋外・屋内 × 精密操作 × 安全 × 記憶 統合最終デモ</div>
-                <div class="sc-sub">全要素統合。屋外・屋内シームレス走行＋Safety Agent＋記憶システム＋精密フィードバック操作が連携</div>
+                <div class="sc-title">屋外・屋内 × 精密操作 × Multi-Agent × 記憶 × 人インタラクション</div>
+                <div class="sc-sub">全要素統合（L1+L2 内包）。移動・操作・記憶に加えて Self-Check・Multi-Agent 協調・Human-in-the-loop を実証する集大成デモ</div>
               </div>
-              <span class="sc-status plan">Phase 7–8</span>
+              <span class="sc-status" style="background:var(--purple-l);color:var(--purple);border:1px solid rgba(124,58,237,.3);">L3 ⭐</span>
             </div>
             <div class="sc-body">
               <div class="sc-flow">
-                🗣️ 複合指示 → <span class="sf">🧠 Memory 参照（RAG+Vector DB）</span> → <span class="sf">🌳 屋外走行（GNSS+SLAM）</span> → <span class="sf">🏢 屋内移動（Nav2）</span> → <span class="sf">⚠️ Safety 監視</span> → <span class="sf">👁️ VLM 状態認識</span> → <span class="sf">🦾 精密操作（Closed-loop フィードバック）</span> → <span class="sf">📝 Memory 更新・報告</span>
+                🗣️ 複合指示 → <span class="sf">🧠 Memory 参照（RAG+Vector DB）</span><br>
+                → <span class="sf">🌳 屋外走行（GNSS+SLAM）→ 🏢 屋内移動（Nav2）</span><br>
+                → <span class="sf">⚠️ Self-Check 監視</span> → 異常時: Multi-Agent 自律判断 or <span class="sf">👤 人に確認</span><br>
+                → <span class="sf">👁️ VLM 状態認識</span> → <span class="sf">🦾 精密操作（Closed-loop フィードバック）</span><br>
+                → <span class="sf">📝 Memory 更新</span> → <span class="sf">🔊 TTS 完了・状況報告</span>
               </div>
               <div class="chips">
                 <span class="chip t">GNSS+ORB-SLAM3</span>
                 <span class="chip t">Nav2</span>
-                <span class="chip a">Safety Agent</span>
+                <span class="chip a">Multi-Agent</span>
+                <span class="chip a">Self-Check</span>
                 <span class="chip a">Episodic Memory</span>
                 <span class="chip h">SOARM101</span>
                 <span class="chip g">Closed-loop</span>
                 <span class="chip a">VLM</span>
-                <span class="chip g">Whisper</span>
-                <span class="chip a">RAG</span>
+                <span class="chip g">Human-in-the-loop</span>
+                <span class="chip g">TTS 報告</span>
               </div>
               <div class="sc-req-row">
                 <span class="sc-req-label">要件カテゴリ：</span>
@@ -1145,7 +1374,7 @@ footer a:hover{text-decoration:underline;}
         </div>
       </div>
 
-    </div><!-- /category-C -->
+    </div><!-- /scenario-list -->
   </section>
 
   <!-- ⑤ USE CASES -->
@@ -1332,8 +1561,8 @@ footer a:hover{text-decoration:underline;}
 (function() {
   const svg = document.getElementById('radar');
   // 9 requirement categories
-  const axes  = ['① Nav','② Memory','③ Agent','④ Manip','⑤ NL','⑥ Percept','⑦ System','⑧ Skill','⑨ World'];
-  const scores = [9, 8, 7, 8, 7, 8, 9, 9, 3]; // out of 10
+  const axes  = ['① Nav','② Memory','③ Agent','④ Manip','⑤ NL','⑥ Percept','⑦ System','⑧ Skill','⑨ Physical AI'];
+  const scores = [9, 8, 7, 8, 7, 8, 9, 9, 8]; // out of 10
   const colors = ['#dc2626','#2563eb','#7c3aed','#d97706','#059669','#0891b2','#475569','#0f172a','#6d28d9'];
   const N = axes.length;
   const R = 120;

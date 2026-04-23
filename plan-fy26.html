@@ -429,6 +429,7 @@ h2 { font-size: clamp(22px, 4vw, 32px); font-weight: 800; color: var(--text); ma
 .phase-bar-fill.active { background: var(--accent); }
 .phase-bar-fill.done   { background: var(--green); }
 .phase-bar-fill.upcoming { background: var(--border2); }
+.phase-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .phase-pct { font-family: var(--mono); font-size: 11px; color: var(--muted); width: 32px; text-align: right; }
 .phase-chevron { color: var(--muted); font-size: 12px; transition: transform .25s; }
 .phase-item.open .phase-chevron { transform: rotate(180deg); }
@@ -714,16 +715,16 @@ footer strong { color: rgba(255,255,255,.9); }
           <circle class="ring-fill" id="mainRing" cx="80" cy="80" r="70"/>
         </svg>
         <div class="ring-label">
-          <div class="ring-pct" id="ringPct">5%</div>
+          <div class="ring-pct" id="ringPct">8%</div>
           <div class="ring-sub">全体進捗</div>
         </div>
       </div>
 
       <div class="phase-mini-list">
         <div class="phase-mini">
-          <span class="phase-mini-label">Phase 0</span>
-          <div class="phase-mini-bar"><div class="phase-mini-fill" style="width:0%;background:var(--accent)" data-pct="50"></div></div>
-          <span class="phase-mini-pct">50%</span>
+          <span class="phase-mini-label" style="color:var(--accent);font-weight:700;">Phase 0</span>
+          <div class="phase-mini-bar"><div class="phase-mini-fill" style="width:0%;background:var(--accent)" data-pct="75"></div></div>
+          <span class="phase-mini-pct" style="color:var(--accent);font-weight:700;">75%</span>
         </div>
         <div class="phase-mini">
           <span class="phase-mini-label">Phase 1</span>
@@ -742,9 +743,12 @@ footer strong { color: rgba(255,255,255,.9); }
         </div>
       </div>
 
-      <div class="slider-wrap">
-        <div class="slider-row"><span>全体進捗を調整</span><span id="sliderVal" style="color:var(--accent);font-weight:700">5%</span></div>
-        <input type="range" min="0" max="100" value="5" id="progressSlider" oninput="updateProgress(this.value)">
+      <div style="margin-top:14px;padding:8px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px;">📊 todo.html から計算</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.7;">
+          Ph0: 7/9 タスク完了（LLM・上下機構 未着手）<br>
+          Ph1–9: 準備中
+        </div>
       </div>
     </div>
   </div>
@@ -775,88 +779,61 @@ footer strong { color: rgba(255,255,255,.9); }
       </div>
     </div>
 
-    <div class="nervous-box reveal">
-      <div class="nervous-tag">System Architecture</div>
-      <div class="nervous-name">Robot Harness System</div>
-      <div class="nervous-flow">
-        <div class="nf-node">👁️ Perception</div>
-        <div class="nf-arrow">→</div>
-        <div class="nf-node">🧠 Memory</div>
-        <div class="nf-arrow">→</div>
-        <div class="nf-node">🤖 Agent (LLM)</div>
-        <div class="nf-arrow">→</div>
-        <div class="nf-node">⚙️ Skill System</div>
-        <div class="nf-arrow">→</div>
-        <div class="nf-node">🦾 Robot</div>
+    <!-- Architecture diagram + figures integrated -->
+    <div class="nervous-box reveal" style="padding:0;overflow:hidden;border:1px solid var(--border);border-radius:16px;box-shadow:var(--sh);">
+      <!-- Main arch image -->
+      <div style="position:relative;cursor:pointer;background:#f1f5f9;" onclick="openLightbox(1)">
+        <img src="figure/robot-arch-ver1.png" alt="ロボットアーキテクチャ v1"
+          style="width:100%;max-height:420px;object-fit:contain;display:block;padding:16px;">
+        <div style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,.45);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;">🔍 クリックで拡大</div>
+        <div style="position:absolute;top:10px;left:10px;background:var(--accent);color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:6px;letter-spacing:.06em;">ROBOT HARNESS ARCHITECTURE v1</div>
       </div>
-      <div class="nervous-desc">知覚・記憶・判断・スキル実行・行動を <strong style="color:var(--accent)">ひとつのハーネスとして束ねる</strong> AI ロボットアーキテクチャ。<br><span style="font-size:12px;opacity:.75">Harness の詳細定義は後ほど補完予定。</span></div>
-      <div class="priority-banner" style="margin-top:20px;justify-content:center;">
-        <span class="priority-label">⚠️ 実装優先度</span>
-        <div class="priority-chain">
-          <span class="priority-item p1">SLAM</span>
-          <span class="priority-arrow">›</span>
-          <span class="priority-item p2">Skill System</span>
-          <span class="priority-arrow">›</span>
-          <span class="priority-item p3">AI Agent</span>
-          <span class="priority-arrow">›</span>
-          <span class="priority-item p4">VLA</span>
+      <!-- Pipeline strip -->
+      <div style="padding:16px 24px;border-top:1px solid var(--border);background:var(--surface);">
+        <div class="nervous-flow" style="justify-content:center;">
+          <div class="nf-node">👁️ Perception</div><div class="nf-arrow">→</div>
+          <div class="nf-node">🧠 Memory</div><div class="nf-arrow">→</div>
+          <div class="nf-node">🤖 Agent</div><div class="nf-arrow">→</div>
+          <div class="nf-node">⚙️ Skill System</div><div class="nf-arrow">→</div>
+          <div class="nf-node">🦾 Robot</div>
+        </div>
+      </div>
+      <!-- Priority + sub-figures row -->
+      <div style="padding:14px 24px 18px;border-top:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+        <div class="priority-banner" style="margin:0;flex:1;min-width:260px;">
+            <span class="priority-label">実装優先度</span>
+            <div class="priority-chain">
+            <span class="priority-item p1">ROS2基盤・SLAM</span><span class="priority-arrow">›</span>
+            <span class="priority-item p2">simulation</span><span class="priority-arrow">›</span>
+            <span class="priority-item p3">agent system</span><span class="priority-arrow">›</span>
+            <span class="priority-item p4">Harness</span>
+            </div>
+        </div>
+        <!-- Small thumbnails -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <div onclick="openLightbox(0)" style="cursor:pointer;position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--border);flex-shrink:0;">
+            <img src="figure/fy26-plan.png" alt="研究プラン概要" style="width:90px;height:60px;object-fit:cover;display:block;">
+            <div style="position:absolute;inset:0;background:rgba(0,0,0,.0);transition:background .15s;" onmouseover="this.style.background='rgba(0,0,0,.25)'" onmouseout="this.style.background='rgba(0,0,0,0)'"></div>
+            <div style="font-size:9px;color:var(--muted);text-align:center;padding:3px 4px;background:var(--surface);">研究プラン概要</div>
+          </div>
+          <div onclick="openLightbox(2)" style="cursor:pointer;position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--border);flex-shrink:0;">
+            <img src="figure/schedual-1.png" alt="スケジュール (1)" style="width:90px;height:60px;object-fit:cover;display:block;">
+            <div style="position:absolute;inset:0;background:rgba(0,0,0,.0);transition:background .15s;" onmouseover="this.style.background='rgba(0,0,0,.25)'" onmouseout="this.style.background='rgba(0,0,0,0)'"></div>
+            <div style="font-size:9px;color:var(--muted);text-align:center;padding:3px 4px;background:var(--surface);">スケジュール (1)</div>
+          </div>
+          <div onclick="openLightbox(3)" style="cursor:pointer;position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--border);flex-shrink:0;">
+            <img src="figure/schedual-2.png" alt="スケジュール (2)" style="width:90px;height:60px;object-fit:cover;display:block;">
+            <div style="position:absolute;inset:0;background:rgba(0,0,0,.0);transition:background .15s;" onmouseover="this.style.background='rgba(0,0,0,.25)'" onmouseout="this.style.background='rgba(0,0,0,0)'"></div>
+            <div style="font-size:9px;color:var(--muted);text-align:center;padding:3px 4px;background:var(--surface);">スケジュール (2)</div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FIGURES -->
-<section id="figures" style="background:var(--bg);padding:48px 28px 56px;">
-  <div class="container">
-    <span class="sec-tag">Reference Figures</span>
-    <h2>関連図・設計資料</h2>
-    <p class="sec-desc">クリックすると拡大表示されます</p>
-
-    <div class="figures-grid reveal">
-      <div class="fig-card" onclick="openLightbox(0)">
-        <div class="fig-img-wrap">
-          <img src="figure/fy26-plan.png" alt="FY2026 研究プラン概要">
-          <div class="fig-overlay">🔍</div>
-        </div>
-        <div class="fig-caption">
-          <div class="fig-num">01</div>
-          FY2026 研究プラン概要
-        </div>
-      </div>
-      <div class="fig-card" onclick="openLightbox(1)">
-        <div class="fig-img-wrap">
-          <img src="figure/robot-arch-ver1.png" alt="ロボットアーキテクチャ v1">
-          <div class="fig-overlay">🔍</div>
-        </div>
-        <div class="fig-caption">
-          <div class="fig-num">02</div>
-          ロボットアーキテクチャ v1
-        </div>
-      </div>
-      <div class="fig-card" onclick="openLightbox(2)">
-        <div class="fig-img-wrap">
-          <img src="figure/schedual-1.png" alt="スケジュール詳細 (1)">
-          <div class="fig-overlay">🔍</div>
-        </div>
-        <div class="fig-caption">
-          <div class="fig-num">03</div>
-          スケジュール詳細 (1)
-        </div>
-      </div>
-      <div class="fig-card" onclick="openLightbox(3)">
-        <div class="fig-img-wrap">
-          <img src="figure/schedual-2.png" alt="スケジュール詳細 (2)">
-          <div class="fig-overlay">🔍</div>
-        </div>
-        <div class="fig-caption">
-          <div class="fig-num">04</div>
-          スケジュール詳細 (2)
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- FIGURES anchor kept for nav links -->
+<section id="figures" style="display:none;"></section>
 
 <!-- SCHEDULE -->
 <section id="schedule">
@@ -866,6 +843,15 @@ footer strong { color: rgba(255,255,255,.9); }
     <p class="sec-desc">Phase 0〜9 ― クリックで詳細を展開</p>
 
     <div class="widget reveal" data-label="GANTT VIEW">
+      <!-- L1/L2/L3 band legend -->
+      <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;align-items:center;">
+        <span style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-right:4px;">Level帯：</span>
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--accent);background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.2);padding:3px 10px;border-radius:6px;">■ L1 基盤 (Ph0–1)</span>
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--amber);background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.2);padding:3px 10px;border-radius:6px;">■ L2 Harness中層 (Ph2–5)</span>
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--purple);background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);padding:3px 10px;border-radius:6px;">■ L3 高階 (Ph6–8)</span>
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:#0891b2;background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.35);padding:3px 10px;border-radius:6px;">🔁 Sim 環境構築 · 検証&amp;RL · 2Real</span>
+        <span style="font-size:10px;color:var(--muted2);margin-left:auto;">← マウスオーバーで目標を表示</span>
+      </div>
       <div class="gantt-wrap">
         <div class="gantt-grid">
           <div class="gantt-header"></div>
@@ -874,125 +860,441 @@ footer strong { color: rgba(255,255,255,.9); }
           <div class="gantt-header">10月</div><div class="gantt-header">11月</div><div class="gantt-header">12月</div>
           <div class="gantt-header">1月</div><div class="gantt-header">2月</div><div class="gantt-header">3月</div>
 
-          <div class="gantt-label"><span style="color:var(--accent)">●</span> Ph0 基盤</div>
-          <div class="gantt-cell fill active"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
-          <div class="gantt-label"><span style="color:var(--muted)">●</span> Ph1 SLAM</div>
-          <div class="gantt-cell"></div><div class="gantt-cell fill"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
-          <div class="gantt-label"><span style="color:var(--muted)">●</span> Ph2 Skill</div>
-          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell fill"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
-          <div class="gantt-label"><span style="color:var(--muted)">●</span> Ph3 AI OS</div>
-          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell fill"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
-          <div class="gantt-label"><span style="color:var(--muted)">●</span> Ph4 Agent</div>
-          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell fill"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
-          <div class="gantt-label"><span style="color:var(--muted)">●</span> Ph5 Arm</div>
-          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell fill"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
-          <div class="gantt-label"><span style="color:var(--muted)">●</span> Ph6 VLA</div>
-          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell fill"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
-          <div class="gantt-label"><span style="color:var(--muted)">●</span> Ph7 統合</div>
-          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell fill"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
-          <div class="gantt-label"><span style="color:var(--muted)">●</span> Ph8 デモ</div>
-          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell fill"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
-          <div class="gantt-label"><span style="color:var(--green)">●</span> Ph9 論文</div>
-          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell fill long"></div><div class="gantt-cell fill long"></div><div class="gantt-cell fill long"></div>
+          <!-- L1 基盤 band -->
+          <div class="gantt-label" style="border-left:3px solid var(--accent);" title="L1 基盤 | 安定したロボット基盤 + LLM接続 + アーム基礎IK + Isaac Sim立ち上げ">
+            <span style="color:var(--accent);font-weight:800;">L1</span> <span style="font-size:10px;color:var(--accent);">Ph0 基盤整備</span>
+          </div>
+          <div class="gantt-cell fill active" data-level="l1" data-tip="Ph0 ロボット基盤の安定化&#10;センサー全接続・LLM基礎・アームIK・Sim起動"></div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+
+          <div class="gantt-label" style="border-left:3px solid var(--accent);" title="L1 基盤 | SLAM + Nav2 + Isaac Sim環境 | 目標: A→B自律移動 + Sim両対応">
+            <span style="color:var(--accent);font-weight:800;">L1</span> <span style="font-size:10px;color:var(--accent);">Ph1 移動+Sim</span>
+          </div>
+          <div class="gantt-cell"></div>
+          <div class="gantt-cell" style="background:rgba(37,99,235,.55);border-radius:4px;" data-level="l1" data-tip="Ph1 A→B 自律移動&#10;SLAM + Nav2 実機・Isaac Sim 両対応"></div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+
+          <!-- L2 Harness中層 band -->
+          <div class="gantt-label" style="border-left:3px solid var(--amber);" title="L2 Harness | Skill/Tool Layer | 目標: Nav+Arm を MCP Tool として AI が呼び出し可能">
+            <span style="color:var(--amber);font-weight:800;">L2</span> <span style="font-size:10px;color:var(--amber);">Ph2 Skill Layer</span>
+          </div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-cell" style="background:rgba(217,119,6,.7);border-radius:4px;" data-level="l2" data-tip="Ph2 Skill Layer 構築&#10;Nav・Arm を同一 API で AI Tool Call 可能"></div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+
+          <div class="gantt-label" style="border-left:3px solid var(--amber);" title="L2 Harness | Agent Core | 目標: Always-on Harness + Cron巡回 + Heartbeat監視">
+            <span style="color:var(--amber);font-weight:800;">L2</span> <span style="font-size:10px;color:var(--amber);">Ph3 Agent Core</span>
+          </div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-cell" style="background:rgba(217,119,6,.7);border-radius:4px;" data-level="l2" data-tip="Ph3 Agent Core 起動&#10;Always-on Harness + Cron + Heartbeat"></div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+
+          <div class="gantt-label" style="border-left:3px solid var(--amber);" title="L2 Harness | Memory + Perception | 目標: 文脈指示に対応 / Agent が Memory + VLM を Tool Call">
+            <span style="color:var(--amber);font-weight:800;">L2</span> <span style="font-size:10px;color:var(--amber);">Ph4 Memory+VLM</span>
+          </div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-cell" style="background:rgba(217,119,6,.7);border-radius:4px;" data-level="l2" data-tip="Ph4 Memory + VLM 統合&#10;RAG/Vector DB + 文脈指示対応"></div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+
+          <div class="gantt-label" style="border-left:3px solid var(--amber);" title="L2 Harness | Motion Intelligence | 目標: VLA/RL/π0 を Skill API 経由で呼び出し / Isaac Lab">
+            <span style="color:var(--amber);font-weight:800;">L2</span> <span style="font-size:10px;color:var(--amber);">Ph5 VLA・RL・π0</span>
+          </div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-cell" style="background:rgba(217,119,6,.7);border-radius:4px;" data-level="l2" data-tip="Ph5 VLA・RL・π0 統合&#10;Skill API 経由でモーション AI 呼び出し"></div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+
+          <!-- L3 高階 band -->
+          <div class="gantt-label" style="border-left:3px solid var(--purple);" title="L3 高階 | Digital Twin | 目標: Isaac Sim フルシステム再現 + Sim-to-Real検証">
+            <span style="color:var(--purple);font-weight:800;">L3</span> <span style="font-size:10px;color:var(--purple);">Ph6 Digital Twin</span>
+          </div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-cell" style="background:rgba(124,58,237,.6);border-radius:4px;" data-level="l3" data-tip="Ph6 Digital Twin&#10;Isaac Sim フルシステム再現・Sim2Real 検証"></div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+
+          <div class="gantt-label" style="border-left:3px solid var(--purple);" title="L3 高階 | Multi-Agent + Self-Check | 目標: 自律停止しないHarness / 人とインタラクション">
+            <span style="color:var(--purple);font-weight:800;">L3</span> <span style="font-size:10px;color:var(--purple);">Ph7 Self-Check・MA</span>
+          </div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-cell" style="background:rgba(124,58,237,.6);border-radius:4px;" data-level="l3" data-tip="Ph7 Multi-Agent + Self-Check&#10;自律停止しない Harness・Human-in-the-loop"></div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+
+          <div class="gantt-label" style="border-left:3px solid var(--purple);" title="L3 高階 | デモ完成 DDL: Dec 2026 | 目標: 全Level 1-3シナリオ実証完了">
+            <span style="color:var(--purple);font-weight:800;">L3</span> <span style="font-size:10px;color:var(--purple);">Ph8 デモ ⭐DDL</span>
+          </div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-cell" style="background:rgba(124,58,237,.6);border:2px solid var(--purple);border-radius:4px;" data-level="l3" data-tip="Ph8 デモ完成 ⭐ DDL Dec 2026&#10;Level 1-3 全シナリオ実証完了"></div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+
+          <div class="gantt-label" title="論文・発表 2027年">
+            <span style="color:var(--green);font-weight:800;">📄</span> <span style="font-size:10px;color:var(--muted);">Ph9 論文</span>
+          </div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-cell fill long"></div><div class="gantt-cell fill long"></div><div class="gantt-cell fill long"></div>
+
+          <!-- Sim: 3 rows aligned to L1/L2/L3 -->
+          <!-- Row 1: Sim環境構築 (L1 aligned Ph0–1) -->
+          <div class="gantt-label" style="border-left:3px solid rgba(6,182,212,.7);" title="Sim 環境構築 — Isaac Sim 立ち上げ・ROS2 Bridge・Sim/実機同期">
+            <span style="color:#0891b2;font-weight:800;font-size:11px;">Sim</span><span style="font-size:9px;color:#0891b2;margin-left:3px;">環境構築</span>
+          </div>
+          <div class="gantt-cell" style="background:rgba(6,182,212,.45);border-radius:4px;" data-level="sim" data-tip="Sim 環境構築 Ph0&#10;Isaac Sim 基礎立ち上げ・ROS2 Bridge 接続"></div>
+          <div class="gantt-cell" style="background:rgba(6,182,212,.45);border-radius:4px;" data-level="sim" data-tip="Sim 環境構築 Ph1&#10;mobile + arm Sim 同期・Sim/実機 両対応"></div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+
+          <!-- Row 2: 検証&RL環境 (L2 aligned Ph2–5) -->
+          <div class="gantt-label" style="border-left:3px solid rgba(6,182,212,.7);" title="Sim 検証&RL — Skill/Agent/Memory Sim 検証・Isaac Lab 強化学習">
+            <span style="color:#0891b2;font-weight:800;font-size:11px;">Sim</span><span style="font-size:9px;color:#0891b2;margin-left:3px;">検証&amp;RL</span>
+          </div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-cell" style="background:rgba(6,182,212,.5);border-radius:4px;" data-level="sim" data-tip="検証&RL環境 Ph2&#10;Skill 動作 Sim 検証"></div>
+          <div class="gantt-cell" style="background:rgba(6,182,212,.5);border-radius:4px;" data-level="sim" data-tip="検証&RL環境 Ph3&#10;Agent Sim 検証"></div>
+          <div class="gantt-cell" style="background:rgba(6,182,212,.5);border-radius:4px;" data-level="sim" data-tip="検証&RL環境 Ph4&#10;Memory + VLM Sim 検証"></div>
+          <div class="gantt-cell" style="background:rgba(6,182,212,.55);border-radius:4px;" data-level="sim" data-tip="検証&RL環境 Ph5&#10;Isaac Lab 強化学習"></div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+
+          <!-- Row 3: Sim2Real (L3 aligned Ph6–8) -->
+          <div class="gantt-label" style="border-left:3px solid rgba(6,182,212,.7);" title="Sim2Real — Digital Twin 確立・L3 シナリオ Sim 検証・デモ両検証">
+            <span style="color:#0891b2;font-weight:800;font-size:11px;">Sim</span><span style="font-size:9px;color:#0891b2;margin-left:3px;">2Real</span>
+          </div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-cell" style="background:rgba(6,182,212,.6);border-radius:4px;" data-level="sim" data-tip="Sim2Real Ph6&#10;Digital Twin 確立・高度 Sim 事前検証"></div>
+          <div class="gantt-cell" style="background:rgba(6,182,212,.6);border-radius:4px;" data-level="sim" data-tip="Sim2Real Ph7&#10;L3 シナリオ Sim 検証"></div>
+          <div class="gantt-cell" style="background:rgba(6,182,212,.6);border-radius:4px;" data-level="sim" data-tip="Sim2Real Ph8&#10;デモ Sim/実機 両検証"></div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
         </div>
       </div>
     </div>
 
-    <div class="phase-timeline reveal">
-      <div class="phase-item active open" onclick="togglePhase(this)">
-        <div class="phase-summary">
-          <span class="phase-num active">Phase 0</span>
-          <span class="phase-name">ロボット基盤の安定化</span>
-          <span class="phase-month">Apr 2026</span>
-          <div class="phase-bar-wrap"><div class="phase-bar"><div class="phase-bar-fill active" style="width:60%"></div></div></div>
-          <span class="phase-pct">60%</span>
-          <span class="phase-chevron">▾</span>
+    <script>
+    // Gantt hover tooltip — Level color coded with emphasized header
+    (function(){
+      const lvColor={l1:'#2563eb',l2:'#d97706',l3:'#7c3aed',sim:'#0891b2'};
+      const lvBg   ={l1:'rgba(37,99,235,.22)',l2:'rgba(217,119,6,.22)',l3:'rgba(124,58,237,.22)',sim:'rgba(6,182,212,.22)'};
+
+      const tip=document.createElement('div');
+      tip.style.cssText='position:fixed;z-index:9999;background:#0f172a;border-radius:10px;pointer-events:none;opacity:0;transition:opacity .15s;max-width:300px;box-shadow:0 6px 24px rgba(0,0,0,.45);overflow:hidden;border:1px solid rgba(255,255,255,.07);';
+      const tipHead=document.createElement('div');
+      tipHead.style.cssText='padding:9px 14px 7px;font-size:13px;font-weight:800;letter-spacing:.01em;line-height:1.3;';
+      const tipBody=document.createElement('div');
+      tipBody.style.cssText='padding:6px 14px 9px;font-size:11px;color:rgba(241,245,249,.75);line-height:1.65;white-space:pre-wrap;';
+      tip.appendChild(tipHead);
+      tip.appendChild(tipBody);
+      document.body.appendChild(tip);
+
+      document.querySelectorAll('[data-tip]').forEach(el=>{
+        el.addEventListener('mouseenter',e=>{
+          const parts=el.dataset.tip.split('\n');
+          const lv=el.dataset.level||'';
+          const c=lvColor[lv]||'#94a3b8';
+          const bg=lvBg[lv]||'rgba(148,163,184,.18)';
+          tipHead.textContent=parts[0];
+          tipHead.style.color=c;
+          tipHead.style.background=bg;
+          tipBody.textContent=parts.slice(1).join('\n');
+          tip.style.opacity='1';
+        });
+        el.addEventListener('mousemove',e=>{tip.style.left=(e.clientX+16)+'px';tip.style.top=(e.clientY-12)+'px';});
+        el.addEventListener('mouseleave',()=>{tip.style.opacity='0';});
+      });
+    })();
+    </script>
+
+    <!-- Phase accordion -->
+    <div style="margin-top:32px;">
+      <div style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;">各フェーズ詳細</div>
+      <div class="phase-timeline">
+
+        <!-- Ph0 — active, 75% done -->
+        <div class="phase-item active open" onclick="togglePhase(this)" style="border-left:3px solid var(--accent);">
+          <div class="phase-summary">
+            <span class="phase-dot" style="background:var(--accent)"></span>
+            <div class="phase-name">Ph0 — ロボット基盤の安定化</div>
+            <div class="phase-tags" style="display:flex;gap:4px;margin-left:8px;">
+              <span style="font-size:10px;font-weight:700;background:var(--accent-l);color:var(--accent);border:1px solid var(--accent-m);padding:1px 6px;border-radius:4px;">L1</span>
+              <span style="font-size:10px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);padding:1px 6px;border-radius:4px;">進行中</span>
+            </div>
+            <div class="phase-pct" style="color:var(--accent);font-weight:700;">75%</div>
+            <div class="phase-bar-wrap" style="flex:1;max-width:80px;height:4px;background:var(--surface2);border-radius:2px;margin:0 10px;">
+              <div style="width:75%;height:100%;background:var(--accent);border-radius:2px;"></div>
+            </div>
+            <span class="phase-chevron">▾</span>
+          </div>
+          <div class="phase-detail">
+            <div class="phase-detail-inner">
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: ハードウェア・ROS2 基盤を完全に安定化。センサー統合・手動操作・TF整合確認まで完了。</div>
+              <div class="phase-tasks">
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);">✅ ROS2 確認</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);">✅ ノード・トピック確認</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);">✅ Joy-Con 手動操作</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);">✅ SOARM101 動作確認</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);">✅ Lidar 追加 (MID360)</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);">✅ 通信テスト</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);">✅ 全センサー TF 整合確認</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">⏸ 上下機構テスト (保留中)</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 LLM システム実装 (未着手)</span>
+              </div>
+              <div style="font-size:11px;color:var(--muted);margin-top:6px;">7/9 タスク完了 — 上下機構・LLM は次フェーズ以降</div>
+            </div>
+          </div>
         </div>
-        <div class="phase-detail"><div class="phase-detail-inner">
-          <div class="phase-tasks">
-            <span class="task-chip" style="background:var(--green-l);border-color:rgba(5,150,105,.25);color:var(--green)">✅ 配線整理</span>
-            <span class="task-chip" style="background:var(--green-l);border-color:rgba(5,150,105,.25);color:var(--green)">✅ ROS2ノード確認</span>
-            <span class="task-chip" style="background:var(--green-l);border-color:rgba(5,150,105,.25);color:var(--green)">✅ Joy-Con手動操作</span>
-            <span class="task-chip" style="background:var(--green-l);border-color:rgba(5,150,105,.25);color:var(--green)">✅ SOARM101動作確認</span>
-            <span class="task-chip" style="background:var(--green-l);border-color:rgba(5,150,105,.25);color:var(--green)">✅ アーム上下機構</span>
-            <span class="task-chip" style="background:var(--green-l);border-color:rgba(5,150,105,.25);color:var(--green)">✅ Livox MID360 LiDAR</span>
-            <span class="task-chip" style="background:var(--green-l);border-color:rgba(5,150,105,.25);color:var(--green)">✅ センサーTF整合確認</span>
-            <span class="task-chip" style="background:var(--green-l);border-color:rgba(5,150,105,.25);color:var(--green)">✅センサー全体確認 (EKF)</span>
-            <span class="task-chip">T8 リードスクリュー 2mm→8mm 変更検討</span>
-            <span class="task-chip">LLM基礎実装</span>
-            <span class="task-chip">外装・配線整理</span>
+
+        <!-- Ph1 — L1, upcoming -->
+        <div class="phase-item" onclick="togglePhase(this)" style="border-left:3px solid var(--accent);">
+          <div class="phase-summary">
+            <span class="phase-dot" style="background:var(--border2)"></span>
+            <div class="phase-name">Ph1 — A→B 自律移動</div>
+            <div class="phase-tags" style="display:flex;gap:4px;margin-left:8px;">
+              <span style="font-size:10px;font-weight:700;background:var(--accent-l);color:var(--accent);border:1px solid var(--accent-m);padding:1px 6px;border-radius:4px;">L1</span>
+              <span style="font-size:10px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);padding:1px 6px;border-radius:4px;">未着手</span>
+            </div>
+            <div class="phase-pct">0%</div>
+            <div class="phase-bar-wrap" style="flex:1;max-width:80px;height:4px;background:var(--surface2);border-radius:2px;margin:0 10px;">
+              <div style="width:0%;height:100%;background:var(--accent);border-radius:2px;"></div>
+            </div>
+            <span class="phase-chevron">▾</span>
           </div>
-          <div style="margin:10px 0 6px;font-size:11px;font-weight:700;color:var(--muted);">🎯 最終験収目標</div>
-          <div style="font-size:12px;color:var(--text2);line-height:2;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:8px;">
-            <span style="color:var(--green)">✅</span> ロボット安定動作 &nbsp;
-            <span style="color:var(--green)">✅</span> Joy-Con操縦 &nbsp;
-            <span style="color:var(--green)">✅</span> SOARM101確認 &nbsp;
-            <span style="color:var(--green)">✅</span> LiDAR接続 &nbsp;
-            <span style="color:var(--green)">✅</span> センサーTF整合 &nbsp;
-            <span style="color:var(--muted)">○</span> LLM基礎接続
+          <div class="phase-detail">
+            <div class="phase-detail-inner">
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: SLAM + Nav2 実機・Isaac Sim 両対応の A→B 自律移動を確立。</div>
+              <div class="phase-tasks">
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 システム分層設計</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 センサー確認</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 TF 構築</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 底盤制御</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 SLAM 検証</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Nav2 設定</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 ナビテスト</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 安定性チューニング</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Isaac Sim 仿真構築</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 ROS2 Bridge</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Sim2Real 基本対応</span>
+              </div>
+            </div>
           </div>
-          <div class="phase-output">安定して動くロボット + 全センサー接続 + LLM基礎接続</div>
-        </div></div>
-      </div>
-      <div class="phase-item" onclick="togglePhase(this)">
-        <div class="phase-summary"><span class="phase-num upcoming">Phase 1</span><span class="phase-name">自律移動（LiDAR SLAM + Nav2）</span><span class="phase-month">May 2026</span><div class="phase-bar-wrap"><div class="phase-bar"><div class="phase-bar-fill upcoming" style="width:0%"></div></div></div><span class="phase-pct">0%</span><span class="phase-chevron">▾</span></div>
-        <div class="phase-detail"><div class="phase-detail-inner">
-          <div class="phase-tasks">
-            <span class="task-chip">システム分層設計</span>
-            <span class="task-chip">TF・座標系構築</span>
-            <span class="task-chip">FAST-LIO / ORB-SLAM3</span>
-            <span class="task-chip">マップ作成・保存・再ロード</span>
-            <span class="task-chip">Nav2 設定 (global+local)</span>
-            <span class="task-chip">障害物回避チューニング</span>
-            <span class="task-chip">簡易環境認識ノード</span>
-            <span class="task-chip" style="background:var(--amber-l);border-color:rgba(217,119,6,.2);color:var(--amber)">★ Isaac Sim 仿真環境</span>
-            <span class="task-chip">ROS2 Bridge</span>
-            <span class="task-chip">Sim2Real 対応</span>
+        </div>
+
+        <!-- Ph2 — L2 -->
+        <div class="phase-item" onclick="togglePhase(this)" style="border-left:3px solid var(--amber);">
+          <div class="phase-summary">
+            <span class="phase-dot" style="background:var(--border2)"></span>
+            <div class="phase-name">Ph2 — Skill Layer 構築</div>
+            <div class="phase-tags" style="display:flex;gap:4px;margin-left:8px;">
+              <span style="font-size:10px;font-weight:700;background:var(--amber-l);color:var(--amber);border:1px solid rgba(217,119,6,.2);padding:1px 6px;border-radius:4px;">L2</span>
+            </div>
+            <div class="phase-pct">0%</div>
+            <div class="phase-bar-wrap" style="flex:1;max-width:80px;height:4px;background:var(--surface2);border-radius:2px;margin:0 10px;">
+              <div style="width:0%;height:100%;background:var(--amber);border-radius:2px;"></div>
+            </div>
+            <span class="phase-chevron">▾</span>
           </div>
-          <div style="margin:10px 0 6px;font-size:11px;font-weight:700;color:var(--muted);">🎯 最終験収目標</div>
-          <div style="font-size:12px;color:var(--text2);line-height:2;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:8px;">
-            <span style="color:var(--muted)">○</span> 安定した地図生成（FAST-LIO / SLAM）&nbsp;
-            <span style="color:var(--muted)">○</span> 自己位置推定 &nbsp;
-            <span style="color:var(--muted)">○</span> RViz→自動ナビゲーション成功 &nbsp;
-            <span style="color:var(--muted)">○</span> 静的障害物回避 &nbsp;
-            <span style="color:var(--muted)">○</span> Isaac Sim でも同等動作
+          <div class="phase-detail">
+            <div class="phase-detail-inner">
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: Nav・Arm を同一 API で AI Tool Call 可能にする Skill Layer 完成。</div>
+              <div class="phase-tasks">
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Skill API 設計</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Nav Skill 実装</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Arm Skill 実装</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 LLM Tool Call 統合</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 MCP インターフェース</span>
+              </div>
+            </div>
           </div>
-          <div class="phase-output">A→B の自律移動が可能（実機 + Isaac Sim 両対応）</div>
-        </div></div>
-      </div>
-      <div class="phase-item" onclick="togglePhase(this)">
-        <div class="phase-summary"><span class="phase-num upcoming">Phase 2</span><span class="phase-name">Skill System 構築</span><span class="phase-month">Jun 2026</span><div class="phase-bar-wrap"><div class="phase-bar"><div class="phase-bar-fill upcoming" style="width:0%"></div></div></div><span class="phase-pct">0%</span><span class="phase-chevron">▾</span></div>
-        <div class="phase-detail"><div class="phase-detail-inner"><div class="phase-tasks"><span class="task-chip">Skill API設計</span><span class="task-chip">JSON schema</span><span class="task-chip">ROS2→API抽象化</span><span class="task-chip">Retry / Timeout</span><span class="task-chip">Safety constraint</span></div><div class="phase-output">ROS機能をAIが使える形に変換</div></div></div>
-      </div>
-      <div class="phase-item" onclick="togglePhase(this)">
-        <div class="phase-summary"><span class="phase-num upcoming">Phase 3</span><span class="phase-name">AI OS 導入（Agent System）</span><span class="phase-month">Jul 2026</span><div class="phase-bar-wrap"><div class="phase-bar"><div class="phase-bar-fill upcoming" style="width:0%"></div></div></div><span class="phase-pct">0%</span><span class="phase-chevron">▾</span></div>
-        <div class="phase-detail"><div class="phase-detail-inner"><div class="phase-tasks"><span class="task-chip">Planner Agent</span><span class="task-chip">Ops Agent</span><span class="task-chip">Safety Agent</span><span class="task-chip">Event Bus</span><span class="task-chip">Memory（簡易）</span></div><div class="phase-output">Always-on AI システム稼働</div></div></div>
-      </div>
-      <div class="phase-item" onclick="togglePhase(this)">
-        <div class="phase-summary"><span class="phase-num upcoming">Phase 4</span><span class="phase-name">移動タスクの AI 化</span><span class="phase-month">Aug 2026</span><div class="phase-bar-wrap"><div class="phase-bar"><div class="phase-bar-fill upcoming" style="width:0%"></div></div></div><span class="phase-pct">0%</span><span class="phase-chevron">▾</span></div>
-        <div class="phase-detail"><div class="phase-detail-inner"><div class="phase-tasks"><span class="task-chip">巡回タスク</span><span class="task-chip">Planner→Skill実行</span><span class="task-chip">成功/失敗判定</span><span class="task-chip">RAG 記憶統合</span></div><div class="phase-output">AI による自律移動タスク実行</div></div></div>
-      </div>
-      <div class="phase-item" onclick="togglePhase(this)">
-        <div class="phase-summary"><span class="phase-num upcoming">Phase 5</span><span class="phase-name">アーム統合（Manipulation）</span><span class="phase-month">Sep 2026</span><div class="phase-bar-wrap"><div class="phase-bar"><div class="phase-bar-fill upcoming" style="width:0%"></div></div></div><span class="phase-pct">0%</span><span class="phase-chevron">▾</span></div>
-        <div class="phase-detail"><div class="phase-detail-inner"><div class="phase-tasks"><span class="task-chip">SOARM101 ROS統合</span><span class="task-chip">IK / FK</span><span class="task-chip">YOLO物体検出</span><span class="task-chip">pick &amp; place</span><span class="task-chip">Depth estimation</span></div><div class="phase-output">移動＋操作が可能</div></div></div>
-      </div>
-      <div class="phase-item" onclick="togglePhase(this)">
-        <div class="phase-summary"><span class="phase-num upcoming">Phase 6</span><span class="phase-name">VLA 導入</span><span class="phase-month">Oct 2026</span><div class="phase-bar-wrap"><div class="phase-bar"><div class="phase-bar-fill upcoming" style="width:0%"></div></div></div><span class="phase-pct">0%</span><span class="phase-chevron">▾</span></div>
-        <div class="phase-detail"><div class="phase-detail-inner"><div class="phase-tasks"><span class="task-chip">LeRobotデータ収集</span><span class="task-chip">Imitation Learning</span><span class="task-chip">VLA モデル適用</span></div><div class="phase-output">「見て→動く」動作実現</div></div></div>
-      </div>
-      <div class="phase-item" onclick="togglePhase(this)">
-        <div class="phase-summary"><span class="phase-num upcoming">Phase 7</span><span class="phase-name">システム統合</span><span class="phase-month">Nov 2026</span><div class="phase-bar-wrap"><div class="phase-bar"><div class="phase-bar-fill upcoming" style="width:0%"></div></div></div><span class="phase-pct">0%</span><span class="phase-chevron">▾</span></div>
-        <div class="phase-detail"><div class="phase-detail-inner"><div class="phase-tasks"><span class="task-chip">Navigation + Arm + AI</span><span class="task-chip">Multi-agent</span><span class="task-chip">Health monitoring</span><span class="task-chip">Fail-safe</span></div><div class="phase-output">Robot Harness System 完成</div></div></div>
-      </div>
-      <div class="phase-item" onclick="togglePhase(this)">
-        <div class="phase-summary"><span class="phase-num upcoming">Phase 8</span><span class="phase-name">デモ完成</span><span class="phase-month">Dec 2026</span><div class="phase-bar-wrap"><div class="phase-bar"><div class="phase-bar-fill upcoming" style="width:0%"></div></div></div><span class="phase-pct">0%</span><span class="phase-chevron">▾</span></div>
-        <div class="phase-detail"><div class="phase-detail-inner"><div class="phase-tasks"><span class="task-chip">E2E タスク設計</span><span class="task-chip">シナリオ作成</span><span class="task-chip">安定化調整</span><span class="task-chip">デモ検証</span></div><div class="phase-output">完成デモ（実用レベル）</div></div></div>
-      </div>
-      <div class="phase-item" onclick="togglePhase(this)">
-        <div class="phase-summary"><span class="phase-num upcoming">Phase 9</span><span class="phase-name">研究化・論文・発表</span><span class="phase-month">Jan–Apr 2027</span><div class="phase-bar-wrap"><div class="phase-bar"><div class="phase-bar-fill upcoming" style="width:0%"></div></div></div><span class="phase-pct">0%</span><span class="phase-chevron">▾</span></div>
-        <div class="phase-detail"><div class="phase-detail-inner"><div class="phase-tasks"><span class="task-chip">システム改善</span><span class="task-chip">ログ分析</span><span class="task-chip">論文化</span><span class="task-chip">発表準備</span></div><div class="phase-output">論文・完成プロジェクト</div></div></div>
+        </div>
+
+        <!-- Ph3 — L2 -->
+        <div class="phase-item" onclick="togglePhase(this)" style="border-left:3px solid var(--amber);">
+          <div class="phase-summary">
+            <span class="phase-dot" style="background:var(--border2)"></span>
+            <div class="phase-name">Ph3 — Planner Agent + Memory</div>
+            <div class="phase-tags" style="display:flex;gap:4px;margin-left:8px;">
+              <span style="font-size:10px;font-weight:700;background:var(--amber-l);color:var(--amber);border:1px solid rgba(217,119,6,.2);padding:1px 6px;border-radius:4px;">L2</span>
+            </div>
+            <div class="phase-pct">0%</div>
+            <div class="phase-bar-wrap" style="flex:1;max-width:80px;height:4px;background:var(--surface2);border-radius:2px;margin:0 10px;">
+              <div style="width:0%;height:100%;background:var(--amber);border-radius:2px;"></div>
+            </div>
+            <span class="phase-chevron">▾</span>
+          </div>
+          <div class="phase-detail">
+            <div class="phase-detail-inner">
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: 目標だけ与えれば手順を自律構成・実行する Planner Agent + Memory システム。</div>
+              <div class="phase-tasks">
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Planner Agent 設計</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Episodic Memory 実装</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Vector DB 統合</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Cron / Heartbeat</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 マルチステップ実行テスト</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ph4 — L2 -->
+        <div class="phase-item" onclick="togglePhase(this)" style="border-left:3px solid var(--amber);">
+          <div class="phase-summary">
+            <span class="phase-dot" style="background:var(--border2)"></span>
+            <div class="phase-name">Ph4 — VLM + マニピュレーション統合</div>
+            <div class="phase-tags" style="display:flex;gap:4px;margin-left:8px;">
+              <span style="font-size:10px;font-weight:700;background:var(--amber-l);color:var(--amber);border:1px solid rgba(217,119,6,.2);padding:1px 6px;border-radius:4px;">L2</span>
+            </div>
+            <div class="phase-pct">0%</div>
+            <div class="phase-bar-wrap" style="flex:1;max-width:80px;height:4px;background:var(--surface2);border-radius:2px;margin:0 10px;">
+              <div style="width:0%;height:100%;background:var(--amber);border-radius:2px;"></div>
+            </div>
+            <span class="phase-chevron">▾</span>
+          </div>
+          <div class="phase-detail">
+            <div class="phase-detail-inner">
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: VLM + YOLO による物体認識と SOARM101 精密マニピュレーションの統合。</div>
+              <div class="phase-tasks">
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 VLM 統合</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 YOLO 物体検出</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Closed-loop アーム制御</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 把持シナリオテスト</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ph5 — L2 -->
+        <div class="phase-item" onclick="togglePhase(this)" style="border-left:3px solid var(--amber);">
+          <div class="phase-summary">
+            <span class="phase-dot" style="background:var(--border2)"></span>
+            <div class="phase-name">Ph5 — VLA・RL・π0 統合</div>
+            <div class="phase-tags" style="display:flex;gap:4px;margin-left:8px;">
+              <span style="font-size:10px;font-weight:700;background:var(--amber-l);color:var(--amber);border:1px solid rgba(217,119,6,.2);padding:1px 6px;border-radius:4px;">L2</span>
+            </div>
+            <div class="phase-pct">0%</div>
+            <div class="phase-bar-wrap" style="flex:1;max-width:80px;height:4px;background:var(--surface2);border-radius:2px;margin:0 10px;">
+              <div style="width:0%;height:100%;background:var(--amber);border-radius:2px;"></div>
+            </div>
+            <span class="phase-chevron">▾</span>
+          </div>
+          <div class="phase-detail">
+            <div class="phase-detail-inner">
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: Skill API 経由で VLA・強化学習・π0 モーション AI を呼び出し可能にする。</div>
+              <div class="phase-tasks">
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Isaac Lab RL 環境構築</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 VLA モデル統合</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 π0 インターフェース</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Skill API 経由呼び出し</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ph6 — L3 -->
+        <div class="phase-item" onclick="togglePhase(this)" style="border-left:3px solid var(--purple);">
+          <div class="phase-summary">
+            <span class="phase-dot" style="background:var(--border2)"></span>
+            <div class="phase-name">Ph6 — Digital Twin</div>
+            <div class="phase-tags" style="display:flex;gap:4px;margin-left:8px;">
+              <span style="font-size:10px;font-weight:700;background:var(--purple-l);color:var(--purple);border:1px solid rgba(124,58,237,.2);padding:1px 6px;border-radius:4px;">L3</span>
+            </div>
+            <div class="phase-pct">0%</div>
+            <div class="phase-bar-wrap" style="flex:1;max-width:80px;height:4px;background:var(--surface2);border-radius:2px;margin:0 10px;">
+              <div style="width:0%;height:100%;background:var(--purple);border-radius:2px;"></div>
+            </div>
+            <span class="phase-chevron">▾</span>
+          </div>
+          <div class="phase-detail">
+            <div class="phase-detail-inner">
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: Isaac Sim でフルシステムを再現し Sim2Real 転移を検証する Digital Twin 確立。</div>
+              <div class="phase-tasks">
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Isaac Sim フルシステム再現</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Sim2Real 転移検証</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Digital Twin 同期確認</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ph7 — L3 -->
+        <div class="phase-item" onclick="togglePhase(this)" style="border-left:3px solid var(--purple);">
+          <div class="phase-summary">
+            <span class="phase-dot" style="background:var(--border2)"></span>
+            <div class="phase-name">Ph7 — Multi-Agent + Self-Check</div>
+            <div class="phase-tags" style="display:flex;gap:4px;margin-left:8px;">
+              <span style="font-size:10px;font-weight:700;background:var(--purple-l);color:var(--purple);border:1px solid rgba(124,58,237,.2);padding:1px 6px;border-radius:4px;">L3</span>
+            </div>
+            <div class="phase-pct">0%</div>
+            <div class="phase-bar-wrap" style="flex:1;max-width:80px;height:4px;background:var(--surface2);border-radius:2px;margin:0 10px;">
+              <div style="width:0%;height:100%;background:var(--purple);border-radius:2px;"></div>
+            </div>
+            <span class="phase-chevron">▾</span>
+          </div>
+          <div class="phase-detail">
+            <div class="phase-detail-inner">
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: 自律停止しない Harness — Self-Check + Multi-Agent + Human-in-the-loop 実装。</div>
+              <div class="phase-tasks">
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Self-Check モジュール</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Multi-Agent 協調</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Human-in-the-loop UI</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Permission 管理</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 異常自律対処シナリオ</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ph8 — L3, DDL -->
+        <div class="phase-item" onclick="togglePhase(this)" style="border-left:3px solid var(--purple);">
+          <div class="phase-summary">
+            <span class="phase-dot" style="background:var(--border2)"></span>
+            <div class="phase-name">Ph8 — デモ完成 ⭐ DDL Dec 2026</div>
+            <div class="phase-tags" style="display:flex;gap:4px;margin-left:8px;">
+              <span style="font-size:10px;font-weight:700;background:var(--purple-l);color:var(--purple);border:1px solid rgba(124,58,237,.2);padding:1px 6px;border-radius:4px;">L3</span>
+              <span style="font-size:10px;font-weight:700;background:#fef2f2;color:#dc2626;border:1px solid rgba(220,38,38,.2);padding:1px 6px;border-radius:4px;">⭐ DDL</span>
+            </div>
+            <div class="phase-pct">0%</div>
+            <div class="phase-bar-wrap" style="flex:1;max-width:80px;height:4px;background:var(--surface2);border-radius:2px;margin:0 10px;">
+              <div style="width:0%;height:100%;background:var(--purple);border-radius:2px;"></div>
+            </div>
+            <span class="phase-chevron">▾</span>
+          </div>
+          <div class="phase-detail">
+            <div class="phase-detail-inner">
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: Level 1–3 全シナリオ実証完了。2026年12月デモ締め切り。</div>
+              <div class="phase-tasks">
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 L1 シナリオ実証</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 L2 シナリオ実証</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 L3 シナリオ実証</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 デモ動画撮影</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 最終発表準備</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ph9 — 論文 -->
+        <div class="phase-item" onclick="togglePhase(this)">
+          <div class="phase-summary">
+            <span class="phase-dot" style="background:var(--border2)"></span>
+            <div class="phase-name">Ph9 — 論文・発表</div>
+            <div class="phase-tags" style="display:flex;gap:4px;margin-left:8px;">
+              <span style="font-size:10px;font-weight:700;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);padding:1px 6px;border-radius:4px;">📄 論文</span>
+              <span style="font-size:10px;color:var(--muted);padding:1px 6px;">2027年</span>
+            </div>
+            <div class="phase-pct">0%</div>
+            <div class="phase-bar-wrap" style="flex:1;max-width:80px;height:4px;background:var(--surface2);border-radius:2px;margin:0 10px;">
+              <div style="width:0%;height:100%;background:var(--green);border-radius:2px;"></div>
+            </div>
+            <span class="phase-chevron">▾</span>
+          </div>
+          <div class="phase-detail">
+            <div class="phase-detail-inner">
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: Harness システム全体の論文化・国際会議発表 (2027年)。</div>
+              <div class="phase-tasks">
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 論文執筆</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 実験データ整理</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 国際会議投稿</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
+
   </div>
 </section>
 
@@ -1030,7 +1332,7 @@ footer strong { color: rgba(255,255,255,.9); }
           <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;">デモ要件マップ</div>
           <div style="font-size:13px;color:var(--muted);margin-bottom:18px;">各項目にカーソルを合わせると連動してハイライト</div>
           <div class="req-list" id="reqList">
-            <div class="req-row" data-idx="0"><div class="req-dot" style="background:#dc2626"></div><span class="req-row-label">🌳 屋外・屋内シームレス走行（GNSS + SLAM）</span><span class="req-badge crit">最重要</span></div>
+            <div class="req-row" data-idx="0"><div class="req-dot" style="background:#dc2626"></div><span class="req-row-label">🌳 屋外・屋内シームレス走行（GNSS + SLAM）</span><span class="req-badge crit">最基礎</span></div>
             <div class="req-row" data-idx="1"><div class="req-dot" style="background:#2563eb"></div><span class="req-row-label">🧠 記憶システム活用（Episodic / RAG + Vector DB）</span><span class="req-badge high">重要</span></div>
             <div class="req-row" data-idx="2"><div class="req-dot" style="background:#7c3aed"></div><span class="req-row-label">🤖 マルチエージェント（Planner / Ops / Safety）</span><span class="req-badge high">重要</span></div>
             <div class="req-row" data-idx="3"><div class="req-dot" style="background:#d97706"></div><span class="req-row-label">🦾 精密マニピュレーション（SOARM101 + Closed-loop）</span><span class="req-badge med">必須</span></div>
@@ -1042,52 +1344,136 @@ footer strong { color: rgba(255,255,255,.9); }
       </div>
     </div>
 
-    <div class="widget reveal" data-label="SCENARIO EXPLORER" style="margin-top:40px">
-      <div style="font-size:14px;color:var(--muted);margin-bottom:14px;">デモシナリオを選択</div>
+    <!-- Containment relationship diagram -->
+    <div class="widget reveal" data-label="LEVEL STRUCTURE" style="margin-top:40px">
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;">Level 包含関係</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:20px;">各 Level は前 Level の全能力を内包する — L3 ⊃ L2 ⊃ L1</div>
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px 28px;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+        <div style="display:flex;gap:24px;align-items:stretch;flex-wrap:wrap;">
+
+          <!-- Nested boxes diagram -->
+          <div style="flex:0 0 auto;display:flex;align-items:center;justify-content:center;min-width:280px;">
+            <div style="position:relative;width:280px;height:244px;">
+              <!-- L3 outer -->
+              <div style="position:absolute;inset:0;border-radius:16px;background:rgba(124,58,237,.09);border:2.5px solid rgba(124,58,237,.55);display:flex;align-items:flex-start;justify-content:flex-start;padding:8px 12px;">
+                <span style="font-size:10px;font-weight:800;color:var(--purple);text-transform:uppercase;letter-spacing:.08em;">Level 3 — 高階 Harness</span>
+              </div>
+              <!-- L2 middle -->
+              <div style="position:absolute;top:34px;left:16px;right:16px;bottom:10px;border-radius:12px;background:rgba(217,119,6,.16);border:2.5px solid rgba(217,119,6,.7);display:flex;align-items:flex-start;justify-content:flex-start;padding:8px 12px;">
+                <span style="font-size:10px;font-weight:800;color:var(--amber);text-transform:uppercase;letter-spacing:.08em;">Level 2 — Harness 中層</span>
+              </div>
+              <!-- L1 inner -->
+              <div style="position:absolute;top:72px;left:32px;right:32px;bottom:22px;border-radius:10px;background:rgba(37,99,235,.11);border:2.5px solid rgba(37,99,235,.55);display:flex;align-items:center;justify-content:center;">
+                <span style="font-size:10px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;">Level 1 — 基盤</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Level descriptions -->
+          <div style="flex:1;min-width:280px;display:flex;flex-direction:column;gap:12px;">
+
+            <div style="border-radius:10px;padding:14px 16px;background:rgba(37,99,235,.05);border:1px solid rgba(37,99,235,.2);">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                <span style="font-size:11px;font-weight:800;background:var(--accent);color:#fff;padding:2px 8px;border-radius:4px;">L1</span>
+                <span style="font-size:13px;font-weight:700;color:var(--text);">基盤 — 単発の物理操作</span>
+                <span style="font-size:10px;color:var(--muted);margin-left:auto;">Ph 0–1</span>
+              </div>
+              <p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0;">LLM + センサー + ROS2 の<strong>直接パイプライン</strong>。Harnessシステム不使用。音声指示 → 認識 → 単発動作実行。</p>
+              <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;">
+                <span style="font-size:10px;background:rgba(37,99,235,.08);color:var(--accent);border:1px solid rgba(37,99,235,.2);padding:2px 7px;border-radius:4px;">SLAM</span>
+                <span style="font-size:10px;background:rgba(37,99,235,.08);color:var(--accent);border:1px solid rgba(37,99,235,.2);padding:2px 7px;border-radius:4px;">LLM基盤</span>
+                <span style="font-size:10px;background:rgba(37,99,235,.08);color:var(--accent);border:1px solid rgba(37,99,235,.2);padding:2px 7px;border-radius:4px;">IK/FK</span>
+                <span style="font-size:10px;background:rgba(37,99,235,.08);color:var(--accent);border:1px solid rgba(37,99,235,.2);padding:2px 7px;border-radius:4px;">MCP</span>
+                <span style="font-size:10px;background:rgba(37,99,235,.08);color:var(--accent);border:1px solid rgba(37,99,235,.2);padding:2px 7px;border-radius:4px;">Isaac Sim基盤</span>
+              </div>
+            </div>
+
+            <div style="border-radius:10px;padding:14px 16px;background:rgba(217,119,6,.05);border:1px solid rgba(217,119,6,.2);">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                <span style="font-size:11px;font-weight:800;background:var(--amber);color:#fff;padding:2px 8px;border-radius:4px;">L2</span>
+                <span style="font-size:13px;font-weight:700;color:var(--text);">Harness中層 — 複数手順の自律構成・実行</span>
+                <span style="font-size:10px;color:var(--muted);margin-left:auto;">Ph 2–5</span>
+              </div>
+              <p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0;"><strong>L1 を内包</strong>した上で Skill API・Planner Agent・Memory・Cron・Heartbeat が加わる。目標だけ与えれば手順を自律構成して実行。</p>
+              <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;">
+                <span style="font-size:10px;background:rgba(217,119,6,.08);color:var(--amber);border:1px solid rgba(217,119,6,.2);padding:2px 7px;border-radius:4px;">Tool Use</span>
+                <span style="font-size:10px;background:rgba(217,119,6,.08);color:var(--amber);border:1px solid rgba(217,119,6,.2);padding:2px 7px;border-radius:4px;">Agent</span>
+                <span style="font-size:10px;background:rgba(217,119,6,.08);color:var(--amber);border:1px solid rgba(217,119,6,.2);padding:2px 7px;border-radius:4px;">Cron</span>
+                <span style="font-size:10px;background:rgba(217,119,6,.08);color:var(--amber);border:1px solid rgba(217,119,6,.2);padding:2px 7px;border-radius:4px;">Heartbeat</span>
+                <span style="font-size:10px;background:rgba(217,119,6,.08);color:var(--amber);border:1px solid rgba(217,119,6,.2);padding:2px 7px;border-radius:4px;">Memory</span>
+                <span style="font-size:10px;background:rgba(217,119,6,.08);color:var(--amber);border:1px solid rgba(217,119,6,.2);padding:2px 7px;border-radius:4px;">VLA</span>
+                <span style="font-size:10px;background:rgba(217,119,6,.08);color:var(--amber);border:1px solid rgba(217,119,6,.2);padding:2px 7px;border-radius:4px;">RL</span>
+                <span style="font-size:10px;background:rgba(217,119,6,.08);color:var(--amber);border:1px solid rgba(217,119,6,.2);padding:2px 7px;border-radius:4px;">Isaac Lab</span>
+              </div>
+            </div>
+
+            <div style="border-radius:10px;padding:14px 16px;background:rgba(124,58,237,.05);border:1px solid rgba(124,58,237,.2);">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                <span style="font-size:11px;font-weight:800;background:var(--purple);color:#fff;padding:2px 8px;border-radius:4px;">L3</span>
+                <span style="font-size:13px;font-weight:700;color:var(--text);">高階 Harness — 自己診断・協調・人との対話</span>
+                <span style="font-size:10px;color:var(--muted);margin-left:auto;">Ph 6–8</span>
+              </div>
+              <p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0;"><strong>L1+L2 を内包</strong>した上で Self-Check・Multi-Agent・User-Interactive が加わる。異常を自律対処し、不確実なときは人に確認を求める。</p>
+              <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;">
+                <span style="font-size:10px;background:rgba(124,58,237,.08);color:var(--purple);border:1px solid rgba(124,58,237,.2);padding:2px 7px;border-radius:4px;">Self-Check</span>
+                <span style="font-size:10px;background:rgba(124,58,237,.08);color:var(--purple);border:1px solid rgba(124,58,237,.2);padding:2px 7px;border-radius:4px;">Self-Progress</span>
+                <span style="font-size:10px;background:rgba(124,58,237,.08);color:var(--purple);border:1px solid rgba(124,58,237,.2);padding:2px 7px;border-radius:4px;">Multi-Agent</span>
+                <span style="font-size:10px;background:rgba(124,58,237,.08);color:var(--purple);border:1px solid rgba(124,58,237,.2);padding:2px 7px;border-radius:4px;">User-Interactive</span>
+                <span style="font-size:10px;background:rgba(124,58,237,.08);color:var(--purple);border:1px solid rgba(124,58,237,.2);padding:2px 7px;border-radius:4px;">Digital Twin</span>
+                <span style="font-size:10px;background:rgba(124,58,237,.08);color:var(--purple);border:1px solid rgba(124,58,237,.2);padding:2px 7px;border-radius:4px;">Permission</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="demo.html#level-structure" style="font-size:12px;color:var(--green);text-decoration:none;padding:4px 12px;border:1px solid rgba(5,150,105,.3);border-radius:20px;background:var(--green-l);">📋 全シナリオ一覧 →</a>
+      </div>
+    </div>
+
+    <!-- Scenario switcher -->
+    <div class="widget reveal" data-label="SCENARIO EXAMPLES" style="margin-top:32px">
+      <div style="font-size:14px;color:var(--muted);margin-bottom:14px;">代表シナリオ — 各 Level の典型的な実行フロー</div>
       <div class="scenario-tabs">
-        <button class="sc-tab active" onclick="switchSc(0,this)">🔴⭐ 統合最終</button>
-        <button class="sc-tab" onclick="switchSc(1,this)">🟢 SLAM+ボタン</button>
-        <button class="sc-tab" onclick="switchSc(2,this)">🔵 移動+操作</button>
-        <button class="sc-tab" onclick="switchSc(3,this)">🟡 記憶活用</button>
-        <button class="sc-tab" onclick="switchSc(4,this)">🟠 自律デリバリー</button>
-        <button class="sc-tab" onclick="switchSc(5,this)">🔴 屋内外+精密</button>
+        <button class="sc-tab active" onclick="switchSc(0,this)">⭐ 統合最終デモ</button>
+        <button class="sc-tab" onclick="switchSc(1,this)">🔵 単発物理操作</button>
+        <button class="sc-tab" onclick="switchSc(2,this)">🟡 Harness エージェント</button>
+        <button class="sc-tab" onclick="switchSc(3,this)">🟣 自律異常対処</button>
+        <button class="sc-tab" onclick="switchSc(4,this)">🟠 記憶 × デリバリー</button>
       </div>
       <div class="scenario-display">
         <div class="sc-content active" id="sc-0">
-          <div class="sc-title">⑥ 屋外・屋内 × 精密操作 × 安全 × 記憶 — 統合最終デモ ⭐（C-L3）</div>
-          <div class="sc-desc">全要素統合。屋外・屋内シームレス走行＋Safety Agent＋記憶システム＋精密フィードバック操作が連携する集大成デモ。</div>
-          <div class="sc-flow">🗣️ <span class="sf">複合指示</span><br>&nbsp;↓ 🧠 Memory 参照（RAG + Vector DB）<br>&nbsp;↓ 🌳 屋外走行（GNSS+SLAM）→ 🏢 屋内移動（Nav2）<br>&nbsp;↓ ⚠️ Safety Agent 監視 → 👁️ VLM 認識<br>&nbsp;↓ 🦾 精密操作（Closed-loop）→ 📝 Memory 更新・報告</div>
-          <div class="sc-chips"><span class="sc-chip t">GNSS+SLAM</span><span class="sc-chip a">Safety Agent</span><span class="sc-chip a">RAG Memory</span><span class="sc-chip h">SOARM101</span><span class="sc-chip a">Closed-loop</span><span class="sc-chip g">Whisper</span></div>
+          <div class="sc-title">⭐ 統合デモのシナリオー</div>
+          <div class="sc-desc">全要素統合。Multi-Agent 協調・Self-Check・Human-in-the-loop を含む屋外走行 + 精密操作 + 人とのインタラクション。</div>
+          <div class="sc-flow">🗣️ <span class="sf">複合指示</span> → 🧠 Memory 参照（RAG + Vector DB）<br>&nbsp;↓ 🌳 屋外走行（GNSS+SLAM）→ 🏢 屋内移動（Nav2）<br>&nbsp;↓ ⚠️ Safety Agent 監視 → 自律異常対処 or <span class="sf">👤 人に確認を求める</span><br>&nbsp;↓ 👁️ VLM 認識 → 🦾 精密操作（Closed-loop フィードバック）<br>&nbsp;↓ 📝 Memory 更新 → 🔊 TTS 完了報告</div>
+          <div class="sc-chips"><span class="sc-chip t">GNSS+SLAM</span><span class="sc-chip a">Multi-Agent</span><span class="sc-chip a">Self-Check</span><span class="sc-chip a">RAG Memory</span><span class="sc-chip h">SOARM101</span><span class="sc-chip a">Closed-loop</span><span class="sc-chip g">Human-in-the-loop</span></div>
         </div>
         <div class="sc-content" id="sc-1">
-          <div class="sc-title">① SLAM 自律移動 & エレベーターボタン押下（A-L1 / B-L1）</div>
-          <div class="sc-desc">音声指令で SLAM 自律移動＋走行ログ記録（A-L1）と、指示によるエレベーターボタン押下（B-L1）を実証する最初の実用デモ群。</div>
-          <div class="sc-flow">【A-L1】 🗣️ 音声指示 → <span class="sf">LLM 解釈</span> → 🗺️ SLAM+Nav2 走行 → <span class="sf">📝 走行ログ記録</span> → ✅ 到達<br>【B-L1】 🗣️「3階を押して」→ <span class="sf">YOLO/VLM 認識</span> → 📐 IK → <span class="sf">🦾 押下</span> → ✅</div>
-          <div class="sc-chips"><span class="sc-chip t">ORB-SLAM3</span><span class="sc-chip t">Nav2</span><span class="sc-chip a">LLM</span><span class="sc-chip g">Whisper</span><span class="sc-chip h">SOARM101</span><span class="sc-chip g">YOLO</span></div>
+          <div class="sc-title">① 単発物理操作（Harness なし）</div>
+          <div class="sc-desc">LLM + センサー + ROS2 の直接パイプライン。Harness システムなしで基礎能力を実証。移動・アーム操作・複合の3例。</div>
+          <div class="sc-flow">【移動】 🗣️ 音声指示 → LLM 解釈 → 🗺️ SLAM+Nav2 走行 → 📝 走行ログ → ✅<br>【アーム】 🗣️「3階を押して」→ YOLO/VLM 認識 → IK → 🦾 押下 → ✅<br>【複合】 🗣️ 複合指示 → LLM 分解 → 移動 + アーム操作 → ✅</div>
+          <div class="sc-chips"><span class="sc-chip t">SLAM</span><span class="sc-chip t">Nav2</span><span class="sc-chip a">LLM</span><span class="sc-chip g">Whisper</span><span class="sc-chip h">SOARM101</span><span class="sc-chip g">YOLO/VLM</span></div>
         </div>
         <div class="sc-content" id="sc-2">
-          <div class="sc-title">② 移動 & 操作 複合デモ（C-L1）</div>
-          <div class="sc-desc">「〇〇に移動してボタンを押して」を1つの音声指示で実行。LLM がタスク分解し、SLAM移動とアーム操作を連続実行。</div>
-          <div class="sc-flow">🗣️ 音声指示 → <span class="sf">🤖 LLM 分解（移動 + アーム）</span><br>&nbsp;↓ 🗺️ SLAM+Nav2 移動 → <span class="sf">📝 走行ログ</span><br>&nbsp;↓ 👁️ ターゲット認識 → 🦾 アーム操作 → ✅</div>
-          <div class="sc-chips"><span class="sc-chip t">Nav2</span><span class="sc-chip t">SLAM</span><span class="sc-chip h">SOARM101</span><span class="sc-chip a">LLM Planner</span><span class="sc-chip g">Whisper</span></div>
+          <div class="sc-title">② Agent + Memory + Skill API</div>
+          <div class="sc-desc">単発操作能力を内包した上で、Skill API・Planner Agent・RAG Memory が加わる。文脈指示・マルチステップ操作・Cron 巡回の3例。</div>
+          <div class="sc-flow">【文脈移動】 🗣️ 文脈指示 → 🧠 RAG Memory 検索 → Planner Agent → Skill: goto() → 📝 Memory 更新<br>【マルチステップ】 🗣️「CAT を並べて」→ Planner 計画 → Skill: pick()×3 → 配置 → ✅<br>【巡回】 ⏰ Cron → Ops Agent → Skill: patrol() → Heartbeat 正常</div>
+          <div class="sc-chips"><span class="sc-chip a">Planner Agent</span><span class="sc-chip a">Episodic Memory</span><span class="sc-chip a">RAG</span><span class="sc-chip t">Skill API</span><span class="sc-chip g">Cron</span><span class="sc-chip g">Heartbeat</span></div>
         </div>
         <div class="sc-content" id="sc-3">
-          <div class="sc-title">③ 記憶システム活用 & 文字スペリング（A-L2 / B-L2）</div>
-          <div class="sc-desc">走行ログを Vector DB に蓄積し文脈ある移動指示に対応（A-L2）。物品名から文字ブロックをスペルアウト（B-L2）。</div>
-          <div class="sc-flow">【A-L2】 🗣️ 文脈指示 → <span class="sf">🧠 RAG 記憶検索</span> → 📍 位置推定 → 🗺️ 移動 → 📝 Memory 更新<br>【B-L2】 🗣️ 物品名 → <span class="sf">LLM 計画</span> → 👁️ OCR+YOLO → 🦾 把持×N → ✅</div>
-          <div class="sc-chips"><span class="sc-chip a">RAG</span><span class="sc-chip a">Episodic Memory</span><span class="sc-chip a">OCR</span><span class="sc-chip g">YOLO</span><span class="sc-chip t">SLAM</span></div>
+          <div class="sc-title">③ 自律異常対処 + 人とのインタラクション</div>
+          <div class="sc-desc">前 Level の全能力を内包した上で、Self-Check・Multi-Agent・Human-in-the-loop を追加。移動中の障害対処と精密操作の失敗回復を実証。</div>
+          <div class="sc-flow">【移動異常】 🚶 巡回中 → Self-Check: ドアが閉 → Multi-Agent 判断 → 別経路再計画 or 👤 人に開錠を依頼<br>【操作回復】 👁️ 精密認識 → 🦾 操作中 → 失敗検知 → Self-Progress 補正 → 不確実時 🔊「確認してください」→ ✅<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; → 📝 Memory に成否・補正量記録</div>
+          <div class="sc-chips"><span class="sc-chip a">Multi-Agent</span><span class="sc-chip a">Self-Check</span><span class="sc-chip a">Self-Progress</span><span class="sc-chip g">Human-in-the-loop</span><span class="sc-chip a">Safety Agent</span><span class="sc-chip g">TTS 報告</span></div>
         </div>
         <div class="sc-content" id="sc-4">
-          <div class="sc-title">④ 記憶 × 自律デリバリー（C-L2）</div>
-          <div class="sc-desc">「前に置いてあった〇〇を取ってきて」など Episodic Memory を参照した文脈指示に対応。移動→把持→搬送→配置を一貫実行。</div>
-          <div class="sc-flow">🗣️ 文脈指示 → <span class="sf">🧠 Memory 検索（RAG+Vector DB）</span><br>&nbsp;↓ 🗺️ SLAM+Nav2 移動 → 👁️ YOLO<br>&nbsp;↓ 🦾 把持・搬送・配置 → <span class="sf">🧠 Memory 更新</span> → ✅</div>
-          <div class="sc-chips"><span class="sc-chip a">Episodic Memory</span><span class="sc-chip a">RAG</span><span class="sc-chip t">Nav2</span><span class="sc-chip h">SOARM101</span><span class="sc-chip g">TTS</span></div>
-        </div>
-        <div class="sc-content" id="sc-5">
-          <div class="sc-title">⑤ 屋外・屋内シームレス走行 & 精密操作（A-L3 / B-L3）</div>
-          <div class="sc-desc">GNSS+SLAM で屋外→屋内を安定走行し Safety Agent が自律判断（A-L3）。プラグ挿入など視覚フィードバック精密操作（B-L3）。</div>
-          <div class="sc-flow">【A-L3】 🌳 屋外（GNSS+SLAM）→ 🏢 屋内（Nav2）→ <span class="sf">⚠️ Safety Agent</span> → 🧠 記憶参照<br>【B-L3】 👁️ 挿入口認識 → 📐 精密 IK → <span class="sf">🔄 視覚 Feedback ループ</span> → ✅</div>
-          <div class="sc-chips"><span class="sc-chip t">GNSS</span><span class="sc-chip t">ORB-SLAM3</span><span class="sc-chip a">Safety Agent</span><span class="sc-chip h">SOARM101</span><span class="sc-chip a">Closed-loop</span></div>
+          <div class="sc-title">④ 記憶 × 自律デリバリー</div>
+          <div class="sc-desc">Episodic Memory を参照した文脈指示に対応。移動→把持→搬送→配置を Planner Agent が一貫して Skill Call で実行。</div>
+          <div class="sc-flow">🗣️ 文脈指示 → <span class="sf">🧠 Memory 検索（RAG+Vector DB）</span><br>&nbsp;↓ Planner Agent → Skill: goto() → 🗺️ SLAM+Nav2<br>&nbsp;↓ Skill: pick() → 🦾 把持 → Skill: goto(dest) → Skill: place()<br>&nbsp;↓ 🧠 Memory 更新 → 🔊 TTS 報告 → ✅</div>
+          <div class="sc-chips"><span class="sc-chip a">Episodic Memory</span><span class="sc-chip a">RAG</span><span class="sc-chip a">Planner Agent</span><span class="sc-chip t">Skill API</span><span class="sc-chip h">SOARM101</span><span class="sc-chip g">TTS</span></div>
         </div>
       </div>
     </div>

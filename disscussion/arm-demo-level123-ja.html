@@ -576,77 +576,69 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
 <div class="page-hero">
   <div class="hero-inner">
     <div class="hero-tag">🦾 カテゴリ B — アーム単体 Demo</div>
-    <h1>マニピュレーション Level 1-3</h1>
+    <h1>マニピュレーション Level 1-3 — Harness 包含構造</h1>
     <p class="hero-desc">
-      単なる「アームが動く」デモではなく、
-      <strong>人が自然に指示した作業を、環境改造なし・専用治具なしで実行できること</strong>を
-      3段階で段階的に示す。<br>
-      LLM・視覚認識・動作計画を組み合わせ、Physical AI 的マニピュレーションを検証する。
+      Level は「段階」ではなく<strong>包含関係</strong> — L3 ⊃ L2 ⊃ L1。<br>
+      L1: Harness なしの単発物理操作 ／ L2: L1 を内包し Skill API + Agent を追加 ／<br>
+      L3: L1+L2 を内包し Self-Check・Human-in-the-loop など高階 Harness を追加する。<br>
+      LLM・視覚認識・動作計画・Harness システムを組み合わせ、Physical AI 的マニピュレーションを検証する。
     </p>
 
-    <!-- レベル俯瞰ロードマップ -->
-    <div class="level-roadmap">
-      <a class="roadmap-level rm-lv1" href="#level1">
-        <div class="rm-num">Level 1 · Phase 1–2</div>
-        <div class="rm-title">音声指令による<br>単発操作実行</div>
-        <div class="rm-phase">例：ボタン押下・スイッチ操作</div>
-        <div class="rm-arrow">→</div>
-      </a>
-      <a class="roadmap-level rm-lv2" href="#level2">
-        <div class="rm-num">Level 2 · Phase 3–4</div>
-        <div class="rm-title">指示に基づく<br>多段タスク実行</div>
-        <div class="rm-phase">例：文字ブロック並べ・順序配置</div>
-        <div class="rm-arrow">→</div>
-      </a>
-      <a class="roadmap-level rm-lv3" href="#level3">
-        <div class="rm-num">Level 3 · Phase 5–6</div>
-        <div class="rm-title">視覚フィードバックを用いた<br>精密操作</div>
-        <div class="rm-phase">例：プラグ挿入・コネクタ接続</div>
-      </a>
-    </div>
   </div>
 </div>
 
 <main>
 
-  <!-- 3段階のつながり（先に概観） -->
-  <div class="progression-section">
-    <div class="prog-title">🗺️ 3段階のつながり — 能力の積み上げ構造</div>
-    <div class="prog-steps">
-      <div class="prog-step">
-        <div class="prog-step-left">
-          <div class="prog-node lv1">L1</div>
-          <div class="prog-line"></div>
+  <section style="margin-bottom:40px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+      <div style="flex:1;height:1px;background:var(--border);"></div>
+      <div style="font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);">Level 1–3 の包含関係図</div>
+      <div style="flex:1;height:1px;background:var(--border);"></div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px 28px;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+      <div style="display:flex;gap:24px;align-items:stretch;flex-wrap:wrap;">
+        <div style="flex:0 0 auto;display:flex;align-items:center;justify-content:center;min-width:280px;">
+          <div style="position:relative;width:280px;height:244px;">
+            <div style="position:absolute;inset:0;border-radius:16px;background:rgba(124,58,237,.09);border:2.5px solid rgba(124,58,237,.55);display:flex;align-items:flex-start;justify-content:flex-start;padding:8px 12px;">
+              <span style="font-size:10px;font-weight:800;color:var(--purple);text-transform:uppercase;letter-spacing:.08em;">Level 3 — 高階 Harness</span>
+            </div>
+            <div style="position:absolute;top:34px;left:16px;right:16px;bottom:10px;border-radius:12px;background:rgba(217,119,6,.16);border:2.5px solid rgba(217,119,6,.7);display:flex;align-items:flex-start;justify-content:flex-start;padding:8px 12px;">
+              <span style="font-size:10px;font-weight:800;color:var(--amber);text-transform:uppercase;letter-spacing:.08em;">Level 2 — Harness 中層</span>
+            </div>
+            <div style="position:absolute;top:72px;left:32px;right:32px;bottom:22px;border-radius:10px;background:rgba(37,99,235,.11);border:2.5px solid rgba(37,99,235,.55);display:flex;align-items:center;justify-content:center;">
+              <span style="font-size:10px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;">Level 1 — 基盤</span>
+            </div>
+          </div>
         </div>
-        <div class="prog-step-content">
-          <div class="prog-step-title">人の言葉 → 単発の物理操作</div>
-          <div class="prog-step-desc">自然言語指示を視覚認識と組み合わせ、単回の操作を実行する最小パイプラインを実証する。</div>
-          <span class="prog-step-tag lv1">低コスト・非侵襲な自動化の入口</span>
-        </div>
-      </div>
-      <div class="prog-step">
-        <div class="prog-step-left">
-          <div class="prog-node lv2">L2</div>
-          <div class="prog-line"></div>
-        </div>
-        <div class="prog-step-content">
-          <div class="prog-step-title">手順書 → 複数手順の自律構成・実行</div>
-          <div class="prog-step-desc">単発動作ではなく、目標から内部で手順を計画し継続して実行する能力を示す。</div>
-          <span class="prog-step-tag lv2">タスク単位の自律化</span>
-        </div>
-      </div>
-      <div class="prog-step">
-        <div class="prog-step-left">
-          <div class="prog-node lv3">L3</div>
-        </div>
-        <div class="prog-step-content">
-          <div class="prog-step-title">誤差・不確実性 → 補正しながら作業完遂</div>
-          <div class="prog-step-desc">視覚と接触フィードバックを使い、ミリ単位の精度が必要な作業を閉ループで成功まで持っていく。</div>
-          <span class="prog-step-tag lv3">実運用に耐えるロバスト操作</span>
+        <div style="flex:1;min-width:280px;display:flex;flex-direction:column;gap:12px;">
+          <div style="border-radius:10px;padding:14px 16px;background:rgba(37,99,235,.05);border:1px solid rgba(37,99,235,.2);">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="font-size:11px;font-weight:800;background:var(--accent);color:#fff;padding:2px 8px;border-radius:4px;">L1</span>
+              <span style="font-size:13px;font-weight:700;color:var(--text);">基盤 — 単発の物理操作</span>
+              <span style="font-size:10px;color:var(--muted);margin-left:auto;">Ph 0–2</span>
+            </div>
+            <p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0;">LLM + 視覚認識 + ROS2 の直接パイプライン。Harness システムを使わず、音声指示から単発の物理操作を実行する最小構成。</p>
+          </div>
+          <div style="border-radius:10px;padding:14px 16px;background:rgba(217,119,6,.05);border:1px solid rgba(217,119,6,.2);">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="font-size:11px;font-weight:800;background:var(--amber);color:#fff;padding:2px 8px;border-radius:4px;">L2</span>
+              <span style="font-size:13px;font-weight:700;color:var(--text);">Harness 中層 — Skill API + Agent</span>
+              <span style="font-size:10px;color:var(--muted);margin-left:auto;">Ph 3–5</span>
+            </div>
+            <p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0;"><strong>L1 を内包</strong>した上で Skill API・Planner Agent・Memory が加わる。目標から手順を自律構成し、複数ステップの操作を連続実行する。</p>
+          </div>
+          <div style="border-radius:10px;padding:14px 16px;background:rgba(124,58,237,.05);border:1px solid rgba(124,58,237,.2);">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="font-size:11px;font-weight:800;background:var(--purple);color:#fff;padding:2px 8px;border-radius:4px;">L3</span>
+              <span style="font-size:13px;font-weight:700;color:var(--text);">高階 Harness — Self-Check + Human</span>
+              <span style="font-size:10px;color:var(--muted);margin-left:auto;">Ph 7–8</span>
+            </div>
+            <p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0;"><strong>L1+L2 を内包</strong>した上で Self-Check・状況理解・Human-in-the-loop を追加。不確実な状況でも適応的に操作し、必要時は人と協調する。</p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- ═══ LEVEL 1 ═══ -->
   <div class="level-section lv1" id="level1">
@@ -662,7 +654,7 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
         <div class="level-title">音声指令による単発操作実行</div>
         <div class="level-subtitle">例：エレベーターボタン押下 / 設備スタートボタン / スイッチ操作</div>
       </div>
-      <div class="level-status status-planned">● planned · Phase 1–2</div>
+      <div class="level-status status-planned">● planned · Ph 0–2 · Harness なし</div>
     </div>
 
     <!-- 望ましいこと → できること -->
@@ -908,10 +900,10 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
     <div class="level-header">
       <div class="level-badge">L2</div>
       <div class="level-title-block">
-        <div class="level-title">指示に基づく多段タスク実行</div>
-        <div class="level-subtitle">例：文字ブロックのスペリング / 物品の並べ替え / 指定順序での配置</div>
+        <div class="level-title">Harness 中層（L1 内包）— Skill API + Agent による多段操作</div>
+        <div class="level-subtitle">例：Skill: pick()×N・スペリング配置・Planner Agent による順序計画</div>
       </div>
-      <div class="level-status status-planned">● planned · Phase 3–4</div>
+      <div class="level-status status-planned">● planned · Ph 3–5 · L1 内包</div>
     </div>
 
     <!-- 望ましいこと → できること -->
@@ -1136,10 +1128,10 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
     <div class="level-header">
       <div class="level-badge">L3</div>
       <div class="level-title-block">
-        <div class="level-title">視覚フィードバックを用いた精密操作</div>
-        <div class="level-subtitle">例：プラグ挿入 / コネクタ接続 / 穴合わせを伴う組付け</div>
+        <div class="level-title">高階 Harness（L1+L2 内包）— Self-Check + Human-in-the-loop + 精密操作</div>
+        <div class="level-subtitle">例：Closed-loop 精密操作・3回失敗 → TTS 報告・人補助 → 再試行・Memory 成否記録</div>
       </div>
-      <div class="level-status status-future">◌ future · Phase 5–6</div>
+      <div class="level-status status-future">◌ future · Ph 7–8 · L1+L2 内包</div>
     </div>
 
     <!-- 望ましいこと → できること -->

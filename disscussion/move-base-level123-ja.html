@@ -562,76 +562,68 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
 <div class="page-hero">
   <div class="hero-inner">
     <div class="hero-tag">🤖 カテゴリ A — 自律移動 Navigation</div>
-    <h1>ロボット自律移動 Level 1-3 分類基準</h1>
+    <h1>自律移動 Level 1-3 — Harness 包含構造</h1>
     <p class="hero-desc">
-      単なる「目標地点へ移動する」ナビゲーションではなく、<br>
-      <strong>環境を認識し、経験を記憶し、不確実な状況でも自律的にタスクを推進できること</strong>を<br>
-      3段階で段階的に示す。ROS2 + Mid360 LiDAR + Nav2 を基盤に、
-      記憶・判断・協働能力を積み上げ、Physical AI 的な自律移動を検証する。
+      Level は「段階」ではなく<strong>包含関係</strong> — L3 ⊃ L2 ⊃ L1。<br>
+      L1: Harness なしの単発移動操作 ／ L2: L1 を内包し Agent + Memory + Skill を追加 ／<br>
+      L3: L1+L2 を内包し Self-Check・Multi-Agent・Human-in-the-loop など高階 Harness を追加する。<br>
+      ROS2 + Mid360 LiDAR + Nav2 を基盤に、Harness の各層が積み重なる構造を検証する。
     </p>
-
-    <div class="level-roadmap">
-      <a class="roadmap-level rm-lv1" href="#level1">
-        <div class="rm-num">Level 1 · Phase 0–1</div>
-        <div class="rm-title">現在を見て<br>認識力を活用</div>
-        <div class="rm-phase">例：配達・巡回・障害物回避</div>
-        <div class="rm-arrow">→</div>
-      </a>
-      <a class="roadmap-level rm-lv2" href="#level2">
-        <div class="rm-num">Level 2 · Phase 2–3</div>
-        <div class="rm-title">記憶を活用して<br>賢く移動</div>
-        <div class="rm-phase">例：経験ベース経路選択・失敗回避</div>
-        <div class="rm-arrow">→</div>
-      </a>
-      <a class="roadmap-level rm-lv3" href="#level3">
-        <div class="rm-num">Level 3 · Phase 4–5</div>
-        <div class="rm-title">思考し主動的に<br>タスクを解決</div>
-        <div class="rm-phase">例：閉ドア対処・マルチステップ自動化</div>
-      </a>
-    </div>
   </div>
 </div>
 
 <main>
 
-  <!-- 3段階のつながり -->
-  <div class="progression-section">
-    <div class="prog-title">🗺️ 3段階のつながり — 能力の積み上げ構造</div>
-    <div class="prog-steps">
-      <div class="prog-step">
-        <div class="prog-step-left">
-          <div class="prog-node lv1">L1</div>
-          <div class="prog-line"></div>
+  <section style="margin-bottom:40px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+      <div style="flex:1;height:1px;background:var(--border);"></div>
+      <div style="font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);">Level 1–3 の包含関係図</div>
+      <div style="flex:1;height:1px;background:var(--border);"></div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px 28px;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+      <div style="display:flex;gap:24px;align-items:stretch;flex-wrap:wrap;">
+        <div style="flex:0 0 auto;display:flex;align-items:center;justify-content:center;min-width:280px;">
+          <div style="position:relative;width:280px;height:244px;">
+            <div style="position:absolute;inset:0;border-radius:16px;background:rgba(124,58,237,.09);border:2.5px solid rgba(124,58,237,.55);display:flex;align-items:flex-start;justify-content:flex-start;padding:8px 12px;">
+              <span style="font-size:10px;font-weight:800;color:var(--purple);text-transform:uppercase;letter-spacing:.08em;">Level 3 — 高階 Harness</span>
+            </div>
+            <div style="position:absolute;top:34px;left:16px;right:16px;bottom:10px;border-radius:12px;background:rgba(217,119,6,.16);border:2.5px solid rgba(217,119,6,.7);display:flex;align-items:flex-start;justify-content:flex-start;padding:8px 12px;">
+              <span style="font-size:10px;font-weight:800;color:var(--amber);text-transform:uppercase;letter-spacing:.08em;">Level 2 — Harness 中層</span>
+            </div>
+            <div style="position:absolute;top:72px;left:32px;right:32px;bottom:22px;border-radius:10px;background:rgba(37,99,235,.11);border:2.5px solid rgba(37,99,235,.55);display:flex;align-items:center;justify-content:center;">
+              <span style="font-size:10px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;">Level 1 — 基盤</span>
+            </div>
+          </div>
         </div>
-        <div class="prog-step-content">
-          <div class="prog-step-title">世界を見る → その場で認識する</div>
-          <div class="prog-step-desc">LiDAR + Camera でリアルタイムに環境を認識し、Nav2 が障害物を回避しながら目標へ移動する最小パイプラインを確立する。現在地から指定地点への移動・障害物検知・基本巡回を実現する。</div>
-          <span class="prog-step-tag lv1">安定したナビゲーション基盤の構築</span>
-        </div>
-      </div>
-      <div class="prog-step">
-        <div class="prog-step-left">
-          <div class="prog-node lv2">L2</div>
-          <div class="prog-line"></div>
-        </div>
-        <div class="prog-step-content">
-          <div class="prog-step-title">過去の経験 → 今の判断に活かす</div>
-          <div class="prog-step-desc">セマンティックマップに経験を記録し、「この通路は混雑する」「あのドアは引き戸」といった蓄積した知識で経路計画・障害物対処を改善する。RAG + LLM による柔軟な記憶参照を実装する。</div>
-          <span class="prog-step-tag lv2">タスク文脈を持った賢いナビゲーション</span>
-        </div>
-      </div>
-      <div class="prog-step">
-        <div class="prog-step-left">
-          <div class="prog-node lv3">L3</div>
-        </div>
-        <div class="prog-step-content">
-          <div class="prog-step-title">異常を判断 → 主動的に解決してタスクを継続</div>
-          <div class="prog-step-desc">ブロッキング・認識失敗・計画不能を検知し、再計画・ツール呼び出し・人間への支援要求を自律判断する。目標タスクの完了まで主動的に手順を再構成し、停止しない自律エージェントとして機能する。</div>
-          <span class="prog-step-tag lv3">不確実環境でも停止しない自律エージェント</span>
+        <div style="flex:1;min-width:280px;display:flex;flex-direction:column;gap:12px;">
+          <div style="border-radius:10px;padding:14px 16px;background:rgba(37,99,235,.05);border:1px solid rgba(37,99,235,.2);">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="font-size:11px;font-weight:800;background:var(--accent);color:#fff;padding:2px 8px;border-radius:4px;">L1</span>
+              <span style="font-size:13px;font-weight:700;color:var(--text);">基盤 — 単発の移動操作</span>
+              <span style="font-size:10px;color:var(--muted);margin-left:auto;">Ph 0–1</span>
+            </div>
+            <p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0;">LiDAR + Camera + ROS2 の直接パイプライン。Harness なしで、指示解釈から SLAM / Nav2 による単発の自律移動を実行する最小構成。</p>
+          </div>
+          <div style="border-radius:10px;padding:14px 16px;background:rgba(217,119,6,.05);border:1px solid rgba(217,119,6,.2);">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="font-size:11px;font-weight:800;background:var(--amber);color:#fff;padding:2px 8px;border-radius:4px;">L2</span>
+              <span style="font-size:13px;font-weight:700;color:var(--text);">Harness 中層 — Agent + Memory + Skill</span>
+              <span style="font-size:10px;color:var(--muted);margin-left:auto;">Ph 3–4</span>
+            </div>
+            <p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0;"><strong>L1 を内包</strong>した上で Planner Agent・Episodic Memory・Skill: goto() が加わる。場所の意味理解や文脈を使って移動計画を構成する。</p>
+          </div>
+          <div style="border-radius:10px;padding:14px 16px;background:rgba(124,58,237,.05);border:1px solid rgba(124,58,237,.2);">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="font-size:11px;font-weight:800;background:var(--purple);color:#fff;padding:2px 8px;border-radius:4px;">L3</span>
+              <span style="font-size:13px;font-weight:700;color:var(--text);">高階 Harness — Self-Check + Multi-Agent + Human</span>
+              <span style="font-size:10px;color:var(--muted);margin-left:auto;">Ph 7</span>
+            </div>
+            <p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0;"><strong>L1+L2 を内包</strong>した上で Self-Check・Multi-Agent・Human-in-the-loop を追加。不確実環境でも再計画し、必要時は人と協調してタスクを継続する。</p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- ═══ LEVEL 1 ═══ -->
   <div class="level-section lv1" id="level1">
@@ -647,7 +639,7 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
         <div class="level-title">環境理解駆動型リアルタイム自動ナビゲーション</div>
         <div class="level-subtitle">例：室内配達 / 施設巡回 / 障害物回避 / 音声ナビゲーション指示</div>
       </div>
-      <div class="level-status status-active">● 現在進行中 · Phase 0–1</div>
+      <div class="level-status status-active">● 現在進行中 · Ph 0–1 · Harness なし</div>
     </div>
 
     <div class="why-what-row">
@@ -875,10 +867,10 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
     <div class="level-header">
       <div class="level-badge">L2</div>
       <div class="level-title-block">
-        <div class="level-title">記憶強化型経験ナビゲーション</div>
-        <div class="level-subtitle">例：経験ベース経路選択 / 混雑回避 / ユーザー習慣学習 / 失敗からの復帰</div>
+        <div class="level-title">Harness 中層（L1 内包）— Agent + Memory + Skill による文脈移動</div>
+        <div class="level-subtitle">例：Skill: goto()・RAG Memory 参照・Cron 巡回・Planner Agent 経路計画</div>
       </div>
-      <div class="level-status status-planned">● planned · Phase 2–3</div>
+      <div class="level-status status-planned">● planned · Ph 3–4 · L1 内包</div>
     </div>
 
     <div class="why-what-row">
@@ -1096,10 +1088,10 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
     <div class="level-header">
       <div class="level-badge">L3</div>
       <div class="level-title-block">
-        <div class="level-title">予測・協働・自己最適化（タスクレベルの自動化）</div>
-        <div class="level-subtitle">例：閉ドア対処 / マルチステップタスク推進 / 主動的な状況探索と人間協働</div>
+        <div class="level-title">高階 Harness（L1+L2 内包）— Self-Check + Multi-Agent + Human-in-the-loop</div>
+        <div class="level-subtitle">例：閉ドア Self-Check → Multi-Agent 再計画 → 人に開錠依頼・Memory 更新</div>
       </div>
-      <div class="level-status status-future">◌ future · Phase 4–5</div>
+      <div class="level-status status-future">◌ future · Ph 7 · L1+L2 内包</div>
     </div>
 
     <div class="why-what-row">
