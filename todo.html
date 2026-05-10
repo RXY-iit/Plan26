@@ -216,6 +216,7 @@ main { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
 .tag.sw { background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m); }
 .tag.hw { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.2); }
 .tag.ai { background: var(--purple-l); color: var(--purple); border: 1px solid rgba(124,58,237,.2); }
+.tag.navigation { background: var(--green-l); color: var(--green); border: 1px solid rgba(5,150,105,.2); }
 .tag.new{ background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.3); font-weight: 800; }
 
 /* Sub items */
@@ -305,6 +306,34 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
 }
 .vid-modal-close:hover { background: rgba(255,255,255,.25); }
 .vid-modal-box video { width: 100%; max-height: 75vh; display: block; background: #000; }
+
+/* ── 画像モーダル ── */
+.img-modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 9998;
+  background: rgba(0,0,0,.90); align-items: center; justify-content: center;
+}
+.img-modal-overlay.open { display: flex; }
+.img-modal-box {
+  max-width: 92vw; max-height: 92vh; border-radius: 14px;
+  overflow: hidden; background: #0f172a;
+  box-shadow: 0 20px 60px rgba(0,0,0,.6);
+  display: flex; flex-direction: column;
+}
+.img-modal-hd {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px; background: #1e293b;
+  border-bottom: 1px solid rgba(255,255,255,.1); flex-shrink: 0;
+}
+.img-modal-ttl { font-size: 13px; font-weight: 700; color: rgba(255,255,255,.85); }
+.img-modal-close {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
+  color: #fff; font-size: 14px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: all .15s;
+}
+.img-modal-close:hover { background: rgba(255,255,255,.25); }
+.img-modal-box img { max-width: 100%; max-height: 80vh; object-fit: contain; display: block; }
+.clickable-img { cursor: zoom-in; }
 </style>
 </head>
 <body>
@@ -370,6 +399,21 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
         <a class="nav-drop-link" href="issues/arm-vertical/arm-vertical.html">
           <span class="nav-dl-icon">🔧</span>
           <div><div class="nav-dl-name">アーム上下機構</div><div class="nav-dl-sub">コネクタ破損 → 再設計（解決済み）</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-btn">サブページ <span class="nav-caret">▾</span></button>
+      <div class="nav-drop">
+        <span class="nav-drop-label">詳細ページ</span>
+        <a class="nav-drop-link" href="subpages/robot-overview.html">
+          <span class="nav-dl-icon">🤖</span>
+          <div><div class="nav-dl-name">ロボット全体設計</div><div class="nav-dl-sub">Three.js による機体構成可視化</div></div>
+        </a>
+        <a class="nav-drop-link" href="subpages/Arduino-MOSFET-AZD-KD/Arduino-MOSFET-AZD-KD.html">
+          <span class="nav-dl-icon">⚙️</span>
+          <div><div class="nav-dl-name">昇降機構制御システム</div><div class="nav-dl-sub">Arduino / MOSFET / AZD-KD 制御</div></div>
         </a>
       </div>
     </div>
@@ -452,7 +496,7 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
       </div>
       <div style="display:flex;flex-direction:column;gap:7px;">
         <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
-          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span style="color:var(--green);font-weight:700;flex-shrink:0;">✅</span>
           <span>アームの上下移動機構設計＆実装</span>
           <span class="tag hw" style="margin-left:auto;">Hardware</span>
         </div>
@@ -504,12 +548,12 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
       </div>
       <div style="display:flex;flex-direction:column;gap:7px;">
         <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
-          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span style="color:var(--green);font-weight:700;flex-shrink:0;">✅</span>
           <span>安定した地図生成が可能（FAST-LIO / SLAM 動作確認）</span>
           <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag sw">Software</span><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
         </div>
         <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
-          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span style="color:var(--green);font-weight:700;flex-shrink:0;">✅</span>
           <span>地図を読み込んでの自己位置推定が安定動作</span>
           <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag sw">Software</span><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
         </div>
@@ -609,27 +653,21 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
     </div>
   </div>
 
-  <!-- 5. 上下機構への実アーム搭載テスト -->
-  <div class="todo-item">
-    <div class="todo-cb"></div>
+  <!-- 昇降機構 ROS2 制御 -->
+  <div class="todo-item done-item">
+    <div class="todo-cb checked">✓</div>
     <div class="todo-body">
-      <div class="todo-text">上下機構への実アーム搭載テスト</div>
-      <div class="todo-note">スライドレール方式の上下機構に実アームを搭載し、重量支持・上下駆動動作を確認。コネクタ破損（3Dプリント製）→ ネジ（金属製）＋ 3Dプリントベース構造に再設計し解決。</div>
+      <div class="todo-text">昇降機構制御システム（Arduino / MOSFET / AZD-KD）ROS2 制御実装（再設計）</div>
+      <div class="todo-note">機械臂底座支架を設計・3D プリント完了。Arduino → MOSFET → AZD-KD のハードウェア接続を完成。ROS2 制御プログラム（lift_serial_node / lift_joy_node）を実装・起動確認済み。JOG 速度 60 mm/s 達成（当初目標 50 mm/s 超え）。自動ホーミング機能も実装済み。</div>
       <div class="todo-tags">
         <span class="tag hw">Hardware</span>
-        <span class="todo-status pending">保留中</span>
+        <span class="tag sw">Software</span>
+        <span class="todo-status done">✅ 完了</span>
       </div>
-      <div class="todo-date">更新: 2026-04-16</div>
+      <div class="todo-date">完了: 2026-05-10</div>
       <div class="log-links">
-        <a class="log-link issue" href="issues/arm-vertical/arm-vertical.html" target="_blank">🔧 問題対処記録 — コネクタ再設計</a>
-        <a class="log-link vid" href="media/chuoku1.MOV" onclick="event.preventDefault(); openVidModal('media/chuoku1.MOV','🎬 chuoku1.MOV — 上下動作テスト①')">🎬 chuoku1.MOV — 上下動作テスト①</a>
-        <a class="log-link vid" href="media/chuoku2.MOV" onclick="event.preventDefault(); openVidModal('media/chuoku2.MOV','🎬 chuoku2.MOV — 上下動作テスト②')">🎬 chuoku2.MOV — 上下動作テスト②</a>
-      </div>
-      <div class="sub-items">
-        <div class="sub-item">
-          <div class="sub-cb"></div>
-          <span>直線軌道軸 T8 リードスクリュー 2mm → 8mm 変更検討（上下移動スピード改善のため）・合わせてモーター変更検討</span>
-        </div>
+        <a class="log-link" href="subpages/Arduino-MOSFET-AZD-KD/Arduino-MOSFET-AZD-KD.html" target="_blank">⚙️ 制御システム詳細ページ</a>
+        <a class="log-link vid" href="media/speed60㎜.mov" onclick="event.preventDefault(); openVidModal('media/speed60㎜.mov','🎬 speed60㎜.mov — 60 mm/s 速度テスト')">🎬 speed60㎜.mov — 速度テスト</a>
       </div>
     </div>
   </div>
@@ -696,89 +734,143 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
     </div>
   </div>
 
+  <!-- ── 本週進捗セクションヘッダー ── -->
+  <div style="display:flex;align-items:center;gap:12px;margin:40px 0 20px;">
+    <div style="flex:1;height:1px;background:var(--border);"></div>
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 16px;background:linear-gradient(135deg,var(--amber-l),var(--accent-l));border:1px solid rgba(217,119,6,.25);border-radius:99px;font-size:12px;font-weight:700;color:var(--amber);">🔄 本週の進捗（2026-04-25 〜 2026-05-10）</div>
+    <div style="flex:1;height:1px;background:var(--border);"></div>
+  </div>
+
+  <!-- URDF 再構築 -->
+  <div class="todo-item done-item">
+    <div class="todo-cb checked">✓</div>
+    <div class="todo-body">
+      <div class="todo-text">URDF 再構築（LiDAR 新取り付け位置対応）</div>
+      <div class="todo-note">新しい LiDAR 支架設計に基づき、センサー取り付け位置を最終確定（2026-05-03）。URDF を再構築し、TF チェーンを更新。以降の建図・Localization はこの位置で運用。</div>
+      <div class="todo-tags">
+        <span class="tag hw">Hardware</span>
+        <span class="tag sw">Software</span>
+        <span class="todo-status done">✅ 完了</span>
+      </div>
+      <div class="todo-date">完了: 2026-05-03</div>
+    </div>
+  </div>
+
+  <!-- LiDAR 支架 -->
+  <div class="todo-item done-item">
+    <div class="todo-cb checked">✓</div>
+    <div class="todo-body">
+      <div class="todo-text">LiDAR 支架の設計・3D プリント</div>
+      <div class="todo-note">LiDAR の高さに合わせたマウント底座を設計・3D プリント完了。TF 変換を調整し、システム設定を新しい LiDAR 取り付け位置に適合させた。</div>
+      <div class="todo-tags">
+        <span class="tag hw">Hardware</span>
+        <span class="todo-status done">✅ 完了</span>
+      </div>
+      <div class="todo-date">完了: 2026-05-03</div>
+      <div class="log-links">
+        <a class="log-link" href="#" onclick="event.preventDefault(); openImgModal('media/Mid3601.jpg','📷 LiDAR 支架 ①')">📷 LiDAR 支架 ①</a>
+        <a class="log-link" href="#" onclick="event.preventDefault(); openImgModal('media/Mid3602.jpg','📷 LiDAR 支架 ②')">📷 LiDAR 支架 ②</a>
+        <a class="log-link" href="subpages/robot-overview.html" target="_blank">🤖 ロボット全体設計ページ</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Camera 全方向移動底座 -->
+  <div class="todo-item done-item">
+    <div class="todo-cb checked">✓</div>
+    <div class="todo-body">
+      <div class="todo-text">Camera 全方向移動底座の設計・ROS2 制御実装</div>
+      <div class="todo-note">カメラの水平（pan）・垂直（tilt）移動底座の接続部品を設計・3D プリント。RealSense D435 を新しい可動式台座に搭載。ROS2 制御プログラムを実装・検証済み。Joy-Con D-pad で操作可能（LB デッドマンスイッチ）。</div>
+      <div class="todo-tags">
+        <span class="tag hw">Hardware</span>
+        <span class="tag sw">Software</span>
+        <span class="todo-status done">✅ 完了</span>
+      </div>
+      <div class="todo-date">完了: 2026-05-04</div>
+      <div class="log-links">
+        <a class="log-link" href="#" onclick="event.preventDefault(); openImgModal('media/camera-hodler1.jpg','📷 Camera 底座 ①')">📷 Camera 底座 ①</a>
+        <a class="log-link" href="#" onclick="event.preventDefault(); openImgModal('media/camera-hodler2.jpg','📷 Camera 底座 ②')">📷 Camera 底座 ②</a>
+        <a class="log-link vid" href="media/camera-movement.mov" onclick="event.preventDefault(); openVidModal('media/camera-movement.mov','🎬 camera-movement.mov — Camera 全方向移動デモ')">🎬 camera-movement.mov — 動作デモ</a>
+      </div>
+    </div>
+  </div>
+
+ <!-- 昇降機構 ROS2 制御 -->
+  <div class="todo-item done-item">
+    <div class="todo-cb checked">✓</div>
+    <div class="todo-body">
+      <div class="todo-text">昇降機構制御システム（Arduino / MOSFET / AZD-KD）ROS2 制御実装</div>
+      <div class="todo-note">機械臂底座支架を設計・3D プリント完了。Arduino → MOSFET → AZD-KD のハードウェア接続を完成。ROS2 制御プログラム（lift_serial_node / lift_joy_node）を実装・起動確認済み。JOG 速度 60 mm/s 達成（当初目標 50 mm/s 超え）。自動ホーミング機能も実装済み。</div>
+      <div class="todo-tags">
+        <span class="tag hw">Hardware</span>
+        <span class="tag sw">Software</span>
+        <span class="todo-status done">✅ 完了</span>
+      </div>
+      <div class="todo-date">完了: 2026-05-10</div>
+      <div class="log-links">
+        <a class="log-link" href="subpages/Arduino-MOSFET-AZD-KD/Arduino-MOSFET-AZD-KD.html" target="_blank">⚙️ 制御システム詳細ページ</a>
+        <a class="log-link vid" href="media/speed60㎜.mov" onclick="event.preventDefault(); openVidModal('media/speed60㎜.mov','🎬 speed60㎜.mov — 60 mm/s 速度テスト')">🎬 speed60㎜.mov — 速度テスト</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- GLIM SLAM 建図 -->
+  <div class="todo-item done-item">
+    <div class="todo-cb checked">✓</div>
+    <div class="todo-body">
+      <div class="todo-text">GLIM 3D SLAM 建図・地図保存（最終版）</div>
+      <div class="todo-note">LiDAR 取り付け位置確定後（2026-05-03）に再建図。GLIM dump・PLY export・Nav2 用 2D map を生成・保存済み。以降の Localization と Navigation はこの地図を使用。</div>
+      <div class="todo-tags">
+        <span class="tag sw">Software</span>
+        <span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span>
+        <span class="todo-status done">✅ 完了</span>
+      </div>
+      <div class="todo-date">完了: 2026-05-03</div>
+    </div>
+  </div>
+
+  <!-- FAST-LIO2 + GICP Localization -->
+  <div class="todo-item done-item">
+    <div class="todo-cb checked">✓</div>
+    <div class="todo-body">
+      <div class="todo-text">FAST-LIO2 + GICP Localization 実機確認</div>
+      <div class="todo-note">Phase 2 localization（FAST-LIO2 + GICP prior-map matching）が Navigation のベースラインとして確定。実機センサーで収束確認済み（スコア約 0.32）。map → odom TF の安定した出力を確認（2026-05-09）。</div>
+      <div class="todo-tags">
+        <span class="tag sw">Software</span>
+        <span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span>
+        <span class="todo-status done">✅ 完了</span>
+      </div>
+      <div class="todo-date">完了: 2026-05-09</div>
+      <div class="log-links">
+        <a class="log-link vid" href="media/gicp_loc.webm" onclick="event.preventDefault(); openVidModal('media/gicp_loc.webm','🎬 gicp_loc.webm — Localization Phase 1（実機 RViz）')">🎬 gicp_loc.webm — Localization Phase 1</a>
+        <a class="log-link vid" href="media/fast-lio2-gicp-loc.webm" onclick="event.preventDefault(); openVidModal('media/fast-lio2-gicp-loc.webm','🎬 fast-lio2-gicp-loc.webm — Localization Phase 2（実機 RViz）')">🎬 fast-lio2-gicp-loc.webm — Localization Phase 2</a>
+      </div>
+    </div>
+  </div>
+
+
+
   <!-- ── Phase 1 セクションヘッダー ── -->
   <div style="display:flex;align-items:center;gap:12px;margin:40px 0 20px;">
     <div style="flex:1;height:1px;background:var(--border);"></div>
-    <div style="display:flex;align-items:center;gap:8px;padding:6px 16px;background:linear-gradient(135deg,var(--accent-l),var(--green-l));border:1px solid var(--accent-m);border-radius:99px;font-size:12px;font-weight:700;color:var(--accent);">🔹 Phase 1 — 自律移動（LiDAR SLAM + Nav2）</div>
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 16px;background:linear-gradient(135deg,var(--accent-l),var(--green-l));border:1px solid var(--accent-m);border-radius:99px;font-size:12px;font-weight:700;color:var(--accent);">🔹 Phase 1 — 自律移動（これから）</div>
     <div style="flex:1;height:1px;background:var(--border);"></div>
   </div>
 
-  <!-- ① システム設計・データリンク -->
-  <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 8px;padding-left:4px;">① システム設計・データリンク</div>
-
-  <div class="todo-item">
+  <!-- システム設計・データリンク -->
+  <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 8px;padding-left:4px;"> システム設計・データリンク</div>
+  <!-- Nav2 デバッグ中 -->
+  <div class="todo-item inprogress-item">
     <div class="todo-cb"></div>
     <div class="todo-body">
-      <div class="todo-text">システム分層設計・データリンク確立</div>
-      <div class="todo-note">伝感器層（Mid360 / RealSense / IMU / 里程計）・基礎処理層（ドライバ + TF + 時刻同期）・空間認識層（SLAM / 測位）・（予定）LLM 層インタフェース</div>
-      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
-      <div class="todo-date">更新: 2026-04-16</div>
-    </div>
-  </div>
-
-  <div class="todo-item">
-    <div class="todo-cb"></div>
-    <div class="todo-body">
-      <div class="todo-text">センサー接続確認（Phase 1 向け）</div>
-      <div class="todo-note">Mid360 点群安定出力・IMU / odom 動作確認・ROS2 topic &amp; Hz 正常</div>
-      <div class="todo-tags"><span class="tag hw">Hardware</span></div>
-      <div class="todo-date">更新: 2026-04-16</div>
-    </div>
-  </div>
-
-  <div class="todo-item">
-    <div class="todo-cb"></div>
-    <div class="todo-body">
-      <div class="todo-text">TF・座標系構築</div>
-      <div class="todo-note"><code style="font-family:var(--mono);font-size:11px;background:var(--surface2);padding:1px 5px;border-radius:3px;">map → odom → base_link → sensors</code> 構築・外参校正（LiDAR / IMU / Camera）・座標方向整合・タイムスタンプ同期確認</div>
-      <div class="todo-tags"><span class="tag sw">Software</span></div>
-      <div class="todo-date">更新: 2026-04-16</div>
-    </div>
-  </div>
-
-  <!-- ② 運動・測位基礎 -->
-  <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 8px;padding-left:4px;">② 運動・測位基礎</div>
-
-  <div class="todo-item">
-    <div class="todo-cb"></div>
-    <div class="todo-body">
-      <div class="todo-text">底盤制御確認</div>
-      <div class="todo-note">/cmd_vel 正常動作・前進 / 回転方向確認・速度スケール検証</div>
-      <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
-      <div class="todo-date">更新: 2026-04-16</div>
-    </div>
-  </div>
-
-  <div class="todo-item">
-    <div class="todo-cb"></div>
-    <div class="todo-body">
-      <div class="todo-text">測位ルート決定・SLAM 検証</div>
-      <div class="todo-note">推奨: C（里程計安定）→ B（SLAM）→ A（測位ナビゲーション）。地図生成（FAST-LIO / その他）・地図品質確認・測位安定性検証（ドリフトなし）</div>
-      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
-      <div class="todo-date">更新: 2026-04-16</div>
-    </div>
-  </div>
-
-  <!-- ③ Nav2 -->
-  <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 8px;padding-left:4px;">③ Nav2 ナビゲーション能力</div>
-
-  <div class="todo-item">
-    <div class="todo-cb"></div>
-    <div class="todo-body">
-      <div class="todo-text">Nav2 設定</div>
-      <div class="todo-note">global planner / local planner・costmap（local + global）・footprint / inflation 設定</div>
-      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
-      <div class="todo-date">更新: 2026-04-16</div>
-    </div>
-  </div>
-
-  <div class="todo-item">
-    <div class="todo-cb"></div>
-    <div class="todo-body">
-      <div class="todo-text">基本ナビゲーションテスト</div>
-      <div class="todo-note">RViz で 2D Goal 送信・自動目標地点到達・静的障害物回避確認</div>
-      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
-      <div class="todo-date">更新: 2026-04-16</div>
+      <div class="todo-text">Nav2 自律ナビゲーション — 実機テスト・デバッグ継続中</div>
+      <div class="todo-note">Nav2 全スタック実装完了（navigation.launch.py / nav2_params.yaml / nav_mode_switch_node）。FAST-LIO2 + GICP localization との統合確認済み。Joy-Con A/B ボタンによる AUTO/MANUAL 切替実装。現在は実機ナビゲーションテストおよびパラメータ調整を継続中。</div>
+      <div class="todo-tags">
+        <span class="tag sw">Software</span>
+        <span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span>
+        <span class="todo-status progress">🔹 進行中</span>
+      </div>
+      <div class="todo-date">更新: 2026-05-10</div>
     </div>
   </div>
 
@@ -787,33 +879,11 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
     <div class="todo-body">
       <div class="todo-text">安定性チューニング</div>
       <div class="todo-note">速度 / 加速度・避障パラメータ・goal tolerance 調整・ナビゲーション成功率向上</div>
-      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag navigation">Navigation</span></div>
       <div class="todo-date">更新: 2026-04-16</div>
     </div>
   </div>
 
-  <!-- ④ シナリオ・検証 -->
-  <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 8px;padding-left:4px;">④ シナリオ・検証</div>
-
-  <div class="todo-item">
-    <div class="todo-cb"></div>
-    <div class="todo-body">
-      <div class="todo-text">ターゲットシナリオ設定</div>
-      <div class="todo-note">室内廊下往復 / 実験室→入口 / 部屋内障害物回避（いずれかひとつを選定）</div>
-      <div class="todo-tags"><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
-      <div class="todo-date">更新: 2026-04-16</div>
-    </div>
-  </div>
-
-  <div class="todo-item">
-    <div class="todo-cb"></div>
-    <div class="todo-body">
-      <div class="todo-text">地図・タスク検証</div>
-      <div class="todo-note">建図 → 保存 → 再ロード・複数回ナビゲーション成功・異なる起点での安定動作確認</div>
-      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
-      <div class="todo-date">更新: 2026-04-16</div>
-    </div>
-  </div>
 
   <div class="todo-item">
     <div class="todo-cb"></div>
@@ -825,8 +895,8 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
     </div>
   </div>
 
-  <!-- ⑤ Isaac Sim -->
-  <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 8px;padding-left:4px;">⑤ Isaac Sim 仿真検証</div>
+  <!--  Isaac Sim -->
+  <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 8px;padding-left:4px;"> Isaac Sim 仿真検証</div>
 
   <div class="todo-item new-add">
     <div class="todo-cb"></div>
@@ -921,9 +991,20 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
   </div>
 </div>
 
+<!-- 画像モーダル -->
+<div id="todoImgModal" class="img-modal-overlay" onclick="closeImgModal()">
+  <div class="img-modal-box" onclick="event.stopPropagation()">
+    <div class="img-modal-hd">
+      <span class="img-modal-ttl" id="todoImgTitle"></span>
+      <button class="img-modal-close" onclick="closeImgModal()">✕</button>
+    </div>
+    <img id="todoImgEl" src="" alt="" />
+  </div>
+</div>
+
 <footer>
   <a href="plan-fy26.html">← メインページへ戻る</a> &nbsp;|&nbsp;
-  FY2026 Robot Harness System &nbsp;|&nbsp; 最終更新: 2026-04-16
+  FY2026 Robot Harness System &nbsp;|&nbsp; 最終更新: 2026-05-10
 </footer>
 
 <script>
@@ -978,9 +1059,22 @@ function closeVidModal() {
   document.body.style.overflow = '';
 }
 
+// ── 画像モーダル ──
+function openImgModal(src, title) {
+  document.getElementById('todoImgEl').src = src;
+  document.getElementById('todoImgTitle').textContent = title;
+  document.getElementById('todoImgModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeImgModal() {
+  document.getElementById('todoImgModal').classList.remove('open');
+  document.getElementById('todoImgEl').src = '';
+  document.body.style.overflow = '';
+}
+
 // ── キーボード ──
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeVidModal();
+  if (e.key === 'Escape') { closeVidModal(); closeImgModal(); }
 });
 
 updateStats();
