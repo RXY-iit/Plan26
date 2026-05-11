@@ -1147,20 +1147,7 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
   </div>
 
   <div class="checklist">
-    <div class="check-item">
-      <div class="check-box"></div>
-      <div>
-        <div style="font-weight:700;margin-bottom:2px;">Arduino に lift_control.ino を書き込み、実機昇降動作確認</div>
-        <div style="font-size:12px;color:var(--muted);">Arduino に Blink 等の旧プログラムが入ったままだと、ROS2 ノードが起動しても D8/D9 が昇降コマンドに反応しません。</div>
-      </div>
-    </div>
-    <div class="check-item">
-      <div class="check-box"></div>
-      <div>
-        <div style="font-weight:700;margin-bottom:2px;">Joy-Con ボタン番号（Y=3, A=0）実機確認・調整</div>
-        <div style="font-size:12px;color:var(--muted);"><code>ros2 topic echo /joy</code> で実際のボタン番号を確認し、lift_joy_node のマッピングを修正。</div>
-      </div>
-    </div>
+
     <div class="check-item">
       <div class="check-box"></div>
       <div>
