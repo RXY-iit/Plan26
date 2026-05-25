@@ -758,11 +758,64 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
     </div>
   </div>
 
-  <div class="img-card">
-    <div class="img-card-hd">📷 ハードウェア接続図</div>
-    <img src="../../media/Arduino-MOSFET-AZD-KD-connection.jpg" alt="Arduino MOSFET AZD-KD ハードウェア接続図" loading="lazy" />
-    <div class="img-card-cap">Arduino UNO → MOSFET モジュール → AZD-KD CN4 の実際の配線状態。2 系統の MOSFET により UP（D8）と DOWN（D9）を独立制御。</div>
+  <!-- タブコンテナ -->
+  <div style="display: flex; gap: 8px; margin-bottom: 14px; border-bottom: 2px solid var(--border);">
+    <button class="hw-tab-btn active" onclick="switchHwTab('wiring')">
+      🔗 配線図
+    </button>
+    <button class="hw-tab-btn" onclick="switchHwTab('holder')">
+      🖨️ 3D プリンターホルダー
+    </button>
   </div>
+
+  <style>
+    .hw-tab-btn {
+      padding: 10px 16px; font-size: 13px; font-weight: 700; border: none;
+      background: transparent; color: var(--muted); cursor: pointer;
+      border-bottom: 3px solid transparent; transition: all .15s;
+      font-family: inherit;
+    }
+    .hw-tab-btn:hover { color: var(--text); }
+    .hw-tab-btn.active {
+      color: var(--accent); border-bottom-color: var(--accent);
+    }
+    .hw-tab-content { display: none; }
+    .hw-tab-content.active { display: block; }
+  </style>
+
+  <!-- タブ 1: 配線図 -->
+  <div id="hw-tab-wiring" class="hw-tab-content active">
+    <div class="img-card">
+      <div class="img-card-hd">📷 ハードウェア接続図</div>
+      <img src="../../media/Arduino-MOSFET-AZD-KD-connection.jpg" alt="Arduino MOSFET AZD-KD ハードウェア接続図" loading="lazy" />
+      <div class="img-card-cap">Arduino UNO → MOSFET モジュール → AZD-KD CN4 の実際の配線状態。2 系統の MOSFET により UP（D8）と DOWN（D9）を独立制御。</div>
+    </div>
+  </div>
+  <!-- タブ 2: 3D プリンターホルダー -->
+  <div id="hw-tab-holder" class="hw-tab-content">
+    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+      <div class="img-card" style="flex:1 1 320px; min-width:280px;">
+        <div class="img-card-hd">📷 3D プリンターホルダー</div>
+        <img src="../../media/Driver-holder1.jpg" alt="3D プリンターホルダー接触面" loading="lazy" />
+        <div class="img-card-cap">AZD-KD ドライバーと Arduino を固定するための 3D プリンターホルダー。</div>
+      </div>
+
+      <div class="img-card" style="flex:1 1 320px; min-width:280px;">
+        <div class="img-card-hd">📷 3D プリンターホルダー</div>
+        <img src="../../media/Driver-holder2.jpg" alt="3D プリンターホルダー全体図" loading="lazy" />
+        <div class="img-card-cap">ホルダーの全体構成。マウント部と配線ガイダンス機能を備えた設計。</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchHwTab(tabName) {
+      document.querySelectorAll('.hw-tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.hw-tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById('hw-tab-' + tabName).classList.add('active');
+      event.target.classList.add('active');
+    }
+  </script>
 
   <div class="card">
     <div class="card-title">配線詳細 — UP 方向（FW-JOG）</div>
