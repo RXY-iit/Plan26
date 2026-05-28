@@ -69,7 +69,7 @@ nav {
   border: none; background: none; cursor: pointer; font-family: inherit;
   transition: background .12s, color .12s; white-space: nowrap;
 }
-.nav-btn:hover, .nav-item:hover > .nav-btn { background: var(--surface2); color: var(--text); }
+.nav-btn:hover { background: var(--surface2); color: var(--text); }
 .nav-btn.cur { color: var(--accent); }
 .nav-caret { font-size: 8px; opacity: .5; transition: transform .15s; }
 .nav-item:hover .nav-caret { transform: rotate(180deg); }
@@ -83,7 +83,8 @@ nav {
   opacity: 0; pointer-events: none;
   transition: opacity .15s, transform .15s;
 }
-.nav-item:hover .nav-drop { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.nav-drop.open { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.nav-btn.nav-open .nav-caret { transform: rotate(180deg); }
 .nav-drop-label {
   font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em;
   color: var(--muted2,#94a3b8); padding: 6px 10px 3px; display: block;
@@ -584,80 +585,62 @@ footer strong { color: rgba(255,255,255,.9); }
     </a>
 
     <div class="nav-item">
-      <button class="nav-btn cur">プラン <span class="nav-caret">▾</span></button>
-      <div class="nav-drop">
-        <span class="nav-drop-label">メインページ</span>
-        <a class="nav-drop-link" href="#background">
-          <span class="nav-dl-icon">📖</span>
-          <div><div class="nav-dl-name">研究背景</div><div class="nav-dl-sub">現状の課題と研究目的</div></div>
-        </a>
-        <a class="nav-drop-link" href="#figures">
-          <span class="nav-dl-icon">📐</span>
-          <div><div class="nav-dl-name">設計資料</div><div class="nav-dl-sub">アーキテクチャ図・スライド</div></div>
-        </a>
-        <a class="nav-drop-link" href="#schedule">
-          <span class="nav-dl-icon">📅</span>
-          <div><div class="nav-dl-name">スケジュール</div><div class="nav-dl-sub">フェーズ・ガントチャート</div></div>
-        </a>
-        <a class="nav-drop-link" href="#demo">
+      <a class="nav-btn cur" href="plan-fy26.html">ホームページ</a>
+    </div>
+
+    <div class="nav-item">
+      <a class="nav-btn" href="todo.html">進捗</a>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-btn" data-nav="vision">ビジョン <span class="nav-caret">▾</span></button>
+      <div class="nav-drop" id="nav-vision">
+        <a class="nav-drop-link" href="demo.html">
           <span class="nav-dl-icon">🎯</span>
-          <div><div class="nav-dl-name">デモ概要</div><div class="nav-dl-sub">デモ要件レーダー</div></div>
+          <div><div class="nav-dl-name">デモ詳細</div><div class="nav-dl-sub">デモシナリオ・要件マップ</div></div>
+        </a>
+        <div class="nav-drop-sep"></div>
+        <a class="nav-drop-link" href="disscussion/arm-demo-level123-ja.html">
+          <span class="nav-dl-icon">🦾</span>
+          <div><div class="nav-dl-name">マニピュレーション実証ロードマップ</div><div class="nav-dl-sub">アーム Demo Level 1-3 分類</div></div>
+        </a>
+        <a class="nav-drop-link" href="disscussion/move-base-level123-ja.html">
+          <span class="nav-dl-icon">🤖</span>
+          <div><div class="nav-dl-name">ナビゲーション Level 1-3 分類</div><div class="nav-dl-sub">自律移動設計方針</div></div>
         </a>
       </div>
     </div>
 
     <div class="nav-item">
-      <a class="nav-btn" href="todo.html">Todo</a>
-    </div>
-
-    <div class="nav-item">
-      <button class="nav-btn" onclick="location.href='demo.html'">デモ詳細 <span class="nav-caret">▾</span></button>
-      <div class="nav-drop">
-        <span class="nav-drop-label">デモページ</span>
-        <a class="nav-drop-link" href="demo.html#req-map">
-          <span class="nav-dl-icon">🗺️</span>
-          <div><div class="nav-dl-name">要件マップ</div><div class="nav-dl-sub">9カテゴリ・技術要素</div></div>
+      <button class="nav-btn" data-nav="misc">その他 <span class="nav-caret">▾</span></button>
+      <div class="nav-drop" id="nav-misc">
+        <span class="nav-drop-label">ロボット</span>
+        <a class="nav-drop-link" href="subpages/robot-overview.html">
+          <span class="nav-dl-icon">🤖</span>
+          <div><div class="nav-dl-name">ロボット全体像</div><div class="nav-dl-sub">Three.js による機体構成可視化</div></div>
         </a>
-        <a class="nav-drop-link" href="demo.html#scenarios">
-          <span class="nav-dl-icon">🎬</span>
-          <div><div class="nav-dl-name">デモシナリオ</div><div class="nav-dl-sub">3カテゴリ × Level 1/2/3</div></div>
+        <div class="nav-drop-sep"></div>
+        <span class="nav-drop-label">Know-how</span>
+        <a class="nav-drop-link" href="subpages/Arduino-MOSFET-AZD-KD/Arduino-MOSFET-AZD-KD.html">
+          <span class="nav-dl-icon">⚙️</span>
+          <div><div class="nav-dl-name">昇降機構制御システム</div><div class="nav-dl-sub">Arduino / MOSFET / AZD-KD 制御</div></div>
         </a>
-        <a class="nav-drop-link" href="demo.html#usecases">
-          <span class="nav-dl-icon">💡</span>
-          <div><div class="nav-dl-name">活用シーン</div><div class="nav-dl-sub">14のユースケース</div></div>
-        </a>
-      </div>
-    </div>
-
-    <div class="nav-item">
-      <button class="nav-btn" onclick="location.href='issues/arm-vertical/arm-vertical.html'">Issues <span class="nav-caret">▾</span></button>
-      <div class="nav-drop">
-        <span class="nav-drop-label">問題対処記録</span>
         <a class="nav-drop-link" href="issues/arm-vertical/arm-vertical.html">
           <span class="nav-dl-icon">🔧</span>
           <div><div class="nav-dl-name">アーム上下機構</div><div class="nav-dl-sub">コネクタ破損 → 再設計（解決済み）</div></div>
         </a>
-      </div>
-    </div>
-
-    <div class="nav-item">
-      <button class="nav-btn" onclick="location.href='disscussion/arm-demo-level123-ja.html'">Discussion <span class="nav-caret">▾</span></button>
-      <div class="nav-drop">
-        <span class="nav-drop-label">議論・検討ドキュメント</span>
-        <a class="nav-drop-link" href="disscussion/arm-demo-level123-ja.html">
-          <span class="nav-dl-icon">🦾</span>
-          <div><div class="nav-dl-name">マニピュレーション実証ロードマップ</div><div class="nav-dl-sub">アーム単体 Demo Level 1-3 分類</div></div>
-        </a>
-        <a class="nav-drop-link" href="disscussion/move-base-level123-ja.html">
-          <span class="nav-dl-icon">🤖</span>
-          <div><div class="nav-dl-name">ナビゲーション Level 1-3 分類基準</div><div class="nav-dl-sub">自律移動システム設計方針</div></div>
+        <div class="nav-drop-sep"></div>
+        <span class="nav-drop-label">週次レポート</span>
+        <a class="nav-drop-link" href="subpages/report-pages/report-2026-05-22.html">
+          <span class="nav-dl-icon">📝</span>
+          <div><div class="nav-dl-name">2026-05-22</div><div class="nav-dl-sub">Navigation baseline 完成</div></div>
         </a>
       </div>
     </div>
 
     <div class="nav-right">
       <span class="nav-pulse"></span>
-      <div class="nav-badge-pill">Phase 0 進行中</div>
+      <div class="nav-badge-pill">Phase 1 進行中</div>
     </div>
   </div>
 </nav>
@@ -1011,9 +994,9 @@ footer strong { color: rgba(255,255,255,.9); }
             <span style="font-size:10px;font-weight:700;background:var(--accent-l);color:var(--accent);border:1px solid var(--accent-m);padding:1px 6px;border-radius:4px;">L1</span>
             <span style="font-size:10px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);padding:1px 6px;border-radius:4px;">進行中</span>
           </div>
-          <div class="phase-pct" style="color:var(--accent);font-weight:700;">86%</div>
+          <div class="phase-pct" style="color:var(--accent);font-weight:700;">100%</div>
           <div class="phase-bar-wrap" style="flex:1;max-width:80px;height:4px;background:var(--surface2);border-radius:2px;margin:0 10px;">
-            <div style="width:86%;height:100%;background:var(--accent);border-radius:2px;"></div>
+            <div style="width:100%;height:100%;background:var(--accent);border-radius:2px;"></div>
           </div>
           <span class="phase-chevron">▾</span>
         </div>
@@ -1029,10 +1012,8 @@ footer strong { color: rgba(255,255,255,.9); }
         <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);">✅ 通信テスト</span>
         <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);">✅ 全センサー TF 整合確認</span>
         <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);">✅ 上下機構テスト</span>
-        <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 LLM システム実装 (Ph1へ統合)</span>
             </div>
-            <div style="font-size:11px;color:var(--muted);margin-top:6px;">7/9 タスク完了 — 上下機構・LLM は次フェーズ以降</div>
-          </div>
+            </div>
         </div>
       </div>
 
@@ -1045,9 +1026,9 @@ footer strong { color: rgba(255,255,255,.9); }
             <span style="font-size:10px;font-weight:700;background:var(--accent-l);color:var(--accent);border:1px solid var(--accent-m);padding:1px 6px;border-radius:4px;">L1</span>
             <span style="font-size:10px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);padding:1px 6px;border-radius:4px;">進行中</span>
           </div>
-          <div class="phase-pct" style="color:var(--accent);font-weight:700;">80%</div>
+          <div class="phase-pct" style="color:var(--accent);font-weight:700;">67%</div>
           <div class="phase-bar-wrap" style="flex:1;max-width:80px;height:4px;background:var(--surface2);border-radius:2px;margin:0 10px;">
-            <div style="width:80%;height:100%;background:var(--accent);border-radius:2px;"></div>
+            <div style="width:67%;height:100%;background:var(--accent);border-radius:2px;"></div>
           </div>
           <span class="phase-chevron">▾</span>
         </div>
@@ -1065,6 +1046,7 @@ footer strong { color: rgba(255,255,255,.9); }
             </div>
         <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 安定性チューニング</span>
         <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Isaac Sim シミュレーション環境構築</span>
+        <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 LLM システム実装 (Ph1へ統合)</span>
             </div>
           </div>
         </div>
@@ -1663,6 +1645,23 @@ window.addEventListener('scroll',()=>{
     a.style.color=a.getAttribute('href')==='#'+cur?'var(--accent)':'';
   });
 });
+// ── Nav click-toggle ──
+(function(){
+  document.querySelectorAll('[data-nav]').forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      var drop=document.getElementById('nav-'+btn.dataset.nav);
+      var isOpen=drop.classList.contains('open');
+      document.querySelectorAll('.nav-drop.open').forEach(function(d){d.classList.remove('open');});
+      document.querySelectorAll('.nav-btn.nav-open').forEach(function(b){b.classList.remove('nav-open');});
+      if(!isOpen){drop.classList.add('open');btn.classList.add('nav-open');}
+    });
+  });
+  document.addEventListener('click',function(){
+    document.querySelectorAll('.nav-drop.open').forEach(function(d){d.classList.remove('open');});
+    document.querySelectorAll('.nav-btn.nav-open').forEach(function(b){b.classList.remove('nav-open');});
+  });
+})();
 </script>
 </body>
 </html>

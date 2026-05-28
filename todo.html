@@ -68,10 +68,10 @@ nav {
   border: none; background: none; cursor: pointer; font-family: inherit;
   transition: background .12s, color .12s; white-space: nowrap;
 }
-.nav-btn:hover, .nav-item:hover > .nav-btn { background: var(--surface2); color: var(--text); }
+.nav-btn:hover { background: var(--surface2); color: var(--text); }
 .nav-btn.cur { color: var(--accent); }
-.nav-caret { font-size: 8px; opacity: .5; transition: transform .15s; }
-.nav-item:hover .nav-caret { transform: rotate(180deg); }
+.nav-caret { font-size: 8px; opacity: .5; transition: transform .2s; }
+.nav-btn.nav-open .nav-caret { transform: rotate(180deg); }
 .nav-drop {
   position: absolute; top: calc(100% + 8px); left: 50%;
   transform: translateX(-50%) translateY(-5px);
@@ -82,7 +82,7 @@ nav {
   opacity: 0; pointer-events: none;
   transition: opacity .15s, transform .15s;
 }
-.nav-item:hover .nav-drop { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.nav-drop.open { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
 .nav-drop-label {
   font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em;
   color: #94a3b8; padding: 6px 10px 3px; display: block;
@@ -334,6 +334,26 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
 .img-modal-close:hover { background: rgba(255,255,255,.25); }
 .img-modal-box img { max-width: 100%; max-height: 80vh; object-fit: contain; display: block; }
 .clickable-img { cursor: zoom-in; }
+
+/* ── Collapsible phase sections ── */
+.phase-toggle {
+  width: 100%; display: flex; align-items: center; gap: 10px;
+  padding: 9px 18px; border-radius: 99px; border: none; cursor: pointer;
+  font-family: inherit; font-size: 12px; font-weight: 700; letter-spacing: .04em;
+  margin: 28px 0 0; transition: opacity .15s;
+}
+.phase-toggle.ph0 { background: var(--green-l); color: var(--green); border: 1px solid rgba(5,150,105,.25); }
+.phase-toggle.ph1 { background: linear-gradient(135deg,var(--accent-l),var(--green-l)); color: var(--accent); border: 1px solid var(--accent-m); }
+.phase-toggle.future { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+.phase-toggle:hover { opacity: .82; }
+.phase-toggle .pt-sep { flex: 1; height: 1px; background: currentColor; opacity: .18; }
+.phase-toggle .pt-arrow { font-size: 9px; opacity: .55; transition: transform .25s; flex-shrink: 0; }
+.phase-toggle.open .pt-arrow { transform: rotate(180deg); }
+.phase-content { overflow: hidden; transition: max-height .35s ease; }
+.phase-sub-label {
+  font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--muted); margin: 22px 0 8px; padding-left: 4px;
+}
 </style>
 </head>
 <body>
@@ -347,101 +367,62 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
     </a>
 
     <div class="nav-item">
-      <button class="nav-btn" onclick="location.href='plan-fy26.html'">プラン <span class="nav-caret">▾</span></button>
-      <div class="nav-drop">
-        <span class="nav-drop-label">メインページ</span>
-        <a class="nav-drop-link" href="plan-fy26.html#background">
-          <span class="nav-dl-icon">📖</span>
-          <div><div class="nav-dl-name">研究背景</div><div class="nav-dl-sub">現状の課題と研究目的</div></div>
-        </a>
-        <a class="nav-drop-link" href="plan-fy26.html#figures">
-          <span class="nav-dl-icon">📐</span>
-          <div><div class="nav-dl-name">設計資料</div><div class="nav-dl-sub">アーキテクチャ図・スライド</div></div>
-        </a>
-        <a class="nav-drop-link" href="plan-fy26.html#schedule">
-          <span class="nav-dl-icon">📅</span>
-          <div><div class="nav-dl-name">スケジュール</div><div class="nav-dl-sub">フェーズ・ガントチャート</div></div>
-        </a>
-        <a class="nav-drop-link" href="plan-fy26.html#demo">
+      <a class="nav-btn" href="plan-fy26.html">ホームページ</a>
+    </div>
+
+    <div class="nav-item">
+      <a class="nav-btn cur" href="todo.html">進捗</a>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-btn" data-nav="vision">ビジョン <span class="nav-caret">▾</span></button>
+      <div class="nav-drop" id="nav-vision">
+        <a class="nav-drop-link" href="demo.html">
           <span class="nav-dl-icon">🎯</span>
-          <div><div class="nav-dl-name">デモ概要</div><div class="nav-dl-sub">デモ要件レーダー</div></div>
+          <div><div class="nav-dl-name">デモ詳細</div><div class="nav-dl-sub">デモシナリオ・要件マップ</div></div>
+        </a>
+        <div class="nav-drop-sep"></div>
+        <a class="nav-drop-link" href="disscussion/arm-demo-level123-ja.html">
+          <span class="nav-dl-icon">🦾</span>
+          <div><div class="nav-dl-name">マニピュレーション実証ロードマップ</div><div class="nav-dl-sub">アーム Demo Level 1-3 分類</div></div>
+        </a>
+        <a class="nav-drop-link" href="disscussion/move-base-level123-ja.html">
+          <span class="nav-dl-icon">🤖</span>
+          <div><div class="nav-dl-name">ナビゲーション Level 1-3 分類</div><div class="nav-dl-sub">自律移動設計方針</div></div>
         </a>
       </div>
     </div>
 
     <div class="nav-item">
-      <a class="nav-btn cur" href="todo.html">Todo</a>
-    </div>
-
-    <div class="nav-item">
-      <button class="nav-btn" onclick="location.href='demo.html'">デモ詳細 <span class="nav-caret">▾</span></button>
-      <div class="nav-drop">
-        <span class="nav-drop-label">デモページ</span>
-        <a class="nav-drop-link" href="demo.html#req-map">
-          <span class="nav-dl-icon">🗺️</span>
-          <div><div class="nav-dl-name">要件マップ</div><div class="nav-dl-sub">9カテゴリ・技術要素</div></div>
-        </a>
-        <a class="nav-drop-link" href="demo.html#scenarios">
-          <span class="nav-dl-icon">🎬</span>
-          <div><div class="nav-dl-name">デモシナリオ</div><div class="nav-dl-sub">3カテゴリ × Level 1/2/3</div></div>
-        </a>
-        <a class="nav-drop-link" href="demo.html#usecases">
-          <span class="nav-dl-icon">💡</span>
-          <div><div class="nav-dl-name">活用シーン</div><div class="nav-dl-sub">14のユースケース</div></div>
-        </a>
-      </div>
-    </div>
-
-    <div class="nav-item">
-      <button class="nav-btn" onclick="location.href='issues/arm-vertical/arm-vertical.html'">Issues <span class="nav-caret">▾</span></button>
-      <div class="nav-drop">
-        <span class="nav-drop-label">問題対処記録</span>
-        <a class="nav-drop-link" href="issues/arm-vertical/arm-vertical.html">
-          <span class="nav-dl-icon">🔧</span>
-          <div><div class="nav-dl-name">アーム上下機構</div><div class="nav-dl-sub">コネクタ破損 → 再設計（解決済み）</div></div>
-        </a>
-      </div>
-    </div>
-
-    <div class="nav-item">
-      <button class="nav-btn">サブページ <span class="nav-caret">▾</span></button>
-      <div class="nav-drop">
-        <span class="nav-drop-label">詳細ページ</span>
+      <button class="nav-btn" data-nav="misc">その他 <span class="nav-caret">▾</span></button>
+      <div class="nav-drop" id="nav-misc">
+        <span class="nav-drop-label">ロボット</span>
         <a class="nav-drop-link" href="subpages/robot-overview.html">
           <span class="nav-dl-icon">🤖</span>
-          <div><div class="nav-dl-name">ロボット全体設計</div><div class="nav-dl-sub">Three.js による機体構成可視化</div></div>
+          <div><div class="nav-dl-name">ロボット全体像</div><div class="nav-dl-sub">Three.js による機体構成可視化</div></div>
         </a>
+        <div class="nav-drop-sep"></div>
+        <span class="nav-drop-label">Know-how</span>
         <a class="nav-drop-link" href="subpages/Arduino-MOSFET-AZD-KD/Arduino-MOSFET-AZD-KD.html">
           <span class="nav-dl-icon">⚙️</span>
           <div><div class="nav-dl-name">昇降機構制御システム</div><div class="nav-dl-sub">Arduino / MOSFET / AZD-KD 制御</div></div>
+        </a>
+        <a class="nav-drop-link" href="issues/arm-vertical/arm-vertical.html">
+          <span class="nav-dl-icon">🔧</span>
+          <div><div class="nav-dl-name">アーム上下機構</div><div class="nav-dl-sub">コネクタ破損 → 再設計（解決済み）</div></div>
         </a>
         <div class="nav-drop-sep"></div>
         <span class="nav-drop-label">週次レポート</span>
         <a class="nav-drop-link" href="subpages/report-pages/report-2026-05-22.html">
           <span class="nav-dl-icon">📝</span>
-          <div><div class="nav-dl-name">Weekly Report 2026-05-22</div><div class="nav-dl-sub">Navigation baseline 完成・カメラホールダー再設計</div></div>
-        </a>
-      </div>
-    </div>
-
-    <div class="nav-item">
-      <button class="nav-btn" onclick="location.href='disscussion/arm-demo-level123-ja.html'">Discussion <span class="nav-caret">▾</span></button>
-      <div class="nav-drop">
-        <span class="nav-drop-label">議論・検討ドキュメント</span>
-        <a class="nav-drop-link" href="disscussion/arm-demo-level123-ja.html">
-          <span class="nav-dl-icon">🦾</span>
-          <div><div class="nav-dl-name">マニピュレーション実証ロードマップ</div><div class="nav-dl-sub">アーム単体 Demo Level 1-3 分類</div></div>
-        </a>
-        <a class="nav-drop-link" href="disscussion/move-base-level123-ja.html">
-          <span class="nav-dl-icon">🤖</span>
-          <div><div class="nav-dl-name">ナビゲーション Level 1-3 分類基準</div><div class="nav-dl-sub">自律移動システム設計方針</div></div>
+          <div><div class="nav-dl-name">2026-05-22</div><div class="nav-dl-sub">Navigation baseline 完成</div></div>
         </a>
       </div>
     </div>
 
     <div class="nav-right">
       <span class="nav-pulse"></span>
-      <div class="nav-badge-pill">Phase 0 進行中</div>
+      <div class="nav-badge-pill">Phase 1 進行中</div>
     </div>
   </div>
 </nav>
@@ -531,11 +512,7 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
           <span>全センサー（Camera / IMU / Encoder / LiDAR）データ取得・TF 整合確認</span>
           <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
         </div>
-        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
-          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
-          <span>LLM 基礎実装：自然言語コマンドで移動 / アーム操作をトリガー可能</span>
-          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag sw">Software</span><span class="tag ai">AI/LLM</span></div>
-        </div>
+    
       </div>
     </div>
 
@@ -578,16 +555,23 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
           <span>Isaac Sim シミュレーション環境でも同等のナビゲーションが動作可能</span>
           <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag sw">Software</span><span class="tag new">New</span></div>
         </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>LLM 基礎実装：自然言語コマンドで移動 / アーム操作をトリガー可能</span>
+          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag sw">Software</span><span class="tag ai">AI/LLM</span></div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- ── 完了セクションヘッダー ── -->
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
-    <div style="flex:1;height:1px;background:var(--border);"></div>
-    <div style="display:flex;align-items:center;gap:8px;padding:6px 16px;background:var(--green-l);border:1px solid rgba(5,150,105,.25);border-radius:99px;font-size:12px;font-weight:700;color:var(--green);">✅ 完了済み（〜2026-04-11）</div>
-    <div style="flex:1;height:1px;background:var(--border);"></div>
-  </div>
+  <!-- ── Phase 0 collapsible ── -->
+  <button class="phase-toggle ph0" data-phase="ph0" id="toggle-ph0">
+    ✅ Phase 0 — 完了済み
+    <div class="pt-sep"></div>
+    <span class="pt-arrow">▾</span>
+  </button>
+  <div class="phase-content" id="phase-ph0">
+  <div class="phase-sub-label">初期整備（〜 2026-04-17）</div>
 
   <!-- 1. ROS2 ワークスペース構成の確認 -->
   <div class="todo-item done-item">
@@ -725,27 +709,20 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
     </div>
   </div>
 
-  <!-- 8. LLM システム実装 -->
-  <div class="todo-item">
-    <div class="todo-cb"></div>
-    <div class="todo-body">
-      <div class="todo-text">LLM システム実装</div>
-      <div class="todo-note">GPT / Claude API をロボットに接続し、自然言語コマンドによる基礎的な移動・操作の制御を初期実験</div>
-      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai">AI / LLM</span></div>
-      <div class="todo-date">更新: 2026-04-13</div>
-      <div class="sub-items">
-        <div class="sub-item"><div class="sub-cb"></div><span>テキストコマンド制御 UI の実装（デモ選択・実行）</span></div>
-        <div class="sub-item"><div class="sub-cb"></div><span>自然言語指令でデモを個別トリガーできることを確認</span></div>
-      </div>
-    </div>
-  </div>
 
-  <!-- ── 本週進捗セクションヘッダー ── -->
-  <div style="display:flex;align-items:center;gap:12px;margin:40px 0 20px;">
-    <div style="flex:1;height:1px;background:var(--border);"></div>
-    <div style="display:flex;align-items:center;gap:8px;padding:6px 16px;background:linear-gradient(135deg,var(--amber-l),var(--accent-l));border:1px solid rgba(217,119,6,.25);border-radius:99px;font-size:12px;font-weight:700;color:var(--amber);">🔄 進捗（〜 2026-05-10）</div>
-    <div style="flex:1;height:1px;background:var(--border);"></div>
-  </div>
+
+
+  </div><!-- /phase-ph0 -->
+
+  <!-- ── Phase 1 collapsible ── -->
+  <button class="phase-toggle ph1 open" data-phase="ph1" id="toggle-ph1">
+    🔹 Phase 1 — 自律移動（進行中）
+    <div class="pt-sep"></div>
+    <span class="pt-arrow">▾</span>
+  </button>
+  <div class="phase-content open" id="phase-ph1">
+
+  <div class="phase-sub-label" style="margin-top:20px;">ハードウェア整備・Navigation 準備（〜 2026-05-10）</div>
 
   <!-- URDF 再構築 -->
   <div class="todo-item done-item">
@@ -856,15 +833,7 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
 
 
 
-  <!-- ── Phase 1 セクションヘッダー ── -->
-  <div style="display:flex;align-items:center;gap:12px;margin:40px 0 20px;">
-    <div style="flex:1;height:1px;background:var(--border);"></div>
-    <div style="display:flex;align-items:center;gap:8px;padding:6px 16px;background:linear-gradient(135deg,var(--accent-l),var(--green-l));border:1px solid var(--accent-m);border-radius:99px;font-size:12px;font-weight:700;color:var(--accent);">🔄 本週の進捗（〜 2026-05-22）</div>
-    <div style="flex:1;height:1px;background:var(--border);"></div>
-  </div>
-
-  <!-- システム設計・データリンク -->
-  <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 8px;padding-left:4px;"> システム設計・データリンク</div>
+  <div class="phase-sub-label">Navigation 実装（〜 2026-05-22）</div>
   <!-- Nav2 ベースライン完成 -->
   <div class="todo-item done-item">
     <div class="todo-cb checked">✓</div>
@@ -942,8 +911,22 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
     </div>
   </div>
 
-  <!--  Isaac Sim -->
-  <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 8px;padding-left:4px;"> Isaac Sim シミュレーション検証</div>
+    <!-- 8. LLM システム実装 -->
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">LLM システム実装</div>
+      <div class="todo-note">GPT / Claude API をロボットに接続し、自然言語コマンドによる基礎的な移動・操作の制御を初期実験</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai">AI / LLM</span></div>
+      <div class="todo-date">更新: 2026-04-13</div>
+      <div class="sub-items">
+        <div class="sub-item"><div class="sub-cb"></div><span>テキストコマンド制御 UI の実装（デモ選択・実行）</span></div>
+        <div class="sub-item"><div class="sub-cb"></div><span>自然言語指令でデモを個別トリガーできることを確認</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-sub-label" style="margin-top:20px;">Isaac Sim シミュレーション検証</div>
 
   <div class="todo-item new-add">
     <div class="todo-cb"></div>
@@ -985,12 +968,15 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
     </div>
   </div>
 
-  <!-- ── 低優先セクションヘッダー ── -->
-  <div style="display:flex;align-items:center;gap:12px;margin:32px 0 20px;">
-    <div style="flex:1;height:1px;background:var(--border);"></div>
-    <div style="display:flex;align-items:center;gap:8px;padding:6px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:99px;font-size:12px;font-weight:700;color:var(--muted);">🔮 中長期タスク</div>
-    <div style="flex:1;height:1px;background:var(--border);"></div>
-  </div>
+  </div><!-- /phase-ph1 -->
+
+  <!-- ── 中長期 collapsible ── -->
+  <button class="phase-toggle future" data-phase="future" id="toggle-future">
+    🔮 中長期タスク
+    <div class="pt-sep"></div>
+    <span class="pt-arrow">▾</span>
+  </button>
+  <div class="phase-content" id="phase-future">
 
   <!-- 外装設計 -->
   <div class="todo-item">
@@ -1024,6 +1010,8 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
       <div class="todo-date">更新: 2026-04-16</div>
     </div>
   </div>
+
+  </div><!-- /phase-future -->
 
 </main>
 
@@ -1123,6 +1111,50 @@ function closeImgModal() {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeVidModal(); closeImgModal(); }
 });
+
+// ── Nav click-toggle ──
+(function() {
+  var navBtns = document.querySelectorAll('[data-nav]');
+  navBtns.forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var dropId = 'nav-' + btn.dataset.nav;
+      var drop = document.getElementById(dropId);
+      var isOpen = drop.classList.contains('open');
+      document.querySelectorAll('.nav-drop.open').forEach(function(d) { d.classList.remove('open'); });
+      document.querySelectorAll('.nav-btn.nav-open').forEach(function(b) { b.classList.remove('nav-open'); });
+      if (!isOpen) { drop.classList.add('open'); btn.classList.add('nav-open'); }
+    });
+  });
+  document.addEventListener('click', function() {
+    document.querySelectorAll('.nav-drop.open').forEach(function(d) { d.classList.remove('open'); });
+    document.querySelectorAll('.nav-btn.nav-open').forEach(function(b) { b.classList.remove('nav-open'); });
+  });
+})();
+
+// ── Phase collapsible ──
+(function() {
+  var toggles = document.querySelectorAll('.phase-toggle[data-phase]');
+  toggles.forEach(function(btn) {
+    var content = document.getElementById('phase-' + btn.dataset.phase);
+    if (!content) return;
+    if (btn.classList.contains('open')) {
+      content.style.maxHeight = content.scrollHeight + 'px';
+    } else {
+      content.style.maxHeight = '0';
+    }
+    btn.addEventListener('click', function() {
+      var isOpen = btn.classList.contains('open');
+      if (isOpen) {
+        btn.classList.remove('open');
+        content.style.maxHeight = '0';
+      } else {
+        btn.classList.add('open');
+        content.style.maxHeight = content.scrollHeight + 'px';
+      }
+    });
+  });
+})();
 
 updateStats();
 </script>

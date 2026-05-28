@@ -48,7 +48,7 @@ nav {
   border: none; background: none; cursor: pointer; font-family: inherit;
   transition: background .12s, color .12s; white-space: nowrap;
 }
-.nav-btn:hover, .nav-item:hover > .nav-btn { background: var(--surface2); color: var(--text); }
+.nav-btn:hover { background: var(--surface2); color: var(--text); }
 .nav-btn.cur { color: var(--accent); }
 .nav-caret { font-size: 8px; opacity: .5; transition: transform .15s; }
 .nav-item:hover .nav-caret { transform: rotate(180deg); }
@@ -62,7 +62,8 @@ nav {
   opacity: 0; pointer-events: none;
   transition: opacity .15s, transform .15s;
 }
-.nav-item:hover .nav-drop { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.nav-drop.open { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.nav-btn.nav-open .nav-caret { transform: rotate(180deg); }
 .nav-drop-label {
   font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em;
   color: #94a3b8; padding: 6px 10px 3px; display: block;
@@ -251,80 +252,62 @@ footer a:hover{text-decoration:underline;}
     </a>
 
     <div class="nav-item">
-      <button class="nav-btn" onclick="location.href='plan-fy26.html'">プラン <span class="nav-caret">▾</span></button>
-      <div class="nav-drop">
-        <span class="nav-drop-label">メインページ</span>
-        <a class="nav-drop-link" href="plan-fy26.html#background">
-          <span class="nav-dl-icon">📖</span>
-          <div><div class="nav-dl-name">研究背景</div><div class="nav-dl-sub">現状の課題と研究目的</div></div>
-        </a>
-        <a class="nav-drop-link" href="plan-fy26.html#figures">
-          <span class="nav-dl-icon">📐</span>
-          <div><div class="nav-dl-name">設計資料</div><div class="nav-dl-sub">アーキテクチャ図・スライド</div></div>
-        </a>
-        <a class="nav-drop-link" href="plan-fy26.html#schedule">
-          <span class="nav-dl-icon">📅</span>
-          <div><div class="nav-dl-name">スケジュール</div><div class="nav-dl-sub">フェーズ・ガントチャート</div></div>
-        </a>
-        <a class="nav-drop-link" href="plan-fy26.html#demo">
+      <a class="nav-btn" href="plan-fy26.html">ホームページ</a>
+    </div>
+
+    <div class="nav-item">
+      <a class="nav-btn" href="todo.html">進捗</a>
+    </div>
+
+    <div class="nav-item">
+      <button class="nav-btn cur" data-nav="vision">ビジョン <span class="nav-caret">▾</span></button>
+      <div class="nav-drop" id="nav-vision">
+        <a class="nav-drop-link" href="demo.html">
           <span class="nav-dl-icon">🎯</span>
-          <div><div class="nav-dl-name">デモ概要</div><div class="nav-dl-sub">デモ要件レーダー</div></div>
+          <div><div class="nav-dl-name">デモ詳細</div><div class="nav-dl-sub">デモシナリオ・要件マップ</div></div>
+        </a>
+        <div class="nav-drop-sep"></div>
+        <a class="nav-drop-link" href="disscussion/arm-demo-level123-ja.html">
+          <span class="nav-dl-icon">🦾</span>
+          <div><div class="nav-dl-name">マニピュレーション実証ロードマップ</div><div class="nav-dl-sub">アーム Demo Level 1-3 分類</div></div>
+        </a>
+        <a class="nav-drop-link" href="disscussion/move-base-level123-ja.html">
+          <span class="nav-dl-icon">🤖</span>
+          <div><div class="nav-dl-name">ナビゲーション Level 1-3 分類</div><div class="nav-dl-sub">自律移動設計方針</div></div>
         </a>
       </div>
     </div>
 
     <div class="nav-item">
-      <a class="nav-btn" href="todo.html">Todo</a>
-    </div>
-
-    <div class="nav-item">
-      <button class="nav-btn cur">デモ詳細 <span class="nav-caret">▾</span></button>
-      <div class="nav-drop">
-        <span class="nav-drop-label">このページ</span>
-        <a class="nav-drop-link" href="#req-map">
-          <span class="nav-dl-icon">🗺️</span>
-          <div><div class="nav-dl-name">要件マップ</div><div class="nav-dl-sub">9カテゴリ・技術要素</div></div>
+      <button class="nav-btn" data-nav="misc">その他 <span class="nav-caret">▾</span></button>
+      <div class="nav-drop" id="nav-misc">
+        <span class="nav-drop-label">ロボット</span>
+        <a class="nav-drop-link" href="subpages/robot-overview.html">
+          <span class="nav-dl-icon">🤖</span>
+          <div><div class="nav-dl-name">ロボット全体像</div><div class="nav-dl-sub">Three.js による機体構成可視化</div></div>
         </a>
-        <a class="nav-drop-link" href="#scenarios">
-          <span class="nav-dl-icon">🎬</span>
-          <div><div class="nav-dl-name">デモシナリオ</div><div class="nav-dl-sub">3カテゴリ × Level 1/2/3</div></div>
+        <div class="nav-drop-sep"></div>
+        <span class="nav-drop-label">Know-how</span>
+        <a class="nav-drop-link" href="subpages/Arduino-MOSFET-AZD-KD/Arduino-MOSFET-AZD-KD.html">
+          <span class="nav-dl-icon">⚙️</span>
+          <div><div class="nav-dl-name">昇降機構制御システム</div><div class="nav-dl-sub">Arduino / MOSFET / AZD-KD 制御</div></div>
         </a>
-        <a class="nav-drop-link" href="#usecases">
-          <span class="nav-dl-icon">💡</span>
-          <div><div class="nav-dl-name">活用シーン</div><div class="nav-dl-sub">14のユースケース</div></div>
-        </a>
-      </div>
-    </div>
-
-    <div class="nav-item">
-      <button class="nav-btn" onclick="location.href='issues/arm-vertical/arm-vertical.html'">Issues <span class="nav-caret">▾</span></button>
-      <div class="nav-drop">
-        <span class="nav-drop-label">問題対処記録</span>
         <a class="nav-drop-link" href="issues/arm-vertical/arm-vertical.html">
           <span class="nav-dl-icon">🔧</span>
           <div><div class="nav-dl-name">アーム上下機構</div><div class="nav-dl-sub">コネクタ破損 → 再設計（解決済み）</div></div>
         </a>
-      </div>
-    </div>
-
-    <div class="nav-item">
-      <button class="nav-btn" onclick="location.href='disscussion/arm-demo-level123-ja.html'">Discussion <span class="nav-caret">▾</span></button>
-      <div class="nav-drop">
-        <span class="nav-drop-label">議論・検討ドキュメント</span>
-        <a class="nav-drop-link" href="disscussion/arm-demo-level123-ja.html">
-          <span class="nav-dl-icon">🦾</span>
-          <div><div class="nav-dl-name">マニピュレーション実証ロードマップ</div><div class="nav-dl-sub">アーム単体 Demo Level 1-3 分類</div></div>
-        </a>
-        <a class="nav-drop-link" href="disscussion/move-base-level123-ja.html">
-          <span class="nav-dl-icon">🤖</span>
-          <div><div class="nav-dl-name">ナビゲーション Level 1-3 分類基準</div><div class="nav-dl-sub">自律移動システム設計方針</div></div>
+        <div class="nav-drop-sep"></div>
+        <span class="nav-drop-label">週次レポート</span>
+        <a class="nav-drop-link" href="subpages/report-pages/report-2026-05-22.html">
+          <span class="nav-dl-icon">📝</span>
+          <div><div class="nav-dl-name">2026-05-22</div><div class="nav-dl-sub">Navigation baseline 完成</div></div>
         </a>
       </div>
     </div>
 
     <div class="nav-right">
       <span class="nav-pulse"></span>
-      <div class="nav-badge-pill">Phase 0 進行中</div>
+      <div class="nav-badge-pill">Phase 1 進行中</div>
     </div>
   </div>
 </nav>
@@ -1750,6 +1733,23 @@ const io = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
 }, { threshold: 0.08 });
 reveals.forEach(r => io.observe(r));
+// ── Nav click-toggle ──
+(function(){
+  document.querySelectorAll('[data-nav]').forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      var drop=document.getElementById('nav-'+btn.dataset.nav);
+      var isOpen=drop.classList.contains('open');
+      document.querySelectorAll('.nav-drop.open').forEach(function(d){d.classList.remove('open');});
+      document.querySelectorAll('.nav-btn.nav-open').forEach(function(b){b.classList.remove('nav-open');});
+      if(!isOpen){drop.classList.add('open');btn.classList.add('nav-open');}
+    });
+  });
+  document.addEventListener('click',function(){
+    document.querySelectorAll('.nav-drop.open').forEach(function(d){d.classList.remove('open');});
+    document.querySelectorAll('.nav-btn.nav-open').forEach(function(b){b.classList.remove('nav-open');});
+  });
+})();
 </script>
 </body>
 </html>

@@ -69,6 +69,22 @@ nav {
 }
 .nav-btn:hover { background: var(--surface2); color: var(--text); }
 .nav-btn.cur { color: var(--accent); background: var(--accent-l); }
+.nav-item { position: relative; }
+.nav-caret { font-size: 8px; opacity: .5; transition: transform .15s; }
+.nav-btn.nav-open .nav-caret { transform: rotate(180deg); }
+.nav-drop {
+  position: absolute; top: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  min-width: 220px; background: #fff;
+  border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.11), 0 2px 8px rgba(0,0,0,.05);
+  padding: 8px; z-index: 999;
+  opacity: 0; pointer-events: none;
+  transition: opacity .15s, transform .15s;
+}
+.nav-drop a { display: block; padding: 8px 12px; text-decoration: none; font-size: 12px; font-weight: 600; color: var(--text); border-radius: 8px; transition: background .1s; }
+.nav-drop a:hover { background: var(--surface2); }
+.nav-drop.open { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
 .nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 .nav-badge-pill {
   font-size: 11px; font-weight: 700;
@@ -323,9 +339,25 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
       <span class="nav-logo-sep">/</span>
       <span class="nav-logo-text">FY26 Plan</span>
     </a>
-    <a class="nav-btn" href="../../plan-fy26.html">プラン</a>
-    <a class="nav-btn" href="../../todo.html">Todo</a>
-    <a class="nav-btn cur" href="#">週次レポート</a>
+    <div class="nav-item"><a class="nav-btn" href="../../plan-fy26.html">ホームページ</a></div>
+    <div class="nav-item"><a class="nav-btn" href="../../todo.html">進捗</a></div>
+    <div class="nav-item">
+      <button class="nav-btn" data-nav="vision">ビジョン <span class="nav-caret">▾</span></button>
+      <div class="nav-drop" id="nav-vision">
+        <a href="../../demo.html">デモ詳細</a>
+        <a href="../../disscussion/arm-demo-level123-ja.html">マニピュレーション実証ロードマップ</a>
+        <a href="../../disscussion/move-base-level123-ja.html">ナビゲーション Level 1-3 分類</a>
+      </div>
+    </div>
+    <div class="nav-item">
+      <button class="nav-btn cur" data-nav="misc">その他 <span class="nav-caret">▾</span></button>
+      <div class="nav-drop" id="nav-misc">
+        <a href="../../subpages/robot-overview.html">ロボット概要</a>
+        <a href="../../subpages/Arduino-MOSFET-AZD-KD/Arduino-MOSFET-AZD-KD.html">Arduino Know-how</a>
+        <a href="../../issues/arm-vertical/arm-vertical.html">アーム上下機構</a>
+        <a href="report-2026-05-22.html">週次レポート 2026-05-22</a>
+      </div>
+    </div>
     <div class="nav-right">
       <span class="nav-pulse"></span>
       <div class="nav-badge-pill">Phase 1 進行中</div>
@@ -610,6 +642,21 @@ function closeImgModal() {
 }
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeVidModal(); closeImgModal(); }
+});
+document.querySelectorAll('.nav-btn[data-nav]').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const id = btn.dataset.nav;
+    const drop = document.getElementById('nav-' + id);
+    const isOpen = drop.classList.contains('open');
+    document.querySelectorAll('.nav-drop.open').forEach(d => d.classList.remove('open'));
+    document.querySelectorAll('.nav-btn.nav-open').forEach(b => b.classList.remove('nav-open'));
+    if (!isOpen) { drop.classList.add('open'); btn.classList.add('nav-open'); }
+  });
+});
+document.addEventListener('click', () => {
+  document.querySelectorAll('.nav-drop.open').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.nav-btn.nav-open').forEach(b => b.classList.remove('nav-open'));
 });
 </script>
 </body>
