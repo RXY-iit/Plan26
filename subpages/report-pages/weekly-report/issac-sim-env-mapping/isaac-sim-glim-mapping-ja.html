@@ -1,0 +1,1080 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>週次報告 — Isaac Sim 環境マッピング | FY2026</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #f8fafc;
+  --surface: #ffffff;
+  --surface2:#f1f5f9;
+  --border:  #e2e8f0;
+  --border2: #cbd5e1;
+  --accent:  #2563eb;
+  --accent-l:#eff6ff;
+  --accent-m:#bfdbfe;
+  --green:   #059669;
+  --green-l: #ecfdf5;
+  --amber:   #d97706;
+  --amber-l: #fffbeb;
+  --red:     #dc2626;
+  --red-l:   #fef2f2;
+  --purple:  #7c3aed;
+  --purple-l:#f5f3ff;
+  --teal:    #0d9488;
+  --teal-l:  #f0fdfa;
+  --text:    #0f172a;
+  --text2:   #334155;
+  --muted:   #64748b;
+  --mono:    'JetBrains Mono','Fira Code','Courier New',monospace;
+  --r: 12px;
+  --sh-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --sh:    0 4px 12px rgba(0,0,0,.08);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Meiryo',-apple-system,sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.8;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+  height: 56px; background: rgba(255,255,255,.97);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  padding: 0 28px; display: flex; align-items: center; gap: 2px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none; margin-right: 16px; flex-shrink: 0;
+}
+.nav-logo-icon {
+  width: 30px; height: 30px; background: var(--text); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.nav-logo-sep { font-size: 20px; color: var(--border2); font-weight: 300; }
+.nav-logo-text { font-size: 12px; color: var(--muted); font-weight: 600; }
+.nav-item { position: relative; }
+.nav-btn {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--muted); text-decoration: none;
+  padding: 6px 11px; border-radius: 7px;
+  border: none; background: none; cursor: pointer; font-family: inherit;
+  transition: background .12s, color .12s; white-space: nowrap;
+}
+.nav-btn:hover { background: var(--surface2); color: var(--text); }
+.nav-btn.cur { color: var(--accent); }
+.nav-caret { font-size: 8px; opacity: .5; transition: transform .15s; }
+.nav-btn.nav-open .nav-caret { transform: rotate(180deg); }
+.nav-item:hover .nav-caret { transform: rotate(180deg); }
+.nav-drop {
+  position: absolute; top: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  min-width: 240px; background: #fff;
+  border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.11), 0 2px 8px rgba(0,0,0,.05);
+  padding: 8px; z-index: 999;
+  opacity: 0; pointer-events: none;
+  transition: opacity .15s, transform .15s;
+}
+.nav-drop.open { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.nav-drop-label {
+  font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em;
+  color: var(--muted2,#94a3b8); padding: 6px 10px 3px; display: block;
+}
+.nav-drop-link {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; padding: 9px 10px; border-radius: 9px; transition: background .1s;
+}
+.nav-drop-link:hover { background: var(--surface2); }
+.nav-dl-icon { font-size: 18px; flex-shrink: 0; }
+.nav-dl-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.nav-dl-sub { font-size: 11px; color: var(--muted); }
+.nav-drop-sep { height: 1px; background: var(--border); margin: 5px 6px; }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.nav-badge-pill {
+  font-size: 11px; font-weight: 700;
+  background: var(--green-l); color: var(--green);
+  border: 1px solid rgba(5,150,105,.25);
+  padding: 4px 12px; border-radius: 99px; white-space: nowrap;
+}
+.nav-pulse {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--green);
+  animation: npulse 2s infinite; flex-shrink: 0;
+}
+@keyframes npulse {
+  0%,100%{ box-shadow: 0 0 0 0 rgba(5,150,105,.4); }
+  50%     { box-shadow: 0 0 0 5px rgba(5,150,105,0); }
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 92px 24px 52px;
+  background: linear-gradient(135deg, #fff 0%, #f0f7ff 50%, #f0fdfa 100%);
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(37,99,235,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37,99,235,.035) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.hero-inner { max-width: 960px; margin: 0 auto; position: relative; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: .06em;
+  color: var(--teal); background: var(--teal-l);
+  border: 1px solid rgba(13,148,136,.25);
+  padding: 3px 12px; border-radius: 99px; margin-bottom: 14px;
+}
+h1 { font-size: clamp(22px, 4vw, 36px); font-weight: 800; color: var(--text); margin-bottom: 8px; line-height: 1.3; }
+.hero-desc { font-size: 15px; color: var(--muted); margin-bottom: 26px; line-height: 1.7; }
+.hero-meta { display: flex; gap: 10px; flex-wrap: wrap; }
+.meta-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--text2);
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 5px 13px; border-radius: 8px; box-shadow: var(--sh-sm);
+}
+
+/* ── MAIN ── */
+main { max-width: 960px; margin: 0 auto; padding: 44px 24px 100px; }
+
+/* Section divider */
+.sec-div { display: flex; align-items: center; gap: 12px; margin: 46px 0 22px; }
+.sec-line { flex: 1; height: 1px; background: var(--border); }
+.sec-label {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 16px; border-radius: 99px;
+  font-size: 12px; font-weight: 700; white-space: nowrap;
+}
+.sec-label.blue   { background: var(--accent-l); border: 1px solid var(--accent-m); color: var(--accent); }
+.sec-label.green  { background: var(--green-l); border: 1px solid rgba(5,150,105,.25); color: var(--green); }
+.sec-label.amber  { background: var(--amber-l); border: 1px solid rgba(217,119,6,.25); color: var(--amber); }
+.sec-label.red    { background: var(--red-l); border: 1px solid rgba(220,38,38,.25); color: var(--red); }
+.sec-label.purple { background: var(--purple-l); border: 1px solid rgba(124,58,237,.2); color: var(--purple); }
+.sec-label.teal   { background: var(--teal-l); border: 1px solid rgba(13,148,136,.25); color: var(--teal); }
+
+/* Summary banner */
+.summary-banner {
+  background: linear-gradient(135deg, var(--green-l), #f0f9ff);
+  border: 1px solid rgba(5,150,105,.2);
+  border-radius: var(--r); padding: 22px 26px; margin-bottom: 28px;
+}
+.summary-banner h2 { font-size: 15px; font-weight: 800; color: var(--green); margin-bottom: 10px; }
+.summary-banner ul { list-style: none; padding: 0; }
+.summary-banner li {
+  font-size: 14px; color: var(--text2); padding: 4px 0;
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.summary-banner li::before { content: '✓'; color: var(--green); font-weight: 800; flex-shrink: 0; }
+
+/* Card */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 22px 24px; margin-bottom: 14px;
+  box-shadow: var(--sh-sm);
+}
+.card.blue   { border-left: 3px solid var(--accent); }
+.card.green  { border-left: 3px solid var(--green); }
+.card.amber  { border-left: 3px solid var(--amber); }
+.card.red    { border-left: 3px solid var(--red); background: linear-gradient(135deg,#fff,#fff9f9); }
+.card.purple { border-left: 3px solid var(--purple); }
+.card.teal   { border-left: 3px solid var(--teal); }
+.card-title {
+  font-size: 15px; font-weight: 700; color: var(--text);
+  margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.card-body { font-size: 14px; color: var(--text2); line-height: 1.8; }
+
+/* Issue / Solve accordion */
+.issue-block {
+  border: 1px solid var(--border); border-radius: var(--r);
+  margin-bottom: 16px; overflow: hidden;
+}
+.issue-header {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 16px 20px; cursor: pointer; user-select: none;
+  background: var(--surface); transition: background .12s;
+}
+.issue-header:hover { background: var(--surface2); }
+.issue-num {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--red-l); border: 1px solid rgba(220,38,38,.3);
+  color: var(--red); font-size: 11px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.issue-num.solved { background: var(--green-l); border-color: rgba(5,150,105,.3); color: var(--green); }
+.issue-title-text { font-size: 14px; font-weight: 700; color: var(--text); flex: 1; }
+.issue-subtitle { font-size: 12px; color: var(--muted); font-weight: 400; margin-top: 2px; }
+.issue-chevron { color: var(--muted); font-size: 12px; flex-shrink: 0; margin-top: 5px; transition: transform .2s; }
+.issue-header.open .issue-chevron { transform: rotate(180deg); }
+.issue-body {
+  border-top: 1px solid var(--border);
+  padding: 20px 20px 20px 58px;
+  display: none; font-size: 13.5px; color: var(--text2); line-height: 1.8;
+}
+.issue-body.open { display: block; }
+.issue-section { margin-bottom: 16px; }
+.issue-section-label {
+  font-size: 11px; font-weight: 800; letter-spacing: .07em;
+  text-transform: uppercase; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.issue-section-label.problem { color: var(--red); }
+.issue-section-label.check   { color: var(--amber); }
+.issue-section-label.solve   { color: var(--green); }
+
+/* Tag */
+.tag {
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+  font-family: var(--mono); flex-shrink: 0;
+}
+.tag.sw  { background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m); }
+.tag.hw  { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.2); }
+.tag.sim { background: var(--purple-l); color: var(--purple); border: 1px solid rgba(124,58,237,.2); }
+.tag.ros { background: var(--green-l); color: var(--green); border: 1px solid rgba(5,150,105,.2); }
+.tag.err { background: var(--red-l); color: var(--red); border: 1px solid rgba(220,38,38,.2); }
+.tag.ok  { background: var(--green-l); color: var(--green); border: 1px solid rgba(5,150,105,.3); }
+.tag.new { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.3); font-weight:900; }
+
+/* Code */
+pre {
+  background: #1e293b; color: #e2e8f0;
+  border-radius: 8px; padding: 14px 16px; overflow-x: auto;
+  font-family: var(--mono); font-size: 12px; line-height: 1.75; margin: 10px 0;
+}
+.inline-code {
+  background: var(--surface2); color: var(--accent);
+  padding: 1px 6px; border-radius: 4px;
+  font-family: var(--mono); font-size: 12.5px;
+}
+.err-code {
+  background: #1e293b; color: #fca5a5;
+  border-radius: 8px; padding: 12px 16px; overflow-x: auto;
+  font-family: var(--mono); font-size: 12px; line-height: 1.75;
+  margin: 10px 0; border-left: 3px solid var(--red);
+}
+
+/* Flow */
+.flow-chain {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  margin: 8px 0; font-family: var(--mono); font-size: 12px;
+}
+.flow-node {
+  padding: 5px 12px; border-radius: 7px; font-weight: 700; line-height: 1.3;
+}
+.flow-node.blue   { background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m); }
+.flow-node.green  { background: var(--green-l); color: var(--green); border: 1px solid rgba(5,150,105,.3); }
+.flow-node.purple { background: var(--purple-l); color: var(--purple); border: 1px solid rgba(124,58,237,.2); }
+.flow-node.amber  { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.25); }
+.flow-node.teal   { background: var(--teal-l); color: var(--teal); border: 1px solid rgba(13,148,136,.25); }
+.flow-arrow { color: var(--muted); font-size: 14px; }
+
+/* Table */
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+th {
+  background: var(--surface2); color: var(--text2);
+  font-weight: 700; font-size: 11px; letter-spacing: .04em;
+  padding: 9px 14px; border: 1px solid var(--border); text-align: left;
+}
+td { padding: 9px 14px; border: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+tr:nth-child(even) td { background: #fafafa; }
+
+/* Stat grid */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 10px; margin: 14px 0; }
+.stat-box {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px; box-shadow: var(--sh-sm); text-align: center;
+}
+.stat-val { font-size: 22px; font-weight: 800; color: var(--text); font-family: var(--mono); }
+.stat-val.green { color: var(--green); }
+.stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; font-weight: 600; }
+
+/* Compare table */
+.compare-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0;
+}
+.compare-box {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px;
+}
+.compare-box h4 { font-size: 12px; font-weight: 800; margin-bottom: 8px; }
+.compare-box.before h4 { color: var(--muted); }
+.compare-box.after  h4 { color: var(--green); }
+.compare-box ul { list-style: none; padding: 0; }
+.compare-box li { font-size: 12.5px; color: var(--text2); padding: 3px 0; display:flex; gap:6px; }
+.compare-box li::before { content: '→'; flex-shrink:0; }
+.compare-box.after li::before { content: '✓'; color: var(--green); }
+
+/* Video grid */
+.vid-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 16px; }
+.vid-card { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: #0f172a; box-shadow: var(--sh); }
+.vid-card video { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
+.vid-cap { padding: 10px 14px; font-size: 12px; font-weight: 600; color: rgba(255,255,255,.75); background: #1e293b; border-top: 1px solid rgba(255,255,255,.06); }
+.vid-cap small { display: block; font-size: 11px; color: rgba(255,255,255,.4); font-weight: 400; margin-top: 2px; }
+
+/* Chip grid */
+.chip-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 5px 12px; font-size: 12px; font-weight: 600; color: var(--text2);
+}
+.chip.ok  { background: var(--green-l); border-color: rgba(5,150,105,.25); color: var(--green); }
+.chip.ng  { background: var(--red-l); border-color: rgba(220,38,38,.2); color: var(--red); }
+.chip.wip { background: var(--amber-l); border-color: rgba(217,119,6,.25); color: var(--amber); }
+
+/* Principle list */
+.principle-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.principle-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 9px; padding: 10px 14px; font-size: 13px; color: var(--text2);
+}
+.principle-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--accent-l); border: 1px solid var(--accent-m);
+  color: var(--accent); font-size: 10px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+/* Note box */
+.note {
+  padding: 12px 16px; border-radius: 9px; font-size: 13px; margin: 10px 0;
+}
+.note.amber { background: var(--amber-l); border: 1px solid rgba(217,119,6,.25); color: #92400e; }
+.note.blue  { background: var(--accent-l); border: 1px solid var(--accent-m); color: #1e40af; }
+
+/* Responsive */
+@media (max-width: 640px) {
+  .vid-grid, .compare-grid { grid-template-columns: 1fr; }
+  .stat-grid { grid-template-columns: repeat(2,1fr); }
+  .hero { padding: 80px 16px 40px; }
+  main { padding: 32px 16px 80px; }
+  .issue-body { padding: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../../../plan-fy26.html">
+      <div class="nav-logo-icon">🧠</div>
+      <span class="nav-logo-sep">/</span>
+      <span class="nav-logo-text">FY26 Plan</span>
+    </a>
+    <div class="nav-item"><a class="nav-btn" href="../../../../plan-fy26.html">ホームページ</a></div>
+    <div class="nav-item"><a class="nav-btn" href="../../../../todo.html">進捗</a></div>
+    <div class="nav-item">
+      <button class="nav-btn" data-nav="vision">ビジョン <span class="nav-caret">▾</span></button>
+      <div class="nav-drop" id="nav-vision">
+        <a class="nav-drop-link" href="../../../../demo.html">
+          <span class="nav-dl-icon">🎯</span>
+          <div><div class="nav-dl-name">デモ詳細</div><div class="nav-dl-sub">デモシナリオ・要件マップ</div></div>
+        </a>
+        <div class="nav-drop-sep"></div>
+        <a class="nav-drop-link" href="../../../../disscussion/arm-demo-level123-ja.html">
+          <span class="nav-dl-icon">🦾</span>
+          <div><div class="nav-dl-name">マニピュレーション実証ロードマップ</div><div class="nav-dl-sub">アーム Demo Level 1-3 分類</div></div>
+        </a>
+        <a class="nav-drop-link" href="../../../../disscussion/move-base-level123-ja.html">
+          <span class="nav-dl-icon">🤖</span>
+          <div><div class="nav-dl-name">ナビゲーション Level 1-3 分類</div><div class="nav-dl-sub">自律移動設計方針</div></div>
+        </a>
+      </div>
+    </div>
+    <div class="nav-item">
+      <a class="nav-btn" href="../../../others-nav.html">その他</a>
+    </div>
+    <div class="nav-right">
+      <span class="nav-pulse"></span>
+      <div class="nav-badge-pill">Phase 1 進行中</div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">&#128205; Isaac Sim 5.0 · GLIM GPU · LiDAR · D455 · IMU · ROS2</div>
+    <h1>Isaac Sim 環境マッピング<br>進捗報告</h1>
+    <p class="hero-desc">
+      Isaac Sim 上で実機と同一フローを用いた GLIM 3D マッピングを実現。<br>
+      今週は D455 カメラの統合に成功し、LiDAR + D455 + true IMU のデフォルトフローを確立しました。
+    </p>
+    <div class="hero-meta">
+      <span class="meta-chip">&#128197; 2026-06-07</span>
+      <span class="meta-chip">&#127981; Isaac Sim 5.0.0</span>
+      <span class="meta-chip">&#129302; ROS2 Humble</span>
+      <span class="meta-chip">&#128248; GLIM GPU</span>
+      <span class="meta-chip">&#128247; D455 統合</span>
+      <span class="meta-chip">&#127918; Joy-Con 操作</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+  <!-- サマリー -->
+  <div class="summary-banner">
+    <h2>今週の達成事項</h2>
+    <ul>
+      <li>D455 camera-only recording を default フローに統合（GLIM には関与せず、rosbag のみ）</li>
+      <li>D455 内部 IMU の停止順序問題を特定・解決。prepare_d455_camera_only.py を整備</li>
+      <li>LiDAR-only と D455 あり の A/B テストで 周波数・安定性を比較検証</li>
+      <li>最新成功セッション（trueimu_d455_002）：CUDA 700 / (2,6) エラーなし・GLIM 自動保存成功</li>
+      <li>デフォルト quickstart コマンドを定義し、再現可能な手順を確立</li>
+    </ul>
+  </div>
+
+  <!-- ── SECTION 1: 今週の進捗 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label teal">&#128200; 今週の進捗・最新成功セッション</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card teal">
+    <div class="card-title">
+      <span class="tag sim">目標</span>
+      現在のデフォルトフロー
+    </div>
+    <div class="card-body">
+      <p>今週確立したデフォルト建図フロー：</p>
+      <pre style="margin-top:10px;">D455 camera-only recording
+  + Isaac true IMU
+  + MID360-like RTX LiDAR
+  + GLIM GPU</pre>
+      <p style="margin-top:10px;">D455 は GLIM には関与せず、カラー・深度・CameraInfo を rosbag に記録するだけです。LiDAR-only と corrected fake IMU は性能比較・故障隔離用として保持します。</p>
+    </div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title">
+      <span class="tag ok">SUCCESS</span>
+      最新成功セッション — trueimu_d455_002
+    </div>
+    <div class="card-body">
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div class="stat-val green">1.1 GiB</div>
+          <div class="stat-label">rosbag サイズ</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val green">89.4 s</div>
+          <div class="stat-label">記録時間</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val green">23,841</div>
+          <div class="stat-label">総メッセージ数</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val green">38</div>
+          <div class="stat-label">有効 submap 数</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val green">561</div>
+          <div class="stat-label">軌跡フレーム数</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val green">6.3 Hz</div>
+          <div class="stat-label">D455 color/depth</div>
+        </div>
+      </div>
+      <pre style="margin-top:14px;">bag: sim_bag/sim_factory_mid360_trueimu_d455_002
+map: maps/sim_glim_dump_sim_factory_mid360_trueimu_d455_002_20260607_230507
+log: log/sim_glim_mapping_sim_factory_mid360_trueimu_d455_002_20260607_230507</pre>
+      <p style="margin-top:10px;">地図：<span class="inline-code">graph.bin</span>・<span class="inline-code">values.bin</span>・軌跡・submap 点群すべて非空。軌跡時間 56.0 s、X 6.6 m / Y 7.2 m / Z 変化 0.65 m。</p>
+    </div>
+  </div>
+
+  <!-- A/B テスト比較 -->
+  <div class="card blue">
+    <div class="card-title">
+      <span class="tag sw">A/B Test</span>
+      LiDAR-only vs D455 追加 — 周波数比較
+    </div>
+    <div class="card-body">
+      <div class="compare-grid">
+        <div class="compare-box before">
+          <h4>LiDAR-only（1x1 render product）</h4>
+          <ul>
+            <li>/point_cloud ≈ 7.33 Hz</li>
+            <li>GLIM 出力 ≈ 7.05 Hz</li>
+            <li>D455 なし</li>
+            <li>CUDA 700・(2,6) エラーなし</li>
+          </ul>
+        </div>
+        <div class="compare-box after">
+          <h4>D455 追加（デフォルト）</h4>
+          <ul>
+            <li>/point_cloud ≈ 6.41 Hz（−12〜13%）</li>
+            <li>GLIM 出力 ≈ 6.29–6.4 Hz</li>
+            <li>D455 color/depth ≈ 6.3 Hz</li>
+            <li>CUDA 700・(2,6) エラーなし</li>
+          </ul>
+        </div>
+      </div>
+      <p style="font-size:13px; color:var(--muted);">D455 追加で仮想実時間速度が約 12〜13% 低下しますが、データチェーンは安定しており、GLIM 建図は支障なく動作します。</p>
+    </div>
+  </div>
+
+  <!-- ── SECTION 2: システム構成 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label blue">&#9881; 現在のシステム構成</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card blue">
+    <div class="card-title">
+      <span class="tag ros">ROS2</span>
+      データフロー全体像
+    </div>
+    <div class="card-body">
+      <p><strong>LiDAR パイプライン（GLIM 入力）：</strong></p>
+      <div class="flow-chain" style="margin-top:8px;">
+        <span class="flow-node purple">Isaac RTX LiDAR</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node blue">ROS2RtxLidarHelper<br><small style="font-size:10px">fullScan=True / 1x1</small></span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node blue">/point_cloud</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node amber">Livox adapter</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node green">/livox/lidar_pc2_accumulated</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node green">GLIM GPU</span>
+      </div>
+
+      <p style="margin-top:14px;"><strong>IMU パイプライン：</strong></p>
+      <div class="flow-chain" style="margin-top:8px;">
+        <span class="flow-node purple">Isaac Physics IMU</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node blue">Python ImuSensorInterface<br><small style="font-size:10px">physics-step callback</small></span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node green">ROS2PublishImu</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node green">/livox/imu</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node green">GLIM GPU</span>
+      </div>
+
+      <p style="margin-top:14px;"><strong>D455 パイプライン（rosbag 記録のみ）：</strong></p>
+      <div class="flow-chain" style="margin-top:8px;">
+        <span class="flow-node teal">Isaac D455 Camera prim<br><small style="font-size:10px">camera-only・IMU無効化済み</small></span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node blue">ROS D455 setup</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node amber">color / depth /<br>CameraInfo ≈ 6.3 Hz</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node amber">rosbag のみ</span>
+      </div>
+
+      <p style="margin-top:14px;"><strong>Joy-Con 制御チェーン：</strong></p>
+      <div class="flow-chain" style="margin-top:8px;">
+        <span class="flow-node amber">Joy-Con</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node blue">/cmd_vel</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node blue">omni_kinematics</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node blue">/sim/target_joint_states</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node purple">Isaac ArticulationController</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card blue">
+    <div class="card-title">
+      <span class="tag sw">Config</span>
+      デフォルト quickstart コマンド
+    </div>
+    <div class="card-body">
+      <pre>tools/sim/create_sim_glim_map_quickstart.sh \
+  --bag sim_factory_mid360_trueimu_d455_XXX \
+  --gpu \
+  --direct-cmd-vel \
+  --record-d455 \
+  --cleanup</pre>
+      <table style="margin-top:12px;">
+        <thead><tr><th>オプション</th><th>役割</th></tr></thead>
+        <tbody>
+          <tr><td>--gpu</td><td>GLIM GPU バックエンド（glim_config/sim）を使用</td></tr>
+          <tr><td>--direct-cmd-vel</td><td>/cmd_vel 直接指令（Joy-Con なしのテスト用）</td></tr>
+          <tr><td>--record-d455</td><td>D455 color/depth/CameraInfo を rosbag に含める</td></tr>
+          <tr><td>--cleanup</td><td>起動前に古い runtime prim を自動削除</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── SECTION 3: 問題と排査 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label red">&#128680; 遭遇した問題・排査・解決（全 7 件）</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <p style="font-size:13px; color:var(--muted); margin-bottom:16px;">各項目をクリックすると詳細を展開します。</p>
+
+  <!-- Issue 1 -->
+  <div class="issue-block">
+    <div class="issue-header open" onclick="toggleIssue(this)">
+      <div class="issue-num solved">1</div>
+      <div style="flex:1">
+        <div class="issue-title-text">ROS 環境の不統一・rosbag が空になる</div>
+        <div class="issue-subtitle">異なる DDS / Domain ID / workspace が混在し、トピックが見えない・bag が空</div>
+      </div>
+      <div class="issue-chevron">▼</div>
+    </div>
+    <div class="issue-body open">
+      <div class="issue-section">
+        <div class="issue-section-label problem">&#9888; 問題</div>
+        <ul style="padding-left:16px; line-height:2;">
+          <li>異なるターミナルで <span class="inline-code">ROS_DOMAIN_ID</span>・DDS・workspace が異なり、トピックが相互に見えない</li>
+          <li>recorder が必要トピック出現前に起動し、空の bag が生成される</li>
+          <li>Isaac スクリプトを複数回実行後に <span class="inline-code">/point_cloud</span> の publisher が複数存在する</li>
+        </ul>
+      </div>
+      <div class="issue-section">
+        <div class="issue-section-label check">&#128270; 排査</div>
+        <p><span class="inline-code">ros2 topic info /point_cloud</span> で publisher count を確認 → 2 以上のときに問題が再現。各ターミナルで <span class="inline-code">echo $ROS_DOMAIN_ID</span> を確認し不一致を発見。</p>
+      </div>
+      <div class="issue-section">
+        <div class="issue-section-label solve">&#9989; 解決</div>
+        <ul style="padding-left:16px; line-height:2;">
+          <li>全プロセスで <span class="inline-code">ROS_DOMAIN_ID=20</span>・ROS Humble・workspace を統一</li>
+          <li><span class="inline-code">unset RMW_IMPLEMENTATION CYCLONEDDS_URI</span> を先行実行</li>
+          <li>quickstart が必要トピックと TF 出現を確認してから rosbag / GLIM を起動</li>
+          <li>bag 保存後は <span class="inline-code">ros2 bag info</span> で自動検証</li>
+          <li><strong>ルール：</strong> Play 前に <span class="inline-code">/point_cloud</span> の publisher count が必ず 1 であることを確認</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Issue 2 -->
+  <div class="issue-block">
+    <div class="issue-header" onclick="toggleIssue(this)">
+      <div class="issue-num solved">2</div>
+      <div style="flex:1">
+        <div class="issue-title-text">PhysX (2,6) テンソルエラー</div>
+        <div class="issue-subtitle">getVelocities: expected total size 6, received total size 12 with shape (2, 6)</div>
+      </div>
+      <div class="issue-chevron">▼</div>
+    </div>
+    <div class="issue-body">
+      <div class="issue-section">
+        <div class="issue-section-label problem">&#9888; エラーログ</div>
+        <div class="err-code">getVelocities: expected total size 6, received total size 12 with shape (2, 6)</div>
+        <p>Isaac Play 後に持続的に発生。</p>
+      </div>
+      <div class="issue-section">
+        <div class="issue-section-label check">&#128270; 排査過程</div>
+        <ul style="padding-left:16px; line-height:2;">
+          <li>シーン内の active / inactive articulation を全スキャン → 叉車・台車など外部 articulation が複数存在することを確認</li>
+          <li>JointState publisher、ArticulationController、Isaac IMU graph を個別に無効化して再現確認</li>
+          <li>D455/RSD455 の nested RigidBody が PhysX 警告を追加発生させることを確認</li>
+          <li>重複した <span class="inline-code">/World/robot_sim/root_joint</span> articulation schema を発見</li>
+        </ul>
+        <p style="margin-top:8px;"><strong>結論：</strong>単一原因ではなく、複数 articulation + nested RigidBody + 古い runtime prim の重複が原因。</p>
+      </div>
+      <div class="issue-section">
+        <div class="issue-section-label solve">&#9989; 解決</div>
+        <ul style="padding-left:16px; line-height:2;">
+          <li>Play 前に <span class="inline-code">cleanup_foreign_articulations.py</span> を実行し、残す articulation を <span class="inline-code">/World/robot_sim/base_footprint</span> のみに限定</li>
+          <li>D455 は後述の Issue 7 の手順（camera-only）で処理</li>
+          <li>Play 前に Isaac を完全再起動して CUDA context をリセット</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Issue 3 -->
+  <div class="issue-block">
+    <div class="issue-header" onclick="toggleIssue(this)">
+      <div class="issue-num solved">3</div>
+      <div style="flex:1">
+        <div class="issue-title-text">LiDAR 設定・TF・周波数の問題</div>
+        <div class="issue-subtitle">点群方向の異常・GLIM 入力フォーマット不一致・出力周波数が目標を下回る</div>
+      </div>
+      <div class="issue-chevron">▼</div>
+    </div>
+    <div class="issue-body">
+      <div class="issue-section">
+        <div class="issue-section-label problem">&#9888; 問題</div>
+        <ul style="padding-left:16px; line-height:2;">
+          <li>初期の LiDAR TF / 取り付け姿勢が誤っており、点群方向と可視範囲が異常</li>
+          <li>Isaac には公式の Livox MID360 プロファイルが存在しない</li>
+          <li><span class="inline-code">/livox/lidar</span> は Livox <span class="inline-code">CustomMsg</span> 形式 → 現行 GLIM に PointCloud2 として直接入力不可</li>
+        </ul>
+      </div>
+      <div class="issue-section">
+        <div class="issue-section-label check">&#128270; 排査</div>
+        <ul style="padding-left:16px; line-height:2;">
+          <li>OS1 32/128、Hesai、MID360-like の各プロファイルを順次テスト</li>
+          <li><span class="inline-code">base_footprint → livox_frame</span> の TF を RViz で可視化して姿勢を確認</li>
+        </ul>
+      </div>
+      <div class="issue-section">
+        <div class="issue-section-label solve">&#9989; 解決</div>
+        <ul style="padding-left:16px; line-height:2;">
+          <li>取り付け pitch を 30 度に固定し外参を確定</li>
+          <li>MID360-like RTX LiDAR を採用、publisher を <span class="inline-code">ROS2RtxLidarHelper + fullScan=True + 1x1 render product</span> に変更</li>
+          <li>Livox adapter で <span class="inline-code">/livox/lidar_pc2_accumulated</span> を出力し GLIM に入力</li>
+          <li>LiDAR setup は各 Isaac セッションで <strong>1 回のみ</strong>実行</li>
+        </ul>
+        <table style="margin-top:10px;">
+          <thead><tr><th>条件</th><th>/point_cloud</th><th>GLIM 出力</th></tr></thead>
+          <tbody>
+            <tr><td>LiDAR-only（1x1）</td><td>≈ 7.33 Hz</td><td>≈ 7.05 Hz</td></tr>
+            <tr><td>D455 追加（デフォルト）</td><td>≈ 6.41 Hz</td><td>≈ 6.29–6.4 Hz</td></tr>
+            <tr><td>目標</td><td>10 Hz</td><td>10 Hz</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Issue 4 -->
+  <div class="issue-block">
+    <div class="issue-header" onclick="toggleIssue(this)">
+      <div class="issue-num solved">4</div>
+      <div style="flex:1">
+        <div class="issue-title-text">IMU 発行源・重力投影・タイムスタンプ不一致</div>
+        <div class="issue-subtitle">GLIM が "large time difference" や "waiting for IMU" で停止</div>
+      </div>
+      <div class="issue-chevron">▼</div>
+    </div>
+    <div class="issue-body">
+      <div class="issue-section">
+        <div class="issue-section-label problem">&#9888; エラーログ</div>
+        <div class="err-code">large time difference between points and imu
+waiting for IMU data
+IMU timestamp rewind detected</div>
+        <ul style="padding-left:16px; line-height:2; margin-top:8px;">
+          <li>初期 fake IMU は重力を Z 軸のみに投影し、LiDAR の 30 度傾きを考慮していなかった</li>
+          <li>LiDAR と IMU が異なる時間源を使用 → 数百秒の時刻差が発生</li>
+          <li><span class="inline-code">IsaacReadIMU.inputs:imuPrim</span> が OmniGraph <span class="inline-code">SET_VALUES</span> で安定バインドできない</li>
+        </ul>
+      </div>
+      <div class="issue-section">
+        <div class="issue-section-label check">&#128270; 排査</div>
+        <ul style="padding-left:16px; line-height:2;">
+          <li>fake IMU の重力を補正（<span class="inline-code">x ≈ -4.9 m/s²、z ≈ 8.5 m/s²</span>）して GLIM が動くことを隔離確認</li>
+          <li><span class="inline-code">/clock</span>・<span class="inline-code">/point_cloud.header.stamp</span>・<span class="inline-code">/livox/imu.header.stamp</span> を bag で比較し時刻域の乖離を特定</li>
+          <li>IsaacReadIMU / 重力読み取り無効化 / ImuSensorInterface 直読みの 3 パスを順次検証</li>
+        </ul>
+      </div>
+      <div class="issue-section">
+        <div class="issue-section-label solve">&#9989; 解決</div>
+        <ul style="padding-left:16px; line-height:2;">
+          <li>Python <span class="inline-code">ImuSensorInterface</span> で物理 IMU を直接読み取り、<span class="inline-code">IsaacReadIMU</span> をバイパス</li>
+          <li>IMU タイムスタンプは既存 <span class="inline-code">/clock</span> simulation time を複用</li>
+          <li>IMU prim と発行グラフは Play <strong>前</strong>に作成（Stop/Play 再作成で時刻 epoch が分断するのを防ぐ）</li>
+        </ul>
+        <pre>linear_acceleration.x ≈ -4.9 m/s²  （30度傾斜の重力投影）
+linear_acceleration.z ≈  8.5 m/s²</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Issue 5 -->
+  <div class="issue-block">
+    <div class="issue-header" onclick="toggleIssue(this)">
+      <div class="issue-num solved">5</div>
+      <div style="flex:1">
+        <div class="issue-title-text">GLIM の漂移・地図保存失敗</div>
+        <div class="issue-subtitle">地図が生成されない・異常に沈む・/tmp/dump が空のまま終了</div>
+      </div>
+      <div class="issue-chevron">▼</div>
+    </div>
+    <div class="issue-body">
+      <div class="issue-section">
+        <div class="issue-section-label problem">&#9888; 問題</div>
+        <ul style="padding-left:16px; line-height:2;">
+          <li>TF エラー・重力誤り・タイムスタンプ不整合が重なって GLIM が激しく漂移または地図が生成されない</li>
+          <li>quickstart がバックグラウンドで GLIM を自動終了させると、<span class="inline-code">/tmp/dump</span> の書き込みが未完了のまま終了</li>
+        </ul>
+      </div>
+      <div class="issue-section">
+        <div class="issue-section-label check">&#128270; 排査</div>
+        <p>自動終了スクリプト経由では GLIM が <span class="inline-code">Ctrl-C</span> シグナルを受け取れず、保存フックが走らないことを確認。</p>
+      </div>
+      <div class="issue-section">
+        <div class="issue-section-label solve">&#9989; 解決</div>
+        <ul style="padding-left:16px; line-height:2;">
+          <li>全プロセスを前台 Terminator ペインで起動（GLIM がインタラクティブ TTY を占有）</li>
+          <li>GLIM ペインで <span class="inline-code">Ctrl-C</span> を直接入力 → <span class="inline-code">saved</span> 表示を確認後にウィンドウを閉じる</li>
+          <li>スクリプトが <span class="inline-code">graph.txt</span>・軌跡・submap を自動検証し、正常なら <span class="inline-code">maps/</span> にコピー</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Issue 6 -->
+  <div class="issue-block">
+    <div class="issue-header" onclick="toggleIssue(this)">
+      <div class="issue-num solved">6</div>
+      <div style="flex:1">
+        <div class="issue-title-text">Isaac Sim フリーズ・CUDA error 700</div>
+        <div class="issue-subtitle">RTX LiDAR 実行中にレンダリングが停止しクラッシュ</div>
+      </div>
+      <div class="issue-chevron">▼</div>
+    </div>
+    <div class="issue-body">
+      <div class="issue-section">
+        <div class="issue-section-label problem">&#9888; エラーチェーン</div>
+        <div class="err-code">isaacsim.sensors.rtx.plugin: CUDA error 700
+OgnROS2PublishPointCloud.cpp: cudaErrorIllegalAddress
+Failed to wait on external semaphore
+Rendering failed</div>
+      </div>
+      <div class="issue-section">
+        <div class="issue-section-label check">&#128270; 排査過程</div>
+        <ul style="padding-left:16px; line-height:2;">
+          <li>外部 articulation・D455・重複 publisher・旧 RenderProduct を削除しても一部改善のみ</li>
+          <li>シンプルなシーンと built-in <span class="inline-code">os1_32</span> でも CUDA 700 が再現 → シーンやプロファイルが単独原因ではない</li>
+          <li>NVIDIA 公式 Isaac Sim 5.0.0 をクリーンインストール → 旧発行方式では依然 CUDA 700 が発生</li>
+          <li>ログに <span class="inline-code">DispatchSync</span> / <span class="inline-code">WriterSyncGate</span> 異常と illegal-cycle が crash 前に出現することを確認</li>
+        </ul>
+        <p style="margin-top:8px;"><strong>結論：</strong>直接 Replicator writer / partial-scan パスが最も明確なトリガーリスク。底層の Isaac RTX バグが完全解消されたとは証明できていない。</p>
+      </div>
+      <div class="issue-section">
+        <div class="issue-section-label solve">&#9989; 解決（有効な回避策）</div>
+        <ul style="padding-left:16px; line-height:2;">
+          <li>LiDAR 発行を <span class="inline-code">ROS2RtxLidarHelper + fullScan=True + 1x1 render product</span> に変更</li>
+          <li>LiDAR setup は各セッションで <strong>1 回のみ</strong>実行</li>
+          <li>CUDA 700 発生後は Isaac を<strong>必ず完全再起動</strong></li>
+          <li>Isaac 実行中は UI ウィンドウのドッキング操作を<strong>禁止</strong></li>
+        </ul>
+        <div class="note amber" style="margin-top:8px;">
+          &#9888;&#65039; <strong>現状は「有効な回避策」です。</strong>少量の SDGPipeline illegal-cycle 警告は引き続き観察が必要です。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Issue 7 NEW -->
+  <div class="issue-block">
+    <div class="issue-header" onclick="toggleIssue(this)">
+      <div class="issue-num solved">7</div>
+      <div style="flex:1">
+        <div class="issue-title-text">
+          D455 内部 IMU の停止順序問題
+          <span class="tag new" style="margin-left:6px;">NEW</span>
+        </div>
+        <div class="issue-subtitle">D455 を camera-only に変換する際に (2,6) エラーが再発する</div>
+      </div>
+      <div class="issue-chevron">▼</div>
+    </div>
+    <div class="issue-body">
+      <div class="issue-section">
+        <div class="issue-section-label problem">&#9888; 問題</div>
+        <p>D455/RSD455 を既存フローに組み込もうとすると (2,6) エラーが再発、またはネストされた rigid body エラーが発生する。</p>
+        <div class="err-code">RSD455 missing rigid body
+nested rigid-body / xformstack error</div>
+        <p style="margin-top:8px;">特定のフロー：</p>
+        <ul style="padding-left:16px; line-height:2;">
+          <li>RigidBody/Mass API を先に削除すると、内部 <span class="inline-code">RSD455/Imu_Sensor</span> が親の rigid body 削除後も tensor reader として登録されたままになり (2,6) を直接引き起こす</li>
+          <li>D455 を完全無効化（マッピングから除外）するだけでは、後で D455 を加えようとするたびに同様の問題が再現する</li>
+        </ul>
+      </div>
+      <div class="issue-section">
+        <div class="issue-section-label check">&#128270; 排査過程</div>
+        <ul style="padding-left:16px; line-height:2;">
+          <li>D455 camera-only フローを 3 パターンで A/B テスト：<br>①RigidBody のみ無効化 → (2,6) 再現<br>②RigidBody/Mass API を先に削除 → (2,6) 再現<br>③内部 IMU を先に停用 → RigidBody/Mass API を削除 → エラー消滅</li>
+          <li>LiDAR-only 基線で安定動作を確認した後、D455 追加で差分を特定</li>
+        </ul>
+      </div>
+      <div class="issue-section">
+        <div class="issue-section-label solve">&#9989; 解決 — prepare_d455_camera_only.py</div>
+        <p><strong>必ず以下の順序で実行します：</strong></p>
+        <ol style="padding-left:20px; line-height:2.2;">
+          <li>D455 内部 <span class="inline-code">RSD455/Imu_Sensor</span> を<strong>先に</strong>停用</li>
+          <li>その後で RSD455 の RigidBody / Mass API を削除</li>
+          <li>碰撞と joint を無効化</li>
+          <li>Camera prim のみ保留（ROS 画像記録に使用）</li>
+        </ol>
+        <div class="note blue" style="margin-top:8px;">
+          順序を逆にすると、内部 IMU が親 rigid body の削除後も tensor reader として残り、(2,6) を直接引き起こします。
+        </div>
+        <p style="margin-top:8px;">D455 ROS setup は Play <strong>後</strong>、LiDAR setup の実行後に 1 回だけ実行します：</p>
+        <pre>exec(open(".../prepare_d455_camera_only.py").read())   # Play 前
+# Press Play
+exec(open(".../setup_isaac_mid360_like_ros.py").read()) # Play 後
+exec(open(".../setup_isaac_d455_ros.py").read())        # Play 後（LiDAR の後）</pre>
+        <p style="margin-top:10px;">最新 D455 デフォルトセッション（trueimu_d455_002）では (2,6)・nested rigid body・RSD455 missing rigid body のいずれも再現せず。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 4: 動画デモ ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label purple">&#127916; デモ映像</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card purple">
+    <div class="card-title">
+      <span class="tag sim">Video</span>
+      warehouse シーンでのマッピング結果
+    </div>
+    <div class="card-body">
+      <p>Joy-Con でロボットを操作しながら warehouse シーンを走行し、GLIM で 3D マップを生成しました。</p>
+      <div class="vid-grid">
+        <div class="vid-card">
+          <video controls preload="metadata">
+            <source src="videos/map_creation_issac_factory.webm" type="video/webm">
+            お使いのブラウザは動画再生に対応していません。
+          </video>
+          <div class="vid-cap">
+            マッピング作成プロセス
+            <small>Isaac Sim 内で GLIM がリアルタイムに地図を構築する様子</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 5: 起動原則 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label green">&#128218; 確立した起動原則</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title">
+      <span class="tag ok">Rules</span>
+      固定起動フロー（9 ステップ）
+    </div>
+    <div class="card-body">
+      <div class="principle-list">
+        <div class="principle-item"><div class="principle-num">1</div>全プロセスで統一 ROS 環境（Domain 20・Humble・workspace）を使用して Isaac を起動</div>
+        <div class="principle-item"><div class="principle-num">2</div>Play 前に外部 articulation と古い runtime prim を cleanup</div>
+        <div class="principle-item"><div class="principle-num">3</div>Play 前に <span class="inline-code">prepare_d455_camera_only.py</span> を実行（D455 内部 IMU を先に停用してから RigidBody/Mass API を削除）</div>
+        <div class="principle-item"><div class="principle-num">4</div>Play 前に Isaac true IMU を作成</div>
+        <div class="principle-item"><div class="principle-num">5</div>Play 後に MID360 setup を 1 回のみ、続けて D455 ROS setup を 1 回実行</div>
+        <div class="principle-item"><div class="principle-num">6</div><span class="inline-code">/point_cloud</span> publisher count が 1 であること、D455・LiDAR・IMU のタイムスタンプが継続前進することを確認</div>
+        <div class="principle-item"><div class="principle-num">7</div><span class="inline-code">--record-d455</span> オプションで quickstart を起動し、デフォルト建図を開始</div>
+        <div class="principle-item"><div class="principle-num">8</div>GLIM ペインで <span class="inline-code">Ctrl-C</span>。<span class="inline-code">saved</span> と <span class="inline-code">MAP SAVE OK</span> を確認後にウィンドウを閉じる</div>
+        <div class="principle-item"><div class="principle-num">9</div>CUDA 700 または (2,6) が発生したら Isaac を即座に再起動。損傷した CUDA context での継続は禁止</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 6: 現状と課題 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label amber">&#128680; 現状の機能状況と残課題</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title">機能状況</div>
+    <div class="card-body">
+      <div class="chip-grid">
+        <span class="chip ok">&#9989; GLIM 3D マッピング（GPU）</span>
+        <span class="chip ok">&#9989; Joy-Con 操作チェーン</span>
+        <span class="chip ok">&#9989; Isaac true IMU</span>
+        <span class="chip ok">&#9989; rosbag 記録・自動検証</span>
+        <span class="chip ok">&#9989; GLIM 自動保存</span>
+        <span class="chip ok">&#9989; D455 camera-only 統合</span>
+        <span class="chip wip">&#9898; LiDAR 周波数（現在 6–7 Hz、目標 10 Hz）</span>
+        <span class="chip wip">&#9898; D455 CameraInfo 精密標定（現在 plumb_bob デフォルト）</span>
+        <span class="chip ng">&#10060; CUDA 700 の根本原因解消（現在は回避策）</span>
+        <span class="chip ng">&#10060; 長時間・複数回の繰り返し安定性テスト（未完了）</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title">残余リスク</div>
+    <div class="card-body">
+      <ul style="padding-left:16px; line-height:2.1; font-size:14px; color:var(--text2);">
+        <li>RTX pipeline が少量の DispatchSync / illegal-cycle 警告を出力する可能性あり（CUDA 700 を伴わなければ観察継続で可）</li>
+        <li>D455 追加で仮想実時間速度が約 12–13% 低下。長時間セッションへの影響は要確認</li>
+        <li>D455 CameraInfo の distortion model がデフォルト <span class="inline-code">plumb_bob</span> に回退しており、精確な標定値ではない</li>
+        <li>地図の閉ループ・重影・Z 漂移・ナビゲーション利用可否を offline viewer でまだ検証していない</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title">次のステップ</div>
+    <div class="card-body">
+      <ul style="padding-left:16px; line-height:2.1; font-size:14px; color:var(--text2);">
+        <li>デフォルト D455 フローで 5〜10 分以上の長時間マッピングを複数回実施し、CUDA 700・(2,6) の非再現を確認</li>
+        <li>最新地図の閉ループ・重影・地面平坦度・Z 漂移を offline viewer で確認</li>
+        <li>LiDAR と D455 の並行スループットを最適化し、単一 publisher・統一 <span class="inline-code">/clock</span> を維持</li>
+        <li>D455 の精密な相機内外参と distortion モデルを補充</li>
+        <li>PLY エクスポートと Nav2 2D マップ生成</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── 振り返り ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label teal">&#128161; 開発振り返り</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card teal">
+    <div class="card-title">今週の学び</div>
+    <div class="card-body">
+      <ul style="padding-left:16px; line-height:2.1; font-size:14px; color:var(--text2);">
+        <li>最小 LiDAR-only 基線を先に確立し、D455 等の旁路センサーを 1 つずつ追加して検証する</li>
+        <li>D455 のような複合センサーは内部コンポーネント（IMU・RigidBody）の<strong>停用順序が重要</strong>。順序の誤りが予期しないエラーを引き起こす</li>
+        <li>1 回の変更につき 1 変数のみ変更し、bag・タイムスタンプ・周波数・ログで必ず証明する</li>
+        <li>トピックの「存在」はデータの健全性を保証しない。publisher count・周波数・header stamp を常に確認する</li>
+        <li>連鎖エラーを根本原因と誤判断しない。CUDA semaphore・RenderGraph エラーは先行する RTX/PhysX 障害の後続症状</li>
+        <li>「1 回の成功」は方式の実現可能性を示すが、底層の不安定要因の解消を証明しない</li>
+      </ul>
+    </div>
+  </div>
+
+</main>
+
+<script>
+function toggleIssue(header) {
+  header.classList.toggle('open');
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+document.querySelectorAll('.nav-btn[data-nav]').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const id = btn.dataset.nav;
+    const drop = document.getElementById('nav-' + id);
+    const isOpen = drop.classList.contains('open');
+    document.querySelectorAll('.nav-drop.open').forEach(d => d.classList.remove('open'));
+    document.querySelectorAll('.nav-btn.nav-open').forEach(b => b.classList.remove('nav-open'));
+    if (!isOpen) { drop.classList.add('open'); btn.classList.add('nav-open'); }
+  });
+});
+document.addEventListener('click', () => {
+  document.querySelectorAll('.nav-drop.open').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.nav-btn.nav-open').forEach(b => b.classList.remove('nav-open'));
+});
+</script>
+</body>
+</html>

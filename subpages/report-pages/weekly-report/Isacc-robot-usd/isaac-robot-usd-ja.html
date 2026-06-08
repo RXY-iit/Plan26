@@ -1,0 +1,759 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Isaac Sim ロボット USD 設計 — 進捗報告 | FY2026</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #f8fafc;
+  --surface: #ffffff;
+  --surface2:#f1f5f9;
+  --border:  #e2e8f0;
+  --border2: #cbd5e1;
+  --accent:  #2563eb;
+  --accent-l:#eff6ff;
+  --accent-m:#bfdbfe;
+  --green:   #059669;
+  --green-l: #ecfdf5;
+  --amber:   #d97706;
+  --amber-l: #fffbeb;
+  --red:     #dc2626;
+  --red-l:   #fef2f2;
+  --purple:  #7c3aed;
+  --purple-l:#f5f3ff;
+  --text:    #0f172a;
+  --text2:   #334155;
+  --muted:   #64748b;
+  --mono:    'JetBrains Mono','Fira Code','Courier New',monospace;
+  --r: 12px;
+  --sh-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --sh:    0 4px 12px rgba(0,0,0,.07);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Meiryo',-apple-system,sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.8;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+  height: 56px; background: rgba(255,255,255,.97);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  padding: 0 28px; display: flex; align-items: center; gap: 2px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none; margin-right: 16px; flex-shrink: 0;
+}
+.nav-logo-icon {
+  width: 30px; height: 30px; background: var(--text); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.nav-logo-sep { font-size: 20px; color: var(--border2); font-weight: 300; }
+.nav-logo-text { font-size: 12px; color: var(--muted); font-weight: 600; }
+.nav-item { position: relative; }
+.nav-btn {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--muted); text-decoration: none;
+  padding: 6px 11px; border-radius: 7px;
+  border: none; background: none; cursor: pointer; font-family: inherit;
+  transition: background .12s, color .12s; white-space: nowrap;
+}
+.nav-btn:hover { background: var(--surface2); color: var(--text); }
+.nav-btn.cur { color: var(--accent); }
+.nav-caret { font-size: 8px; opacity: .5; transition: transform .15s; }
+.nav-btn.nav-open .nav-caret { transform: rotate(180deg); }
+.nav-item:hover .nav-caret { transform: rotate(180deg); }
+.nav-drop {
+  position: absolute; top: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  min-width: 240px; background: #fff;
+  border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.11), 0 2px 8px rgba(0,0,0,.05);
+  padding: 8px; z-index: 999;
+  opacity: 0; pointer-events: none;
+  transition: opacity .15s, transform .15s;
+}
+.nav-drop.open { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.nav-drop-label {
+  font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em;
+  color: var(--muted2,#94a3b8); padding: 6px 10px 3px; display: block;
+}
+.nav-drop-link {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; padding: 9px 10px; border-radius: 9px; transition: background .1s;
+}
+.nav-drop-link:hover { background: var(--surface2); }
+.nav-dl-icon { font-size: 18px; flex-shrink: 0; }
+.nav-dl-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.nav-dl-sub { font-size: 11px; color: var(--muted); }
+.nav-drop-sep { height: 1px; background: var(--border); margin: 5px 6px; }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.nav-badge-pill {
+  font-size: 11px; font-weight: 700;
+  background: var(--green-l); color: var(--green);
+  border: 1px solid rgba(5,150,105,.25);
+  padding: 4px 12px; border-radius: 99px; white-space: nowrap;
+}
+.nav-pulse {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--green);
+  animation: npulse 2s infinite; flex-shrink: 0;
+}
+@keyframes npulse {
+  0%,100%{ box-shadow: 0 0 0 0 rgba(5,150,105,.4); }
+  50%     { box-shadow: 0 0 0 5px rgba(5,150,105,0); }
+}
+
+/* HERO */
+.hero {
+  padding: 92px 24px 52px;
+  background: linear-gradient(135deg, #fff 0%, #f0f7ff 55%, #f5f3ff 100%);
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(37,99,235,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37,99,235,.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.hero-inner { max-width: 960px; margin: 0 auto; position: relative; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: .06em;
+  color: var(--purple); background: var(--purple-l);
+  border: 1px solid rgba(124,58,237,.25);
+  padding: 3px 12px; border-radius: 99px; margin-bottom: 14px;
+}
+h1 {
+  font-size: clamp(22px, 4vw, 36px); font-weight: 800; color: var(--text);
+  margin-bottom: 8px; line-height: 1.3;
+}
+.hero-desc { font-size: 15px; color: var(--muted); margin-bottom: 26px; line-height: 1.7; }
+.hero-meta { display: flex; gap: 10px; flex-wrap: wrap; }
+.meta-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--text2);
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 5px 13px; border-radius: 8px; box-shadow: var(--sh-sm);
+}
+
+/* MAIN */
+main { max-width: 960px; margin: 0 auto; padding: 44px 24px 100px; }
+
+/* Section divider */
+.sec-div {
+  display: flex; align-items: center; gap: 12px;
+  margin: 44px 0 22px;
+}
+.sec-line { flex: 1; height: 1px; background: var(--border); }
+.sec-label {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 16px; border-radius: 99px;
+  font-size: 12px; font-weight: 700; white-space: nowrap;
+}
+.sec-label.blue   { background: var(--accent-l); border: 1px solid var(--accent-m); color: var(--accent); }
+.sec-label.green  { background: var(--green-l); border: 1px solid rgba(5,150,105,.25); color: var(--green); }
+.sec-label.amber  { background: var(--amber-l); border: 1px solid rgba(217,119,6,.25); color: var(--amber); }
+.sec-label.purple { background: var(--purple-l); border: 1px solid rgba(124,58,237,.2); color: var(--purple); }
+
+/* Card */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 22px 24px; margin-bottom: 14px;
+  box-shadow: var(--sh-sm);
+}
+.card.blue  { border-left: 3px solid var(--accent); }
+.card.green { border-left: 3px solid var(--green); background: linear-gradient(135deg,#f0fdf9,#fff); }
+.card.amber { border-left: 3px solid var(--amber); }
+.card.purple{ border-left: 3px solid var(--purple); }
+.card-title {
+  font-size: 15px; font-weight: 700; color: var(--text);
+  margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+}
+.card-body { font-size: 14px; color: var(--text2); line-height: 1.8; }
+
+/* Tag */
+.tag {
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+  font-family: var(--mono);
+}
+.tag.sw { background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m); }
+.tag.hw { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.2); }
+.tag.sim{ background: var(--purple-l); color: var(--purple); border: 1px solid rgba(124,58,237,.2); }
+.tag.ros{ background: var(--green-l); color: var(--green); border: 1px solid rgba(5,150,105,.2); }
+
+/* Code block */
+pre {
+  background: #1e293b; color: #e2e8f0;
+  border-radius: 10px; padding: 16px 18px; overflow-x: auto;
+  font-family: var(--mono); font-size: 12.5px; line-height: 1.7;
+  margin: 12px 0;
+}
+code { font-family: var(--mono); font-size: 12.5px; }
+.inline-code {
+  background: var(--surface2); color: var(--accent);
+  padding: 1px 6px; border-radius: 4px;
+  font-family: var(--mono); font-size: 12.5px;
+}
+
+/* Tree diagram */
+.tree {
+  background: #1e293b; color: #94a3b8;
+  border-radius: 10px; padding: 16px 18px;
+  font-family: var(--mono); font-size: 12.5px; line-height: 1.85;
+  margin: 12px 0;
+}
+.tree .hl { color: #7dd3fc; }
+.tree .hl2 { color: #86efac; }
+.tree .hl3 { color: #fcd34d; }
+.tree .comment { color: #64748b; }
+
+/* Flow diagram */
+.flow {
+  display: flex; flex-direction: column; gap: 0;
+  margin: 12px 0; font-family: var(--mono); font-size: 12.5px;
+}
+.flow-step {
+  display: flex; align-items: flex-start; gap: 0;
+}
+.flow-box {
+  background: var(--accent-l); border: 1px solid var(--accent-m);
+  color: var(--accent); border-radius: 8px; padding: 6px 14px;
+  font-weight: 700; white-space: nowrap;
+}
+.flow-box.green { background: var(--green-l); border-color: rgba(5,150,105,.3); color: var(--green); }
+.flow-box.purple{ background: var(--purple-l); border-color: rgba(124,58,237,.2); color: var(--purple); }
+.flow-box.amber { background: var(--amber-l); border-color: rgba(217,119,6,.25); color: var(--amber); }
+.flow-arrow {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 4px 0; color: var(--muted); font-size: 13px; line-height: 1.2;
+  min-width: 40px; text-align: center;
+}
+.flow-arrow span { font-size: 11px; color: var(--muted); }
+
+/* Table */
+table {
+  width: 100%; border-collapse: collapse;
+  font-size: 13px; margin: 12px 0;
+}
+th {
+  background: var(--surface2); color: var(--text2);
+  font-weight: 700; font-size: 11px; letter-spacing: .04em;
+  padding: 9px 14px; border: 1px solid var(--border); text-align: left;
+}
+td {
+  padding: 9px 14px; border: 1px solid var(--border);
+  color: var(--text2); vertical-align: top;
+}
+tr:nth-child(even) td { background: var(--surface2); }
+
+/* Video grid */
+.vid-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px; margin-top: 16px;
+}
+.vid-card {
+  border-radius: 12px; overflow: hidden;
+  border: 1px solid var(--border); background: #0f172a;
+  box-shadow: var(--sh);
+}
+.vid-card video {
+  width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block;
+}
+.vid-cap {
+  padding: 10px 14px; font-size: 12px; font-weight: 600;
+  color: rgba(255,255,255,.7); background: #1e293b;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.vid-cap small { display: block; font-size: 11px; color: rgba(255,255,255,.4); font-weight: 400; margin-top: 2px; }
+
+/* Chip grid */
+.chip-grid {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;
+}
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px 12px;
+  font-size: 12px; font-weight: 600; color: var(--text2);
+}
+
+/* Math formula box */
+.formula-box {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 18px; margin: 10px 0;
+  font-family: var(--mono); font-size: 13px; color: var(--text2);
+  line-height: 1.9;
+}
+
+/* Summary banner */
+.summary-banner {
+  background: linear-gradient(135deg, var(--green-l), #f0f9ff);
+  border: 1px solid rgba(5,150,105,.2);
+  border-radius: var(--r); padding: 22px 26px; margin-bottom: 28px;
+}
+.summary-banner h2 { font-size: 16px; font-weight: 800; color: var(--green); margin-bottom: 10px; }
+.summary-banner ul { list-style: none; padding: 0; }
+.summary-banner li {
+  font-size: 14px; color: var(--text2); padding: 4px 0;
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.summary-banner li::before { content: '✓'; color: var(--green); font-weight: 800; flex-shrink: 0; }
+
+/* Responsive */
+@media (max-width: 640px) {
+  .vid-grid { grid-template-columns: 1fr; }
+  .hero { padding: 80px 16px 40px; }
+  main { padding: 32px 16px 80px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../../../plan-fy26.html">
+      <div class="nav-logo-icon">🧠</div>
+      <span class="nav-logo-sep">/</span>
+      <span class="nav-logo-text">FY26 Plan</span>
+    </a>
+    <div class="nav-item"><a class="nav-btn" href="../../../../plan-fy26.html">ホームページ</a></div>
+    <div class="nav-item"><a class="nav-btn" href="../../../../todo.html">進捗</a></div>
+    <div class="nav-item">
+      <button class="nav-btn" data-nav="vision">ビジョン <span class="nav-caret">▾</span></button>
+      <div class="nav-drop" id="nav-vision">
+        <a class="nav-drop-link" href="../../../../demo.html">
+          <span class="nav-dl-icon">🎯</span>
+          <div><div class="nav-dl-name">デモ詳細</div><div class="nav-dl-sub">デモシナリオ・要件マップ</div></div>
+        </a>
+        <div class="nav-drop-sep"></div>
+        <a class="nav-drop-link" href="../../../../disscussion/arm-demo-level123-ja.html">
+          <span class="nav-dl-icon">🦾</span>
+          <div><div class="nav-dl-name">マニピュレーション実証ロードマップ</div><div class="nav-dl-sub">アーム Demo Level 1-3 分類</div></div>
+        </a>
+        <a class="nav-drop-link" href="../../../../disscussion/move-base-level123-ja.html">
+          <span class="nav-dl-icon">🤖</span>
+          <div><div class="nav-dl-name">ナビゲーション Level 1-3 分類</div><div class="nav-dl-sub">自律移動設計方針</div></div>
+        </a>
+      </div>
+    </div>
+    <div class="nav-item">
+      <a class="nav-btn" href="../../../others-nav.html">その他</a>
+    </div>
+    <div class="nav-right">
+      <span class="nav-pulse"></span>
+      <div class="nav-badge-pill">Phase 1 進行中</div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">&#128295; Isaac Sim 5.0 · ROS2 · 三輪全方位底盤</div>
+    <h1>Isaac Sim ロボット USD 設計<br>＆ Joy-Con 制御シミュレーション</h1>
+    <p class="hero-desc">
+      物理シミュレーション用 USD の構造・動作原理と、Joy-Con コントローラによるロボット操作の開発状況を共有します。
+    </p>
+    <div class="hero-meta">
+      <span class="meta-chip">&#128197; 2026-06</span>
+      <span class="meta-chip">&#127981; Isaac Sim 5.0</span>
+      <span class="meta-chip">&#129302; ROS2</span>
+      <span class="meta-chip">&#127918; Joy-Con 制御</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+  <!-- 概要 -->
+  <div class="summary-banner">
+    <h2>開発サマリー</h2>
+    <ul>
+      <li>Isaac Sim 5.0 上で三輪全方位ロボットの物理シミュレーションが動作</li>
+      <li>ROS2 ActionGraph により <code class="inline-code">/joint_states</code> の発信・受信が実現</li>
+      <li>Joy-Con 入力 → 速度指令 → 三輪逆運動学 → Isaac 関節制御の完全なチェーンを構築</li>
+      <li>RTX LiDAR（MID360）は USD クラッシュを避けるためスクリプトで動的に生成</li>
+    </ul>
+  </div>
+
+  <!-- ── SECTION 1: USD 構造 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label blue">&#128194; USD モデル構造</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card blue">
+    <div class="card-title">
+      <span class="tag sim">USD</span>
+      ファイル構成 ― overlay アーキテクチャ
+    </div>
+    <div class="card-body">
+      <p>稼働中の USD は以下の 2 層構造になっています：</p>
+      <div class="tree" style="margin-top:10px;">
+        <div><span class="hl">robot_sim_physics.usd</span>  <span class="comment">← 現在実行するファイル（overlay）</span></div>
+        <div>  └─ references ──▶ <span class="hl2">robot_sim_flattened.usda</span>  <span class="comment">← 全メッシュ・関節が含まれた基底 USD</span></div>
+      </div>
+      <p style="margin-top:10px;">
+        <span class="inline-code">robot_sim_physics.usd</span> はロボットのメッシュを再生成せず、
+        既存の flattened USD の上に <strong>物理設定・ROS2 ブリッジ・地面・センサーマウント</strong> を重ねます。
+        変更が最小限で済み、メッシュ更新と物理設定を分離できます。
+      </p>
+    </div>
+  </div>
+
+  <div class="card blue">
+    <div class="card-title">
+      <span class="tag sim">USD</span>
+      Prim ヒエラルキー
+    </div>
+    <div class="card-body">
+      <div class="tree">
+        <div><span class="hl">/World</span></div>
+        <div>  ├─ <span class="hl2">/robot_sim</span></div>
+        <div>  │    ├─ <span class="hl3">/base_footprint</span>  <span class="comment">← Articulation Root（物理制御の起点）</span></div>
+        <div>  │    │    ├─ /sim_chassis_collision  <span class="comment">← 簡略化した底盤コライダー</span></div>
+        <div>  │    │    └─ /base_link</div>
+        <div>  │    │         ├─ /camera_bottom_screw_frame/camera_link/<span class="hl2">d455_sensor</span></div>
+        <div>  │    │         └─ /livox_frame/<span class="hl2">mid360_mount</span>  <span class="comment">← プレースホルダー</span></div>
+        <div>  │    ├─ /joints</div>
+        <div>  │    ├─ /wheel_*_steer_link</div>
+        <div>  │    ├─ /wheel_*</div>
+        <div>  │    └─ /root_joint  <span class="comment">← inactive（fixed joint 固定防止）</span></div>
+        <div>  ├─ <span class="hl2">/GroundPlane</span>  <span class="comment">← 高摩擦マテリアル付き地面</span></div>
+        <div>  └─ <span class="hl2">/ROS2_ActionGraph</span></div>
+        <div><span class="hl">/physicsScene</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 2: 物理設定 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label amber">&#9881; 物理定義</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title">
+      <span class="tag hw">Physics</span>
+      Articulation Root — base_footprint
+    </div>
+    <div class="card-body">
+      <p><span class="inline-code">/World/robot_sim/base_footprint</span> に <strong>PhysicsArticulationRootAPI</strong> を付与。Isaac Sim がここを関節ツリーの制御ルートとして認識します。質量・重心・慣性テンソルもここで上書きし、Play 後に安定して着地します。</p>
+    </div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title">
+      <span class="tag hw">Physics</span>
+      底盤コライダーの設計意図
+    </div>
+    <div class="card-body">
+      <p><span class="inline-code">sim_chassis_collision</span> はホイールの接地点よりも少し高い位置に設定されています。底盤が先にグラウンドと衝突すると前傾が生じるため、コライダーを浮かせることで <strong>ホイールのみが接地</strong> するよう制御しています。</p>
+    </div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title">
+      <span class="tag hw">Physics</span>
+      ホイール関節の定義
+    </div>
+    <div class="card-body">
+      <table>
+        <thead>
+          <tr><th>関節名</th><th>タイプ</th><th>制御方式</th><th>備考</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>wheel_*_steer</td><td>転向関節</td><td>position drive</td><td>目標角度を position で指令</td></tr>
+          <tr><td>wheel_*_drive</td><td>駆動関節</td><td>velocity drive</td><td>stiffness = 0、速度のみ制御</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:8px;">3 ホイール × 2 自由度 = 計 <strong>6 DOF</strong> を独立に制御します。</p>
+    </div>
+  </div>
+
+  <!-- ── SECTION 3: ROS2 ActionGraph ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label green">&#128257; ROS2 ActionGraph</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title">
+      <span class="tag ros">ROS2</span>
+      ActionGraph の構成
+    </div>
+    <div class="card-body">
+      <div class="tree">
+        <div><span class="hl">/World/ROS2_ActionGraph</span></div>
+        <div>  ├─ OnPlaybackTick</div>
+        <div>  ├─ ROS2Context</div>
+        <div>  ├─ IsaacReadSimulationTime</div>
+        <div>  ├─ ROS2PublishClock         <span class="comment">→ /clock</span></div>
+        <div>  ├─ ROS2PublishJointState    <span class="comment">→ /joint_states</span></div>
+        <div>  ├─ ROS2SubscribeJointState  <span class="comment">← /sim/target_joint_states</span></div>
+        <div>  └─ IsaacArticulationController  <span class="comment">target: /World/robot_sim/base_footprint</span></div>
+      </div>
+      <p style="margin-top:10px;">
+        <strong>robotPath を空欄</strong>にし <strong>targetPrim</strong> のみ使用。USD を別の Prim 下に reference しても
+        パスが壊れません。
+      </p>
+    </div>
+  </div>
+
+  <!-- ── SECTION 4: センサー ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label purple">&#128268; センサー構成</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card purple">
+    <div class="card-title">
+      <span class="tag sim">Camera</span>
+      RealSense D455
+    </div>
+    <div class="card-body">
+      <p>Isaac Sim 5.0 内蔵アセットを reference。現状は視覚的なカメラモデルとして配置されています。</p>
+      <pre>/World/robot_sim/base_footprint/base_link/camera_bottom_screw_frame/camera_link/d455_sensor</pre>
+    </div>
+  </div>
+
+  <div class="card purple">
+    <div class="card-title">
+      <span class="tag sim">LiDAR</span>
+      Livox MID360 ― スクリプト動的生成の理由
+    </div>
+    <div class="card-body">
+      <p>USD 内に RTX LiDAR / render product / ROS graph を直書きすると、Isaac Sim 5.0 の Play 時にクラッシュします。そのため <strong>USD にはマウントのプレースホルダーのみ</strong> 置き、LiDAR 本体の生成はスクリプトで行います：</p>
+      <pre>src/robot_sim/scripts/setup_isaac_mid360_ros.py</pre>
+    </div>
+  </div>
+
+  <!-- ── SECTION 5: 逆運動学 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label blue">&#128208; 三輪逆運動学 — cmd_vel → 6DOF</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card blue">
+    <div class="card-title">
+      <span class="tag sw">Math</span>
+      速度指令から各ホイール目標値への変換ステップ
+    </div>
+    <div class="card-body">
+      <p><span class="inline-code">/sim/cmd_vel</span>（geometry_msgs/Twist）の意味：</p>
+      <div class="chip-grid">
+        <span class="chip">linear.x — ロボット前方速度 [m/s]</span>
+        <span class="chip">linear.y — ロボット左方速度 [m/s]</span>
+        <span class="chip">angular.z — Z 軸回転角速度 [rad/s]</span>
+      </div>
+
+      <p style="margin-top:16px;"><strong>変換手順：</strong></p>
+      <div class="formula-box">
+        <div>① 各ホイールの接地速度を計算</div>
+        <div>&nbsp;&nbsp;&nbsp;wheel_i_vx = vx − ω·y_i</div>
+        <div>&nbsp;&nbsp;&nbsp;wheel_i_vy = vy + ω·x_i</div>
+        <br>
+        <div>② 転向角・速度へ変換</div>
+        <div>&nbsp;&nbsp;&nbsp;steer_φ_i = atan2(vy_i, vx_i)</div>
+        <div>&nbsp;&nbsp;&nbsp;drive_v_i  = √(vx_i² + vy_i²)</div>
+        <br>
+        <div>③ 大回り防止（角度折り返し）</div>
+        <div>&nbsp;&nbsp;&nbsp;|φ| &gt; 0.71π → φ ±= π、v *= −1</div>
+        <br>
+        <div>④ 線速度 → 角速度</div>
+        <div>&nbsp;&nbsp;&nbsp;rad/s = v / r &nbsp;&nbsp;（r = 0.1125 m）</div>
+      </div>
+
+      <p style="margin-top:10px;">重要：<span class="inline-code">/sim/target_joint_states</span> では <strong>NaN を使い分け</strong> します。IsaacArticulationController は非 NaN 値のみ指令として扱います。</p>
+      <table style="margin-top:10px;">
+        <thead><tr><th>関節</th><th>position</th><th>velocity</th></tr></thead>
+        <tbody>
+          <tr><td>wheel_*_steer（転向）</td><td>転向角 φ_i</td><td>NaN</td></tr>
+          <tr><td>wheel_*_drive（駆動）</td><td>NaN</td><td>角速度 [rad/s]</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card blue">
+    <div class="card-title">
+      <span class="tag sw">Code</span>
+      実装ファイル構成
+    </div>
+    <div class="card-body">
+      <table>
+        <thead><tr><th>ファイル</th><th>役割</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code class="inline-code">omni_kinematics.py</code></td>
+            <td>数学コア。<code>cmd_vel_to_wheels()</code> で各ホイールの転向角・線速度を計算。<code>linear_to_wheel_rad_s()</code> で角速度変換。</td>
+          </tr>
+          <tr>
+            <td><code class="inline-code">sim_omni_drive_command_node.py</code></td>
+            <td>ROS2 ノード。速度 topic を受信し、運動学関数を呼び出して <code>/sim/target_joint_states</code> を発行。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── SECTION 6: トピックチェーン ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label green">&#128279; 制御チェーン対応表</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title">
+      <span class="tag ros">ROS2</span>
+      真機 vs シミュレーション — トピック対照
+    </div>
+    <div class="card-body">
+      <table>
+        <thead>
+          <tr><th>段階</th><th>真機</th><th>シミュレーション（完全チェーン）</th><th>シミュレーション（直接テスト）</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>入力</td><td>/joy</td><td>/joy</td><td>—</td></tr>
+          <tr><td>速度指令</td><td>/teleop/cmd_vel</td><td>/teleop/cmd_vel</td><td>—</td></tr>
+          <tr><td>mode switch 出力</td><td>/cmd_vel_raw</td><td>/cmd_vel_raw</td><td>—</td></tr>
+          <tr><td>safety 後最終速度</td><td>/cmd_vel</td><td>/cmd_vel</td><td>—</td></tr>
+          <tr><td>sim 専用直接入力</td><td>なし</td><td>なし</td><td>/sim/cmd_vel</td></tr>
+          <tr><td>関節目標</td><td>ドライバー内部</td><td>/sim/target_joint_states</td><td>/sim/target_joint_states</td></tr>
+          <tr><td>実行</td><td>モータードライバー</td><td>Isaac ArticulationController</td><td>Isaac ArticulationController</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:10px; color: var(--muted); font-size: 13px;">
+        &#9888;&#65039; Joy-Con テストは必ず<strong>完全チェーン</strong>を使用。<span class="inline-code">/cmd_vel</span> に直接発行すると <span class="inline-code">cmd_vel_safety_node</span> と競合します。
+      </p>
+    </div>
+  </div>
+
+  <!-- ── SECTION 7: デモ動画 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label purple">&#127916; デモ動画 — Joy-Con 制御シミュレーション</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Joy-Con でロボットを操作するシミュレーション映像</div>
+    <div class="card-body">
+      <p>以下は Isaac Sim 上で Joy-Con 入力によりロボットを制御したデモ映像です。三輪全方位底盤の動作と、地面・障害物との物理インタラクションを確認できます。</p>
+      <div class="vid-grid" style="margin-top: 16px;">
+        <div class="vid-card">
+          <video controls preload="metadata">
+            <source src="Isaac_joycon_factory2.webm" type="video/webm">
+            お使いのブラウザは動画の再生に対応していません。
+          </video>
+          <div class="vid-cap">
+            工場環境でのデモ
+            <small>Isaac_joycon_factory2.webm — 工場フロアレイアウトにて操作</small>
+          </div>
+        </div>
+        <div class="vid-card">
+          <video controls preload="metadata">
+            <source src="Isaac_joycon_planeground.webm" type="video/webm">
+            お使いのブラウザは動画の再生に対応していません。
+          </video>
+          <div class="vid-cap">
+            平面グラウンドでのデモ
+            <small>Isaac_joycon_planeground.webm — フラット地面にて基本動作確認</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 8: まとめ・今後 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label amber">&#128680; 現状と今後の課題</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title">
+      <span class="tag hw">Status</span>
+      現在の動作状況
+    </div>
+    <div class="card-body">
+      <div class="chip-grid">
+        <span class="chip">&#9989; 物理シミュレーション動作</span>
+        <span class="chip">&#9989; Joy-Con 操作チェーン</span>
+        <span class="chip">&#9989; ROS2 topic ブリッジ</span>
+        <span class="chip">&#9989; 三輪逆運動学</span>
+        <span class="chip">&#128308; D455 カメラ（表示のみ）</span>
+        <span class="chip">&#128308; MID360 LiDAR（スクリプト起動）</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title">
+      <span class="tag hw">Next</span>
+      今後の開発イメージ
+    </div>
+    <div class="card-body">
+      <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:8px;">
+        <li style="display:flex; gap:10px; font-size:14px; color:var(--text2);">
+          <span style="color:var(--amber); font-weight:800; flex-shrink:0;">→</span>
+          D455 カメラ ROS2 publish の有効化（深度・RGB ストリーム）
+        </li>
+        <li style="display:flex; gap:10px; font-size:14px; color:var(--text2);">
+          <span style="color:var(--amber); font-weight:800; flex-shrink:0;">→</span>
+          MID360 RTX LiDAR の安定した起動フローの整備
+        </li>
+        <li style="display:flex; gap:10px; font-size:14px; color:var(--text2);">
+          <span style="color:var(--amber); font-weight:800; flex-shrink:0;">→</span>
+          Nav2 との統合（シミュレーション環境での自律移動テスト）
+        </li>
+        <li style="display:flex; gap:10px; font-size:14px; color:var(--text2);">
+          <span style="color:var(--amber); font-weight:800; flex-shrink:0;">→</span>
+          真機との同一 launch ファイル統合
+        </li>
+      </ul>
+    </div>
+  </div>
+
+</main>
+
+<script>
+document.querySelectorAll('.nav-btn[data-nav]').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const id = btn.dataset.nav;
+    const drop = document.getElementById('nav-' + id);
+    const isOpen = drop.classList.contains('open');
+    document.querySelectorAll('.nav-drop.open').forEach(d => d.classList.remove('open'));
+    document.querySelectorAll('.nav-btn.nav-open').forEach(b => b.classList.remove('nav-open'));
+    if (!isOpen) { drop.classList.add('open'); btn.classList.add('nav-open'); }
+  });
+});
+document.addEventListener('click', () => {
+  document.querySelectorAll('.nav-drop.open').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.nav-btn.nav-open').forEach(b => b.classList.remove('nav-open'));
+});
+</script>
+</body>
+</html>
