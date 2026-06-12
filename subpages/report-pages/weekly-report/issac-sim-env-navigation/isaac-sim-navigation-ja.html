@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>週次報告 — Isaac Sim ナビゲーション | FY2026</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #f8fafc;
+  --surface: #ffffff;
+  --surface2:#f1f5f9;
+  --border:  #e2e8f0;
+  --border2: #cbd5e1;
+  --accent:  #2563eb;
+  --accent-l:#eff6ff;
+  --accent-m:#bfdbfe;
+  --green:   #059669;
+  --green-l: #ecfdf5;
+  --amber:   #d97706;
+  --amber-l: #fffbeb;
+  --red:     #dc2626;
+  --red-l:   #fef2f2;
+  --purple:  #7c3aed;
+  --purple-l:#f5f3ff;
+  --teal:    #0d9488;
+  --teal-l:  #f0fdfa;
+  --text:    #0f172a;
+  --text2:   #334155;
+  --muted:   #64748b;
+  --mono:    'JetBrains Mono','Fira Code','Courier New',monospace;
+  --r: 12px;
+  --sh-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --sh:    0 4px 12px rgba(0,0,0,.08);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Meiryo',-apple-system,sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.8;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+  height: 56px; background: rgba(255,255,255,.97);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  padding: 0 28px; display: flex; align-items: center; gap: 2px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none; margin-right: 16px; flex-shrink: 0;
+}
+.nav-logo-icon {
+  width: 30px; height: 30px; background: var(--text); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.nav-logo-sep { font-size: 20px; color: var(--border2); font-weight: 300; }
+.nav-logo-text { font-size: 12px; color: var(--muted); font-weight: 600; }
+.nav-item { position: relative; }
+.nav-btn {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--muted); text-decoration: none;
+  padding: 6px 11px; border-radius: 7px;
+  border: none; background: none; cursor: pointer; font-family: inherit;
+  transition: background .12s, color .12s; white-space: nowrap;
+}
+.nav-btn:hover { background: var(--surface2); color: var(--text); }
+.nav-btn.cur { color: var(--accent); }
+.nav-caret { font-size: 8px; opacity: .5; transition: transform .15s; }
+.nav-btn.nav-open .nav-caret { transform: rotate(180deg); }
+.nav-item:hover .nav-caret { transform: rotate(180deg); }
+.nav-drop {
+  position: absolute; top: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  min-width: 240px; background: #fff;
+  border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.11), 0 2px 8px rgba(0,0,0,.05);
+  padding: 8px; z-index: 999;
+  opacity: 0; pointer-events: none;
+  transition: opacity .15s, transform .15s;
+}
+.nav-drop.open { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.nav-drop-label {
+  font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em;
+  color: var(--muted2,#94a3b8); padding: 6px 10px 3px; display: block;
+}
+.nav-drop-link {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; padding: 9px 10px; border-radius: 9px; transition: background .1s;
+}
+.nav-drop-link:hover { background: var(--surface2); }
+.nav-dl-icon { font-size: 18px; flex-shrink: 0; }
+.nav-dl-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.nav-dl-sub { font-size: 11px; color: var(--muted); }
+.nav-drop-sep { height: 1px; background: var(--border); margin: 5px 6px; }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.nav-badge-pill {
+  font-size: 11px; font-weight: 700;
+  background: var(--green-l); color: var(--green);
+  border: 1px solid rgba(5,150,105,.25);
+  padding: 4px 12px; border-radius: 99px; white-space: nowrap;
+}
+.nav-pulse {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--green);
+  animation: npulse 2s infinite; flex-shrink: 0;
+}
+@keyframes npulse {
+  0%,100%{ box-shadow: 0 0 0 0 rgba(5,150,105,.4); }
+  50%     { box-shadow: 0 0 0 5px rgba(5,150,105,0); }
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 92px 24px 52px;
+  background: linear-gradient(135deg, #fff 0%, #f0f7ff 50%, #f5f3ff 100%);
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(37,99,235,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37,99,235,.035) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.hero-inner { max-width: 960px; margin: 0 auto; position: relative; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: .06em;
+  color: var(--purple); background: var(--purple-l);
+  border: 1px solid rgba(124,58,237,.25);
+  padding: 3px 12px; border-radius: 99px; margin-bottom: 14px;
+}
+h1 { font-size: clamp(22px, 4vw, 36px); font-weight: 800; color: var(--text); margin-bottom: 8px; line-height: 1.3; }
+.hero-desc { font-size: 15px; color: var(--muted); margin-bottom: 26px; line-height: 1.7; }
+.hero-meta { display: flex; gap: 10px; flex-wrap: wrap; }
+.meta-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--text2);
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 5px 13px; border-radius: 8px; box-shadow: var(--sh-sm);
+}
+
+/* ── MAIN ── */
+main { max-width: 960px; margin: 0 auto; padding: 44px 24px 100px; }
+
+/* Section divider */
+.sec-div { display: flex; align-items: center; gap: 12px; margin: 46px 0 22px; }
+.sec-line { flex: 1; height: 1px; background: var(--border); }
+.sec-label {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 16px; border-radius: 99px;
+  font-size: 12px; font-weight: 700; white-space: nowrap;
+}
+.sec-label.blue   { background: var(--accent-l); border: 1px solid var(--accent-m); color: var(--accent); }
+.sec-label.green  { background: var(--green-l); border: 1px solid rgba(5,150,105,.25); color: var(--green); }
+.sec-label.amber  { background: var(--amber-l); border: 1px solid rgba(217,119,6,.25); color: var(--amber); }
+.sec-label.red    { background: var(--red-l); border: 1px solid rgba(220,38,38,.25); color: var(--red); }
+.sec-label.purple { background: var(--purple-l); border: 1px solid rgba(124,58,237,.2); color: var(--purple); }
+.sec-label.teal   { background: var(--teal-l); border: 1px solid rgba(13,148,136,.25); color: var(--teal); }
+
+/* Summary banner */
+.summary-banner {
+  background: linear-gradient(135deg, var(--green-l), #f5f3ff);
+  border: 1px solid rgba(5,150,105,.2);
+  border-radius: var(--r); padding: 22px 26px; margin-bottom: 28px;
+}
+.summary-banner h2 { font-size: 15px; font-weight: 800; color: var(--green); margin-bottom: 10px; }
+.summary-banner ul { list-style: none; padding: 0; }
+.summary-banner li {
+  font-size: 14px; color: var(--text2); padding: 4px 0;
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.summary-banner li::before { content: '✓'; color: var(--green); font-weight: 800; flex-shrink: 0; }
+
+/* Card */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 22px 24px; margin-bottom: 14px;
+  box-shadow: var(--sh-sm);
+}
+.card.blue   { border-left: 3px solid var(--accent); }
+.card.green  { border-left: 3px solid var(--green); }
+.card.amber  { border-left: 3px solid var(--amber); }
+.card.red    { border-left: 3px solid var(--red); background: linear-gradient(135deg,#fff,#fff9f9); }
+.card.purple { border-left: 3px solid var(--purple); }
+.card.teal   { border-left: 3px solid var(--teal); }
+.card-title {
+  font-size: 15px; font-weight: 700; color: var(--text);
+  margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.card-body { font-size: 14px; color: var(--text2); line-height: 1.8; }
+
+/* Tag */
+.tag {
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+  font-family: var(--mono); flex-shrink: 0;
+}
+.tag.sw  { background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m); }
+.tag.hw  { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.2); }
+.tag.sim { background: var(--purple-l); color: var(--purple); border: 1px solid rgba(124,58,237,.2); }
+.tag.ros { background: var(--green-l); color: var(--green); border: 1px solid rgba(5,150,105,.2); }
+.tag.ok  { background: var(--green-l); color: var(--green); border: 1px solid rgba(5,150,105,.3); }
+.tag.new { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.3); font-weight:900; }
+
+/* Flow */
+.flow-chain {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  margin: 8px 0; font-family: var(--mono); font-size: 12px;
+}
+.flow-node {
+  padding: 5px 12px; border-radius: 7px; font-weight: 700; line-height: 1.3;
+}
+.flow-node.blue   { background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m); }
+.flow-node.green  { background: var(--green-l); color: var(--green); border: 1px solid rgba(5,150,105,.3); }
+.flow-node.purple { background: var(--purple-l); color: var(--purple); border: 1px solid rgba(124,58,237,.2); }
+.flow-node.amber  { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.25); }
+.flow-node.teal   { background: var(--teal-l); color: var(--teal); border: 1px solid rgba(13,148,136,.25); }
+.flow-arrow { color: var(--muted); font-size: 14px; }
+
+/* Table */
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+th {
+  background: var(--surface2); color: var(--text2);
+  font-weight: 700; font-size: 11px; letter-spacing: .04em;
+  padding: 9px 14px; border: 1px solid var(--border); text-align: left;
+}
+td { padding: 9px 14px; border: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+tr:nth-child(even) td { background: #fafafa; }
+
+/* Stat grid */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 10px; margin: 14px 0; }
+.stat-box {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px; box-shadow: var(--sh-sm); text-align: center;
+}
+.stat-val { font-size: 22px; font-weight: 800; color: var(--text); font-family: var(--mono); }
+.stat-val.green { color: var(--green); }
+.stat-val.purple { color: var(--purple); }
+.stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; font-weight: 600; }
+
+/* Pipeline steps */
+.pipeline {
+  display: flex; flex-direction: column; gap: 0; margin: 14px 0;
+}
+.pipeline-step {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 12px 16px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 0; position: relative;
+}
+.pipeline-step:first-child { border-radius: 10px 10px 0 0; }
+.pipeline-step:last-child  { border-radius: 0 0 10px 10px; }
+.pipeline-step:not(:last-child) { border-bottom: none; }
+.pipeline-num {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+  background: var(--purple-l); border: 1px solid rgba(124,58,237,.3);
+  color: var(--purple); font-size: 11px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+.pipeline-num.green {
+  background: var(--green-l); border-color: rgba(5,150,105,.3); color: var(--green);
+}
+.pipeline-text { font-size: 13.5px; color: var(--text2); line-height: 1.7; }
+.pipeline-text strong { color: var(--text); }
+
+/* Chip grid */
+.chip-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 5px 12px; font-size: 12px; font-weight: 600; color: var(--text2);
+}
+.chip.ok  { background: var(--green-l); border-color: rgba(5,150,105,.25); color: var(--green); }
+.chip.ng  { background: var(--red-l); border-color: rgba(220,38,38,.2); color: var(--red); }
+.chip.wip { background: var(--amber-l); border-color: rgba(217,119,6,.25); color: var(--amber); }
+
+/* Video grid */
+.vid-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 16px; }
+.vid-card { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: #0f172a; box-shadow: var(--sh); }
+.vid-card video { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
+.vid-cap { padding: 10px 14px; font-size: 12px; font-weight: 600; color: rgba(255,255,255,.75); background: #1e293b; border-top: 1px solid rgba(255,255,255,.06); }
+.vid-cap small { display: block; font-size: 11px; color: rgba(255,255,255,.4); font-weight: 400; margin-top: 2px; }
+
+/* Note box */
+.note {
+  padding: 12px 16px; border-radius: 9px; font-size: 13px; margin: 10px 0;
+}
+.note.amber { background: var(--amber-l); border: 1px solid rgba(217,119,6,.25); color: #92400e; }
+.note.blue  { background: var(--accent-l); border: 1px solid var(--accent-m); color: #1e40af; }
+.note.green { background: var(--green-l); border: 1px solid rgba(5,150,105,.25); color: #065f46; }
+
+/* Responsive */
+@media (max-width: 640px) {
+  .vid-grid { grid-template-columns: 1fr; }
+  .stat-grid { grid-template-columns: repeat(2,1fr); }
+  .hero { padding: 80px 16px 40px; }
+  main { padding: 32px 16px 80px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../../../plan-fy26.html">
+      <div class="nav-logo-icon">🧠</div>
+      <span class="nav-logo-sep">/</span>
+      <span class="nav-logo-text">FY26 Plan</span>
+    </a>
+    <div class="nav-item"><a class="nav-btn" href="../../../../plan-fy26.html">ホームページ</a></div>
+    <div class="nav-item"><a class="nav-btn" href="../../../../todo.html">進捗</a></div>
+    <div class="nav-item">
+      <button class="nav-btn" data-nav="vision">ビジョン <span class="nav-caret">▾</span></button>
+      <div class="nav-drop" id="nav-vision">
+        <a class="nav-drop-link" href="../../../../demo.html">
+          <span class="nav-dl-icon">🎯</span>
+          <div><div class="nav-dl-name">デモ詳細</div><div class="nav-dl-sub">デモシナリオ・要件マップ</div></div>
+        </a>
+        <div class="nav-drop-sep"></div>
+        <a class="nav-drop-link" href="../../../../disscussion/arm-demo-level123-ja.html">
+          <span class="nav-dl-icon">🦾</span>
+          <div><div class="nav-dl-name">マニピュレーション実証ロードマップ</div><div class="nav-dl-sub">アーム Demo Level 1-3 分類</div></div>
+        </a>
+        <a class="nav-drop-link" href="../../../../disscussion/move-base-level123-ja.html">
+          <span class="nav-dl-icon">🤖</span>
+          <div><div class="nav-dl-name">ナビゲーション Level 1-3 分類</div><div class="nav-dl-sub">自律移動設計方針</div></div>
+        </a>
+      </div>
+    </div>
+    <div class="nav-item">
+      <a class="nav-btn" href="../../../others-nav.html">その他</a>
+    </div>
+    <div class="nav-right">
+      <span class="nav-pulse"></span>
+      <div class="nav-badge-pill">Phase 1 進行中</div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">&#128205; Isaac Sim 5.0 · FAST-LIO2 · GICP · Nav2 · ROS2</div>
+    <h1>Isaac Sim ナビゲーション<br>進捗報告</h1>
+    <p class="hero-desc">
+      先週の GLIM マッピング完成を受け、今週はナビゲーション前準備としてロボットキャリブレーションを実施し、<br>
+      Isaac Sim 上で FAST-LIO2 + GICP + Nav2 による自律ナビゲーションの初クローズドループ成功を達成しました。
+    </p>
+    <div class="hero-meta">
+      <span class="meta-chip">&#128197; 2026-06-11</span>
+      <span class="meta-chip">&#127981; Isaac Sim 5.0.0</span>
+      <span class="meta-chip">&#129302; ROS2 Humble</span>
+      <span class="meta-chip">&#128205; FAST-LIO2 + GICP</span>
+      <span class="meta-chip">&#129517; Nav2</span>
+      <span class="meta-chip">&#127918; 自律ナビゲーション初成功</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+  <!-- サマリー -->
+  <div class="summary-banner">
+    <h2>今週の達成事項</h2>
+    <ul>
+      <li>仮想 / 実機ロボットキャリブレーション実施 — ナビゲーション前のオドメトリ整合性を確認</li>
+      <li>仮想キャリブレーション baseline bag 録制完了（calib_baseline_sim_02）</li>
+      <li>実機キャリブレーションで目標値との乖離（制御指令の 70〜80%）を検出 → 左前輪ハブ部品の損傷を特定</li>
+      <li>損傷部品を再加工・再装着。動作は顕著に改善（残留遊び角度 ≈ 5°、継続調査中）</li>
+      <li>FAST-LIO2 + GICP 自己位置推定を Isaac Sim に移植・動作確認</li>
+      <li>Nav2 全 lifecycle ノード起動完了。RViz ゴール送信によるクローズドループ自律移動を初めて達成</li>
+    </ul>
+  </div>
+
+  <!-- ── SECTION 1: 今週の取り組み概要 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label purple">&#128506; 今週の取り組み概要</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card purple">
+    <div class="card-title">
+      <span class="tag sim">目標</span>
+      シミュレーション自律ナビゲーションの段階的構築
+    </div>
+    <div class="card-body">
+      <p>先週確立した GLIM マッピングをベースに、以下のステップでナビゲーションへ進みました。</p>
+      <div class="pipeline" style="margin-top: 14px;">
+        <div class="pipeline-step">
+          <div class="pipeline-num green">1</div>
+          <div class="pipeline-text"><strong>マッピング（先週完了）</strong> — GLIM GPU で 3D 点群地図と Nav2 2D 占有格子地図を生成</div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-num green">2</div>
+          <div class="pipeline-text"><strong>キャリブレーション（今週）</strong> — 仮想・実機双方でオドメトリ精度・速度応答を確認。ナビゲーション前提条件を整備</div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-num green">3</div>
+          <div class="pipeline-text"><strong>自己位置推定（今週）</strong> — FAST-LIO2 + GICP を Isaac Sim に移植し、<span style="font-family:var(--mono);font-size:12px">map → odom</span> TF の安定供給を確認</div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-num green">4</div>
+          <div class="pipeline-text"><strong>Nav2 クローズドループ（今週）</strong> — RViz ゴール → Nav2 プランニング → <span style="font-family:var(--mono);font-size:12px">/cmd_vel</span> → 仮想ロボット移動 → ゴール到達 を初めて確認</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 2: キャリブレーション ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label teal">&#128295; ロボットキャリブレーション</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card teal">
+    <div class="card-title">
+      <span class="tag sim">目的</span>
+      ナビゲーション前のオドメトリ整合性確認
+    </div>
+    <div class="card-body">
+      <p>Nav2 の経路追従精度はオドメトリに依存するため、キャリブレーションでナビゲーション前提条件を整えました。</p>
+      <p style="margin-top:10px;">仮想環境では <span style="font-family:var(--mono);font-size:12px">/wheel_odom</span> を Isaac Graph から直接発布する構成が完成し、コマンドチェーンの整合性を確認しました。</p>
+      <div class="flow-chain" style="margin-top: 12px;">
+        <span class="flow-node purple">/cmd_vel</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node blue">sim_omni_drive_command_node</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node blue">/sim/target_joint_states</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node purple">Isaac ArticulationController</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node green">/wheel_odom</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card teal">
+    <div class="card-title">
+      <span class="tag hw">実機</span>
+      実機キャリブレーション試験 — 目標値と制御信号の乖離を検出
+    </div>
+    <div class="card-body">
+      <p>実機は 6 プロファイル（直行・後進・左右旋転・左右横移）を各 3 試行実施。全体的に制御指令に対して実際の移動量が <strong>70〜80% 程度</strong>にとどまり、かつ横方向偏移が不安定であることを確認しました。</p>
+      <table style="margin-top: 12px;">
+        <thead>
+          <tr><th>プロファイル</th><th>指令値</th><th>実測値（代表）</th><th>乖離</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>直行前進</td><td>3.0 m</td><td>≈ 2.8 m</td><td>−7%・左偏傾向</td></tr>
+          <tr><td>直行前進</td><td>2.0 m</td><td>≈ 1.6 m</td><td>−20%</td></tr>
+          <tr><td>逆方向旋転</td><td>720°</td><td>旋転動作確認</td><td>停止後 ≈ 20 cm / 20° 偏移</td></tr>
+          <tr><td>横移動（左右）</td><td>2.0 m</td><td>ほぼ正確〜一部詰まり</td><td>上偏移 30〜35 mm</td></tr>
+        </tbody>
+      </table>
+      <div class="note amber" style="margin-top: 12px;">
+        &#9888;&#65039; 乖離量・横偏移のばらつきが大きく、純粋な速度スケール問題（固定比率誤差）ではなく機械的な遊びが疑われたため、ハードウェア調査を実施。
+      </div>
+    </div>
+  </div>
+
+  <div class="card red">
+    <div class="card-title">
+      <span class="tag hw">HW</span>
+      原因究明 — 左前輪ハブ部品の損傷を特定
+    </div>
+    <div class="card-body">
+      <p>調査の結果、左前輪のホイールハブ部品（駆動軸とホイールを連結するキー溝部）が損傷しており、<strong>約 15° の遊び角度</strong>が発生していることを確認しました。この遊びが制御信号と実際の車輪動作のズレ・不安定な横偏移の主因です。</p>
+      <div style="margin: 16px 0; display: flex; justify-content: center;">
+        <div style="max-width: 420px; width: 100%; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); box-shadow: var(--sh);">
+          <img src="videos/parts-new.jpg" alt="ホイールハブ部品 新旧比較" style="width: 100%; display: block;" />
+          <div style="padding: 10px 14px; background: var(--surface2); font-size: 12px; color: var(--muted); font-weight: 600;">
+            左：新規加工品　右：損傷した旧部品
+            <span style="display:block; font-size:11px; font-weight:400; margin-top:2px;">旧部品はキー溝中央部が大きく摩耗・破損しており、車輪とシャフトの間に大きな遊びが生じていた</span>
+          </div>
+        </div>
+      </div>
+      <p><strong>対応：</strong>部品を新規加工して再装着。動作は顕著に改善しましたが、現時点でも残留遊び角度が約 <strong>5° 程度</strong>残っており、継続的な調査・対応が必要です。</p>
+      <div class="note amber" style="margin-top: 12px;">
+        &#9888;&#65039; 残留 5° の遊びはナビゲーション精度に影響する可能性があるため、再装着精度の確認および追加対策を検討中。
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 3: 自己位置推定 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label blue">&#128205; 自己位置推定構築</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card blue">
+    <div class="card-title">
+      <span class="tag ros">ROS2</span>
+      FAST-LIO2 + GICP — 仮想環境への移植
+    </div>
+    <div class="card-body">
+      <p>実機と同一の自己位置推定スタックを Isaac Sim へ移植しました。主な変更点は <span style="font-family:var(--mono);font-size:12px">use_sim_time:=true</span> の統一と PointCloud2 → Livox CustomMsg 変換アダプターの追加のみです。</p>
+      <div class="flow-chain" style="margin-top: 12px;">
+        <span class="flow-node purple">/point_cloud<br><small style="font-size:10px">Isaac RTX LiDAR</small></span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node blue">pc2_to_livox_adapter</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node blue">FAST-LIO2</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node green">/fast_lio/odometry</span>
+      </div>
+      <div class="flow-chain" style="margin-top: 8px;">
+        <span class="flow-node blue">GICP ローカライザ</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node green">map → odom TF</span>
+        <span class="flow-arrow">+</span>
+        <span class="flow-node green">/scan</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node purple">Nav2 コストマップ</span>
+      </div>
+      <p style="margin-top: 12px;">有効セッション（<span style="font-family:var(--mono);font-size:12px">sim_nav2_20260611_174946</span>）で <span style="font-family:var(--mono);font-size:12px">/gicp_loc/score ≈ 0.116</span> を確認。<span style="font-family:var(--mono);font-size:12px">map → odom</span> TF が安定供給されていることを検証しました。</p>
+    </div>
+  </div>
+
+  <!-- ── SECTION 4: Nav2 初成功 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label green">&#127881; Nav2 クローズドループ初成功</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title">
+      <span class="tag ok">SUCCESS</span>
+      自律ナビゲーション初クローズドループ達成
+    </div>
+    <div class="card-body">
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div class="stat-val green">0</div>
+          <div class="stat-label">リカバリー回数</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val green">5</div>
+          <div class="stat-label">プランポーズ数</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val purple">0.116</div>
+          <div class="stat-label">GICP スコア</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val green">全 OK</div>
+          <div class="stat-label">lifecycle ノード</div>
+        </div>
+      </div>
+      <p style="margin-top: 14px;">送信ゴール: <span style="font-family:var(--mono);font-size:12px">x=1.365, y=0.106, yaw=0.403</span>（map フレーム）</p>
+      <p>最終 odom: <span style="font-family:var(--mono);font-size:12px">x≈1.49, y≈0.14, yaw≈0.45</span>。ゴール到達後 <span style="font-family:var(--mono);font-size:12px">/cmd_vel</span> がゼロになり、正常停止を確認。</p>
+      <div class="note green" style="margin-top: 12px;">
+        &#9989; controller_server・planner_server・behavior_server・BT navigator・map_server・global/local costmap — 全 lifecycle ノードが active 状態で動作確認済み。
+      </div>
+    </div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title">
+      <span class="tag ros">Chain</span>
+      完全なコマンドチェーン
+    </div>
+    <div class="card-body">
+      <p>実機と同一のコマンドチェーンを維持したまま、仮想環境でエンドツーエンドのナビゲーションを実現しました。</p>
+      <div class="flow-chain" style="margin-top: 12px;">
+        <span class="flow-node amber">RViz ゴール</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node purple">Nav2</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node blue">/nav2/cmd_vel</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node blue">nav_mode_switch</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node blue">safety_layer</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node blue">/cmd_vel</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node green">sim_omni_drive</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node purple">Isaac</span>
+      </div>
+      <p style="margin-top: 10px; font-size: 13px; color: var(--muted);">実機チェーンとの差異は最小。今後、実機テストでも同じスタックをそのまま使用できる設計を維持しています。</p>
+    </div>
+  </div>
+
+  <!-- ── SECTION 5: デモ映像 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label purple">&#127916; デモ映像</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card purple">
+    <div class="card-title">
+      <span class="tag sim">Video</span>
+      Isaac Sim ナビゲーション実行映像
+    </div>
+    <div class="card-body">
+      <p>FAST-LIO2 + GICP 自己位置推定と Nav2 を組み合わせた、仮想環境での自律ナビゲーション動作の様子です。</p>
+      <div class="vid-grid">
+        <div class="vid-card">
+          <video controls preload="metadata">
+            <source src="videos/navigation-isaac.webm" type="video/webm">
+            お使いのブラウザは動画再生に対応していません。
+          </video>
+          <div class="vid-cap">
+            Isaac Sim ナビゲーション動作
+            <small>FAST-LIO2 + GICP 自己位置推定 + Nav2 クローズドループ — 初成功セッション</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 6: 現状と次のステップ ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label amber">&#128680; 現状・残課題・次のステップ</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title">機能状況</div>
+    <div class="card-body">
+      <div class="chip-grid">
+        <span class="chip ok">&#9989; GLIM 3D マップ（先週）</span>
+        <span class="chip ok">&#9989; Nav2 2D 占有格子地図</span>
+        <span class="chip ok">&#9989; 仮想キャリブレーション baseline</span>
+        <span class="chip ok">&#9989; FAST-LIO2 + GICP 自己位置推定</span>
+        <span class="chip ok">&#9989; Nav2 クローズドループ初成功</span>
+        <span class="chip ok">&#9989; 損傷部品の特定・再加工・再装着</span>
+        <span class="chip wip">&#9898; 残留遊び角度 ≈ 5°（継続調査中）</span>
+        <span class="chip wip">&#9898; 複数ゴール・長距離ナビゲーション検証</span>
+        <span class="chip ng">&#10060; 実機でのナビゲーション統合テスト（未実施）</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title">次のステップ</div>
+    <div class="card-body">
+      <ul style="padding-left:16px; line-height:2.1; font-size:14px; color:var(--text2);">
+        <li>左前輪ハブの残留遊び角度（≈ 5°）を調査し、再装着精度の確認および追加対策を実施</li>
+        <li>ハードウェア修復後の実機キャリブレーションを再実施し、motion_scale および横偏移の改善量を定量確認</li>
+        <li>仮想環境でより遠距離・複数ゴールのナビゲーションを繰り返し、経路追従精度とリカバリー動作を検証</li>
+        <li>実機環境での自己位置推定 → Nav2 統合テストへ移行</li>
+        <li>障害物回避（dynamic costmap）の動作確認</li>
+      </ul>
+    </div>
+  </div>
+
+</main>
+
+<script>
+document.querySelectorAll('.nav-btn[data-nav]').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const id = btn.dataset.nav;
+    const drop = document.getElementById('nav-' + id);
+    const isOpen = drop.classList.contains('open');
+    document.querySelectorAll('.nav-drop.open').forEach(d => d.classList.remove('open'));
+    document.querySelectorAll('.nav-btn.nav-open').forEach(b => b.classList.remove('nav-open'));
+    if (!isOpen) { drop.classList.add('open'); btn.classList.add('nav-open'); }
+  });
+});
+document.addEventListener('click', () => {
+  document.querySelectorAll('.nav-drop.open').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.nav-btn.nav-open').forEach(b => b.classList.remove('nav-open'));
+});
+</script>
+</body>
+</html>
