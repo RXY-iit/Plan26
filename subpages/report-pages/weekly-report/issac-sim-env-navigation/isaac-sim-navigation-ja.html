@@ -284,7 +284,7 @@ tr:nth-child(even) td { background: #fafafa; }
 /* Video grid */
 .vid-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 16px; }
 .vid-card { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: #0f172a; box-shadow: var(--sh); }
-.vid-card video { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
+.vid-card video { width: 100%; height: auto; display: block; }
 .vid-cap { padding: 10px 14px; font-size: 12px; font-weight: 600; color: rgba(255,255,255,.75); background: #1e293b; border-top: 1px solid rgba(255,255,255,.06); }
 .vid-cap small { display: block; font-size: 11px; color: rgba(255,255,255,.4); font-weight: 400; margin-top: 2px; }
 
@@ -624,7 +624,227 @@ tr:nth-child(even) td { background: #fafafa; }
     </div>
   </div>
 
-  <!-- ── SECTION 6: 現状と次のステップ ── -->
+  <!-- ── SECTION 6: Nav2 MPPI + Motion Policy 2026-06-15/16 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label blue">&#128197; 2026-06-15/16 追加進捗 — Nav2 MPPI + Motion Policy</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <!-- MPPI 基本概念 -->
+  <div class="card blue">
+    <div class="card-title">
+      <span class="tag sw">MPPI</span>
+      MPPI とは — 全方位ロボットへの適用方針
+    </div>
+    <div class="card-body">
+      <p>MPPI（Model Predictive Path Integral）は多数の軌跡サンプルを並列評価し、コスト最小の速度指令を選ぶ最適化手法です。全方位ロボットは <strong>vx / vy / wz の 3 自由度</strong>を持つため、サンプル分布が偏ると不自然な横移動・急旋転が生じます。</p>
+      <p style="margin-top:10px;">以下の <strong>5 ステップ</strong>で段階的に調整しました。</p>
+      <div style="display:flex;flex-direction:column;gap:0;margin-top:14px;">
+        <div style="display:flex;align-items:flex-start;gap:14px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px 10px 0 0;border-bottom:none;">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--accent-l);border:1px solid var(--accent-m);color:var(--accent);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+          <div style="font-size:13.5px;color:var(--text2);"><strong>速度上限を引き上げる</strong> — vx_max 0.24 m/s、後退 vx_min −0.24 も許可</div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:14px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-bottom:none;">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--accent-l);border:1px solid var(--accent-m);color:var(--accent);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+          <div style="font-size:13.5px;color:var(--text2);"><strong>横移動・角速度のサンプル幅を絞る</strong> — vy_std 0.02、wz_std 0.18 で不要な横移動・急旋転を抑制</div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:14px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-bottom:none;">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--accent-l);border:1px solid var(--accent-m);color:var(--accent);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
+          <div style="font-size:13.5px;color:var(--text2);"><strong>Path alignment / forward preference を強める</strong> — 直進性・前向き姿勢を critic weight で優先</div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:14px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-bottom:none;">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--accent-l);border:1px solid var(--accent-m);color:var(--accent);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">4</div>
+          <div style="font-size:13.5px;color:var(--text2);"><strong>Sim wheel bridge に真機の steering 制限を反映</strong> — ±0.71π、steer rate、drive gating を追加</div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:14px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:0 0 10px 10px;">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--accent-l);border:1px solid var(--accent-m);color:var(--accent);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">5</div>
+          <div style="font-size:13.5px;color:var(--text2);"><strong>AUTO motion policy でコマンドを最終整形</strong> — Nav2 出力を状況に応じて直進寄りに整える上位レイヤーを追加</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- パラメータ表 -->
+  <div class="card blue">
+    <div class="card-title">
+      <span class="tag sw">Params</span>
+      現在の主要 MPPI パラメータ
+    </div>
+    <div class="card-body">
+      <table>
+        <thead><tr><th>パラメータ</th><th>現在値</th><th>意図</th></tr></thead>
+        <tbody>
+          <tr><td>vx_max / vx_min</td><td>0.24 / −0.24</td><td>前進速度を上げ、短距離後退も許可</td></tr>
+          <tr><td>vy_max / vy_min</td><td>0.05 / −0.05</td><td>横移動は残すが控えめ（motion policy で更に絞る）</td></tr>
+          <tr><td>wz_max / wz_min</td><td>0.40 / −0.40</td><td>過剰旋転を抑える</td></tr>
+          <tr><td>vx_std</td><td>0.28</td><td>速度上限に合わせたサンプル幅</td></tr>
+          <tr><td>vy_std</td><td>0.02</td><td>横移動サンプルを最小限に抑制</td></tr>
+          <tr><td>wz_std</td><td>0.18</td><td>急旋転サンプルを抑制</td></tr>
+          <tr><td>ax_max / ax_min</td><td>0.5 / −0.5</td><td>前後加速度</td></tr>
+          <tr><td>ay_max</td><td>0.12</td><td>横加速度を抑える</td></tr>
+          <tr><td>PathAlignCritic.cost_weight</td><td><strong>18.0</strong></td><td>経路追従を強化 → 直進性向上</td></tr>
+          <tr><td>PathAngleCritic.forward_preference</td><td><strong>true</strong></td><td>進行方向への正面整列を優先</td></tr>
+          <tr><td>PathAngleCritic.cost_weight</td><td><strong>1.5</strong></td><td>forward_preference 時の過剰旋転を防止</td></tr>
+          <tr><td>SteeringChangeCritic</td><td style="color:var(--amber);">無効（segfault 調査中）</td><td>ステア角変化コスト — 将来再導入予定</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Motion Policy フローチャート -->
+  <div class="card blue">
+    <div class="card-title">
+      <span class="tag sw">Policy</span>
+      AUTO Motion Policy — 状態遷移フロー
+    </div>
+    <div class="card-body">
+      <p>Nav2 が出力した <span style="font-family:var(--mono);font-size:12px">/nav2/cmd_vel</span> を <span style="font-family:var(--mono);font-size:12px">nav_mode_switch_node</span> が状況に応じて整形してから <span style="font-family:var(--mono);font-size:12px">/cmd_vel_raw</span> へ送ります。MANUAL モードはこのレイヤーをバイパスします。</p>
+
+      <!-- 全体フロー -->
+      <div style="margin:16px 0 10px;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;">全体コマンドフロー</div>
+      <div class="flow-chain">
+        <span class="flow-node amber">RViz ゴール</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node purple">Nav2 MPPI<br><small style="font-size:10px">/nav2/cmd_vel</small></span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node blue">Motion Policy<br><small style="font-size:10px">nav_mode_switch_node</small></span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node blue">/cmd_vel_raw</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node blue">safety layer</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node green">/cmd_vel</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node purple">Isaac</span>
+      </div>
+
+      <!-- 判定フロー -->
+      <div style="margin:20px 0 10px;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;">Policy 状態判定フロー（AUTO 時）</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:0;font-size:12.5px;">
+        <!-- Start -->
+        <div style="background:var(--purple-l);border:1.5px solid rgba(124,58,237,.3);color:var(--purple);border-radius:8px;padding:7px 20px;font-weight:700;">/nav2/cmd_vel 受信</div>
+        <div style="color:var(--muted);font-size:18px;line-height:1.2;">↓</div>
+        <!-- Q1 -->
+        <div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:7px 20px;font-weight:600;color:var(--text2);">ゴールまでの距離 &lt; finish_distance (0.18 m)?</div>
+        <div style="display:flex;gap:40px;align-items:flex-start;margin-top:2px;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+            <div style="color:var(--green);font-size:11px;font-weight:700;">YES</div>
+            <div style="color:var(--muted);font-size:16px;">↓</div>
+            <!-- Q1-yes -->
+            <div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--text2);text-align:center;">yaw 誤差 &gt; finish_yaw_gate (0.45 rad)?</div>
+            <div style="display:flex;gap:20px;margin-top:2px;">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+                <div style="color:var(--green);font-size:10px;font-weight:700;">YES</div>
+                <div style="color:var(--muted);font-size:14px;">↓</div>
+                <div style="background:var(--amber-l);border:1.5px solid rgba(217,119,6,.3);color:var(--amber);border-radius:8px;padding:6px 12px;font-weight:700;font-size:12px;text-align:center;">FINAL_YAW_ALIGN<br><span style="font-size:10px;font-weight:400;">linear.y=0, vx=0</span></div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+                <div style="color:var(--red);font-size:10px;font-weight:700;">NO</div>
+                <div style="color:var(--muted);font-size:14px;">↓</div>
+                <div style="background:var(--green-l);border:1.5px solid rgba(5,150,105,.3);color:var(--green);border-radius:8px;padding:6px 12px;font-weight:700;font-size:12px;text-align:center;">FINAL_APPROACH<br><span style="font-size:10px;font-weight:400;">低速前後移動</span></div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+            <div style="color:var(--red);font-size:11px;font-weight:700;">NO</div>
+            <div style="color:var(--muted);font-size:16px;">↓</div>
+            <!-- Q2 -->
+            <div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--text2);text-align:center;">goal が後方 かつ<br>距離 &lt; reverse_distance (0.55 m)?</div>
+            <div style="display:flex;gap:20px;margin-top:2px;">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+                <div style="color:var(--green);font-size:10px;font-weight:700;">YES</div>
+                <div style="color:var(--muted);font-size:14px;">↓</div>
+                <div style="background:var(--red-l);border:1.5px solid rgba(220,38,38,.2);color:var(--red);border-radius:8px;padding:6px 12px;font-weight:700;font-size:12px;text-align:center;">SHORT_REVERSE<br><span style="font-size:10px;font-weight:400;">linear.x &lt; 0 で後退</span></div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+                <div style="color:var(--red);font-size:10px;font-weight:700;">NO</div>
+                <div style="color:var(--muted);font-size:14px;">↓</div>
+                <!-- Q3 -->
+                <div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;color:var(--text2);text-align:center;">lookahead 方向の<br>yaw 誤差 &gt; align_angle (0.50 rad)?</div>
+                <div style="display:flex;gap:20px;margin-top:2px;">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+                    <div style="color:var(--green);font-size:10px;font-weight:700;">YES</div>
+                    <div style="color:var(--muted);font-size:14px;">↓</div>
+                    <div style="background:var(--purple-l);border:1.5px solid rgba(124,58,237,.2);color:var(--purple);border-radius:8px;padding:6px 12px;font-weight:700;font-size:12px;text-align:center;">ALIGN_THEN_FORWARD<br><span style="font-size:10px;font-weight:400;">先に向き変え → 前進</span></div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+                    <div style="color:var(--red);font-size:10px;font-weight:700;">NO</div>
+                    <div style="color:var(--muted);font-size:14px;">↓</div>
+                    <div style="background:var(--accent-l);border:1.5px solid var(--accent-m);color:var(--accent);border-radius:8px;padding:6px 12px;font-weight:700;font-size:12px;text-align:center;">FORWARD_TRACK<br><span style="font-size:10px;font-weight:400;">通常追従 / linear.y 抑制</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 状態一覧 -->
+      <div style="margin:20px 0 10px;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;">全状態一覧</div>
+      <table>
+        <thead><tr><th>状態</th><th>意味 / 出力</th></tr></thead>
+        <tbody>
+          <tr><td><span style="font-family:var(--mono);font-size:11px;color:var(--accent);">FORWARD_TRACK</span></td><td>通常追従。linear.y を抑え、横成分を少し yaw に変換</td></tr>
+          <tr><td><span style="font-family:var(--mono);font-size:11px;color:var(--purple);">ALIGN_THEN_FORWARD</span></td><td>lookahead 方向が大きく横/後方なら先に向きを変える</td></tr>
+          <tr><td><span style="font-family:var(--mono);font-size:11px;color:var(--red);">SHORT_REVERSE</span></td><td>近距離後方 goal へ直接後退（旋転しない）</td></tr>
+          <tr><td><span style="font-family:var(--mono);font-size:11px;color:var(--amber);">FINAL_YAW_ALIGN</span></td><td>到達直前の姿勢整列。linear.y = vx = 0</td></tr>
+          <tr><td><span style="font-family:var(--mono);font-size:11px;color:var(--green);">FINAL_APPROACH</span></td><td>ゴール直前の低速前後移動</td></tr>
+          <tr><td><span style="font-family:var(--mono);font-size:11px;color:var(--muted);">PASS_THROUGH_*</span></td><td>plan/TF 未取得・policy 無効・例外時。Nav2 命令をそのまま通す</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Sim Wheel Bridge -->
+  <div class="card blue">
+    <div class="card-title">
+      <span class="tag hw">Bridge</span>
+      Sim Wheel Bridge — 真機 Steering 制限の反映
+    </div>
+    <div class="card-body">
+      <p>真機の steering は無限回転ではなく <strong>±0.71π</strong> の範囲で drive 反転を使います。同じ制約を sim に入れることで、Nav2 の小さな速度変化が過大な wheel angle jump に見えるのを防ぎます。</p>
+      <table style="margin-top:12px;">
+        <thead><tr><th>パラメータ</th><th>値</th><th>役割</th></tr></thead>
+        <tbody>
+          <tr><td>steer_angle_limit_rad</td><td>2.231 (0.71π)</td><td>転向角の上限。超えたら drive 反転</td></tr>
+          <tr><td>steer_rate_limit_rad_s</td><td>0.9</td><td>1 tick あたりの最大転向速度。急跳びを防止</td></tr>
+          <tr><td>wheel_speed_deadband_m_s</td><td>0.055</td><td>微小速度では steer 角を保持し drive=0</td></tr>
+          <tr><td>drive_disable_steer_error_rad</td><td>0.25</td><td>転向が整うまで drive=0。整列優先</td></tr>
+        </tbody>
+      </table>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:12px 16px;margin-top:12px;font-size:13px;color:var(--text2);">
+        <strong>調整目安：</strong><br>
+        動き出しが遅い → <span style="font-family:var(--mono);font-size:11px;">drive_disable_steer_error_rad: 0.25 → 0.35</span><br>
+        steer が遅い → <span style="font-family:var(--mono);font-size:11px;">steer_rate_limit_rad_s</span> を少し上げる<br>
+        曲がり切れない → MPPI <span style="font-family:var(--mono);font-size:11px;">wz_max</span> または policy <span style="font-family:var(--mono);font-size:11px;">max_align_wz</span> を戻す
+      </div>
+    </div>
+  </div>
+
+  <!-- Video placeholder -->
+  <div class="card blue">
+    <div class="card-title">
+      <span class="tag sim">Video</span>
+      パラメータ調整後の動作映像
+    </div>
+    <div class="card-body">
+      <div class="vid-grid">
+        <div class="vid-card">
+          <video controls preload="metadata">
+            <source src="videos/sim-navi-modify-1080p-4Mbps.mp4" type="video/mp4">
+            お使いのブラウザは動画再生に対応していません。
+          </video>
+          <div class="vid-cap">
+            パラメータ調整後の動作映像
+            <small>sim-navi-modify-1080p-4Mbps.mp4 — MPPI チューニング結果</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 7: 現状と次のステップ ── -->
   <div class="sec-div">
     <div class="sec-line"></div>
     <div class="sec-label amber">&#128680; 現状・残課題・次のステップ</div>
@@ -641,8 +861,12 @@ tr:nth-child(even) td { background: #fafafa; }
         <span class="chip ok">&#9989; FAST-LIO2 + GICP 自己位置推定</span>
         <span class="chip ok">&#9989; Nav2 クローズドループ初成功</span>
         <span class="chip ok">&#9989; 損傷部品の特定・再加工・再装着</span>
+        <span class="chip ok">&#9989; MPPI パラメータ調整（vx/vy/wz/critic）</span>
+        <span class="chip ok">&#9989; AUTO Motion Policy（5状態）</span>
+        <span class="chip ok">&#9989; Sim Wheel Bridge 真機制限反映</span>
         <span class="chip wip">&#9898; 残留遊び角度 ≈ 5°（継続調査中）</span>
-        <span class="chip wip">&#9898; 複数ゴール・長距離ナビゲーション検証</span>
+        <span class="chip wip">&#9898; SteeringChangeCritic（segfault 調査中）</span>
+        <span class="chip wip">&#9898; 検証動画（追加予定）</span>
         <span class="chip ng">&#10060; 実機でのナビゲーション統合テスト（未実施）</span>
       </div>
     </div>

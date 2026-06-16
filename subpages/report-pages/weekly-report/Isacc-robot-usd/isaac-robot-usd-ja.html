@@ -269,7 +269,7 @@ tr:nth-child(even) td { background: var(--surface2); }
   box-shadow: var(--sh);
 }
 .vid-card video {
-  width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block;
+  width: 100%; height: auto; display: block;
 }
 .vid-cap {
   padding: 10px 14px; font-size: 12px; font-weight: 600;
@@ -368,7 +368,7 @@ tr:nth-child(even) td { background: var(--surface2); }
       物理シミュレーション用 USD の構造・動作原理と、Joy-Con コントローラによるロボット操作の開発状況を共有します。
     </p>
     <div class="hero-meta">
-      <span class="meta-chip">&#128197; 2026-06</span>
+      <span class="meta-chip">&#128197; 2026-06 / 更新 2026-06-15</span>
       <span class="meta-chip">&#127981; Isaac Sim 5.0</span>
       <span class="meta-chip">&#129302; ROS2</span>
       <span class="meta-chip">&#127918; Joy-Con 制御</span>
@@ -387,6 +387,7 @@ tr:nth-child(even) td { background: var(--surface2); }
       <li>ROS2 ActionGraph により <code class="inline-code">/joint_states</code> の発信・受信が実現</li>
       <li>Joy-Con 入力 → 速度指令 → 三輪逆運動学 → Isaac 関節制御の完全なチェーンを構築</li>
       <li>RTX LiDAR（MID360）は USD クラッシュを避けるためスクリプトで動的に生成</li>
+      <li>【2026-06-15 追加】カメラホルダー・アームホルダー（アクチュエーター）を Isaac Sim モデルへ統合</li>
     </ul>
   </div>
 
@@ -685,7 +686,79 @@ tr:nth-child(even) td { background: var(--surface2); }
     </div>
   </div>
 
-  <!-- ── SECTION 8: まとめ・今後 ── -->
+  <!-- ── SECTION 8: 最新追加 2026-06-15 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label green">&#128197; 2026-06-15 追加進捗 — カメラ・アームホルダー統合</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title">
+      <span class="tag sim">USD</span>
+      robot_sim_physics.usd — 追加 Prim 構造
+    </div>
+    <div class="card-body">
+      <p><span style="font-family:var(--mono);font-size:12px">base_footprint</span> 配下に以下の関節・リンクを追加しました。カメラホルダーとアームベース（リフト）は独立した関節として実装されています。</p>
+      <div class="tree" style="margin-top: 12px;">
+        <div><span class="hl">base_footprint</span> (ArticulationRoot)</div>
+        <div>  ├─ <span class="hl2">lift_joint</span>         <span class="comment">PhysicsPrismaticJoint  Z軸  0.0 – 0.3 m  (アームベース底座)</span></div>
+        <div>  │    └─ <span class="hl2">lift_link</span>        <span class="comment">RigidBody 1.5 kg</span></div>
+        <div>  ├─ <span class="hl3">camera_pan_joint</span>   <span class="comment">PhysicsRevoluteJoint   Z軸  ±90°</span></div>
+        <div>  │    └─ <span class="hl3">camera_pan_link</span></div>
+        <div>  │         └─ <span class="hl3">camera_swing_joint</span>  <span class="comment">PhysicsRevoluteJoint  Y軸  ±45°</span></div>
+        <div>  │               └─ <span class="hl3">camera_swing_link</span></div>
+        <div>  │                    └─ <span class="hl2">d455_sensor</span>  <span class="comment">(rsd455.usd — camera publisher ターゲット)</span></div>
+      </div>
+      <p style="margin-top: 12px; font-size: 13px; color: var(--muted);">
+        旧 <span style="font-family:var(--mono);font-size:12px">camera_bottom_screw_frame/camera_link</span> は TF 参照フレームとして残存。D455 sensor の実体は <span style="font-family:var(--mono);font-size:12px">camera_swing_link/d455_sensor</span> に移行。
+      </p>
+    </div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title">
+      <span class="tag sw">Node</span>
+      sim_lift_command_node.py — 実機・仮想共用ブリッジ
+    </div>
+    <div class="card-body">
+      <p>アーム・カメラ制御を仮想環境で動かすための新規 ROS2 ノードを追加しました。実機側のジョイ入力ノードはそのまま共用できます。</p>
+      <table style="margin-top: 10px;">
+        <thead><tr><th>ノード</th><th>入力 topic</th><th>仮想での扱い</th></tr></thead>
+        <tbody>
+          <tr><td>lift_joy_node</td><td>/lift/command</td><td>そのまま共用</td></tr>
+          <tr><td>camera_motor_joy_node</td><td>/chokudomotor/target_angle<br>/cameraswingmotor/target_angle</td><td>そのまま共用</td></tr>
+          <tr><td><strong>sim_lift_command_node</strong>（新規）</td><td>上記2 topic</td><td>→ /sim/arm_joint_states として Isaac へ転送</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top: 10px; font-size: 13px; color: var(--muted);">
+        アーム指令はホイール指令（<span style="font-family:var(--mono);font-size:12px">/sim/target_joint_states</span>）と topic を分離。ホイールが 60 Hz で送信するためアーム指令が上書きされるのを防ぐ設計です。
+      </p>
+    </div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title">
+      <span class="tag sim">Video</span>
+      モデル確認映像
+    </div>
+    <div class="card-body">
+      <div class="vid-grid" style="grid-template-columns: 1fr;">
+        <div class="vid-card">
+          <video controls preload="metadata">
+            <source src="lift-camera-holder-motor.mp4" type="video/webm">
+            お使いのブラウザは動画の再生に対応していません。
+          </video>
+          <div class="vid-cap">
+            カメラホルダー・アームホルダー追加後のモデル
+            <small>lift-camera-holder-motor.webm — lift_joint / camera_pan / camera_swing を含む USD モデルの確認映像</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 9: まとめ・今後 ── -->
   <div class="sec-div">
     <div class="sec-line"></div>
     <div class="sec-label amber">&#128680; 現状と今後の課題</div>
@@ -703,36 +776,11 @@ tr:nth-child(even) td { background: var(--surface2); }
         <span class="chip">&#9989; Joy-Con 操作チェーン</span>
         <span class="chip">&#9989; ROS2 topic ブリッジ</span>
         <span class="chip">&#9989; 三輪逆運動学</span>
-        <span class="chip">&#128308; D455 カメラ（表示のみ）</span>
-        <span class="chip">&#128308; MID360 LiDAR（スクリプト起動）</span>
+        <span class="chip">&#9989; カメラホルダー統合（2026-06-15）</span>
+        <span class="chip">&#9989; アームホルダー統合（2026-06-15）</span>
+        <span class="chip">&#9989; D455 カメラ（スクリプト起動）</span>
+        <span class="chip">&#9989; MID360 LiDAR（スクリプト起動）</span>
       </div>
-    </div>
-  </div>
-
-  <div class="card amber">
-    <div class="card-title">
-      <span class="tag hw">Next</span>
-      今後の開発イメージ
-    </div>
-    <div class="card-body">
-      <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:8px;">
-        <li style="display:flex; gap:10px; font-size:14px; color:var(--text2);">
-          <span style="color:var(--amber); font-weight:800; flex-shrink:0;">→</span>
-          D455 カメラ ROS2 publish の有効化（深度・RGB ストリーム）
-        </li>
-        <li style="display:flex; gap:10px; font-size:14px; color:var(--text2);">
-          <span style="color:var(--amber); font-weight:800; flex-shrink:0;">→</span>
-          MID360 RTX LiDAR の安定した起動フローの整備
-        </li>
-        <li style="display:flex; gap:10px; font-size:14px; color:var(--text2);">
-          <span style="color:var(--amber); font-weight:800; flex-shrink:0;">→</span>
-          Nav2 との統合（シミュレーション環境での自律移動テスト）
-        </li>
-        <li style="display:flex; gap:10px; font-size:14px; color:var(--text2);">
-          <span style="color:var(--amber); font-weight:800; flex-shrink:0;">→</span>
-          真機との同一 launch ファイル統合
-        </li>
-      </ul>
     </div>
   </div>
 
