@@ -344,7 +344,7 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
   margin: 28px 0 0; transition: opacity .15s;
 }
 .phase-toggle.ph0 { background: var(--green-l); color: var(--green); border: 1px solid rgba(5,150,105,.25); }
-.phase-toggle.ph1 { background: linear-gradient(135deg,var(--accent-l),var(--green-l)); color: var(--accent); border: 1px solid var(--accent-m); }
+.phase-toggle.ph1 { background: linear-gradient(135deg,var(--accent-l),var(--green-l)); color: var(--green); border: 1px solid var(--accent-m); }
 .phase-toggle.ph2 { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.25); }
 .phase-toggle.ph3 { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.25); }
 .phase-toggle.future { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
@@ -409,7 +409,7 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
 
 <div class="page-hero">
   <div class="hero-inner">
-    <div class="hero-tag">Phase 0 → 1 進行中</div>
+    <div class="hero-tag">Phase 0 → 4 進行中</div>
     <h1>📋 Todo List</h1>
     <p class="hero-desc">タスクの完了状態は Markdown ファイルを編集して管理します。このページは閲覧専用です。</p>
     <div class="stats-row">
@@ -534,11 +534,6 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
           <span style="color:var(--green);font-weight:700;flex-shrink:0;">✅</span>
           <span>Isaac Sim シミュレーション環境でも同等のナビゲーションが動作可能</span>
           <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag sw">Software</span><span class="tag new">New</span></div>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
-          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
-          <span>LLM 基礎実装：自然言語コマンドで移動 / アーム操作をトリガー可能</span>
-          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag sw">Software</span><span class="tag ai">AI/LLM</span></div>
         </div>
       </div>
     </div>
@@ -769,12 +764,12 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
   </div><!-- /phase-ph0 -->
 
   <!-- ── Phase 1 collapsible ── -->
-  <button class="phase-toggle ph1 open" data-phase="ph1" id="toggle-ph1">
-    🔹 Phase 1 — 自律移動（進行中）
+  <button class="phase-toggle ph1" data-phase="ph1" id="toggle-ph1">
+    ✅ Phase 1 — 完了済み
     <div class="pt-sep"></div>
     <span class="pt-arrow">▾</span>
   </button>
-  <div class="phase-content open" id="phase-ph1">
+  <div class="phase-content" id="phase-ph1">
 
   <div class="phase-sub-label" style="margin-top:20px;">ハードウェア整備・Navigation 準備（〜 2026-05-10）</div>
 
@@ -950,32 +945,6 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
         <a class="log-link" href="#" onclick="event.preventDefault(); openImgModal('media/new-camera-holder2.png','📷 新カメラホールダー2')">📷 新カメラホールダー</a>
         <a class="log-link" href="#" onclick="event.preventDefault(); openImgModal('media/camera-visiable-range.png','📷 カメラ可視範囲（調整後）')">📷 可視範囲</a>
         <a class="log-link" href="#" onclick="event.preventDefault(); openImgModal('media/match-mid360-camera.png','📷 LiDAR・カメラ検出一致確認')">📷 LiDAR/Camera 一致</a>
-      </div>
-    </div>
-  </div>
-
-
-  <div class="todo-item">
-    <div class="todo-cb"></div>
-    <div class="todo-body">
-      <div class="todo-text">簡易環境認識ノード（Phase 2 準備）</div>
-      <div class="todo-note">点群前処理ノード（任意先行実装）：前方障害物距離・通路幅・free space 推定・JSON 構造化データ出力</div>
-      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
-      <div class="todo-date">更新: 2026-04-16</div>
-    </div>
-  </div>
-
-    <!-- 8. LLM システム実装 -->
-  <div class="todo-item">
-    <div class="todo-cb"></div>
-    <div class="todo-body">
-      <div class="todo-text">LLM システム実装</div>
-      <div class="todo-note">GPT / Claude API をロボットに接続し、自然言語コマンドによる基礎的な移動・操作の制御を初期実験</div>
-      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai">AI / LLM</span></div>
-      <div class="todo-date">更新: 2026-04-13</div>
-      <div class="sub-items">
-        <div class="sub-item"><div class="sub-cb"></div><span>テキストコマンド制御 UI の実装（デモ選択・実行）</span></div>
-        <div class="sub-item"><div class="sub-cb"></div><span>自然言語指令でデモを個別トリガーできることを確認</span></div>
       </div>
     </div>
   </div>

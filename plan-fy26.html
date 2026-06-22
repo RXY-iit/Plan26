@@ -654,7 +654,7 @@ footer strong { color: rgba(255,255,255,.9); }
       </p>
       <div class="hero-stats">
         <div class="stat-card">
-          <div class="stat-value" style="color:var(--accent)">Ph.0</div>
+          <div class="stat-value" style="color:var(--accent)">Ph.2</div>
           <div class="stat-label">現在のフェーズ</div>
         </div>
         <div class="stat-card">
@@ -675,7 +675,7 @@ footer strong { color: rgba(255,255,255,.9); }
           <circle class="ring-fill" id="mainRing" cx="80" cy="80" r="70"/>
         </svg>
         <div class="ring-label">
-          <div class="ring-pct" id="ringPct">8%</div>
+          <div class="ring-pct" id="ringPct">5%</div>
           <div class="ring-sub">全体進捗</div>
         </div>
       </div>
@@ -683,13 +683,13 @@ footer strong { color: rgba(255,255,255,.9); }
       <div class="phase-mini-list">
         <div class="phase-mini">
           <span class="phase-mini-label" style="color:var(--accent);font-weight:700;">Phase 0</span>
-          <div class="phase-mini-bar"><div class="phase-mini-fill" style="width:0%;background:var(--accent)" data-pct="75"></div></div>
-          <span class="phase-mini-pct" style="color:var(--accent);font-weight:700;">75%</span>
+          <div class="phase-mini-bar"><div class="phase-mini-fill" style="width:0%;background:var(--accent)" data-pct="100"></div></div>
+          <span class="phase-mini-pct" style="color:var(--accent);font-weight:700;">100%</span>
         </div>
         <div class="phase-mini">
-          <span class="phase-mini-label">Phase 1</span>
-          <div class="phase-mini-bar"><div class="phase-mini-fill" style="width:0%;background:var(--border2)" data-pct="0"></div></div>
-          <span class="phase-mini-pct">0%</span>
+          <span class="phase-mini-label" style="color:var(--accent);font-weight:700;">Phase 1</span>
+          <div class="phase-mini-bar"><div class="phase-mini-fill" style="width:0%;background:var(--accent)" data-pct="100"></div></div>
+          <span class="phase-mini-pct" style="color:var(--accent);font-weight:700;">100%</span>
         </div>
         <div class="phase-mini">
           <span class="phase-mini-label">Phase 2</span>
@@ -704,10 +704,10 @@ footer strong { color: rgba(255,255,255,.9); }
       </div>
 
       <div style="margin-top:14px;padding:8px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px;">📊 todo.html から計算</div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px;">進捗ページ から計算</div>
         <div style="font-size:11px;color:var(--text2);line-height:1.7;">
-          Ph0: 7/9 タスク完了（LLM・上下機構 未着手）<br>
-          Ph1–9: 準備中
+          Ph0-1: ロボット基盤の安定化&自律移動<br>
+          Ph2–9: Harness System の開発 進行中<br>
         </div>
       </div>
     </div>
@@ -831,7 +831,7 @@ footer strong { color: rgba(255,255,255,.9); }
             <span style="color:var(--accent);font-weight:800;">L1</span> <span style="font-size:10px;color:var(--accent);">Ph1 移動+Sim</span>
           </div>
           <div class="gantt-cell"></div>
-          <div class="gantt-cell" style="background:rgba(37,99,235,.55);border-radius:4px;" data-level="l1" data-tip="Ph1 A→B 自律移動&#10;SLAM + Nav2 実機・Isaac Sim 両対応"></div>
+          <div class="gantt-cell" style="background:rgba(37,99,235,.55);border-radius:4px;" data-level="l1" data-tip="Ph1 A→B 自律移動（実機・Sim）&#10;SLAM + Nav2 実機・Isaac Sim 両対応"></div>
           <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
 
           <!-- L2 Harness中層 band -->
@@ -974,7 +974,7 @@ footer strong { color: rgba(255,255,255,.9); }
           <div class="phase-name">Ph0 — ロボット基盤の安定化</div>
           <div class="phase-tags" style="display:flex;gap:4px;margin-left:8px;">
             <span style="font-size:10px;font-weight:700;background:var(--accent-l);color:var(--accent);border:1px solid var(--accent-m);padding:1px 6px;border-radius:4px;">L1</span>
-            <span style="font-size:10px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);padding:1px 6px;border-radius:4px;">進行中</span>
+            <span style="font-size:10px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);padding:1px 6px;border-radius:4px;">完了</span>
           </div>
           <div class="phase-pct" style="color:var(--accent);font-weight:700;">100%</div>
           <div class="phase-bar-wrap" style="flex:1;max-width:80px;height:4px;background:var(--surface2);border-radius:2px;margin:0 10px;">
@@ -1003,14 +1003,14 @@ footer strong { color: rgba(255,255,255,.9); }
       <div class="phase-item" onclick="togglePhase(this)" style="border-left:3px solid var(--accent);">
         <div class="phase-summary">
           <span class="phase-dot" style="background:var(--border2)"></span>
-          <div class="phase-name">Ph1 — A→B 自律移動</div>
+          <div class="phase-name">Ph1 — A→B 自律移動（実機・Sim）</div>
           <div class="phase-tags" style="display:flex;gap:4px;margin-left:8px;">
             <span style="font-size:10px;font-weight:700;background:var(--accent-l);color:var(--accent);border:1px solid var(--accent-m);padding:1px 6px;border-radius:4px;">L1</span>
-            <span style="font-size:10px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);padding:1px 6px;border-radius:4px;">進行中</span>
+            <span style="font-size:10px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);padding:1px 6px;border-radius:4px;">完了</span>
           </div>
-          <div class="phase-pct" style="color:var(--accent);font-weight:700;">67%</div>
+          <div class="phase-pct" style="color:var(--accent);font-weight:700;">100%</div>
           <div class="phase-bar-wrap" style="flex:1;max-width:80px;height:4px;background:var(--surface2);border-radius:2px;margin:0 10px;">
-            <div style="width:67%;height:100%;background:var(--accent);border-radius:2px;"></div>
+            <div style="width:100%;height:100%;background:var(--accent);border-radius:2px;"></div>
           </div>
           <span class="phase-chevron">▾</span>
         </div>
@@ -1026,9 +1026,8 @@ footer strong { color: rgba(255,255,255,.9); }
         <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);">✅ Nav2 設定</span>
         <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);">✅ ナビテスト</span>
             </div>
-        <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 安定性チューニング</span>
-        <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Isaac Sim シミュレーション環境構築</span>
-        <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 LLM システム実装 (Ph1へ統合)</span>
+        <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);">✅ 安定性チューニング</span>
+        <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);">✅ Isaac Sim シミュレーション環境構築</span>
             </div>
           </div>
         </div>
@@ -1041,6 +1040,7 @@ footer strong { color: rgba(255,255,255,.9); }
             <div class="phase-name">Ph2 — Skill Layer 構築</div>
             <div class="phase-tags" style="display:flex;gap:4px;margin-left:8px;">
               <span style="font-size:10px;font-weight:700;background:var(--amber-l);color:var(--amber);border:1px solid rgba(217,119,6,.2);padding:1px 6px;border-radius:4px;">L2</span>
+                          <span style="font-size:10px;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);padding:1px 6px;border-radius:4px;">進行中</span>
             </div>
             <div class="phase-pct">0%</div>
             <div class="phase-bar-wrap" style="flex:1;max-width:80px;height:4px;background:var(--surface2);border-radius:2px;margin:0 10px;">
