@@ -842,40 +842,45 @@ footer strong { color: rgba(255,255,255,.9); }
           <div class="gantt-cell" style="background:rgba(217,119,6,.7);border-radius:4px;" data-level="l2" data-tip="Ph2 Skill Layer 構築&#10;Nav・Arm を同一 API で AI Tool Call 可能"></div>
           <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
 
-          <div class="gantt-label" style="border-left:3px solid var(--amber);" title="L2 Harness | Agent Core | 目標: Always-on Harness + Cron巡回 + Heartbeat監視">
-            <span style="color:var(--amber);font-weight:800;">L2</span> <span style="font-size:10px;color:var(--amber);">Ph3 Agent Core</span>
+          <div class="gantt-label" style="border-left:3px solid var(--amber);" title="L2 Harness | Agent v1 | 目標: Mission+Navigation+Vision Agent による最小タスクループ確立">
+            <span style="color:var(--amber);font-weight:800;">L2</span> <span style="font-size:10px;color:var(--amber);">Ph3 Agent v1</span>
           </div>
           <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
-          <div class="gantt-cell" style="background:rgba(217,119,6,.7);border-radius:4px;" data-level="l2" data-tip="Ph3 Agent Core 起動&#10;Always-on Harness + Cron + Heartbeat"></div>
+          <div class="gantt-cell" style="background:rgba(217,119,6,.7);border-radius:4px;" data-level="l2" data-tip="Ph3 Agent v1 起動&#10;Mission+Navigation+Vision Agent で最小ループ確立"></div>
           <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
 
-          <div class="gantt-label" style="border-left:3px solid var(--amber);" title="L2 Harness | Memory + Perception | 目標: 文脈指示に対応 / Agent が Memory + VLM を Tool Call">
-            <span style="color:var(--amber);font-weight:800;">L2</span> <span style="font-size:10px;color:var(--amber);">Ph4 Memory+VLM</span>
+          <div class="gantt-label" style="border-left:3px solid var(--amber);" title="L2 Harness | Recovery Agent | 目標: 失敗検知・自動リプランニングでタスク継続">
+            <span style="color:var(--amber);font-weight:800;">L2</span> <span style="font-size:10px;color:var(--amber);">Ph4 Recovery Agent</span>
           </div>
           <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
-          <div class="gantt-cell" style="background:rgba(217,119,6,.7);border-radius:4px;" data-level="l2" data-tip="Ph4 Memory + VLM 統合&#10;RAG/Vector DB + 文脈指示対応"></div>
+          <div class="gantt-cell" style="background:rgba(217,119,6,.7);border-radius:4px;" data-level="l2" data-tip="Ph4 Recovery Agent 実装&#10;MoveTo/SearchObject 失敗時の自動リプランニング"></div>
           <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
 
-          <div class="gantt-label" style="border-left:3px solid var(--amber);" title="L2 Harness | Motion Intelligence | 目標: VLA/RL/π0 を Skill API 経由で呼び出し / Isaac Lab">
-            <span style="color:var(--amber);font-weight:800;">L2</span> <span style="font-size:10px;color:var(--amber);">Ph5 VLA・RL・π0</span>
+          <div class="gantt-label" style="border-left:3px solid var(--amber);" title="L2 Harness | Manipulation Agent | 目標: Isaac Sim 先行で Arm Pick&amp;Place、その後実機接続">
+            <span style="color:var(--amber);font-weight:800;">L2</span> <span style="font-size:10px;color:var(--amber);">Ph5 Manipulation Agent</span>
           </div>
           <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
-          <div class="gantt-cell" style="background:rgba(217,119,6,.7);border-radius:4px;" data-level="l2" data-tip="Ph5 VLA・RL・π0 統合&#10;Skill API 経由でモーション AI 呼び出し"></div>
+          <div class="gantt-cell" style="background:rgba(217,119,6,.7);border-radius:4px;" data-level="l2" data-tip="Ph5 Manipulation Agent 統合&#10;Isaac Sim Only → 実機アーム接続・Pick&amp;Place"></div>
           <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
 
           <!-- L3 高階 band -->
-          <div class="gantt-label" style="border-left:3px solid var(--purple);" title="L3 高階 | Digital Twin | 目標: Isaac Sim フルシステム再現 + Sim-to-Real検証">
-            <span style="color:var(--purple);font-weight:800;">L3</span> <span style="font-size:10px;color:var(--purple);">Ph6 Digital Twin</span>
+          <div class="gantt-label" style="border-left:3px solid var(--purple);" title="L3 高階 | Memory + World Model | 目標: 過去タスク・環境状態を記憶し長期運用を支える">
+            <span style="color:var(--purple);font-weight:800;">L3</span> <span style="font-size:10px;color:var(--purple);">Ph6 Memory+World</span>
           </div>
           <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
-          <div class="gantt-cell" style="background:rgba(124,58,237,.6);border-radius:4px;" data-level="l3" data-tip="Ph6 Digital Twin&#10;Isaac Sim フルシステム再現・Sim2Real 検証"></div>
+          <div class="gantt-cell" style="background:rgba(124,58,237,.6);border-radius:4px;" data-level="l3" data-tip="Ph6 Memory + World Model&#10;Episodic Memory・長期運用対応"></div>
           <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
 
-          <div class="gantt-label" style="border-left:3px solid var(--purple);" title="L3 高階 | Multi-Agent + Self-Check | 目標: 自律停止しないHarness / 人とインタラクション">
-            <span style="color:var(--purple);font-weight:800;">L3</span> <span style="font-size:10px;color:var(--purple);">Ph7 Self-Check・MA</span>
+          <div class="gantt-label" style="border-left:3px solid var(--purple);" title="L3 高階 | Digital Twin（横断的） | 目標: Real⇄Sim⇄Mission State⇄Environment State を Ph2–7 全期間で同期・検証">
+            <span style="color:var(--purple);font-weight:800;">L3</span> <span style="font-size:10px;color:var(--purple);">Ph7 Digital Twin</span>
           </div>
-          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
-          <div class="gantt-cell" style="background:rgba(124,58,237,.6);border-radius:4px;" data-level="l3" data-tip="Ph7 Multi-Agent + Self-Check&#10;自律停止しない Harness・Human-in-the-loop"></div>
+          <div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-cell" style="background:rgba(124,58,237,.32);border-radius:4px;border:1px dashed rgba(124,58,237,.55);" data-level="l3" data-tip="Ph7 Digital Twin（横断的）&#10;Real⇄Sim⇄Mission State⇄Environment State を Ph2–7 全体で検証"></div>
+          <div class="gantt-cell" style="background:rgba(124,58,237,.32);border-radius:4px;border:1px dashed rgba(124,58,237,.55);" data-level="l3" data-tip="Ph7 Digital Twin（横断的）&#10;Real⇄Sim⇄Mission State⇄Environment State を Ph2–7 全体で検証"></div>
+          <div class="gantt-cell" style="background:rgba(124,58,237,.32);border-radius:4px;border:1px dashed rgba(124,58,237,.55);" data-level="l3" data-tip="Ph7 Digital Twin（横断的）&#10;Real⇄Sim⇄Mission State⇄Environment State を Ph2–7 全体で検証"></div>
+          <div class="gantt-cell" style="background:rgba(124,58,237,.32);border-radius:4px;border:1px dashed rgba(124,58,237,.55);" data-level="l3" data-tip="Ph7 Digital Twin（横断的）&#10;Real⇄Sim⇄Mission State⇄Environment State を Ph2–7 全体で検証"></div>
+          <div class="gantt-cell" style="background:rgba(124,58,237,.32);border-radius:4px;border:1px dashed rgba(124,58,237,.55);" data-level="l3" data-tip="Ph7 Digital Twin（横断的）&#10;Real⇄Sim⇄Mission State⇄Environment State を Ph2–7 全体で検証"></div>
+          <div class="gantt-cell" style="background:rgba(124,58,237,.32);border-radius:4px;border:1px dashed rgba(124,58,237,.55);" data-level="l3" data-tip="Ph7 Digital Twin（横断的）&#10;Real⇄Sim⇄Mission State⇄Environment State を Ph2–7 全体で検証"></div>
           <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
 
           <div class="gantt-label" style="border-left:3px solid var(--purple);" title="L3 高階 | デモ完成 DDL: Dec 2026 | 目標: 全Level 1-3シナリオ実証完了">
@@ -901,23 +906,23 @@ footer strong { color: rgba(255,255,255,.9); }
           <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
 
           <!-- Row 2: 検証&RL環境 (L2 aligned Ph2–5) -->
-          <div class="gantt-label" style="border-left:3px solid rgba(6,182,212,.7);" title="Sim 検証&RL — Skill/Agent/Memory Sim 検証・Isaac Lab 強化学習">
+          <div class="gantt-label" style="border-left:3px solid rgba(6,182,212,.7);" title="Sim 検証&RL — Skill/Agent/Recovery Sim 検証・Manipulation Sim 訓練">
             <span style="color:#0891b2;font-weight:800;font-size:11px;">Sim</span><span style="font-size:9px;color:#0891b2;margin-left:3px;">検証&amp;RL</span>
           </div>
           <div class="gantt-cell"></div><div class="gantt-cell"></div>
           <div class="gantt-cell" style="background:rgba(6,182,212,.5);border-radius:4px;" data-level="sim" data-tip="検証&RL環境 Ph2&#10;Skill 動作 Sim 検証"></div>
-          <div class="gantt-cell" style="background:rgba(6,182,212,.5);border-radius:4px;" data-level="sim" data-tip="検証&RL環境 Ph3&#10;Agent Sim 検証"></div>
-          <div class="gantt-cell" style="background:rgba(6,182,212,.5);border-radius:4px;" data-level="sim" data-tip="検証&RL環境 Ph4&#10;Memory + VLM Sim 検証"></div>
-          <div class="gantt-cell" style="background:rgba(6,182,212,.55);border-radius:4px;" data-level="sim" data-tip="検証&RL環境 Ph5&#10;Isaac Lab 強化学習"></div>
+          <div class="gantt-cell" style="background:rgba(6,182,212,.5);border-radius:4px;" data-level="sim" data-tip="検証&RL環境 Ph3&#10;Agent v1 Sim 検証"></div>
+          <div class="gantt-cell" style="background:rgba(6,182,212,.5);border-radius:4px;" data-level="sim" data-tip="検証&RL環境 Ph4&#10;Recovery Agent Sim 検証"></div>
+          <div class="gantt-cell" style="background:rgba(6,182,212,.55);border-radius:4px;" data-level="sim" data-tip="検証&RL環境 Ph5&#10;Manipulation Agent Sim 訓練（Isaac Sim Pick&amp;Place）"></div>
           <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
 
           <!-- Row 3: Sim2Real (L3 aligned Ph6–8) -->
-          <div class="gantt-label" style="border-left:3px solid rgba(6,182,212,.7);" title="Sim2Real — Digital Twin 確立・L3 シナリオ Sim 検証・デモ両検証">
+          <div class="gantt-label" style="border-left:3px solid rgba(6,182,212,.7);" title="Sim2Real — Memory運用検証・Digital Twin同期・デモ両検証">
             <span style="color:#0891b2;font-weight:800;font-size:11px;">Sim</span><span style="font-size:9px;color:#0891b2;margin-left:3px;">2Real</span>
           </div>
           <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
-          <div class="gantt-cell" style="background:rgba(6,182,212,.6);border-radius:4px;" data-level="sim" data-tip="Sim2Real Ph6&#10;Digital Twin 確立・高度 Sim 事前検証"></div>
-          <div class="gantt-cell" style="background:rgba(6,182,212,.6);border-radius:4px;" data-level="sim" data-tip="Sim2Real Ph7&#10;L3 シナリオ Sim 検証"></div>
+          <div class="gantt-cell" style="background:rgba(6,182,212,.6);border-radius:4px;" data-level="sim" data-tip="Sim2Real Ph6&#10;Memory + World Model 長期運用 Sim 検証"></div>
+          <div class="gantt-cell" style="background:rgba(6,182,212,.6);border-radius:4px;" data-level="sim" data-tip="Sim2Real Ph7&#10;Digital Twin（横断的）Real⇄Sim 同期検証"></div>
           <div class="gantt-cell" style="background:rgba(6,182,212,.6);border-radius:4px;" data-level="sim" data-tip="Sim2Real Ph8&#10;デモ Sim/実機 両検証"></div>
           <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
         </div>
@@ -1045,13 +1050,14 @@ footer strong { color: rgba(255,255,255,.9); }
           </div>
           <div class="phase-detail">
             <div class="phase-detail-inner">
-              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: Nav・Arm を同一 API で AI Tool Call 可能にする Skill Layer 完成。</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: Nav・Arm を統一 SkillResult で AI が Tool Call 可能にする基礎 Skill 群を実装する。</div>
               <div class="phase-tasks">
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Skill API 設計</span>
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Nav Skill 実装</span>
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Arm Skill 実装</span>
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 LLM Tool Call 統合</span>
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 MCP インターフェース</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Skill Registry</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 SkillResult統一(confidence/success)</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 MoveToSkill→Nav2</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 DetectObjectSkill(mock→YOLO/VLM)</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 LookAroundSkill / ReportSkill</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Sim+実機 両対応</span>
               </div>
             </div>
           </div>
@@ -1061,7 +1067,7 @@ footer strong { color: rgba(255,255,255,.9); }
         <div class="phase-item" onclick="togglePhase(this)" style="border-left:3px solid var(--amber);">
           <div class="phase-summary">
             <span class="phase-dot" style="background:var(--border2)"></span>
-            <div class="phase-name">Ph3 — Planner Agent + Memory</div>
+            <div class="phase-name">Ph3 — Agent v1（Mission+Navigation+Vision）</div>
             <div class="phase-tags" style="display:flex;gap:4px;margin-left:8px;">
               <span style="font-size:10px;font-weight:700;background:var(--amber-l);color:var(--amber);border:1px solid rgba(217,119,6,.2);padding:1px 6px;border-radius:4px;">L2</span>
             </div>
@@ -1073,13 +1079,12 @@ footer strong { color: rgba(255,255,255,.9); }
           </div>
           <div class="phase-detail">
             <div class="phase-detail-inner">
-              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: 目標だけ与えれば手順を自律構成・実行する Planner Agent + Memory システム。</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: 自然言語タスクを MissionAgent が plan に変換し、Skill を順次呼び出して完了まで自律実行する最小ループを確立する。</div>
               <div class="phase-tasks">
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Planner Agent 設計</span>
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Episodic Memory 実装</span>
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Vector DB 統合</span>
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Cron / Heartbeat</span>
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 マルチステップ実行テスト</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 MissionAgent(State/Rule/Planner/Dispatcher)</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 llm_plan() 一回呼び出し</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Nav/Vision Agent 内部モジュール化</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 最小タスク実行テスト</span>
               </div>
             </div>
           </div>
@@ -1089,7 +1094,7 @@ footer strong { color: rgba(255,255,255,.9); }
         <div class="phase-item" onclick="togglePhase(this)" style="border-left:3px solid var(--amber);">
           <div class="phase-summary">
             <span class="phase-dot" style="background:var(--border2)"></span>
-            <div class="phase-name">Ph4 — VLM + マニピュレーション統合</div>
+            <div class="phase-name">Ph4 — Recovery Agent</div>
             <div class="phase-tags" style="display:flex;gap:4px;margin-left:8px;">
               <span style="font-size:10px;font-weight:700;background:var(--amber-l);color:var(--amber);border:1px solid rgba(217,119,6,.2);padding:1px 6px;border-radius:4px;">L2</span>
             </div>
@@ -1101,12 +1106,13 @@ footer strong { color: rgba(255,255,255,.9); }
           </div>
           <div class="phase-detail">
             <div class="phase-detail-inner">
-              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: VLM + YOLO による物体認識と SOARM101 精密マニピュレーションの統合。</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: MoveTo失敗・SearchObject失敗などの定義済み失敗パターンを検知し、自動リプランニングでタスクを継続する。</div>
               <div class="phase-tasks">
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 VLM 統合</span>
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 YOLO 物体検出</span>
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Closed-loop アーム制御</span>
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 把持シナリオテスト</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 失敗閾値の明示化(Skill引数化)</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 ClearCostmap+Retry</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Rotate+Retry</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 retry上限→Human報告</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Recovery成功率の定量指標</span>
               </div>
             </div>
           </div>
@@ -1116,7 +1122,7 @@ footer strong { color: rgba(255,255,255,.9); }
         <div class="phase-item" onclick="togglePhase(this)" style="border-left:3px solid var(--amber);">
           <div class="phase-summary">
             <span class="phase-dot" style="background:var(--border2)"></span>
-            <div class="phase-name">Ph5 — VLA・RL・π0 統合</div>
+            <div class="phase-name">Ph5 — Manipulation Agent</div>
             <div class="phase-tags" style="display:flex;gap:4px;margin-left:8px;">
               <span style="font-size:10px;font-weight:700;background:var(--amber-l);color:var(--amber);border:1px solid rgba(217,119,6,.2);padding:1px 6px;border-radius:4px;">L2</span>
             </div>
@@ -1128,12 +1134,13 @@ footer strong { color: rgba(255,255,255,.9); }
           </div>
           <div class="phase-detail">
             <div class="phase-detail-inner">
-              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: Skill API 経由で VLA・強化学習・π0 モーション AI を呼び出し可能にする。</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: Arm による Pick&amp;Place を、まず Isaac Sim 上で実現し、その後実機アームに接続する。</div>
               <div class="phase-tasks">
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Isaac Lab RL 環境構築</span>
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 VLA モデル統合</span>
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 π0 インターフェース</span>
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Skill API 経由呼び出し</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Isaac Sim Only 先行実装</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 実機 SOARM101 接続</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Pick&amp;Place Skill化</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Grasp検証</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Sim2Real</span>
               </div>
             </div>
           </div>
@@ -1143,7 +1150,7 @@ footer strong { color: rgba(255,255,255,.9); }
         <div class="phase-item" onclick="togglePhase(this)" style="border-left:3px solid var(--purple);">
           <div class="phase-summary">
             <span class="phase-dot" style="background:var(--border2)"></span>
-            <div class="phase-name">Ph6 — Digital Twin</div>
+            <div class="phase-name">Ph6 — Memory + World Model</div>
             <div class="phase-tags" style="display:flex;gap:4px;margin-left:8px;">
               <span style="font-size:10px;font-weight:700;background:var(--purple-l);color:var(--purple);border:1px solid rgba(124,58,237,.2);padding:1px 6px;border-radius:4px;">L3</span>
             </div>
@@ -1155,11 +1162,13 @@ footer strong { color: rgba(255,255,255,.9); }
           </div>
           <div class="phase-detail">
             <div class="phase-detail-inner">
-              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: Isaac Sim でフルシステムを再現し Sim2Real 転移を検証する Digital Twin 確立。</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: 過去タスクと環境状態を記憶し、複数日・複数タスクにまたがる長期運用を可能にする。</div>
               <div class="phase-tasks">
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Isaac Sim フルシステム再現</span>
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Sim2Real 転移検証</span>
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Digital Twin 同期確認</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Episodic Memory</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 World State 永続化</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Vector DB(RAG)</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 長期知識例の蓄積</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 長期運用テスト</span>
               </div>
             </div>
           </div>
@@ -1169,7 +1178,7 @@ footer strong { color: rgba(255,255,255,.9); }
         <div class="phase-item" onclick="togglePhase(this)" style="border-left:3px solid var(--purple);">
           <div class="phase-summary">
             <span class="phase-dot" style="background:var(--border2)"></span>
-            <div class="phase-name">Ph7 — Multi-Agent + Self-Check</div>
+            <div class="phase-name">Ph7 — Digital Twin（横断的）</div>
             <div class="phase-tags" style="display:flex;gap:4px;margin-left:8px;">
               <span style="font-size:10px;font-weight:700;background:var(--purple-l);color:var(--purple);border:1px solid rgba(124,58,237,.2);padding:1px 6px;border-radius:4px;">L3</span>
             </div>
@@ -1181,13 +1190,12 @@ footer strong { color: rgba(255,255,255,.9); }
           </div>
           <div class="phase-detail">
             <div class="phase-detail-inner">
-              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: 自律停止しない Harness — Self-Check + Multi-Agent + Human-in-the-loop 実装。</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">目標: 単独立項せず、Real Robot ⇄ Isaac Sim ⇄ Mission State ⇄ Environment State の同期を Ph2–Ph6 each で実装・検証する横断的取り組みと位置づける。</div>
               <div class="phase-tasks">
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Self-Check モジュール</span>
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Multi-Agent 協調</span>
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Human-in-the-loop UI</span>
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Permission 管理</span>
-                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 異常自律対処シナリオ</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Real⇄Sim 状態同期</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 各PhaseでSim+実機 両方の受け入れ確認</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Mission State 共有</span>
+                <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);">🔲 Environment State 共有</span>
               </div>
             </div>
           </div>

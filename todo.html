@@ -345,6 +345,8 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
 }
 .phase-toggle.ph0 { background: var(--green-l); color: var(--green); border: 1px solid rgba(5,150,105,.25); }
 .phase-toggle.ph1 { background: linear-gradient(135deg,var(--accent-l),var(--green-l)); color: var(--accent); border: 1px solid var(--accent-m); }
+.phase-toggle.ph2 { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.25); }
+.phase-toggle.ph3 { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.25); }
 .phase-toggle.future { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
 .phase-toggle:hover { opacity: .82; }
 .phase-toggle .pt-sep { flex: 1; height: 1px; background: currentColor; opacity: .18; }
@@ -429,7 +431,7 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
         <div class="stat-dot" style="background:var(--accent)"></div>
         <div>
           <div class="stat-num" id="pctNum">0%</div>
-          <div class="stat-lbl">Phase0&1進捗</div>
+          <div class="stat-lbl">Phase0-3進捗</div>
         </div>
       </div>
     </div>
@@ -537,6 +539,80 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
           <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
           <span>LLM 基礎実装：自然言語コマンドで移動 / アーム操作をトリガー可能</span>
           <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag sw">Software</span><span class="tag ai">AI/LLM</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div data-phase-card="phase2" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-top:10px;box-shadow:var(--sh-sm);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span style="font-size:12px;font-weight:800;background:var(--amber-l);color:var(--amber);border:1px solid rgba(217,119,6,.2);padding:2px 10px;border-radius:6px;font-family:var(--mono);">Phase 2</span>
+        <span style="font-size:13px;font-weight:700;color:var(--text);">Skill Layer 構築 — Done Definition</span>
+      </div>
+      <div class="prog-wrap" style="margin-bottom:14px;">
+        <div class="prog-label">
+          <span>Phase 2 進捗</span>
+          <span id="phase2PctLabel" style="font-weight:700; color:var(--accent)">0%</span>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" id="phase2ProgFill" style="width:0%"></div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>MoveToSkill が Nav2 に接続し、実機・Isaac Sim 両方で動作する</span>
+          <span class="tag sw" style="margin-left:auto;">Software</span>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>全 Skill が統一 SkillResult を返す（confidence/success の意味を区別）</span>
+          <span class="tag sw" style="margin-left:auto;">Software</span>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>DetectObjectSkill が mock detection で疎通確認済み、実 YOLO/VLM へのスキーマ互換が確定している</span>
+          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag sw">Software</span><span class="tag ai">AI/LLM</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>Skill Registry 経由で任意 Skill を呼び出せる</span>
+          <span class="tag sw" style="margin-left:auto;">Software</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div data-phase-card="phase3" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-top:10px;box-shadow:var(--sh-sm);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span style="font-size:12px;font-weight:800;background:var(--amber-l);color:var(--amber);border:1px solid rgba(217,119,6,.2);padding:2px 10px;border-radius:6px;font-family:var(--mono);">Phase 3</span>
+        <span style="font-size:13px;font-weight:700;color:var(--text);">Agent v1（Mission+Navigation+Vision）— Done Definition</span>
+      </div>
+      <div class="prog-wrap" style="margin-bottom:14px;">
+        <div class="prog-label">
+          <span>Phase 3 進捗</span>
+          <span id="phase3PctLabel" style="font-weight:700; color:var(--accent)">0%</span>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" id="phase3ProgFill" style="width:0%"></div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>自然言語コマンド → MissionAgent が plan 生成 → Skill 順次実行 → 完了報告の一連が動作する</span>
+          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag sw">Software</span><span class="tag ai">AI/LLM</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>バージョン1最小タスク「実験室で赤い箱を探す」を Isaac Sim 上で成功</span>
+          <span class="tag sw" style="margin-left:auto;">Software</span>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>同タスクを実機上で再現・成功</span>
+          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>Navigation/Vision Agent が MissionAgent 内部モジュールとして動作（独立プロセス化は不要）</span>
+          <span class="tag sw" style="margin-left:auto;">Software</span>
         </div>
       </div>
     </div>
@@ -948,6 +1024,150 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
 
   </div><!-- /phase-ph1 -->
 
+  <!-- ── Phase 2 collapsible ── -->
+  <button class="phase-toggle ph2" data-phase="ph2" id="toggle-ph2">
+    🔲 Phase 2 — Skill Layer 構築（計画中）
+    <div class="pt-sep"></div>
+    <span class="pt-arrow">▾</span>
+  </button>
+  <div class="phase-content" id="phase-ph2">
+
+  <div class="phase-sub-label">Skill Layer（詳細項目リスト）</div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">Skill Registry 構築</div>
+      <div class="todo-note">MoveTo / SearchObject / LookAt / DetectObject / Report などの Skill を登録・呼び出し可能にする。</div>
+      <div class="todo-tags"><span class="tag sw">Software</span></div>
+      <div class="todo-date">更新: 2026-06-19</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">SkillResult 構造統一</div>
+      <div class="todo-note">confidence（知覚系）と success（実行系）の意味を区別し、全 Skill 共通の結果構造とする。</div>
+      <div class="todo-tags"><span class="tag sw">Software</span></div>
+      <div class="todo-date">更新: 2026-06-19</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">MoveToSkill を Nav2 接続</div>
+      <div class="todo-note">実機・Isaac Sim 両対応で動作確認。</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai" style="background:var(--green-l);color:var(--green);border-color:rgba(5,150,105,.2)">Navigation</span></div>
+      <div class="todo-date">更新: 2026-06-19</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">DetectObjectSkill のスキーマ確定</div>
+      <div class="todo-note">bbox / position / confidence を含む共通契約を定義。まず mock detection で疎通確認し、後で実 YOLO/VLM に接続する。</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai">AI/LLM</span></div>
+      <div class="todo-date">更新: 2026-06-19</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">LookAroundSkill / ReportSkill 実装</div>
+      <div class="todo-note">バージョン1最小タスクに必要な補助 Skill。</div>
+      <div class="todo-tags"><span class="tag sw">Software</span></div>
+      <div class="todo-date">更新: 2026-06-19</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">NavRecoverySkill の最小実装</div>
+      <div class="todo-note">Ph4 Recovery Agent への布石として、最低限の失敗復旧 Skill を用意する。</div>
+      <div class="todo-tags"><span class="tag sw">Software</span></div>
+      <div class="todo-date">更新: 2026-06-19</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">Skill 単体テスト（Isaac Sim上）</div>
+      <div class="todo-note">各 Skill を Isaac Sim 上で単体動作確認してから実機に適用する。</div>
+      <div class="todo-tags"><span class="tag sw">Software</span></div>
+      <div class="todo-date">更新: 2026-06-19</div>
+    </div>
+  </div>
+
+  </div><!-- /phase-ph2 -->
+
+  <!-- ── Phase 3 collapsible ── -->
+  <button class="phase-toggle ph3" data-phase="ph3" id="toggle-ph3">
+    🔲 Phase 3 — Agent v1（計画中）
+    <div class="pt-sep"></div>
+    <span class="pt-arrow">▾</span>
+  </button>
+  <div class="phase-content" id="phase-ph3">
+
+  <div class="phase-sub-label">Agent v1（詳細項目リスト）</div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">MissionAgent 実装</div>
+      <div class="todo-note">State Machine / Rule Engine / LLM Planner / Skill Dispatcher / World State / Event Log で構成する単一 Agent。</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai">AI/LLM</span></div>
+      <div class="todo-date">更新: 2026-06-19</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">llm_plan() による自然言語→plan 変換</div>
+      <div class="todo-note">タスク開始時に一度だけ LLM を呼び、構造化 plan（JSON）を生成する。</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="tag ai">AI/LLM</span></div>
+      <div class="todo-date">更新: 2026-06-19</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">ルールロジックによるステップ判定</div>
+      <div class="todo-note">実行中は基本的に LLM を都度呼ばず、ルールと状態管理でステップを進行させる。</div>
+      <div class="todo-tags"><span class="tag sw">Software</span></div>
+      <div class="todo-date">更新: 2026-06-19</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">最小タスク成功（Isaac Sim → 実機）</div>
+      <div class="todo-note">「Go to area A, search for red box, report result」を Isaac Sim で先行検証し、実機で再現する。</div>
+      <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
+      <div class="todo-date">更新: 2026-06-19</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">Navigation/Vision Agent の内部モジュール化</div>
+      <div class="todo-note">バージョン1では独立プロセスに分けず、MissionAgent 内部のモジュールとして実装する。</div>
+      <div class="todo-tags"><span class="tag sw">Software</span></div>
+      <div class="todo-date">更新: 2026-06-19</div>
+    </div>
+  </div>
+
+  </div><!-- /phase-ph3 -->
+
   <!-- ── 中長期 collapsible ── -->
   <button class="phase-toggle future" data-phase="future" id="toggle-future">
     🔮 中長期タスク
@@ -1039,7 +1259,7 @@ function updateStats() {
   document.getElementById('todoCount').textContent  = total - done;
   document.getElementById('pctNum').textContent     = pct + '%';
 
-  ['phase0', 'phase1'].forEach(phase => {
+  ['phase0', 'phase1', 'phase2', 'phase3'].forEach(phase => {
     const card = document.querySelector(`[data-phase-card="${phase}"]`);
     if (!card) return;
     const phaseItems = card.querySelectorAll('div[style*="align-items:flex-start"]');
