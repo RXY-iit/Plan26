@@ -540,12 +540,12 @@ tr:nth-child(even) td { background: #fafafa; }
       </div>
       <table style="margin-top: 14px;">
         <thead>
-          <tr><th>層</th><th>処理時間</th><th>得意分野</th></tr>
+          <tr><th>層</th><th>処理時間</th><th>得意分野</th><th>コマンド例</th></tr>
         </thead>
         <tbody>
-          <tr><td><strong>Deterministic</strong><br><span style="font-size:11px;color:var(--muted);">if-else / キーワード</span></td><td>&lt;1 ms</td><td>緊急停止・安全コマンド（これだけは LLM に任せない）</td></tr>
-          <tr><td><strong>Embedding</strong><br><span style="font-size:11px;color:var(--muted);">multilingual-e5-small</span></td><td>5〜20 ms</td><td>同義語・自然言語バリエーションのコマンド</td></tr>
-          <tr><td><strong>LLM Fallback</strong><br><span style="font-size:11px;color:var(--muted);">qwen2.5-3b · ローカル</span></td><td>300 ms+</td><td>複雑・多段階・曖昧な指示</td></tr>
+          <tr><td><strong>Deterministic</strong><br><span style="font-size:11px;color:var(--muted);">if-else / キーワード</span></td><td>&lt;1 ms</td><td>緊急停止・安全コマンド（これだけは LLM に任せない）</td><td>止まれ、停止</td></tr>
+          <tr><td><strong>Embedding</strong><br><span style="font-size:11px;color:var(--muted);">multilingual-e5-small</span></td><td>5〜20 ms</td><td>同義語・自然言語バリエーションのコマンド</td><td>少し待ってください、止まって、待って</td></tr>
+          <tr><td><strong>LLM Fallback</strong><br><span style="font-size:11px;color:var(--muted);">qwen2.5-3b · ローカル</span></td><td>300 ms+</td><td>複雑・多段階・曖昧な指示</td><td>今日はここまでにして、残りは午後に続けよう。</td></tr>
         </tbody>
       </table>
       <div class="note purple" style="margin-top: 12px;">
