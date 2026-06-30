@@ -538,6 +538,9 @@ tr:nth-child(even) td { background: #fafafa; }
         <span class="flow-arrow">→</span>
         <span class="flow-node purple">LLM Fallback<br><small style="font-size:10px;">300 ms+ · 複雑コマンド</small></span>
       </div>
+      <div style="margin-top: 8px; text-align: center;">
+        <img src="command-interprate.png" alt="Deterministic → Embedding → LLM routing" style="max-width: 60%; border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--sh-sm);" />
+      </div>
       <table style="margin-top: 14px;">
         <thead>
           <tr><th>層</th><th>処理時間</th><th>得意分野</th><th>コマンド例</th></tr>
@@ -548,6 +551,7 @@ tr:nth-child(even) td { background: #fafafa; }
           <tr><td><strong>LLM Fallback</strong><br><span style="font-size:11px;color:var(--muted);">qwen2.5-3b · ローカル</span></td><td>300 ms+</td><td>複雑・多段階・曖昧な指示</td><td>今日はここまでにして、残りは午後に続けよう。</td></tr>
         </tbody>
       </table>
+
       <div class="note purple" style="margin-top: 12px;">
         このパターンは特定の論文ではなく、2023〜2026 年に AI Agent / ロボットシステムで自然に収束してきたエンジニアリングベストプラクティス。Claude Code の Skill Routing、MCP Tool 選択、企業 FAQ システムなどで広く採用されている。
       </div>
