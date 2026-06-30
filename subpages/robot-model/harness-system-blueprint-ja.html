@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Robot Harness System — 設計Blueprint | FY2026</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #f8fafc;
+  --surface: #ffffff;
+  --surface2:#f1f5f9;
+  --border:  #e2e8f0;
+  --border2: #cbd5e1;
+  --accent:  #2563eb;
+  --accent-l:#eff6ff;
+  --accent-m:#bfdbfe;
+  --green:   #059669;
+  --green-l: #ecfdf5;
+  --amber:   #d97706;
+  --amber-l: #fffbeb;
+  --purple:  #7c3aed;
+  --purple-l:#f5f3ff;
+  --teal:    #0d9488;
+  --teal-l:  #f0fdfa;
+  --text:    #0f172a;
+  --text2:   #334155;
+  --muted:   #64748b;
+  --mono:    'JetBrains Mono','Fira Code','Courier New',monospace;
+  --r: 12px;
+  --sh-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --sh:    0 4px 12px rgba(0,0,0,.08);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Meiryo',-apple-system,sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.8;
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+  height: 56px; background: rgba(255,255,255,.97);
+  backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  padding: 0 28px; display: flex; align-items: center; gap: 2px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none; margin-right: 16px; flex-shrink: 0;
+}
+.nav-logo-icon {
+  width: 30px; height: 30px; background: var(--text); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.nav-logo-sep { font-size: 20px; color: var(--border2); font-weight: 300; }
+.nav-logo-text { font-size: 12px; color: var(--muted); font-weight: 600; }
+.nav-item { position: relative; }
+.nav-btn {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--muted); text-decoration: none;
+  padding: 6px 11px; border-radius: 7px;
+  border: none; background: none; cursor: pointer; font-family: inherit;
+  transition: background .12s, color .12s; white-space: nowrap;
+}
+.nav-btn:hover { background: var(--surface2); color: var(--text); }
+.nav-btn.cur { color: var(--accent); }
+.nav-caret { font-size: 8px; opacity: .5; transition: transform .15s; }
+.nav-drop {
+  position: absolute; top: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  min-width: 240px; background: #fff;
+  border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.11); padding: 8px; z-index: 999;
+  opacity: 0; pointer-events: none; transition: opacity .15s, transform .15s;
+}
+.nav-drop.open { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.nav-drop-link {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; padding: 9px 10px; border-radius: 9px; transition: background .1s;
+}
+.nav-drop-link:hover { background: var(--surface2); }
+.nav-dl-icon { font-size: 18px; flex-shrink: 0; }
+.nav-dl-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.nav-dl-sub { font-size: 11px; color: var(--muted); }
+.nav-drop-sep { height: 1px; background: var(--border); margin: 5px 6px; }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.nav-badge-pill {
+  font-size: 11px; font-weight: 700;
+  background: var(--purple-l); color: var(--purple);
+  border: 1px solid rgba(124,58,237,.25);
+  padding: 4px 12px; border-radius: 99px; white-space: nowrap;
+}
+
+/* HERO */
+.hero {
+  padding: 92px 24px 56px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f2942 100%);
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(124,58,237,.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,58,237,.08) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+.hero-inner { max-width: 960px; margin: 0 auto; position: relative; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: .06em;
+  color: #a78bfa; background: rgba(124,58,237,.2);
+  border: 1px solid rgba(124,58,237,.4);
+  padding: 3px 12px; border-radius: 99px; margin-bottom: 16px;
+}
+h1 { font-size: clamp(24px, 4vw, 40px); font-weight: 800; color: #fff; margin-bottom: 10px; line-height: 1.25; }
+.hero-desc { font-size: 15px; color: rgba(255,255,255,.6); margin-bottom: 28px; line-height: 1.7; max-width: 640px; }
+.hero-meta { display: flex; gap: 10px; flex-wrap: wrap; }
+.meta-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: rgba(255,255,255,.8);
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
+  padding: 5px 13px; border-radius: 8px;
+}
+
+/* MAIN */
+main { max-width: 960px; margin: 0 auto; padding: 48px 24px 100px; }
+
+/* Section divider */
+.sec-div { display: flex; align-items: center; gap: 12px; margin: 52px 0 24px; }
+.sec-line { flex: 1; height: 1px; background: var(--border); }
+.sec-label {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 16px; border-radius: 99px;
+  font-size: 12px; font-weight: 700; white-space: nowrap;
+}
+.sec-label.blue   { background: var(--accent-l); border: 1px solid var(--accent-m); color: var(--accent); }
+.sec-label.green  { background: var(--green-l); border: 1px solid rgba(5,150,105,.25); color: var(--green); }
+.sec-label.amber  { background: var(--amber-l); border: 1px solid rgba(217,119,6,.25); color: var(--amber); }
+.sec-label.purple { background: var(--purple-l); border: 1px solid rgba(124,58,237,.2); color: var(--purple); }
+.sec-label.teal   { background: var(--teal-l); border: 1px solid rgba(13,148,136,.25); color: var(--teal); }
+
+/* Card */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 22px 24px; margin-bottom: 14px;
+  box-shadow: var(--sh-sm);
+}
+.card.blue   { border-left: 3px solid var(--accent); }
+.card.green  { border-left: 3px solid var(--green); }
+.card.amber  { border-left: 3px solid var(--amber); }
+.card.purple { border-left: 3px solid var(--purple); }
+.card.teal   { border-left: 3px solid var(--teal); }
+.card-title {
+  font-size: 15px; font-weight: 700; color: var(--text);
+  margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.card-body { font-size: 14px; color: var(--text2); line-height: 1.85; }
+
+/* Tag */
+.tag {
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+  font-family: var(--mono); flex-shrink: 0;
+}
+.tag.sw  { background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m); }
+.tag.ai  { background: var(--purple-l); color: var(--purple); border: 1px solid rgba(124,58,237,.2); }
+.tag.key { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.25); }
+
+/* Image figure */
+.fig {
+  margin: 20px 0;
+  border-radius: 14px; overflow: hidden;
+  border: 1px solid var(--border); box-shadow: var(--sh);
+}
+.fig img { width: 100%; display: block; }
+.fig-cap {
+  padding: 10px 16px; background: var(--surface2);
+  font-size: 12px; color: var(--muted); font-weight: 600;
+  border-top: 1px solid var(--border);
+}
+
+/* Two-col question */
+.q-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0;
+}
+@media (max-width: 600px) { .q-grid { grid-template-columns: 1fr; } }
+.q-box {
+  border-radius: 10px; padding: 18px 20px;
+}
+.q-box.lower {
+  background: rgba(217,119,6,.08); border: 1.5px solid rgba(217,119,6,.3);
+}
+.q-box.upper {
+  background: rgba(124,58,237,.07); border: 1.5px solid rgba(124,58,237,.3);
+}
+.q-label {
+  font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.q-box.lower .q-label { color: var(--amber); }
+.q-box.upper .q-label { color: var(--purple); }
+.q-question { font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 8px; line-height: 1.4; }
+.q-items { list-style: none; padding: 0; }
+.q-items li {
+  font-size: 13px; color: var(--text2); padding: 3px 0;
+  display: flex; align-items: flex-start; gap: 7px;
+}
+.q-items li::before { content: '·'; font-weight: 900; flex-shrink: 0; margin-top: 1px; }
+.q-box.lower .q-items li::before { color: var(--amber); }
+.q-box.upper .q-items li::before { color: var(--purple); }
+.q-model {
+  margin-top: 10px; display: inline-block;
+  font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 6px;
+  font-family: var(--mono);
+}
+.q-box.lower .q-model { background: rgba(217,119,6,.12); color: var(--amber); }
+.q-box.upper .q-model { background: rgba(124,58,237,.12); color: var(--purple); }
+
+/* Escalation steps */
+.esc-steps { display: flex; flex-direction: column; gap: 0; margin: 14px 0; }
+.esc-step {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 13px 16px; background: var(--surface);
+  border: 1px solid var(--border);
+}
+.esc-step:first-child { border-radius: 10px 10px 0 0; }
+.esc-step:last-child  { border-radius: 0 0 10px 10px; }
+.esc-step:not(:last-child) { border-bottom: none; }
+.esc-num {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+  font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+}
+.esc-num.n1 { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.3); }
+.esc-num.n2 { background: var(--purple-l); color: var(--purple); border: 1px solid rgba(124,58,237,.3); }
+.esc-num.n3 { background: var(--green-l); color: var(--green); border: 1px solid rgba(5,150,105,.3); }
+.esc-text { font-size: 13.5px; color: var(--text2); line-height: 1.7; }
+.esc-text strong { color: var(--text); }
+
+/* Value grid */
+.value-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; margin: 18px 0; }
+.value-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px 22px; box-shadow: var(--sh-sm);
+  position: relative; overflow: hidden;
+}
+.value-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.value-card.v1::before { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+.value-card.v2::before { background: linear-gradient(90deg, #0d9488, #22d3ee); }
+.value-card.v3::before { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+.value-card.v4::before { background: linear-gradient(90deg, #059669, #34d399); }
+.value-card.v5::before { background: linear-gradient(90deg, #d97706, #fbbf24); }
+.value-card.v6::before { background: linear-gradient(90deg, #dc2626, #f87171); }
+.value-icon { font-size: 22px; margin-bottom: 8px; }
+.value-title { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.value-desc { font-size: 13px; color: var(--text2); line-height: 1.7; }
+
+/* One-liner */
+.one-liner {
+  background: linear-gradient(135deg, #0f172a, #1e1b4b);
+  border-radius: 14px; padding: 28px 32px; margin: 28px 0;
+  text-align: center;
+}
+.one-liner-text {
+  font-size: clamp(15px, 2.5vw, 19px); font-weight: 800;
+  color: #fff; line-height: 1.55;
+}
+.one-liner-sub { font-size: 13px; color: rgba(255,255,255,.5); margin-top: 8px; }
+
+/* Note */
+.note {
+  padding: 12px 16px; border-radius: 9px; font-size: 13px; margin: 12px 0; line-height: 1.7;
+}
+.note.purple { background: var(--purple-l); border: 1px solid rgba(124,58,237,.2); color: #4c1d95; }
+.note.amber  { background: var(--amber-l); border: 1px solid rgba(217,119,6,.25); color: #92400e; }
+.note.teal   { background: var(--teal-l); border: 1px solid rgba(13,148,136,.25); color: #134e4a; }
+
+/* Table */
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+th {
+  background: var(--surface2); color: var(--text2);
+  font-weight: 700; font-size: 11px; letter-spacing: .04em;
+  padding: 9px 14px; border: 1px solid var(--border); text-align: left;
+}
+td { padding: 9px 14px; border: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+tr:nth-child(even) td { background: #fafafa; }
+
+@media (max-width: 640px) {
+  .hero { padding: 80px 16px 44px; }
+  main { padding: 32px 16px 80px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../plan-fy26.html">
+      <div class="nav-logo-icon">🧠</div>
+      <span class="nav-logo-sep">/</span>
+      <span class="nav-logo-text">FY26 Plan</span>
+    </a>
+    <div class="nav-item"><a class="nav-btn" href="../../plan-fy26.html">ホームページ</a></div>
+    <div class="nav-item"><a class="nav-btn" href="../../todo.html">進捗</a></div>
+    <div class="nav-item">
+      <button class="nav-btn" data-nav="vision">ビジョン <span class="nav-caret">▾</span></button>
+      <div class="nav-drop" id="nav-vision">
+        <a class="nav-drop-link" href="../../demo.html">
+          <span class="nav-dl-icon">🎯</span>
+          <div><div class="nav-dl-name">デモ詳細</div><div class="nav-dl-sub">デモシナリオ・要件マップ</div></div>
+        </a>
+        <div class="nav-drop-sep"></div>
+        <a class="nav-drop-link" href="../../disscussion/arm-demo-level123-ja.html">
+          <span class="nav-dl-icon">🦾</span>
+          <div><div class="nav-dl-name">マニピュレーション実証ロードマップ</div><div class="nav-dl-sub">アーム Demo Level 1-3 分類</div></div>
+        </a>
+        <a class="nav-drop-link" href="../../disscussion/move-base-level123-ja.html">
+          <span class="nav-dl-icon">🤖</span>
+          <div><div class="nav-dl-name">ナビゲーション Level 1-3 分類</div><div class="nav-dl-sub">自律移動設計方針</div></div>
+        </a>
+      </div>
+    </div>
+    <div class="nav-item">
+      <a class="nav-btn" href="../others-nav.html">その他</a>
+    </div>
+    <div class="nav-right">
+      <div class="nav-badge-pill">設計 Blueprint</div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">&#129504; Robot Harness System · Design Blueprint</div>
+    <h1>移植可能なロボット脳<br>— Harness System 設計思想</h1>
+    <p class="hero-desc">
+      「考える脳」と「動く体」を分離することで、特定のハードウェアに縛られない汎用ロボット脳を作る。
+      その設計思想の全体像をまとめる。
+    </p>
+    <div class="hero-meta">
+      <span class="meta-chip">&#128197; 2026-06-27</span>
+      <span class="meta-chip">&#129504; Thinking Model × Small Model</span>
+      <span class="meta-chip">&#129302; ROS2 / Nav2 / Isaac Sim</span>
+      <span class="meta-chip">&#127759; Harness OS</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+  <!-- ── SECTION 1: 二つの本質的問い ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label purple">&#128336; 設計の出発点 — 二つの本質的問い</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card purple">
+    <div class="card-title">
+      <span class="tag ai">Core</span>
+      Agent 層内部における役割の分離
+    </div>
+    <div class="card-body">
+      <p>このシステム設計の根幹は、Agent 層の中に<strong>役割の異なる二つの階層</strong>を置くことにある。</p>
+      <div class="q-grid" style="margin-top: 16px;">
+        <div class="q-box lower">
+          <div class="q-label">下層 Agent</div>
+          <div class="q-question">「ロボットは今、<br>何が"できる"か？」</div>
+          <ul class="q-items">
+            <li>自然言語コマンドを即時解析</li>
+            <li>Skill を選択・実行</li>
+            <li>Nav2 / Localization / Perception / Safety を管理</li>
+            <li>リアルタイム・高速・低レイテンシ優先</li>
+          </ul>
+          <div class="q-model">Small Model ~3B</div>
+        </div>
+        <div class="q-box upper">
+          <div class="q-label">上層 Agent</div>
+          <div class="q-question">「システムは長期的に<br>何を"すべきか"？」</div>
+          <ul class="q-items">
+            <li>Memory 管理・長期タスク</li>
+            <li>Recovery 管理・下層の監視・修正</li>
+            <li>Human Interaction・外部知識取得</li>
+            <li>能力拡張・パーソナリティ設定</li>
+          </ul>
+          <div class="q-model">Thinking Model</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image: system-image.png -->
+  <div class="fig">
+    <img src="images/system-image.png" alt="設計の出発点 — 二つの本質的問い / 小脳と大脳の比喩" />
+    <div class="fig-cap">設計の出発点 — 二つの本質的問い・小脳と大脳の比喩・並列アーキテクチャ概要</div>
+  </div>
+
+  <div class="card purple">
+    <div class="card-title">
+      <span class="tag ai">Parallel</span>
+      上層と下層は直列ではなく並列に存在する
+    </div>
+    <div class="card-body">
+      <p>上層と下層は一本のパイプラインではない。<strong>下層が実行を継続している間、上層は独立して思考・計画・学習を進める。</strong>
+      上層が下層に介入するのは「問題発生時」「長期計画の更新時」「人間確認が必要な時」のみ。</p>
+      <div class="note purple" style="margin-top: 12px;">
+        人間が「歩きながら考える」ように、下層が体を動かしている間、上層の大脳は思考・記憶・対話に集中できる。
+        上層の計算リソースを「ロボットの足の動かし方」に使わなくてよい。
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 2: 詳細アーキテクチャ ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label blue">&#127963; 詳細アーキテクチャ</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <!-- Image: system-design.png -->
+  <div class="fig">
+    <img src="images/system-design.png" alt="Harness System アーキテクチャ（二層 Agent + Skill + Platform）" />
+    <div class="fig-cap">Harness System 完全アーキテクチャ図 — 上層 Agent / 下層 Agent / Skill Layer / Platform Layer の全体関係</div>
+  </div>
+
+  <div class="card blue">
+    <div class="card-title">
+      <span class="tag sw">Principles</span>
+      基本原則（絶対に守る）
+    </div>
+    <div class="card-body">
+      <table>
+        <thead><tr><th>原則</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td>LLM はロボットを直接制御しない</td><td>Harness → Skill → ROS を経由する</td></tr>
+          <tr><td>下層 Agent は /cmd_vel を直接発行しない</td><td>Skill Layer 経由のみ</td></tr>
+          <tr><td>上層 Agent は Skill の逐次実行に関与しない</td><td>非同期監視・必要時のみ介入</td></tr>
+          <tr><td>ROS は実行基盤として機能し、意思決定は行わない</td><td>L1 Platform は実行のみ担う</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── SECTION 3: 上層の独立性 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label teal">&#127759; 上層 Agent の独立性 — 汎用ロボット脳へ</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card teal">
+    <div class="card-title">
+      <span class="tag sw">Portability</span>
+      上層はハードウェアに依存しない
+    </div>
+    <div class="card-body">
+      <p>上層 Agent が知るのは <code style="font-family:var(--mono);font-size:12px;background:var(--surface2);padding:1px 6px;border-radius:4px;">goto_pose</code>・<code style="font-family:var(--mono);font-size:12px;background:var(--surface2);padding:1px 6px;border-radius:4px;">detect_object</code>・<code style="font-family:var(--mono);font-size:12px;background:var(--surface2);padding:1px 6px;border-radius:4px;">move_lift_bounded</code> といった
+      <strong>意味のある能力インターフェース（Skill API）</strong>だけ。底層が何のロボットなのかは意識しない。</p>
+      <ul style="padding-left: 18px; margin-top: 12px; line-height: 2.1; font-size: 14px; color: var(--text2);">
+        <li>Isaac Sim でテストしたものをそのまま実機に持っていける</li>
+        <li>上層 Agent を別の機種へ移植 → 上層はほぼ変更なし</li>
+        <li>変わるのは下層の Skill 実装（ハードウェア固有部分）のみ</li>
+      </ul>
+      <div class="note teal" style="margin-top: 14px;">
+        上層 Agent にはパーソナリティを設定できる。コア能力（Memory・Recovery・推論）は全 Harness 共通だが、
+        語り口・判断スタイル・対話設計は用途・シナリオに合わせてカスタマイズ可能。
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 4: Self-Verification Loop ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label green">&#128260; Self-Verification Loop — 自己監視と段階的エスカレーション</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title">
+      <span class="tag sw">Loop</span>
+      三段階の責任分担
+    </div>
+    <div class="card-body">
+      <p>外部に頼らず、システムが自分自身の問題を発見・修正する内部ループ。解決できない問題だけを段階的に上位へエスカレーションする。</p>
+      <div class="esc-steps" style="margin-top: 14px;">
+        <div class="esc-step">
+          <div class="esc-num n1">1</div>
+          <div class="esc-text"><strong>下層 Agent 自身が対応</strong> — localization 悪化 → spin recovery を自動実行。Nav2 失敗 → Skill 内リトライ。</div>
+        </div>
+        <div class="esc-step">
+          <div class="esc-num n2">2</div>
+          <div class="esc-text"><strong>上層 Agent が介入</strong> — 繰り返し失敗を検知 → 原因分析・再計画・Skill 更新指示。新しい YOLO モデルの訓練指示など。</div>
+        </div>
+        <div class="esc-step">
+          <div class="esc-num n3">3</div>
+          <div class="esc-text"><strong>Human-in-the-Loop</strong> — 上層 AI でも解決不可 → 人間に状況を説明し判断を求める。</div>
+        </div>
+      </div>
+      <div class="note amber" style="margin-top: 12px;">
+        初期段階では「上層 Agent」の役割を人間のオペレーターが担うことができる。
+        システムが成熟するにつれて、人間が担っていた判断を徐々に AI が引き継ぐ。
+        これは安全に段階を踏んだ自律化のロードマップでもある。
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 5: モジュール設計 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label amber">&#129513; モジュール拡張性</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title">
+      <span class="tag key">Modular</span>
+      ハードウェアを追加しても既存部分は壊れない
+    </div>
+    <div class="card-body">
+      <p><strong>機械腕を追加するケース：</strong></p>
+      <table style="margin-top: 10px;">
+        <thead><tr><th>変更が必要な部分</th><th>変更不要な部分</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>L2: pick_object / place_object（Skill 実装追加）<br>下層 Agent: Manipulation Agent（追加）</td>
+            <td>上層 Agent（Skill API は変わらない）<br>既存の他の Skill・Agent</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top: 12px; font-size: 13px; color: var(--text2);">ある現場で設計した Skill の思想は他のシステムへ借用できる。
+      ハードウェア固有の問題はローカル適応で解決し、上位の設計思想は変えない。</p>
+    </div>
+  </div>
+
+  <!-- ── SECTION 6: スタートアップ価値 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label purple">&#128640; スタートアップとしての価値 — 「移植可能なロボット脳」</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <!-- Image: system-value.png -->
+  <div class="fig">
+    <img src="images/system-value.png" alt="スタートアップとしての価値 — 移植可能なロボット脳（Harness OS）" />
+    <div class="fig-cap">移植可能なロボット脳（Harness OS）— スタートアップとしての6つの価値軸</div>
+  </div>
+
+  <div class="value-grid">
+    <div class="value-card v1">
+      <div class="value-icon">&#129302;</div>
+      <div class="value-title">「ロボットの OS」</div>
+      <div class="value-desc">スマートフォンに Android があるように、ロボットにも「脳の OS」が必要。ハードウェアが変わっても、OS は同じものが動く。</div>
+    </div>
+    <div class="value-card v2">
+      <div class="value-icon">&#128260;</div>
+      <div class="value-title">移植可能性</div>
+      <div class="value-desc">倉庫・医療・案内 — 上層の脳は同じ、Skill だけが違う。ハードウェア刷新のたびにシステム全体を作り直す必要がない。</div>
+    </div>
+    <div class="value-card v3">
+      <div class="value-icon">&#128200;</div>
+      <div class="value-title">段階的自律化</div>
+      <div class="value-desc">最初は Human-in-the-Loop。人間が上層を担い、徐々に AI が引き継ぐ。急激な自律化ではなく、安全なバトンタッチ。</div>
+    </div>
+    <div class="value-card v4">
+      <div class="value-icon">&#128257;</div>
+      <div class="value-title">自己監視・自己修復</div>
+      <div class="value-desc">ロボットがエラーに気づき、自分で直す。それでもダメなら人に聞く。長期運用での信頼性を担保する設計。</div>
+    </div>
+    <div class="value-card v5">
+      <div class="value-icon">&#128578;</div>
+      <div class="value-title">パーソナリティの可搬性</div>
+      <div class="value-desc">コア能力は全 Harness 共通。語り口・判断スタイルは用途ごとにカスタマイズ。「このロボットらしさ」をソフトで定義・継承できる。</div>
+    </div>
+    <div class="value-card v6">
+      <div class="value-icon">&#129513;</div>
+      <div class="value-title">モジュール設計</div>
+      <div class="value-desc">機能を足しても既存が壊れない。ある現場で磨いた Skill は別の現場のロボットにも移植できる。設計の横展開コストが低い。</div>
+    </div>
+  </div>
+
+  <!-- One-liner -->
+  <div class="one-liner">
+    <div class="one-liner-text">「考える脳」と「動く体」を分離することで、<br>脳を使い回せるロボットシステム。</div>
+    <div class="one-liner-sub">Harness OS — Portable Robot Brain</div>
+  </div>
+
+</main>
+
+<script>
+document.querySelectorAll('.nav-btn[data-nav]').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const id = btn.dataset.nav;
+    const drop = document.getElementById('nav-' + id);
+    const isOpen = drop.classList.contains('open');
+    document.querySelectorAll('.nav-drop.open').forEach(d => d.classList.remove('open'));
+    document.querySelectorAll('.nav-btn.nav-open').forEach(b => b.classList.remove('nav-open'));
+    if (!isOpen) { drop.classList.add('open'); btn.classList.add('nav-open'); }
+  });
+});
+document.addEventListener('click', () => {
+  document.querySelectorAll('.nav-drop.open').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.nav-btn.nav-open').forEach(b => b.classList.remove('nav-open'));
+});
+</script>
+</body>
+</html>
