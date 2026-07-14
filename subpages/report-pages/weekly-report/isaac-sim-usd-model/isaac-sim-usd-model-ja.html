@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>週次報告 — 実環境 USD モデル制作 | FY2026</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #f8fafc;
+  --surface: #ffffff;
+  --surface2:#f1f5f9;
+  --border:  #e2e8f0;
+  --border2: #cbd5e1;
+  --accent:  #2563eb;
+  --accent-l:#eff6ff;
+  --accent-m:#bfdbfe;
+  --green:   #059669;
+  --green-l: #ecfdf5;
+  --amber:   #d97706;
+  --amber-l: #fffbeb;
+  --red:     #dc2626;
+  --red-l:   #fef2f2;
+  --purple:  #7c3aed;
+  --purple-l:#f5f3ff;
+  --teal:    #0d9488;
+  --teal-l:  #f0fdfa;
+  --text:    #0f172a;
+  --text2:   #334155;
+  --muted:   #64748b;
+  --mono:    'JetBrains Mono','Fira Code','Courier New',monospace;
+  --r: 12px;
+  --sh-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --sh:    0 4px 12px rgba(0,0,0,.08);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Meiryo',-apple-system,sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.8;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+  height: 56px; background: rgba(255,255,255,.97);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  padding: 0 28px; display: flex; align-items: center; gap: 2px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none; margin-right: 16px; flex-shrink: 0;
+}
+.nav-logo-icon {
+  width: 30px; height: 30px; background: var(--text); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.nav-logo-sep { font-size: 20px; color: var(--border2); font-weight: 300; }
+.nav-logo-text { font-size: 12px; color: var(--muted); font-weight: 600; }
+.nav-item { position: relative; }
+.nav-btn {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--muted); text-decoration: none;
+  padding: 6px 11px; border-radius: 7px;
+  border: none; background: none; cursor: pointer; font-family: inherit;
+  transition: background .12s, color .12s; white-space: nowrap;
+}
+.nav-btn:hover { background: var(--surface2); color: var(--text); }
+.nav-btn.cur { color: var(--accent); }
+.nav-caret { font-size: 8px; opacity: .5; transition: transform .15s; }
+.nav-btn.nav-open .nav-caret { transform: rotate(180deg); }
+.nav-item:hover .nav-caret { transform: rotate(180deg); }
+.nav-drop {
+  position: absolute; top: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  min-width: 240px; background: #fff;
+  border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.11), 0 2px 8px rgba(0,0,0,.05);
+  padding: 8px; z-index: 999;
+  opacity: 0; pointer-events: none;
+  transition: opacity .15s, transform .15s;
+}
+.nav-drop.open { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.nav-drop-label {
+  font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em;
+  color: var(--muted2,#94a3b8); padding: 6px 10px 3px; display: block;
+}
+.nav-drop-link {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; padding: 9px 10px; border-radius: 9px; transition: background .1s;
+}
+.nav-drop-link:hover { background: var(--surface2); }
+.nav-dl-icon { font-size: 18px; flex-shrink: 0; }
+.nav-dl-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.nav-dl-sub { font-size: 11px; color: var(--muted); }
+.nav-drop-sep { height: 1px; background: var(--border); margin: 5px 6px; }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.nav-badge-pill {
+  font-size: 11px; font-weight: 700;
+  background: var(--green-l); color: var(--green);
+  border: 1px solid rgba(5,150,105,.25);
+  padding: 4px 12px; border-radius: 99px; white-space: nowrap;
+}
+.nav-pulse {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--green);
+  animation: npulse 2s infinite; flex-shrink: 0;
+}
+@keyframes npulse {
+  0%,100%{ box-shadow: 0 0 0 0 rgba(5,150,105,.4); }
+  50%     { box-shadow: 0 0 0 5px rgba(5,150,105,0); }
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 92px 24px 52px;
+  background: linear-gradient(135deg, #fff 0%, #f0f7ff 50%, #f5f3ff 100%);
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(37,99,235,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37,99,235,.035) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.hero-inner { max-width: 960px; margin: 0 auto; position: relative; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: .06em;
+  color: var(--purple); background: var(--purple-l);
+  border: 1px solid rgba(124,58,237,.25);
+  padding: 3px 12px; border-radius: 99px; margin-bottom: 14px;
+}
+h1 { font-size: clamp(22px, 4vw, 36px); font-weight: 800; color: var(--text); margin-bottom: 8px; line-height: 1.3; }
+.hero-desc { font-size: 15px; color: var(--muted); margin-bottom: 26px; line-height: 1.7; }
+.hero-meta { display: flex; gap: 10px; flex-wrap: wrap; }
+.meta-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--text2);
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 5px 13px; border-radius: 8px; box-shadow: var(--sh-sm);
+}
+
+/* ── MAIN ── */
+main { max-width: 960px; margin: 0 auto; padding: 44px 24px 100px; }
+
+.sec-div { display: flex; align-items: center; gap: 12px; margin: 46px 0 22px; }
+.sec-line { flex: 1; height: 1px; background: var(--border); }
+.sec-label {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 16px; border-radius: 99px;
+  font-size: 12px; font-weight: 700; white-space: nowrap;
+}
+.sec-label.blue   { background: var(--accent-l); border: 1px solid var(--accent-m); color: var(--accent); }
+.sec-label.green  { background: var(--green-l); border: 1px solid rgba(5,150,105,.25); color: var(--green); }
+.sec-label.amber  { background: var(--amber-l); border: 1px solid rgba(217,119,6,.25); color: var(--amber); }
+.sec-label.red    { background: var(--red-l); border: 1px solid rgba(220,38,38,.25); color: var(--red); }
+.sec-label.purple { background: var(--purple-l); border: 1px solid rgba(124,58,237,.2); color: var(--purple); }
+.sec-label.teal   { background: var(--teal-l); border: 1px solid rgba(13,148,136,.25); color: var(--teal); }
+
+.summary-banner {
+  background: linear-gradient(135deg, var(--green-l), #f5f3ff);
+  border: 1px solid rgba(5,150,105,.2);
+  border-radius: var(--r); padding: 22px 26px; margin-bottom: 28px;
+}
+.summary-banner h2 { font-size: 15px; font-weight: 800; color: var(--green); margin-bottom: 10px; }
+.summary-banner ul { list-style: none; padding: 0; }
+.summary-banner li {
+  font-size: 14px; color: var(--text2); padding: 4px 0;
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.summary-banner li::before { content: '✓'; color: var(--green); font-weight: 800; flex-shrink: 0; }
+
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 22px 24px; margin-bottom: 14px;
+  box-shadow: var(--sh-sm);
+}
+.card.blue   { border-left: 3px solid var(--accent); }
+.card.green  { border-left: 3px solid var(--green); }
+.card.amber  { border-left: 3px solid var(--amber); }
+.card.purple { border-left: 3px solid var(--purple); }
+.card.teal   { border-left: 3px solid var(--teal); }
+.card-title {
+  font-size: 15px; font-weight: 700; color: var(--text);
+  margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.card-body { font-size: 14px; color: var(--text2); line-height: 1.8; }
+
+.tag {
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+  font-family: var(--mono); flex-shrink: 0;
+}
+.tag.sw  { background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m); }
+.tag.hw  { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.2); }
+.tag.sim { background: var(--purple-l); color: var(--purple); border: 1px solid rgba(124,58,237,.2); }
+.tag.ref { background: var(--teal-l); color: var(--teal); border: 1px solid rgba(13,148,136,.2); }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+th {
+  background: var(--surface2); color: var(--text2);
+  font-weight: 700; font-size: 11px; letter-spacing: .04em;
+  padding: 9px 14px; border: 1px solid var(--border); text-align: left;
+}
+td { padding: 9px 14px; border: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+tr:nth-child(even) td { background: #fafafa; }
+
+/* Pipeline steps */
+.pipeline { display: flex; flex-direction: column; gap: 0; margin: 14px 0; }
+.pipeline-step {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 12px 16px;
+  background: var(--surface); border: 1px solid var(--border);
+  position: relative;
+}
+.pipeline-step:first-child { border-radius: 10px 10px 0 0; }
+.pipeline-step:last-child  { border-radius: 0 0 10px 10px; }
+.pipeline-step:not(:last-child) { border-bottom: none; }
+.pipeline-num {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+  background: var(--purple-l); border: 1px solid rgba(124,58,237,.3);
+  color: var(--purple); font-size: 11px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+.pipeline-text { font-size: 13.5px; color: var(--text2); line-height: 1.7; }
+.pipeline-text strong { color: var(--text); }
+
+/* Reference link cards */
+.ref-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 6px; }
+.ref-card {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px; text-decoration: none; color: var(--text);
+  transition: background .12s, border-color .12s;
+}
+.ref-card:hover { background: #fff; border-color: var(--accent-m); }
+.ref-icon { font-size: 20px; flex-shrink: 0; }
+.ref-name { font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.ref-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+/* Folder tree */
+.tree {
+  display: block;
+  font-family: var(--mono); font-size: 12.5px; line-height: 2.1;
+  background: #0f172a; color: #e2e8f0; border-radius: 10px;
+  padding: 16px 20px; overflow-x: auto; margin: 12px 0;
+  white-space: pre; tab-size: 2;
+}
+.tree .dir   { color: #93c5fd; font-weight: 700; }
+.tree .file  { color: #a7f3d0; }
+.tree .cmt   { color: #64748b; }
+
+/* Image gallery (horizontal-scroll album with prev/next controls) */
+.carousel { position: relative; margin-top: 16px; }
+.album {
+  display: flex; gap: 12px; overflow-x: auto;
+  padding: 4px 4px 10px; scroll-snap-type: x proximity;
+}
+.album img {
+  flex: 0 0 auto; height: 230px; width: auto; max-width: 340px; object-fit: cover;
+  border-radius: 10px; border: 1px solid var(--border); box-shadow: var(--sh-sm);
+  scroll-snap-align: start; background: #0f172a; cursor: zoom-in;
+  transition: transform .15s;
+}
+.album img:hover { transform: scale(1.015); }
+.album::-webkit-scrollbar { height: 8px; }
+.album::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+.album::-webkit-scrollbar-track { background: transparent; }
+.car-btn {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,.15);
+  background: rgba(15,23,42,.55); color: #fff; font-size: 18px; line-height: 1;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  z-index: 5; opacity: .85; transition: background .15s, opacity .15s;
+  backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
+}
+.car-btn:hover { background: rgba(15,23,42,.85); opacity: 1; }
+.car-btn.prev { left: 2px; }
+.car-btn.next { right: 2px; }
+
+/* Lightbox */
+.lightbox {
+  position: fixed; inset: 0; background: rgba(5,8,16,.92);
+  display: none; align-items: center; justify-content: center;
+  z-index: 1000; padding: 48px;
+}
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 88vw; max-height: 84vh; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+.lb-btn {
+  position: absolute; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2);
+  color: #fff; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.lb-btn:hover { background: rgba(255,255,255,.2); }
+.lb-close { top: 18px; right: 18px; width: 40px; height: 40px; font-size: 22px; }
+.lb-prev, .lb-next { top: 50%; transform: translateY(-50%); width: 46px; height: 46px; font-size: 24px; }
+.lb-prev { left: 18px; }
+.lb-next { right: 18px; }
+
+/* Side-by-side image pair */
+.side-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+.side-grid figure { margin: 0; }
+.side-grid img { width: 100%; height: auto; display: block; border-radius: 10px; border: 1px solid var(--border); box-shadow: var(--sh-sm); }
+.side-grid figcaption { font-size: 12px; color: var(--muted); font-weight: 600; margin-top: 6px; text-align: center; }
+
+/* Video */
+.vid-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 16px; }
+.vid-card { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: #0f172a; box-shadow: var(--sh); }
+.vid-card video { width: 100%; height: auto; display: block; }
+.vid-cap { padding: 10px 14px; font-size: 12px; font-weight: 600; color: rgba(255,255,255,.75); background: #1e293b; border-top: 1px solid rgba(255,255,255,.06); }
+.vid-cap small { display: block; font-size: 11px; color: rgba(255,255,255,.4); font-weight: 400; margin-top: 2px; }
+
+/* Chip grid */
+.chip-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 5px 12px; font-size: 12px; font-weight: 600; color: var(--text2);
+}
+.chip.ok  { background: var(--green-l); border-color: rgba(5,150,105,.25); color: var(--green); }
+.chip.ng  { background: var(--red-l); border-color: rgba(220,38,38,.2); color: var(--red); }
+.chip.wip { background: var(--amber-l); border-color: rgba(217,119,6,.25); color: var(--amber); }
+
+/* Note box */
+.note {
+  padding: 12px 16px; border-radius: 9px; font-size: 13px; margin: 10px 0;
+}
+.note.amber { background: var(--amber-l); border: 1px solid rgba(217,119,6,.25); color: #92400e; }
+.note.blue  { background: var(--accent-l); border: 1px solid var(--accent-m); color: #1e40af; }
+.note.green { background: var(--green-l); border: 1px solid rgba(5,150,105,.25); color: #065f46; }
+
+@media (max-width: 640px) {
+  .side-grid { grid-template-columns: 1fr; }
+  .album img { height: 170px; max-width: 260px; }
+  .hero { padding: 80px 16px 40px; }
+  main { padding: 32px 16px 80px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../../../plan-fy26.html">
+      <div class="nav-logo-icon">🧠</div>
+      <span class="nav-logo-sep">/</span>
+      <span class="nav-logo-text">FY26 Plan</span>
+    </a>
+    <div class="nav-item"><a class="nav-btn" href="../../../../plan-fy26.html">ホームページ</a></div>
+    <div class="nav-item"><a class="nav-btn" href="../../../../todo.html">進捗</a></div>
+    <div class="nav-item">
+      <button class="nav-btn" data-nav="vision">ビジョン <span class="nav-caret">▾</span></button>
+      <div class="nav-drop" id="nav-vision">
+        <a class="nav-drop-link" href="../../../../demo.html">
+          <span class="nav-dl-icon">🎯</span>
+          <div><div class="nav-dl-name">デモ詳細</div><div class="nav-dl-sub">デモシナリオ・要件マップ</div></div>
+        </a>
+        <div class="nav-drop-sep"></div>
+        <a class="nav-drop-link" href="../../../../disscussion/arm-demo-level123-ja.html">
+          <span class="nav-dl-icon">🦾</span>
+          <div><div class="nav-dl-name">マニピュレーション実証ロードマップ</div><div class="nav-dl-sub">アーム Demo Level 1-3 分類</div></div>
+        </a>
+        <a class="nav-drop-link" href="../../../../disscussion/move-base-level123-ja.html">
+          <span class="nav-dl-icon">🤖</span>
+          <div><div class="nav-dl-name">ナビゲーション Level 1-3 分類</div><div class="nav-dl-sub">自律移動設計方針</div></div>
+        </a>
+      </div>
+    </div>
+    <div class="nav-item">
+      <a class="nav-btn" href="../../../others-nav.html">その他</a>
+    </div>
+    <div class="nav-right">
+      <span class="nav-pulse"></span>
+      <div class="nav-badge-pill">Phase 1 進行中</div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">&#128230; Isaac Sim 5.0 · USD · Real Lab Model</div>
+    <h1>実環境ベース USD モデル制作<br>進捗報告</h1>
+    <p class="hero-desc">
+      研究室（L402想定）の実測データをもとに、Isaac Sim 上で動作する実環境 USD モデルの第一版を制作しました。<br>
+      本報告では制作フロー、USD ファイル群のフォルダ構成、見た目 / 衝突境界の作り込み状況をまとめます。
+    </p>
+    <div class="hero-meta">
+      <span class="meta-chip">&#128197; 2026-07-13</span>
+      <span class="meta-chip">&#127981; Isaac Sim 5.0.0</span>
+      <span class="meta-chip">&#128209; USD (usda)</span>
+      <span class="meta-chip">&#128208; 7.3m × 14.2m</span>
+      <span class="meta-chip">&#127959;&#65039; real_lab シーン初版完成</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+  <!-- サマリー -->
+  <div class="summary-banner">
+    <h2>今週の達成事項</h2>
+    <ul>
+      <li>手描きの実測スケッチ（部屋 7.3m × 14.2m、テーブル・棚・扉・窓の寸法）をもとに、AI でラフな箱組みモデルを一次生成</li>
+      <li>ラフモデルの各パーツをオープンソースアセット（テーブル・椅子・本棚・扉・ソファ等）へ置換</li>
+      <li>ポスターや書籍、置物などの装飾アイテムを追加し、見た目のリアリティを向上</li>
+      <li>照明（DistantLight / DomeLight / RectLight / SphereLight）と衝突境界（PhysicsCollisionAPI）を追加し、物理的に使えるシーンとして完成</li>
+      <li>USD をレイヤー分割（root / materials / structure / furniture / asset_refs / lighting）し、見た目用アセットと衝突用プロキシを分離する構成を確立</li>
+      <li>ロボットモデルと本シーンを合成した <span style="font-family:var(--mono);font-size:12px">robot_sim_real_lab.usd</span> で LiDAR・IMU・車輪オドメトリの ROS2 Graph 動作を確認</li>
+    </ul>
+  </div>
+
+  <!-- ── SECTION: 参考資料 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label teal">&#128218; 参考資料</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card teal">
+    <div class="card-title">
+      <span class="tag ref">Ref</span>
+      USD の基礎・事前調査ノート
+    </div>
+    <div class="card-body">
+      <p>USD とは何か、Isaac Sim における役割、制作開始前の基本的な考え方については以下の既存ページにまとめてあります。本報告ではその内容を前提とし、実際の制作プロセスとフォルダ構成に絞って記載します。</p>
+      <div class="ref-grid">
+        <a class="ref-card" href="USD-notes.html">
+          <span class="ref-icon">&#128221;</span>
+          <div>
+            <div class="ref-name">USD-notes</div>
+            <div class="ref-desc">USD の基本概念・調査メモ</div>
+          </div>
+        </a>
+        <a class="ref-card" href="../issac-sim-env-navigation/isaac-sim-navigation-ja.html">
+          <span class="ref-icon">&#129517;</span>
+          <div>
+            <div class="ref-name">Isaac Sim ナビゲーション報告</div>
+            <div class="ref-desc">ロボット分野で USD がどう使われるかの参考</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION: 制作フロー ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label purple">&#128506; 制作フロー</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card purple">
+    <div class="card-title">
+      <span class="tag sim">Process</span>
+      実測 → ラフ生成 → アセット置換 → 装飾 → 物理属性、の5ステップ
+    </div>
+    <div class="card-body">
+      <p>USD モデル制作の経験がなかったため、最初から完璧な要件を用意するのではなく、手探りで一歩ずつ進める方式を取りました。</p>
+      <div class="pipeline" style="margin-top: 14px;">
+        <div class="pipeline-step">
+          <div class="pipeline-num">1</div>
+          <div class="pipeline-text"><strong>要件・アウトライン整理</strong> — シーンに何が必要か（壁・窓・扉・什器・センサー用の障害物など）を大まかに洗い出す</div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-num">2</div>
+          <div class="pipeline-text"><strong>実測</strong> — 部屋の幅・奥行き、机や棚のサイズなど実物を計測し、寸法入りのスケッチにまとめる</div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-num">3</div>
+          <div class="pipeline-text"><strong>ラフモデル生成</strong> — 実測スケッチを AI に渡し、直方体（Cube）主体の粗いレイアウトを一次生成</div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-num">4</div>
+          <div class="pipeline-text"><strong>OSS アセットへの置換</strong> — 机・椅子・扉・窓・照明などをオープンソース / Isaac Asset Browser のモデルに置き換え</div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-num">5</div>
+          <div class="pipeline-text"><strong>装飾の追加</strong> — 必要に応じてポスター・書籍・置物などの装飾アイテムを追加</div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-num green">6</div>
+          <div class="pipeline-text"><strong>物理属性の付与</strong> — 照明（Lighting）、衝突境界（Collision）などの物理的な属性を最後に追加し、シミュレーションで使える状態に仕上げる</div>
+        </div>
+      </div>
+      <div class="note blue" style="margin-top: 14px;">
+        &#128161; この手順が唯一の正解というわけではなく、USD 制作の勘所がまだ無かったための手探りの結果です。全体像・要件が最初から明確であれば、必要な寸法などをすべて盛り込んだ要件書を用意し、AI との 1〜2 往復のやり取りだけで理想に近いモデルを得るのが最も効率的だと考えています。
+      </div>
+    </div>
+  </div>
+
+  <div class="card purple">
+    <div class="card-title">
+      <span class="tag hw">実測</span>
+      室内寸法スケッチ
+    </div>
+    <div class="card-body">
+      <p>部屋全体（7.3m × 14.2m）と、棚・テーブル・扉・窓の実寸を計測し、色分けしたスケッチとして整理しました。左が AI にそのまま渡した実測スケッチ、右がそこから生成された初版モデルです。</p>
+      <div class="side-grid">
+        <figure>
+          <img src="images/lab-scraf.png" alt="実測寸法スケッチ" />
+          <figcaption>実測スケッチ（AIへの入力）</figcaption>
+        </figure>
+        <figure>
+          <img src="images/scraf-ver1.png" alt="スケッチから生成された初版モデル" />
+          <figcaption>スケッチから生成された初版モデル</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION: フォルダ構成 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label blue">&#128193; フォルダ構成</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card blue">
+    <div class="card-title">
+      <span class="tag sw">USD</span>
+      scenes/ 以下の実際のレイヤー構成
+    </div>
+    <div class="card-body">
+      <p>Isaac Sim で実際に使用している USD は、見た目用アセットと衝突用プロキシを分離しつつ、<span style="font-family:var(--mono);font-size:12px">subLayers</span> で1枚のシーンに合成する構成にしています。</p>
+      <pre class="tree"><span class="dir">scenes/</span>
+├── <span class="file">robot_sim_real_lab.usd</span>        <span class="cmt"># 実行用ルート。ロボット物理層 + real_lab_root を subLayers、LiDAR/IMU/ROS2 Graph を追加</span>
+└── <span class="dir">real_lab/</span>
+    ├── <span class="file">real_lab_root.usd</span>       <span class="cmt"># レイヤー合成の起点。座標系の前提・部屋サイズ(7.3×14.2m)を定義</span>
+    ├── <span class="file">real_lab_materials.usd</span>  <span class="cmt"># 物理マテリアル(床/家具の摩擦)とPBR表示マテリアルの定義</span>
+    ├── <span class="file">real_lab_structure.usd</span>  <span class="cmt"># 床・天井・壁・窓・扉の開口部・梁やケーブルトレイ(Cube+衝突)</span>
+    ├── <span class="file">real_lab_furniture.usd</span>  <span class="cmt"># 机・棚・什器の衝突プロキシ(Cube)。倉庫ラック(WarehouseStyleRacks)も含む</span>
+    ├── <span class="file">real_lab_asset_refs.usd</span> <span class="cmt"># 見た目用の実アセット参照(机/椅子/本棚/扉/ソファ/TV台など)</span>
+    └── <span class="file">real_lab_lighting.usd</span>   <span class="cmt"># 天井照明・フィルライト・視認用の発光ストリップ</span></pre>
+      <table>
+        <thead><tr><th>ファイル</th><th>役割</th><th>主な内容</th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-family:var(--mono);font-size:11.5px;">real_lab_root.usd</td>
+            <td>合成の起点</td>
+            <td>他の5レイヤーを <span style="font-family:var(--mono);font-size:11px">subLayers</span> でまとめる。座標系の前提（X=幅・Y=奥行・Z=上）と部屋サイズをメモとして保持</td>
+          </tr>
+          <tr>
+            <td style="font-family:var(--mono);font-size:11.5px;">real_lab_materials.usd</td>
+            <td>マテリアル定義</td>
+            <td>床・家具用の <span style="font-family:var(--mono);font-size:11px">PhysicsMaterialAPI</span>（摩擦係数）と、扉・すりガラス・倉庫床・発光体などの表示用 PBR マテリアル</td>
+          </tr>
+          <tr>
+            <td style="font-family:var(--mono);font-size:11.5px;">real_lab_structure.usd</td>
+            <td>建屋構造</td>
+            <td>床・天井・4面の壁・窓開口部・扉開口部・トリム・梁・ケーブルトレイを Cube ベースで構築し、<span style="font-family:var(--mono);font-size:11px">PhysicsCollisionAPI</span> を付与</td>
+          </tr>
+          <tr>
+            <td style="font-family:var(--mono);font-size:11.5px;">real_lab_furniture.usd</td>
+            <td>什器の衝突形状</td>
+            <td>テーブル群・棚・倉庫ラックの当たり判定用 Cube。見た目は持たず、位置と物理マテリアルのみを定義</td>
+          </tr>
+          <tr>
+            <td style="font-family:var(--mono);font-size:11.5px;">real_lab_asset_refs.usd</td>
+            <td>見た目アセット参照</td>
+            <td>Isaac Asset Browser / ArchVis / DigitalTwin ライブラリのテーブル・椅子・本棚・扉・ソファ・TV台・倉庫コンテナ等を <span style="font-family:var(--mono);font-size:11px">references</span> で読み込み。オンライン資産が使えない場合でも衝突プロキシだけでナビゲーション/LiDAR テストが継続できる設計</td>
+          </tr>
+          <tr>
+            <td style="font-family:var(--mono);font-size:11.5px;">real_lab_lighting.usd</td>
+            <td>照明</td>
+            <td>ロボットカメラからの視認性を優先した第一版ライティング。DistantLight・DomeLight・天井 RectLight・SphereLight・発光ストリップ(Cube+Emissive)を配置</td>
+          </tr>
+          <tr>
+            <td style="font-family:var(--mono);font-size:11.5px;">robot_sim_real_lab.usd</td>
+            <td>実行ルート</td>
+            <td>ロボット物理層と real_lab_root を合成し、Ouster LiDAR・IMU・車輪オドメトリの OmniGraph（ROS2 Publish）と RenderProduct/Replicator を追加した、実際に Isaac Sim 上で開く実行用シーン</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note blue" style="margin-top: 12px;">
+        &#128161; 見た目用アセット（<span style="font-family:var(--mono);font-size:11px">asset_refs</span>）と衝突用プロキシ（<span style="font-family:var(--mono);font-size:11px">furniture</span> / <span style="font-family:var(--mono);font-size:11px">structure</span>）を分離しているため、オンラインアセットが読み込めない環境でも、衝突判定と LiDAR マッピングは維持されます。
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION: 制作過程 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label green">&#127912; 制作過程</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title">
+      <span class="tag sim">Gallery</span>
+      シーンの様子
+    </div>
+    <div class="card-body">
+      <div class="carousel">
+        <button class="car-btn prev" type="button" aria-label="前へ">&#8249;</button>
+        <div class="album">
+          <img src="images/scenes/1.png" alt="scene 1" />
+          <img src="images/scenes/2.png" alt="scene 2" />
+          <img src="images/scenes/3.png" alt="scene 3" />
+          <img src="images/scenes/4.png" alt="scene 4" />
+          <img src="images/scenes/5.png" alt="scene 5" />
+          <img src="images/scenes/6.png" alt="scene 6" />
+          <img src="images/scenes/7.png" alt="scene 7" />
+          <img src="images/scenes/8.png" alt="scene 8" />
+          <img src="images/scenes/9.png" alt="scene 9" />
+          <img src="images/scenes/10.png" alt="scene 10" />
+        </div>
+        <button class="car-btn next" type="button" aria-label="次へ">&#8250;</button>
+      </div>
+      <div class="vid-grid" style="margin-top: 16px;">
+        <div class="vid-card">
+          <video controls preload="metadata">
+            <source src="images/room_usd.webm" type="video/webm">
+            お使いのブラウザは動画再生に対応していません。
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION: 衝突境界 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label amber">&#129513; 衝突境界（コリジョン）の確認</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title">
+      <span class="tag sw">Collision</span>
+      見た目アセットと衝突プロキシの重ね合わせ表示
+    </div>
+    <div class="card-body">
+      <p>見た目用アセットとは別に定義した衝突用 Cube（<span style="font-family:var(--mono);font-size:12px">PhysicsCollisionAPI</span>）が、実際の家具形状とズレなく重なっているかを確認しました。</p>
+      <div class="carousel">
+        <button class="car-btn prev" type="button" aria-label="前へ">&#8249;</button>
+        <div class="album">
+          <img src="images/scenes/s1.png" alt="collision s1" />
+          <img src="images/scenes/s2.png" alt="collision s2" />
+          <img src="images/scenes/s3.png" alt="collision s3" />
+          <img src="images/scenes/s4.png" alt="collision s4" />
+          <img src="images/scenes/s5.png" alt="collision s5" />
+        </div>
+        <button class="car-btn next" type="button" aria-label="次へ">&#8250;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION: USD追加の利点 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label teal">&#128161; 実環境 USD を追加する利点</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card teal">
+    <div class="card-title">
+      <span class="tag ref">Why</span>
+      複数シーンでの検証と sim-to-real への布石
+    </div>
+    <div class="card-body">
+      <p>実環境ベースの USD シーンを用意することで、同一のロボットモデルを複数のシーン（デフォルトの倉庫シーンと今回の real_lab シーンなど）で切り替えてテストできるようになりました。</p>
+      <p style="margin-top:10px;">特に、今回のシーンは実際の部屋の寸法をもとに制作しているため、将来的な <strong>sim-to-real</strong>（シミュレーションから実機への移行）の場面で効果を発揮すると考えています。local planner やナビゲーションの各種パラメータ（例: MPPI）を調整する際に、実寸に基づいた地図の上で検証できるため、</p>
+      <ul style="padding-left:16px; line-height:2.1; font-size:14px; color:var(--text2); margin-top:8px;">
+        <li>通路幅が狭い場所での挙動</li>
+        <li>Uターンができない・切り返しが必要な場所での挙動</li>
+        <li>MPPI などのパラメータが実際の空間でどう振る舞うか</li>
+      </ul>
+      <p style="margin-top:10px;">といった、実機でも起こり得る状況を事前に想定し、シミュレーション上で再現・検証しやすくなる点が大きなメリットです。</p>
+    </div>
+  </div>
+
+  <!-- ── SECTION: 現状・次のステップ ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label amber">&#128680; 現状・次のステップ</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title">機能状況</div>
+    <div class="card-body">
+      <div class="chip-grid">
+        <span class="chip ok">&#9989; 実測スケッチ作成</span>
+        <span class="chip ok">&#9989; ラフモデル一次生成</span>
+        <span class="chip ok">&#9989; OSS アセットへの置換</span>
+        <span class="chip ok">&#9989; 装飾アイテム追加</span>
+        <span class="chip ok">&#9989; 照明レイヤー追加</span>
+        <span class="chip ok">&#9989; 衝突境界（Collision）追加</span>
+        <span class="chip ok">&#9989; レイヤー分割によるフォルダ構成整理</span>
+        <span class="chip ok">&#9989; ロボット + LiDAR/IMU/オドメトリ ROS2 Graph 動作確認</span>
+        <span class="chip wip">&#9898; 残留遊び等ハードウェア側の影響切り分け（継続）</span>
+        <span class="chip wip">&#9898; 衝突形状の精度チューニング（継続）</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title">次のステップ</div>
+    <div class="card-body">
+      <ul style="padding-left:16px; line-height:2.1; font-size:14px; color:var(--text2);">
+        <li>本シーン上でナビゲーション（FAST-LIO2 + GICP + Nav2）を再実行し、デフォルトシーンとの挙動差を比較</li>
+        <li>通路が狭い箇所・什器が密集する箇所での MPPI パラメータの再検証</li>
+        <li>衝突プロキシの寸法・位置を実測値と再照合し、ズレがあれば修正</li>
+        <li>照明パラメータを視認性優先設定から、より実際の室内に近い明るさへ調整</li>
+        <li>他の実環境（別の部屋・別フロア）への同様の手順の展開を検討</li>
+      </ul>
+    </div>
+  </div>
+
+</main>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-btn lb-close" id="lb-close" type="button" aria-label="閉じる">&times;</button>
+  <button class="lb-btn lb-prev" id="lb-prev" type="button" aria-label="前へ">&#8249;</button>
+  <img id="lb-img" src="" alt="" />
+  <button class="lb-btn lb-next" id="lb-next" type="button" aria-label="次へ">&#8250;</button>
+</div>
+
+<script>
+document.querySelectorAll('.nav-btn[data-nav]').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const id = btn.dataset.nav;
+    const drop = document.getElementById('nav-' + id);
+    const isOpen = drop.classList.contains('open');
+    document.querySelectorAll('.nav-drop.open').forEach(d => d.classList.remove('open'));
+    document.querySelectorAll('.nav-btn.nav-open').forEach(b => b.classList.remove('nav-open'));
+    if (!isOpen) { drop.classList.add('open'); btn.classList.add('nav-open'); }
+  });
+});
+document.addEventListener('click', () => {
+  document.querySelectorAll('.nav-drop.open').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.nav-btn.nav-open').forEach(b => b.classList.remove('nav-open'));
+});
+
+/* Carousel prev/next */
+document.querySelectorAll('.carousel').forEach(car => {
+  const album = car.querySelector('.album');
+  const step = () => (album.querySelector('img')?.getBoundingClientRect().width || 300) + 12;
+  car.querySelector('.prev').addEventListener('click', () => album.scrollBy({ left: -step(), behavior: 'smooth' }));
+  car.querySelector('.next').addEventListener('click', () => album.scrollBy({ left: step(), behavior: 'smooth' }));
+});
+
+/* Lightbox */
+const lightbox = document.getElementById('lightbox');
+const lbImg = document.getElementById('lb-img');
+let lbGroup = [];
+let lbIndex = 0;
+
+function showLbIndex(i) {
+  lbIndex = (i + lbGroup.length) % lbGroup.length;
+  lbImg.src = lbGroup[lbIndex].src;
+}
+document.querySelectorAll('.album img').forEach(img => {
+  img.addEventListener('click', () => {
+    lbGroup = Array.from(img.closest('.album').querySelectorAll('img'));
+    showLbIndex(lbGroup.indexOf(img));
+    lightbox.classList.add('open');
+  });
+});
+document.getElementById('lb-prev').addEventListener('click', () => showLbIndex(lbIndex - 1));
+document.getElementById('lb-next').addEventListener('click', () => showLbIndex(lbIndex + 1));
+document.getElementById('lb-close').addEventListener('click', () => lightbox.classList.remove('open'));
+lightbox.addEventListener('click', e => { if (e.target === lightbox) lightbox.classList.remove('open'); });
+document.addEventListener('keydown', e => {
+  if (!lightbox.classList.contains('open')) return;
+  if (e.key === 'Escape') lightbox.classList.remove('open');
+  if (e.key === 'ArrowLeft') showLbIndex(lbIndex - 1);
+  if (e.key === 'ArrowRight') showLbIndex(lbIndex + 1);
+});
+</script>
+</body>
+</html>

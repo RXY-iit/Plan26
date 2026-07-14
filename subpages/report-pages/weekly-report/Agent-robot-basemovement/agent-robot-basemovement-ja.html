@@ -247,6 +247,28 @@ main { max-width: 960px; margin: 0 auto; padding: 44px 24px 100px; }
 .note.green { background: var(--green-l); border: 1px solid rgba(5,150,105,.25); color: #065f46; }
 .note.purple{ background: var(--purple-l); border: 1px solid rgba(124,58,237,.2); color: #4c1d95; }
 
+/* Layer panel (block diagram) */
+.layer-panel { border-radius: var(--r); border: 1px solid; margin: 16px 0; overflow: hidden; }
+.layer-panel.l3 { border-color: rgba(124,58,237,.3); }
+.layer-panel.l2 { border-color: rgba(37,99,235,.25); }
+.layer-panel-head { padding: 12px 18px; text-align: center; }
+.layer-panel-head.l3 { background: var(--purple-l); }
+.layer-panel-head.l2 { background: var(--accent-l); }
+.layer-panel-head strong { font-size: 14px; font-weight: 800; }
+.layer-panel-head.l3 strong { color: var(--purple); }
+.layer-panel-head.l2 strong { color: var(--accent); }
+.layer-panel-head div.sub { font-size: 12px; color: var(--text2); margin-top: 3px; }
+.layer-panel-body { background: var(--surface); padding: 14px; }
+.layer-panel-foot { padding: 9px 18px; text-align: center; font-size: 12px; font-weight: 600; }
+.layer-panel-foot.l3 { background: var(--purple-l); color: var(--purple); }
+.layer-panel-foot.l2 { background: var(--accent-l); color: var(--accent); }
+.block-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.block-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 12px; }
+.block-icon { font-size: 19px; margin-bottom: 6px; text-align: center; }
+.block-name { font-size: 12.5px; font-weight: 700; color: var(--text); text-align: center; }
+.block-name small { display: block; font-size: 10px; font-weight: 500; color: var(--muted); margin-top: 2px; font-family: var(--mono); }
+.block-desc { font-size: 11.5px; color: var(--muted); margin-top: 7px; line-height: 1.6; text-align: left; }
+
 /* Layer diagram */
 .layer-stack { display: flex; flex-direction: column; gap: 0; margin: 14px 0; }
 .layer-box {
@@ -483,7 +505,7 @@ tr:nth-child(even) td { background: #fafafa; }
           <tr>
             <td><strong>Agent（L3）</strong></td>
             <td>What / Why / When / What next</td>
-            <td>「旁边」の意味は何か・失敗時に別 approach pose を試すか・Human に聞くか</td>
+            <td>「近場」の意味は何か・失敗時に別 approach pose を試すか・Human に聞くか</td>
           </tr>
         </tbody>
       </table>
@@ -495,25 +517,108 @@ tr:nth-child(even) td { background: #fafafa; }
 
   <div class="card teal">
     <div class="card-title">
-      <span class="tag sw">Skills</span>
-      現在実装済みの主要 Skill
+      <span class="tag ai">L3</span>
+      Agent Layer の構成 — 「今何ができるか」をリアルタイムに実行判断する層
     </div>
     <div class="card-body">
-      <div class="chip-grid">
-        <span class="chip ok">get_robot_status</span>
-        <span class="chip ok">await_robot_auto_mode</span>
-        <span class="chip ok">check_localization_health</span>
-        <span class="chip ok">recover_localization_spin</span>
-        <span class="chip ok">resolve_semantic_target</span>
-        <span class="chip ok">list_known_targets</span>
-        <span class="chip ok">goto_pose</span>
-        <span class="chip ok">cancel_motion</span>
-        <span class="chip ok">set_camera_pose</span>
-        <span class="chip ok">capture_observation</span>
-        <span class="chip ok">detect_known_object</span>
-        <span class="chip ok">move_lift_bounded</span>
+      <p>ユーザーコマンドを解析し、複数の Skill を組み合わせた実行計画を作り、健康状態や結果に応じて回復・継続・人間確認を判断する層。real lab でのテストを重ね、Recovery や Dashboard の監視項目を拡充しました。</p>
+      <div class="layer-panel l3">
+        <div class="layer-panel-head l3">
+          <strong>L3：Agent Layer</strong>
+          <div class="sub">src/robot_agent — 意味解釈・計画・回復判断</div>
+        </div>
+        <div class="layer-panel-body">
+          <div class="block-grid">
+            <div class="block-item">
+              <div class="block-icon">&#128172;</div>
+              <div class="block-name">自然言語解析<br><small>HybridParser</small></div>
+              <div class="block-desc">Deterministic → Embedding → LLM Fallback の3段階でコマンドを MissionIntent に変換</div>
+            </div>
+            <div class="block-item">
+              <div class="block-icon">&#128203;</div>
+              <div class="block-name">Mission 管理<br><small>MissionAgent</small></div>
+              <div class="block-desc">タスク分解・Skill Plan 構築・進行管理。Health 起因の一時停止と Navigation 失敗を区別し、region / fixed point target ごとに異なる方針で回復</div>
+            </div>
+            <div class="block-item">
+              <div class="block-icon">&#128737;&#65039;</div>
+              <div class="block-name">Navigation<br><small>NavigationAgent</small></div>
+              <div class="block-desc">移動計画を作成。狭路侵入前の正対調整・到達判定などの実行策は L2 側が担当し、Agent は map 非依存で plan のみ組み立てる</div>
+            </div>
+            <div class="block-item">
+              <div class="block-icon">&#128247;</div>
+              <div class="block-name">Perception<br><small>PerceptionAgent</small></div>
+              <div class="block-desc">カメラ姿勢・観察・検出の計画を作成。color / object 等のクエリ分解を行い、検出可否は L2 の capability に委ねる</div>
+            </div>
+            <div class="block-item">
+              <div class="block-icon">&#128225;</div>
+              <div class="block-name">Health Recovery<br><small>Localization・Safety</small></div>
+              <div class="block-desc">Localization 異常を検知すると自動でスピン回復を実行し、成功後は同じ手順から再開。Local Planner の異常も監視し安全に一時停止</div>
+            </div>
+            <div class="block-item">
+              <div class="block-icon">&#128202;</div>
+              <div class="block-name">Dashboard<br><small>DashboardNode</small></div>
+              <div class="block-desc">Mission / Health / Navigation 状態を可視化。Timeout・stuck 状態や Local Planner の状態、route state もリアルタイム表示</div>
+            </div>
+          </div>
+        </div>
+        <div class="layer-panel-foot l3">「今できること」を整理し、Skill Plan を通してロボットを安全に実行する</div>
       </div>
-      <p style="margin-top: 12px; font-size: 13px; color: var(--muted);">各 Skill は：入力 schema → 前置条件チェック → ROS action 実行 → 監視 → タイムアウト/失敗処理 → 構造化 SkillResult 返却 の形式で統一されている。</p>
+    </div>
+  </div>
+
+  <div class="card teal">
+    <div class="card-title">
+      <span class="tag sw">L2</span>
+      Skill Layer の構成 — 再利用可能な typed Skill 群
+    </div>
+    <div class="card-body">
+      <p>Agent が安全に呼び出せる typed robot API。ROS2 action / topic / service / Nav2 / semantic map への実際のアクセスはここに閉じ込め、結果は構造化された SkillResult で返す。</p>
+      <div class="layer-panel l2">
+        <div class="layer-panel-head l2">
+          <strong>L2：Skill Layer</strong>
+          <div class="sub">src/robot_skills — 実行・監視・構造化結果</div>
+        </div>
+        <div class="layer-panel-body">
+          <div class="block-grid">
+            <div class="block-item">
+              <div class="block-icon">&#127937;</div>
+              <div class="block-name">goto_pose<br><small>移動</small></div>
+              <div class="block-desc">指定 Pose へ移動。狭い通路の手前で正対に自動調整し、到達判定は「微調整 → tolerance 緩和 → 代替候補選定」の3段階で判断</div>
+            </div>
+            <div class="block-item">
+              <div class="block-icon">&#127919;</div>
+              <div class="block-name">resolve_semantic_target<br><small>意味解決</small></div>
+              <div class="block-desc">sofa / tool_box など意味的な目標を地図データから解決し、最終 Pose と接近候補を返す</div>
+            </div>
+            <div class="block-item">
+              <div class="block-icon">&#128269;</div>
+              <div class="block-name">detect_known_object<br><small>物体検出</small></div>
+              <div class="block-desc">色 / 物体 / テキストなどをカメラ画像から検出。YOLO・色検出などモデルの能力に応じて判定</div>
+            </div>
+            <div class="block-item">
+              <div class="block-icon">&#128737;&#65039;</div>
+              <div class="block-name">check / recover localization<br><small>自己位置</small></div>
+              <div class="block-desc">Localization の健全性を確認し、不安定な場合はその場でスピンして回復を試みる</div>
+            </div>
+            <div class="block-item">
+              <div class="block-icon">&#128209;</div>
+              <div class="block-name">move_lift_bounded<br><small>リフト</small></div>
+              <div class="block-desc">リフトを安全範囲内で昇降させる</div>
+            </div>
+            <div class="block-item">
+              <div class="block-icon">&#9209;&#65039;</div>
+              <div class="block-name">cancel_navigation<br><small>中断</small></div>
+              <div class="block-desc">実行中の移動を安全に中断する</div>
+            </div>
+            <div class="block-item">
+              <div class="block-icon">&#8943;</div>
+              <div class="block-name">他のスキル<br><small>get_robot_status 等</small></div>
+              <div class="block-desc">get_robot_status / await_robot_auto_mode / set_camera_pose / capture_observation / list_known_targets など</div>
+            </div>
+          </div>
+        </div>
+        <div class="layer-panel-foot l2">各 Skill は入力 schema → 前置条件チェック → ROS action 実行 → 監視 → タイムアウト/失敗処理 → 構造化 SkillResult 返却 で統一</div>
+      </div>
     </div>
   </div>
 
@@ -573,10 +678,23 @@ tr:nth-child(even) td { background: #fafafa; }
     </div>
   </div>
 
+  <div class="card purple">
+    <div class="card-title">
+      <span class="tag ai">Test</span>
+      Dry-run Test — 三層 Routing の検証結果
+    </div>
+    <div class="card-body">
+      <p>ROS2 / Isaac Sim を起動せずに、Parser と Skill Plan の妥当性だけを検証する dry-run test を継続的に運用中。現時点のテストケースと結果は以下から確認できます（今後随時更新予定）。</p>
+      <div class="note purple" style="margin-top: 10px;">
+        &#128202; <a href="dry-run-test/viewer/results-viewer-jp.html" style="color: var(--purple); font-weight: 700;">Dry-run Test 結果ビューア</a> — Deterministic / Embedding / LLM Fallback の各テストケースと合否を一覧表示
+      </div>
+    </div>
+  </div>
+
   <!-- ── SECTION 5: デモ映像 ── -->
   <div class="sec-div">
     <div class="sec-line"></div>
-    <div class="sec-label green">&#127916; デモ映像 — 04-05 棚ナビゲーション</div>
+    <div class="sec-label green">&#127916; デモ映像</div>
     <div class="sec-line"></div>
   </div>
 
@@ -586,7 +704,7 @@ tr:nth-child(even) td { background: #fafafa; }
       指令受信 → ナビゲーション → 観察 → 人間へのフィードバック
     </div>
     <div class="card-body">
-      <p>自然言語コマンドを受け取り、04-05 棚に移動、周囲を観察して結果を人間に報告するまでのフル動作です。</p>
+      <p>自然言語コマンドを受け取ってからナビゲーション・観察・各種タスク実行までの一連の動作を、複数のシナリオで確認しました。</p>
       <div class="vid-grid">
         <div class="vid-card">
           <video controls preload="metadata">
@@ -598,31 +716,26 @@ tr:nth-child(even) td { background: #fafafa; }
             <small>指令受信 → Nav2 移動 → Perception Scan → 結果フィードバック</small>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── SECTION 6: L402 部屋モデル ── -->
-  <div class="sec-div">
-    <div class="sec-line"></div>
-    <div class="sec-label amber">&#127968; タスク 2 — L402 部屋モデル作成（調査完了）</div>
-    <div class="sec-line"></div>
-  </div>
-
-  <div class="card amber">
-    <div class="card-title">
-      <span class="tag wip">WIP</span>
-      USD による部屋モデル — 調査フェーズ完了
-    </div>
-    <div class="card-body">
-      <p>今週は L402 部屋の Isaac Sim 用 USD モデル作成に向けて調査を実施しました。</p>
-      <ul style="padding-left: 18px; margin-top: 10px; line-height: 2.1; font-size: 14px; color: var(--text2);">
-        <li><strong>USD とは何か</strong>：Universal Scene Description — 3D シーンの記述・合成・インスタンス化のための標準フォーマット</li>
-        <li><strong>位置付け</strong>：Isaac Sim のシーン管理の中核。物理プロパティ・マテリアル・センサー設定も含められる</li>
-        <li><strong>各案の比較</strong>：CAD インポート案・手動モデリング案・既存アセット活用案を比較検討</li>
-      </ul>
-      <div class="note amber" style="margin-top: 12px;">
-        具体的な実装は次週に移行予定。調査は完了しており、方針は固まっている。
+        <div class="vid-card">
+          <video controls preload="metadata">
+            <source src="go-to-sofa.webm" type="video/webm">
+            お使いのブラウザは動画再生に対応していません。
+          </video>
+          <div class="vid-cap">
+            ソファへのナビゲーション — 狭路通過と柔軟な到達判定
+            <small>狭い通路手前での向き調整 → 通過 → 到達判定（微調整・tolerance 緩和）</small>
+          </div>
+        </div>
+        <div class="vid-card">
+          <video controls preload="metadata">
+            <source src="search-task.webm" type="video/webm">
+            お使いのブラウザは動画再生に対応していません。
+          </video>
+          <div class="vid-cap">
+            その場タスク実行 — 相対移動・周囲確認・物体検出
+            <small>旋回などの相対移動 → カメラで周囲確認 → YOLO 検出などの Agent タスク例</small>
+          </div>
+        </div>
       </div>
     </div>
   </div>
