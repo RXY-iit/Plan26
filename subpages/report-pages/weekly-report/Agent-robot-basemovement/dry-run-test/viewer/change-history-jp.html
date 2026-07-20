@@ -1,0 +1,456 @@
+<title>NLU Parser 改善の歩み</title>
+
+<style>
+  :root {
+    --bg: #f6f7f6;
+    --surface: #ffffff;
+    --surface-2: #eef0ee;
+    --ink: #1a1d1b;
+    --ink-2: #4d514d;
+    --muted: #83867f;
+    --line: #dde0da;
+    --accent: #2f7a72;
+    --accent-ink: #ffffff;
+    --accent-soft: #e2f0ed;
+    --found: #b8790f;
+    --found-soft: #fdf1da;
+    --fixed: #2f8f52;
+    --fixed-soft: #e4f5e8;
+    --crit: #c23b3b;
+    --crit-soft: #fbe6e4;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", "JetBrains Mono", Consolas, monospace;
+    --sans: -apple-system, "Segoe UI", "Hiragino Sans", "Noto Sans JP", "PingFang SC", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14161a;
+      --surface: #1b1e23;
+      --surface-2: #22262c;
+      --ink: #eceeec;
+      --ink-2: #b7bab5;
+      --muted: #7d8079;
+      --line: #2c3036;
+      --accent: #5fb3a8;
+      --accent-ink: #0c1210;
+      --accent-soft: #1b2e2b;
+      --found: #e0a83a;
+      --found-soft: #332a13;
+      --fixed: #4fce7c;
+      --fixed-soft: #16281b;
+      --crit: #e2685f;
+      --crit-soft: #331615;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14161a; --surface: #1b1e23; --surface-2: #22262c;
+    --ink: #eceeec; --ink-2: #b7bab5; --muted: #7d8079; --line: #2c3036;
+    --accent: #5fb3a8; --accent-ink: #0c1210; --accent-soft: #1b2e2b;
+    --found: #e0a83a; --found-soft: #332a13;
+    --fixed: #4fce7c; --fixed-soft: #16281b;
+    --crit: #e2685f; --crit-soft: #331615;
+  }
+  :root[data-theme="light"] {
+    --bg: #f6f7f6; --surface: #ffffff; --surface-2: #eef0ee;
+    --ink: #1a1d1b; --ink-2: #4d514d; --muted: #83867f; --line: #dde0da;
+    --accent: #2f7a72; --accent-ink: #ffffff; --accent-soft: #e2f0ed;
+    --found: #b8790f; --found-soft: #fdf1da;
+    --fixed: #2f8f52; --fixed-soft: #e4f5e8;
+    --crit: #c23b3b; --crit-soft: #fbe6e4;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+  body { line-height: 1.7; }
+  ::selection { background: var(--accent-soft); color: var(--ink); }
+
+  .wrap { max-width: 880px; margin: 0 auto; padding: 56px 24px 96px; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 10px;
+  }
+  h1 {
+    font-size: clamp(24px, 4vw, 33px);
+    line-height: 1.35;
+    margin: 0 0 14px;
+    text-wrap: balance;
+    letter-spacing: -0.005em;
+  }
+  .lede { color: var(--ink-2); font-size: 15.5px; max-width: 68ch; margin: 0 0 32px; }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 48px;
+  }
+  .stat-tile { background: var(--surface); padding: 16px 14px; }
+  .stat-tile .num { font-family: var(--mono); font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .stat-tile .lbl { font-size: 11px; color: var(--muted); margin-top: 4px; letter-spacing: 0.02em; }
+  .stat-tile.pass .num { color: var(--fixed); }
+  .stat-tile.warn .num { color: var(--found); }
+  .stat-tile.fail .num { color: var(--crit); }
+
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--line);
+  }
+
+  .round {
+    position: relative;
+    margin-bottom: 56px;
+  }
+  .round::before {
+    content: "";
+    position: absolute;
+    left: -28px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 3px solid var(--bg);
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+  .round-head { margin-bottom: 6px; }
+  .round-date {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.03em;
+  }
+  .round-title {
+    font-size: 19.5px;
+    font-weight: 700;
+    margin: 2px 0 8px;
+    letter-spacing: 0;
+  }
+  .round-summary { color: var(--ink-2); font-size: 14px; max-width: 66ch; margin: 0 0 20px; }
+
+  .fix-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+  .fix-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 2px 8px;
+    border-radius: 5px;
+  }
+  .tag.found { background: var(--found-soft); color: var(--found); }
+  .tag.fixed { background: var(--fixed-soft); color: var(--fixed); }
+  .tag.decision { background: var(--accent-soft); color: var(--accent); }
+  .tag.open { background: var(--crit-soft); color: var(--crit); }
+  .fix-title { font-weight: 600; font-size: 14.5px; }
+  .fix-body { color: var(--ink-2); font-size: 13.8px; margin: 0 0 12px; }
+  .fix-body code {
+    font-family: var(--mono);
+    font-size: 0.92em;
+    background: var(--surface-2);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+
+  .example {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 12.8px;
+    background: var(--surface-2);
+    border-radius: 8px;
+    padding: 12px 14px;
+    overflow-x: auto;
+  }
+  .example .in { color: var(--ink); }
+  .example .in::before { content: "▸ "; color: var(--muted); }
+  .example .before, .example .after { display: flex; gap: 8px; align-items: baseline; white-space: pre; }
+  .example .before .lbl, .example .after .lbl {
+    font-family: var(--sans);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+    width: 52px;
+  }
+  .example .before .lbl { color: var(--crit); }
+  .example .after .lbl { color: var(--fixed); }
+  .example .before .val { color: var(--ink-2); text-decoration: line-through; text-decoration-color: var(--crit); text-decoration-thickness: 1px; white-space: pre-wrap; }
+  .example .after .val { color: var(--ink); white-space: pre-wrap; }
+
+  .closing {
+    margin-top: 8px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+  }
+  .closing h2 { font-size: 17px; margin: 0 0 12px; }
+  .open-list { list-style: none; margin: 0 0 28px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .open-list li {
+    font-size: 13.8px;
+    color: var(--ink-2);
+    padding-left: 20px;
+    position: relative;
+  }
+  .open-list li::before {
+    content: "○";
+    position: absolute;
+    left: 0;
+    color: var(--crit);
+    font-size: 11px;
+    top: 4px;
+  }
+  .refs { font-size: 13px; color: var(--muted); }
+  .refs a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-soft); }
+  .refs a:hover { border-bottom-color: var(--accent); }
+
+  @media (max-width: 560px) {
+    .wrap { padding: 36px 16px 64px; }
+    .timeline { padding-left: 22px; }
+    .round::before { left: -22px; }
+  }
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Dry-Run Test Console · robot_agent NLU Pipeline</p>
+  <h1>Parser 改善の歩み：F1 から WARNING 階層まで</h1>
+  <p class="lede">
+    このページは <code>DeterministicParser</code> / <code>EmbeddingParser</code> /
+    <code>LlamaCppParser</code> の3層 NLU パイプラインが、4回の dry-run テストを通じて発見・解決してきた
+    問題を時系列でまとめたものです。各項目には実際の入力文と「修正前 → 修正後」の対比を添えています。
+    技術的な詳細は末尾のリンク先の元レポートを参照してください。
+  </p>
+
+  <div class="stat-row">
+    <div class="stat-tile"><div class="num">249</div><div class="lbl">real_lab テストケース（EN+JP）</div></div>
+    <div class="stat-tile pass"><div class="num">193</div><div class="lbl">PASS</div></div>
+    <div class="stat-tile warn"><div class="num">51</div><div class="lbl">WARNING（見積もりのズレ）</div></div>
+    <div class="stat-tile fail"><div class="num">1</div><div class="lbl">FAIL（実際の不具合）</div></div>
+  </div>
+
+  <div class="timeline">
+
+    <div class="round">
+      <div class="round-head">
+        <div class="round-date">Round 1–3 · 2026-07-06</div>
+        <div class="round-title">初回 dry-run：基礎的な解析の穴を発見（F1–F12）</div>
+      </div>
+      <p class="round-summary">
+        あらゆるコマンド種別を初めて体系的に実行し、一連の「正規表現の詰めが甘い」レベルの問題が
+        露呈した——アーキテクチャの問題ではなく、個々のルールが境界ケースを見落としていた。
+      </p>
+
+      <div class="fix-card">
+        <div class="fix-head"><span class="tag found">発見</span><span class="tag fixed">修正済み</span><span class="fix-title">F4：代名詞・曖昧語が正当な対象として扱われていた</span></div>
+        <p class="fix-body">"check it" のような指示に含まれる <code>it</code> は本来特定できない対象のはずが、そのまま具体的な巡視対象として受理されていた。</p>
+        <div class="example">
+          <div class="in">check it</div>
+          <div class="before"><span class="lbl">修正前</span><span class="val">inspect_place(target=it)</span></div>
+          <div class="after"><span class="lbl">修正後</span><span class="val">ask_human</span></div>
+        </div>
+      </div>
+
+      <div class="fix-card">
+        <div class="fix-head"><span class="tag found">発見</span><span class="tag fixed">修正済み</span><span class="fix-title">F9：複合ターゲット名が方向語ルールに誤爆されていた</span></div>
+        <p class="fix-body">ターゲット名のクリーンアップ処理が「front を見たら方向語として切り落とす」という単純な仕組みだったため、"front door" のように front を含む本物のターゲット名が誤って "door" に削られていた。既知ターゲット名に基づくフレーズ単位のアンカー式除去に変更。</p>
+        <div class="example">
+          <div class="in">go to front door</div>
+          <div class="before"><span class="lbl">修正前</span><span class="val">navigate_to_place(target=door)</span></div>
+          <div class="after"><span class="lbl">修正後</span><span class="val">navigate_to_place(target="front door")</span></div>
+        </div>
+      </div>
+
+      <div class="fix-card">
+        <div class="fix-head"><span class="tag found">発見</span><span class="tag fixed">修正済み</span><span class="fix-title">F12：アンダースコア形式が認識されない</span></div>
+        <p class="fix-body">知覚クエリの型プレフィックス用正規表現が「スペース」区切り（"object car"）しか認識せず、テンプレート集で同じく使われている「アンダースコア」形式（"object_car"）を認識していなかった——自前の warehouse シナリオの例文すら正しく解析できていなかった。</p>
+        <div class="example">
+          <div class="in">check object_car</div>
+          <div class="before"><span class="lbl">修正前</span><span class="val">Embedding / LLM Fallback に落ちる（本来 Deterministic で直接一致すべき）</span></div>
+          <div class="after"><span class="lbl">修正後</span><span class="val">search_object_here(object_query=object_car) · Deterministic</span></div>
+        </div>
+      </div>
+
+      <div class="fix-card">
+        <div class="fix-head"><span class="tag found">発見</span><span class="tag decision">設計判断</span><span class="fix-title">F6：綴り訂正——あえて修正せず、後の設計議論に持ち越し</span></div>
+        <p class="fix-body">"go to sfoa" のような綴りミスは、当時は訂正処理を一切行わないことを選択し、「設計判断が必要で、その場しのぎで直せるバグではない」と明記して保留された——この判断が最終的に決着するのは Round 5.1（下記参照）。</p>
+      </div>
+    </div>
+
+    <div class="round">
+      <div class="round-head">
+        <div class="round-date">Round 4 · 2026-07-07</div>
+        <div class="round-title">アーキテクチャ再設計：Parser と Perception の責務分担を見直し</div>
+      </div>
+      <p class="round-summary">
+        単なる修正ではなく契約そのものの再設計：Parser はもう Perception の代わりに判断せず、
+        Perception の「能力」は推測ではなく実モデルのデータに基づくようになった。
+      </p>
+
+      <div class="fix-card">
+        <div class="fix-head"><span class="tag decision">アーキテクチャ変更</span><span class="fix-title">Parser が知覚クエリに事前の「型ラベル付け」をしなくなった</span></div>
+        <p class="fix-body">以前は Parser が "green door" を先回りして "green_door" に分類しており、Perception 自身の判定ロジックと二重管理・衝突していた。現在は Parser はクリーンアップ済みの生フレーズをそのまま渡すだけで、色/物体/文字が何であるかはすべて Perception 側の一箇所で決定する。</p>
+      </div>
+
+      <div class="fix-card">
+        <div class="fix-head"><span class="tag decision">アーキテクチャ変更</span><span class="fix-title">「能力」は推測ではなく、実際の YOLO モデルの COCO 80クラスを参照</span></div>
+        <p class="fix-body">以前は「この単語が検出可能な物体っぽいか」をハードコードされた16個の英語接尾辞リストで判定していた。現在は現行の <code>yolo11s.pt</code> の重みファイルに実在するクラス名一覧を直接参照する。</p>
+        <div class="example">
+          <div class="in">check for a door / cart / sofa / chair</div>
+          <div class="before"><span class="lbl">修正前</span><span class="val">door/cart/sofa が「物体っぽい」として検出対象にされていた（実際はモデルが認識できない）</span></div>
+          <div class="after"><span class="lbl">修正後</span><span class="val">door/cart/sofa → 正しく「非対応」と判定；逆に chair は実在クラスなのに以前は漏れていたが、今は検出可能</span></div>
+        </div>
+      </div>
+
+      <div class="fix-card">
+        <div class="fix-head"><span class="tag found">発見</span><span class="tag fixed">修正済み</span><span class="fix-title">"turquoise chair" 色+物体の結合バグ</span></div>
+        <p class="fix-body">新しい能力モデル導入後に露呈した新規バグ：一致しなかった色の単語と物体の単語が文字列連結時にくっついてしまい、どちらにも一致しなくなっていた。先に単語分割してから各単語を個別に照合するよう修正。</p>
+        <div class="example">
+          <div class="in">check for a turquoise chair</div>
+          <div class="before"><span class="lbl">修正前</span><span class="val">"turquoise" + "chair" → "turquoisechair" となり、既知のどのクラスにも一致しない</span></div>
+          <div class="after"><span class="lbl">修正後</span><span class="val">個別に認識：turquoise（未知の色）+ chair（実在する検出可能クラス）</span></div>
+        </div>
+      </div>
+
+      <div class="fix-card">
+        <div class="fix-head"><span class="tag decision">アーキテクチャ変更</span><span class="fix-title">検出しようがないクエリは、カメラスキャン全体をスキップ</span></div>
+        <p class="fix-body">以前はクエリの内容にかかわらず、必ず9姿勢のカメラスキャンを一通り行ってから検出可否を判定していた。現在は事前判定を行い、検出可能な手がかりが一切ない場合は物理動作を丸ごとスキップして、即座に人手確認が必要と報告する。</p>
+        <div class="example">
+          <div class="in">check for salfjogasf</div>
+          <div class="before"><span class="lbl">修正前</span><span class="val">9姿勢スキャン（スキルコール18回）を最後まで完走してから NEEDS_HUMAN を報告</span></div>
+          <div class="after"><span class="lbl">修正後</span><span class="val">カメラを動かさず、即座に NEEDS_HUMAN を報告</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="round">
+      <div class="round-head">
+        <div class="round-date">Round 5 · 2026-07-13</div>
+        <div class="round-title">LLM Fallback の再設計、ローカル大規模言語モデルへの実接続</div>
+      </div>
+      <p class="round-summary">
+        「動けばいい」では終わらせず、実際にローカルの llama.cpp サービスに接続してテスト。
+        同時にフォールバック層の振る舞いそのものを再設計した。
+      </p>
+
+      <div class="fix-card">
+        <div class="fix-head"><span class="tag decision">アーキテクチャ変更</span><span class="fix-title">Deterministic / Embedding は単独で ask_human に終端できなくなった</span></div>
+        <p class="fix-body">以前は Embedding の判断が自信不足（スコアが拮抗、または閾値未満）だとそのまま「要人手確認」を返し、そこで処理が終わっていた。現在は自信を持って判断できなかった場合、必ず LLM Fallback に処理を継続して最終判断を委ねる。</p>
+      </div>
+
+      <div class="fix-card">
+        <div class="fix-head"><span class="tag decision">アーキテクチャ変更</span><span class="fix-title">LLM Fallback が「単一の確定回答を推測する」から「常に候補3件+キャンセル」に変更</span></div>
+        <p class="fix-body">新設計では LLM が単独で実行を確定することは二度となく、最大3件の候補案とキャンセル選択肢を提示し、人手確認に委ねる。プロンプト内の「対応コマンド一覧」も <code>parser_templates.yaml</code> からその場で生成する方式に変更し、陳腐化しやすい手書き文面を廃止した。</p>
+      </div>
+
+      <div class="fix-card">
+        <div class="fix-head"><span class="tag found">発見</span><span class="tag fixed">緩和済み</span><span class="fix-title">llama.cpp のプロンプトキャッシュ正確性バグ</span></div>
+        <p class="fix-body">ローカルモデルへの実接続で初めて露呈：temperature=0 にもかかわらず、同一リクエストが時折壊れた空の JSON <code>{}</code> を返す。原因は llama.cpp の最長共通接頭辞キャッシュ再利用機構が、この「非常に長い共有プレフィックス+極端に短い可変末尾」というプロンプト構造で誤動作すること。キャッシュを無効化すれば直るが毎回のリクエストが10倍遅くなるため、「失敗時に1回だけ自動リトライ」で緩和し、残存の失敗率を 4/126（EN）・0/117（JP）まで低減。</p>
+      </div>
+
+      <div class="fix-card">
+        <div class="fix-head"><span class="tag fixed">パラメータ調整</span><span class="fix-title">Embedding の閾値を再調整、隠れたハードコードも修正</span></div>
+        <p class="fix-body"><code>accept_threshold</code> を 0.94 から 0.90 へ、<code>clarify_threshold</code> を 0.75 から 0.78 へ変更。あわせて <code>_is_ambiguous</code> 内部に 0.72 という値がハードコードされたままで、設定を変えても反映されていなかった問題を発見・修正し、実際に設定値を読むようにした。</p>
+      </div>
+    </div>
+
+    <div class="round">
+      <div class="round-head">
+        <div class="round-date">Round 5.1 · 2026-07-14</div>
+        <div class="round-title">「あいまい一致は禁止」の決定を実装、実バグを修正、WARNING 階層を導入</div>
+      </div>
+      <p class="round-summary">
+        Round 5 の実行で明らかになった問題を一つずつ修正すると同時に、「どの層に落ちるかというテストの
+        予想が外れただけ」なのか「システムが実際に誤った結果を出した」のかを初めて明確に区別した。
+      </p>
+
+      <div class="fix-card">
+        <div class="fix-head"><span class="tag decision">設計判断の実装</span><span class="fix-title">F6 にようやく決着：あいまい一致はせず、Embedding/LLM に判断を委ねる</span></div>
+        <p class="fix-body">Deterministic は「既知のどのターゲットにも似ていない」入力を一律で一致拒否するようになった（編集距離などのあいまい訂正は行わない）。判定には元の部分文字列ではなく「スクリプト認識トークン化」を使用——"sofa" が "sofaa" に誤って一致するような偽陽性を避けつつ、スペースのない日本語の正当な包含関係も保持する。</p>
+        <div class="example">
+          <div class="in">go to sfoa</div>
+          <div class="before"><span class="lbl">修正前</span><span class="val">Deterministic が navigate_to_object(target=sfoa) を黙って受理</span></div>
+          <div class="after"><span class="lbl">修正後</span><span class="val">Deterministic は拒否 → Embedding が意味的類似度で自力解決（ただし綴りを "sofa" に訂正はしない——この残課題も正直に記録）</span></div>
+        </div>
+      </div>
+
+      <div class="fix-card">
+        <div class="fix-head"><span class="tag found">発見</span><span class="tag fixed">修正済み</span><span class="fix-title">F16（最も深刻）：日本語の回転指示のつなぎ言葉が「90メートル移動」になっていた</span></div>
+        <p class="fix-body">"くらい"という口語的なつなぎ言葉が「90度」と「回って」の間に挟まったことで組み合わせ正規表現が一致せず、より緩い移動系正規表現に落ちてしまい、「90」を移動距離のメートル数として解釈していた。</p>
+        <div class="example">
+          <div class="in">右に90度くらい回って</div>
+          <div class="before"><span class="lbl">修正前</span><span class="val">move_relative(direction=right, distance_m=90.0) ← 危うくロボットが90メートル移動するところだった</span></div>
+          <div class="after"><span class="lbl">修正後</span><span class="val">rotate_relative(yaw_deg=-90.0)</span></div>
+        </div>
+      </div>
+
+      <div class="fix-card">
+        <div class="fix-head"><span class="tag found">発見</span><span class="tag fixed">修正済み</span><span class="fix-title">F14：丁寧語・つなぎ言葉付きの視線指示が、意味不明な知覚クエリになっていた</span></div>
+        <p class="fix-body">"look up please" に含まれる余分な "please" のせいで視線方向の正規表現が一致せず、より緩い知覚検索用の正規表現に拾われ、"up please" 全体を探すべき物体として扱ってしまっていた。</p>
+        <div class="example">
+          <div class="in">look up please</div>
+          <div class="before"><span class="lbl">修正前</span><span class="val">search_object_here(object_query="up please")</span></div>
+          <div class="after"><span class="lbl">修正後</span><span class="val">look_direction(direction=front, band=upper)</span></div>
+        </div>
+      </div>
+
+      <div class="fix-card">
+        <div class="fix-head"><span class="tag found">発見</span><span class="tag fixed">修正済み</span><span class="fix-title">全角単位が誤った数値に黙って解析されていた</span></div>
+        <p class="fix-body">全角文字 "ｃｍ" が半角 "cm" のみに一致する正規表現とマッチせず、デフォルトの「少しだけ」という距離に黙って後退していた——実行される距離が意図の半分になってもエラーは出なかった。Unicode の NFKC 正規化で全角/半角を統一して解決。</p>
+        <div class="example">
+          <div class="in">リフトを10ｃｍ上げてください</div>
+          <div class="before"><span class="lbl">修正前</span><span class="val">distance_m=0.05 ← 意図は 0.10、半分しか動かない</span></div>
+          <div class="after"><span class="lbl">修正後</span><span class="val">distance_m=0.1</span></div>
+        </div>
+      </div>
+
+      <div class="fix-card">
+        <div class="fix-head"><span class="tag decision">階層の変更</span><span class="fix-title">WARNING を新設：「テストが層を読み違えた」と「システムが本当に間違えた」を区別</span></div>
+        <p class="fix-body">あるテストケースが単に「Embedding に落ちると予想したが実際は LLM Fallback だった」（あるいはその逆）で、それ以外の項目はすべて一致している場合、今は赤い FAIL ではなく WARNING と判定する——これはテスト側の仮説の調整が必要なだけで、システムの欠陥ではない。Deterministic / Ambiguity Gate での誤りや、内容そのものが誤っている場合のみが本当の FAIL となる。</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="closing">
+    <h2>まだ解決していない、議論待ちの課題</h2>
+    <ul class="open-list">
+      <li><strong>Embedding のテンプレート混同</strong>："take a look at the front door" が高スコアで look_direction（本来は inspect_place）と誤判定される——現時点で real_lab マトリクス中唯一の本物の FAIL。テンプレート設計レベルの調整が必要で、単純な閾値調整では解決しない。</li>
+      <li><strong>navigate_to_place / navigate_to_object を両方維持する必要があるか</strong>：下流の実行ロジックが両者を完全に同一に扱っていることをコードの証拠で確認済み——区別しているのは Parser 内部のヒューリスティック一箇所のみ。統合の有力候補だが、今回のラウンドでは着手していない。</li>
+      <li><strong>日本語の「あいまいな量の回転」分岐が存在しない</strong>："左にちょっと回転して"（左に少しだけ回転して）のように明確な角度がない場合、依然として move_relative に誤判定される——既知のバグとして正直に記録済みだが、未修正。</li>
+    </ul>
+
+    <p class="refs">
+      技術的な詳細・全テストデータは
+      <a href="dry-run-design-findings.md">dry-run-design-findings.md</a>（英語）を参照。
+      インタラクティブな結果閲覧は同じディレクトリの
+      <a href="results-viewer.html">results-viewer.html</a>（中国語）/
+      <a href="results-viewer-jp.html">results-viewer-jp.html</a>（日本語）。
+    </p>
+  </div>
+</div>

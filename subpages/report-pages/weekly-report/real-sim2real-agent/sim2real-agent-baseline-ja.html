@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>週次報告 — Sim2Real Agent / Navigation Baseline 検証 | FY2026</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #f8fafc;
+  --surface: #ffffff;
+  --surface2:#f1f5f9;
+  --border:  #e2e8f0;
+  --border2: #cbd5e1;
+  --accent:  #2563eb;
+  --accent-l:#eff6ff;
+  --accent-m:#bfdbfe;
+  --green:   #059669;
+  --green-l: #ecfdf5;
+  --amber:   #d97706;
+  --amber-l: #fffbeb;
+  --red:     #dc2626;
+  --red-l:   #fef2f2;
+  --purple:  #7c3aed;
+  --purple-l:#f5f3ff;
+  --teal:    #0d9488;
+  --teal-l:  #f0fdfa;
+  --text:    #0f172a;
+  --text2:   #334155;
+  --muted:   #64748b;
+  --mono:    'JetBrains Mono','Fira Code','Courier New',monospace;
+  --r: 12px;
+  --sh-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --sh:    0 4px 12px rgba(0,0,0,.08);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Meiryo',-apple-system,sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.8;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+  height: 56px; background: rgba(255,255,255,.97);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  padding: 0 28px; display: flex; align-items: center; gap: 2px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none; margin-right: 16px; flex-shrink: 0;
+}
+.nav-logo-icon {
+  width: 30px; height: 30px; background: var(--text); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.nav-logo-sep { font-size: 20px; color: var(--border2); font-weight: 300; }
+.nav-logo-text { font-size: 12px; color: var(--muted); font-weight: 600; }
+.nav-item { position: relative; }
+.nav-btn {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--muted); text-decoration: none;
+  padding: 6px 11px; border-radius: 7px;
+  border: none; background: none; cursor: pointer; font-family: inherit;
+  transition: background .12s, color .12s; white-space: nowrap;
+}
+.nav-btn:hover { background: var(--surface2); color: var(--text); }
+.nav-btn.cur { color: var(--accent); }
+.nav-caret { font-size: 8px; opacity: .5; transition: transform .15s; }
+.nav-btn.nav-open .nav-caret { transform: rotate(180deg); }
+.nav-drop {
+  position: absolute; top: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  min-width: 240px; background: #fff;
+  border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.11), 0 2px 8px rgba(0,0,0,.05);
+  padding: 8px; z-index: 999;
+  opacity: 0; pointer-events: none;
+  transition: opacity .15s, transform .15s;
+}
+.nav-drop.open { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.nav-drop-link {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; padding: 9px 10px; border-radius: 9px; transition: background .1s;
+}
+.nav-drop-link:hover { background: var(--surface2); }
+.nav-dl-icon { font-size: 18px; flex-shrink: 0; }
+.nav-dl-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.nav-dl-sub { font-size: 11px; color: var(--muted); }
+.nav-drop-sep { height: 1px; background: var(--border); margin: 5px 6px; }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.nav-badge-pill {
+  font-size: 11px; font-weight: 700;
+  background: var(--amber-l); color: var(--amber);
+  border: 1px solid rgba(217,119,6,.25);
+  padding: 4px 12px; border-radius: 99px; white-space: nowrap;
+}
+.nav-pulse {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--amber);
+  animation: npulse 2s infinite; flex-shrink: 0;
+}
+@keyframes npulse {
+  0%,100%{ box-shadow: 0 0 0 0 rgba(217,119,6,.4); }
+  50%     { box-shadow: 0 0 0 5px rgba(217,119,6,0); }
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 92px 24px 52px;
+  background: linear-gradient(135deg, #fff 0%, #fff7ed 50%, #fef2f2 100%);
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(217,119,6,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(217,119,6,.035) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.hero-inner { max-width: 960px; margin: 0 auto; position: relative; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: .06em;
+  color: var(--amber); background: var(--amber-l);
+  border: 1px solid rgba(217,119,6,.25);
+  padding: 3px 12px; border-radius: 99px; margin-bottom: 14px;
+}
+h1 { font-size: clamp(22px, 4vw, 36px); font-weight: 800; color: var(--text); margin-bottom: 8px; line-height: 1.3; }
+.hero-desc { font-size: 15px; color: var(--muted); margin-bottom: 26px; line-height: 1.7; }
+.hero-meta { display: flex; gap: 10px; flex-wrap: wrap; }
+.meta-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--text2);
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 5px 13px; border-radius: 8px; box-shadow: var(--sh-sm);
+}
+
+/* ── MAIN ── */
+main { max-width: 960px; margin: 0 auto; padding: 44px 24px 100px; }
+
+.sec-div { display: flex; align-items: center; gap: 12px; margin: 46px 0 22px; }
+.sec-line { flex: 1; height: 1px; background: var(--border); }
+.sec-label {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 16px; border-radius: 99px;
+  font-size: 12px; font-weight: 700; white-space: nowrap;
+}
+.sec-label.blue   { background: var(--accent-l); border: 1px solid var(--accent-m); color: var(--accent); }
+.sec-label.green  { background: var(--green-l); border: 1px solid rgba(5,150,105,.25); color: var(--green); }
+.sec-label.amber  { background: var(--amber-l); border: 1px solid rgba(217,119,6,.25); color: var(--amber); }
+.sec-label.red    { background: var(--red-l); border: 1px solid rgba(220,38,38,.2); color: var(--red); }
+.sec-label.purple { background: var(--purple-l); border: 1px solid rgba(124,58,237,.2); color: var(--purple); }
+.sec-label.teal   { background: var(--teal-l); border: 1px solid rgba(13,148,136,.25); color: var(--teal); }
+
+.summary-banner {
+  background: linear-gradient(135deg, var(--amber-l), #fff7ed);
+  border: 1px solid rgba(217,119,6,.2);
+  border-radius: var(--r); padding: 22px 26px; margin-bottom: 28px;
+}
+.summary-banner h2 { font-size: 15px; font-weight: 800; color: var(--amber); margin-bottom: 10px; }
+.summary-banner ul { list-style: none; padding: 0; }
+.summary-banner li {
+  font-size: 14px; color: var(--text2); padding: 4px 0;
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.summary-banner li::before { content: '✓'; color: var(--amber); font-weight: 800; flex-shrink: 0; }
+
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 22px 24px; margin-bottom: 14px;
+  box-shadow: var(--sh-sm);
+}
+.card.blue   { border-left: 3px solid var(--accent); }
+.card.green  { border-left: 3px solid var(--green); }
+.card.amber  { border-left: 3px solid var(--amber); }
+.card.red    { border-left: 3px solid var(--red); }
+.card.purple { border-left: 3px solid var(--purple); }
+.card.teal   { border-left: 3px solid var(--teal); }
+.card-title {
+  font-size: 15px; font-weight: 700; color: var(--text);
+  margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.card-body { font-size: 13.5px; color: var(--text2); line-height: 1.85; }
+.card-body p { margin-bottom: 8px; }
+.card-body ul, .card-body ol { padding-left: 19px; margin: 8px 0; }
+.card-body li { margin-bottom: 5px; }
+
+.tag {
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+  font-family: var(--mono); flex-shrink: 0;
+}
+.tag.sw  { background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m); }
+.tag.ok  { background: var(--green-l); color: var(--green); border: 1px solid rgba(5,150,105,.3); }
+.tag.wip { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.3); }
+.tag.bug { background: var(--red-l); color: var(--red); border: 1px solid rgba(220,38,38,.25); }
+.tag.hw  { background: var(--purple-l); color: var(--purple); border: 1px solid rgba(124,58,237,.2); }
+
+.flow-chain {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  margin: 8px 0; font-family: var(--mono); font-size: 11.5px;
+}
+.flow-node { padding: 5px 11px; border-radius: 7px; font-weight: 700; line-height: 1.3; }
+.flow-node.blue   { background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m); }
+.flow-node.green  { background: var(--green-l); color: var(--green); border: 1px solid rgba(5,150,105,.3); }
+.flow-node.purple { background: var(--purple-l); color: var(--purple); border: 1px solid rgba(124,58,237,.2); }
+.flow-node.amber  { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.25); }
+.flow-node.red    { background: var(--red-l); color: var(--red); border: 1px solid rgba(220,38,38,.2); }
+.flow-arrow { color: var(--muted); font-size: 13px; }
+
+.chip-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 5px 12px; font-size: 12px; font-weight: 600; color: var(--text2);
+}
+.chip.ok  { background: var(--green-l); border-color: rgba(5,150,105,.25); color: var(--green); }
+.chip.ng  { background: var(--red-l); border-color: rgba(220,38,38,.2); color: var(--red); }
+.chip.wip { background: var(--amber-l); border-color: rgba(217,119,6,.25); color: var(--amber); }
+
+.vid-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 16px; }
+.vid-card { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: #0f172a; box-shadow: var(--sh); }
+.vid-card video { width: 100%; height: auto; display: block; max-height: 520px; background: #000; }
+.vid-cap { padding: 10px 14px; font-size: 12px; font-weight: 600; color: rgba(255,255,255,.75); background: #1e293b; border-top: 1px solid rgba(255,255,255,.06); }
+.vid-cap small { display: block; font-size: 11px; color: rgba(255,255,255,.4); font-weight: 400; margin-top: 2px; }
+.vid-pair { display: grid; grid-template-columns: 3fr 1fr; gap: 14px; margin-top: 14px; align-items: start; }
+@media (max-width: 700px) { .vid-pair { grid-template-columns: 1fr; } }
+
+.note {
+  padding: 12px 16px; border-radius: 9px; font-size: 13px; margin: 10px 0;
+}
+.note.amber { background: var(--amber-l); border: 1px solid rgba(217,119,6,.25); color: #92400e; }
+.note.blue  { background: var(--accent-l); border: 1px solid var(--accent-m); color: #1e40af; }
+.note.green { background: var(--green-l); border: 1px solid rgba(5,150,105,.25); color: #065f46; }
+.note.red   { background: var(--red-l); border: 1px solid rgba(220,38,38,.2); color: #7f1d1d; }
+
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: 12px 0; }
+th {
+  background: var(--surface2); color: var(--text2);
+  font-weight: 700; font-size: 11px; letter-spacing: .04em;
+  padding: 8px 12px; border: 1px solid var(--border); text-align: left;
+}
+td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+tr:nth-child(even) td { background: #fafafa; }
+
+.tl { display: flex; flex-direction: column; gap: 0; margin: 10px 0; }
+.tl-item { display: flex; gap: 14px; padding: 4px 0 14px; position: relative; }
+.tl-item:not(:last-child)::before {
+  content: ''; position: absolute; left: 11px; top: 26px; bottom: -2px; width: 2px; background: var(--border2);
+}
+.tl-dot {
+  width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800;
+  background: var(--surface2); border: 2px solid var(--border2); z-index: 1;
+}
+.tl-body { flex: 1; padding-top: 1px; }
+.tl-title { font-size: 13px; font-weight: 700; color: var(--text); }
+.tl-desc { font-size: 12.5px; color: var(--muted); margin-top: 2px; line-height: 1.7; }
+
+@media (max-width: 640px) {
+  .hero { padding: 80px 16px 40px; }
+  main { padding: 32px 16px 80px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../../../plan-fy26.html">
+      <div class="nav-logo-icon">🧠</div>
+      <span class="nav-logo-sep">/</span>
+      <span class="nav-logo-text">FY26 Plan</span>
+    </a>
+    <div class="nav-item"><a class="nav-btn" href="../../../../plan-fy26.html">ホームページ</a></div>
+    <div class="nav-item"><a class="nav-btn" href="../../../../todo.html">進捗</a></div>
+    <div class="nav-item">
+      <button class="nav-btn" data-nav="vision">ビジョン <span class="nav-caret">▾</span></button>
+      <div class="nav-drop" id="nav-vision">
+        <a class="nav-drop-link" href="../../../../demo.html">
+          <span class="nav-dl-icon">🎯</span>
+          <div><div class="nav-dl-name">デモ詳細</div><div class="nav-dl-sub">デモシナリオ・要件マップ</div></div>
+        </a>
+        <div class="nav-drop-sep"></div>
+        <a class="nav-drop-link" href="../../../../disscussion/arm-demo-level123-ja.html">
+          <span class="nav-dl-icon">🦾</span>
+          <div><div class="nav-dl-name">マニピュレーション実証ロードマップ</div><div class="nav-dl-sub">アーム Demo Level 1-3 分類</div></div>
+        </a>
+        <a class="nav-drop-link" href="../../../../disscussion/move-base-level123-ja.html">
+          <span class="nav-dl-icon">🤖</span>
+          <div><div class="nav-dl-name">ナビゲーション Level 1-3 分類</div><div class="nav-dl-sub">自律移動設計方針</div></div>
+        </a>
+      </div>
+    </div>
+    <div class="nav-item">
+      <a class="nav-btn" href="../../../others-nav.html">その他</a>
+    </div>
+    <div class="nav-right">
+      <span class="nav-pulse"></span>
+      <div class="nav-badge-pill">Sim2Real 検証中</div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">&#128268; Sim2Real · Real Robot · Agent / Skill / Navigation</div>
+    <h1>Sim2Real Agent / Navigation<br>Baseline 検証報告</h1>
+    <p class="hero-desc">
+      Simulation で組み上げた Agent / Skill 層を実機（real lab）に移植し、実際のロボットで動作させる検証を実施。<br>
+      本日、狭い通路を含む <code>go to sofa</code> タスクの完全な機能フローが実機で成功。一方で、実運用に向けた信頼性面の課題も明確になった。
+    </p>
+    <div class="hero-meta">
+      <span class="meta-chip">&#128197; 2026-07-18</span>
+      <span class="meta-chip">&#129302; robot_ws（real lab）</span>
+      <span class="meta-chip">&#128506; l402_2d_map_clean_0509</span>
+      <span class="meta-chip">&#128225; ROS_DOMAIN_ID=13</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+  <!-- サマリー -->
+  <div class="summary-banner">
+    <h2>今回の要点</h2>
+    <ul>
+      <li>Simulation で構築した Agent / Skill / Dashboard、semantic map、Nav2、狭路（narrow passage）ロジックを実機へ移植</li>
+      <li><code>go to sofa</code> の狭路タスクが実機で完全成功（意味解析 → 窄路整列 → 走行 → 到達判定 → Agent DONE）</li>
+      <li>Joy-Con 応答性、AUTO 制御信号の連続性、Localization Recovery、カメラ・モーター監視を改善</li>
+      <li>機能面の baseline は通過。一方で Modbus 通信タイムアウトなど、実機特有の信頼性課題が残存</li>
+      <li>実機でのタスク実行の様子とスクリーン録画・実カメラ映像をあわせて記録</li>
+    </ul>
+  </div>
+
+  <!-- ── SECTION: 結論 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label amber">&#127919; 結論 — 機能 Baseline は通過、信頼性 Baseline は未達</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title">
+      <span class="tag ok">機能面</span>
+      <code>go to sofa</code> の完全フローが実機で成功
+    </div>
+    <div class="card-body">
+      <p>本日、実機の local costmap を修正した後、<code>go to sofa</code> が2回目の完全成功を記録。窄い通路入口に到達しただけでなく、以下をすべて実行できたことをログで確認した。</p>
+      <div class="flow-chain">
+        <span class="flow-node amber">自然言語命令</span><span class="flow-arrow">→</span>
+        <span class="flow-node blue">semantic target 解析</span><span class="flow-arrow">→</span>
+        <span class="flow-node blue">カメラ navigation 姿勢復帰</span><span class="flow-arrow">→</span>
+        <span class="flow-node green">AUTO / localization gate</span><span class="flow-arrow">→</span>
+        <span class="flow-node blue">global plan・候補 approach 確認</span>
+      </div>
+      <div class="flow-chain">
+        <span class="flow-node purple">窄路入口整列</span><span class="flow-arrow">→</span>
+        <span class="flow-node purple">narrow profile 適用</span><span class="flow-arrow">→</span>
+        <span class="flow-node purple">窄路 waypoint</span><span class="flow-arrow">→</span>
+        <span class="flow-node green">sofa final goal</span><span class="flow-arrow">→</span>
+        <span class="flow-node green">Agent DONE</span>
+      </div>
+      <p style="margin-top:8px;">これにより、Agent/Skill スケジューリング・semantic map・Nav2・実機 localization・窄路ルール・運動モード/安全層・足回り制御・Dashboard・ログ連携が、simulation から real robot へ協調して移植できることが実証された。</p>
+    </div>
+  </div>
+
+  <div class="card red">
+    <div class="card-title">
+      <span class="tag bug">信頼性面</span>
+      「無人運用に耐える」段階にはまだ届いていない
+    </div>
+    <div class="card-body">
+      <p>成功したタスクの最中にも Modbus トランザクションのタイムアウトが継続的に発生していた。これまでにも電源の緩み、USB/RS-485 切断、非常停止によるロック、モーターの瞬断、カメラ画質の不安定さが実際に発生している。これらは理想的な simulation では自然に現れない問題であり、実機側で個別に解決・統計的に検証する必要がある。</p>
+    </div>
+  </div>
+
+  <!-- ── SECTION: 移行内容 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label blue">&#128268; 今回 Sim2Real で行ったこと（概要）</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card blue">
+    <div class="card-body">
+      <ul>
+        <li>Agent / Skill / Dashboard を simulation checkpoint から実機用に移植（real profile・実機地図・real-mode capability gate）</li>
+        <li>実機 Semantic Map と窄路（narrow passage）の annotation を整備・校正</li>
+        <li>Navigation の窄路ロジック（速度制限・入口整列・中心線制約）を実機に適用</li>
+        <li>Joy-Con / AUTO の制御信号を安定化し、カクつきや停止遅れを改善</li>
+        <li>Localization Recovery のロジックを改善（initialpose 直後のズレ対策など）</li>
+        <li>Camera・Lift・Perception を実機フィードバックで校正・整備</li>
+        <li>Motor・Modbus 通信の安定化と Dashboard 監視・再起動ツールを追加</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── SECTION: 本日の実行結果 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label purple">&#128202; 本日（2026-07-18）の実行結果（概要）</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card purple">
+    <div class="card-body">
+      <p>本日 3 回の Agent セッションを実施。前半 2 回は窄路内で人手キャンセルとなったが、local costmap を修正した 3 回目で <code>go to sofa</code> が完全成功（約 64 秒、west→east のフォールバックや入口整列・waypoint・final goal を含むフルフロー）。</p>
+      <p style="margin-top:8px;">一方、成功したタスクの最中にも Modbus 通信のタイムアウトが多発しており、機能面の baseline は通過したものの、信頼性面の検証はこれからという位置づけ。</p>
+    </div>
+  </div>
+
+  <!-- ── SECTION: デモ映像 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label green">&#127916; デモ映像 — 実機タスク実行</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title">
+      <span class="tag ok">Demo 1</span>
+      go to sofa — 窄路ナビゲーションタスク
+    </div>
+    <div class="card-body">
+      <p>「ソファへ移動」コマンドを実行したときの、ロボット側の画面録画と、実世界をカメラで撮影した映像。</p>
+      <div class="vid-pair">
+        <div class="vid-card">
+          <video controls preload="metadata" muted>
+            <source src="real-bot-video/go-to-sofa.webm" type="video/webm">
+            お使いのブラウザは動画再生に対応していません。
+          </video>
+          <div class="vid-cap">
+            画面録画（Dashboard / RViz 側）
+            <small>意味解析 → 窄路整列 → waypoint → final goal → DONE</small>
+          </div>
+        </div>
+        <div class="vid-card">
+          <video controls preload="metadata" muted>
+            <source src="real-bot-video/goto-sofa-real.MOV" type="video/mp4">
+            お使いのブラウザは動画再生に対応していません。
+          </video>
+          <div class="vid-cap">
+            実世界カメラ撮影
+            <small>実機が狭い通路を通過してソファへ到達する様子</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title">
+      <span class="tag ok">Demo 2</span>
+      椅子を探すタスク（Search）
+    </div>
+    <div class="card-body">
+      <p>周辺を探索して椅子を見つけるタスクの、画面録画と実世界カメラ映像。</p>
+      <div class="vid-pair">
+        <div class="vid-card">
+          <video controls preload="metadata" muted>
+            <source src="real-bot-video/search-chair.webm" type="video/webm">
+            お使いのブラウザは動画再生に対応していません。
+          </video>
+          <div class="vid-cap">
+            画面録画（Dashboard 側）
+            <small>相対運動・カメラ確認・検出処理</small>
+          </div>
+        </div>
+        <div class="vid-card">
+          <video controls preload="metadata" muted>
+            <source src="real-bot-video/find-chair.MOV" type="video/mp4">
+            お使いのブラウザは動画再生に対応していません。
+          </video>
+          <div class="vid-cap">
+            実世界カメラ撮影
+            <small>実機が周囲を確認しながら椅子を探す様子</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title">
+      <span class="tag ok">Demo 3</span>
+      ソファ付近での探索タスク
+    </div>
+    <div class="card-body">
+      <p>ソファ近辺を対象にした探索タスクの画面録画（この回は実世界カメラ映像なし）。</p>
+      <div class="vid-grid">
+        <div class="vid-card">
+          <video controls preload="metadata" muted>
+            <source src="real-bot-video/search-chair-nearsofa.webm" type="video/webm">
+            お使いのブラウザは動画再生に対応していません。
+          </video>
+          <div class="vid-cap">
+            画面録画（Dashboard 側）
+            <small>ソファ付近を対象範囲とした探索タスクの実行例</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION: Simulation / Real の役割分担 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label teal">&#9878;&#65039; Simulation と Real Robot の役割分担</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card teal">
+    <div class="card-title">Simulation で継続できること</div>
+    <div class="card-body">
+      <p>決定的な上層のふるまいの検証と、大量の反復実験に向く：Agent parser・task plan・Skill contract・状態機、semantic target 解決・approach candidate・passage 選択、planner アルゴリズムや tolerance の初期範囲、narrow profile のルール、localization recovery のフロー、camera/lift/perception のプラン、そして実機で測定した delay・jitter・packet loss・sensor noise・blur・map offset を注入した fault-injection regression。</p>
+    </div>
+  </div>
+
+  <div class="card teal">
+    <div class="card-title">Real Robot でしか検証できないこと</div>
+    <div class="card-body">
+      <p>電源線・端子・接触抵抗・負荷時電圧降下、USB-RS485/カメラの物理的な緩みや再列挙、Modbus の実応答時間とOS/DDSスケジューリング、モーター/操舵の機械的な引っかかりや滑り、footprint と実際の家具クリアランス、FAST-LIO/GICPの実環境品質、カメラの露出・ピント・振動、リフト/カメラの実可動域、そして人手 B/E-stop の実際の停止までの最悪時間。</p>
+      <div class="note green">最も効果的な Sim2Real ループは両者を別々に調整することではなく、「実機で記録 → 実測分布を抽出 → simulation に注入して再検証 → 実機で低速の受入確認」という往復。</div>
+    </div>
+  </div>
+
+  <!-- ── SECTION: 現状まとめ ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label amber">&#128203; 現状まとめ</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title">通過済み</div>
+    <div class="card-body">
+      <div class="chip-grid">
+        <span class="chip ok">✅ 実機 bringup・地図・FAST-LIO/GICP・Nav2 基本動作</span>
+        <span class="chip ok">✅ Joy-Con MANUAL 制御・deadman・即時停止</span>
+        <span class="chip ok">✅ 通常 AUTO navigation</span>
+        <span class="chip ok">✅ Agent・Skill・Dashboard・deterministic command</span>
+        <span class="chip ok">✅ 実機 semantic map・route visualization</span>
+        <span class="chip ok">✅ go to sofa の窄路 baseline（1回成功）</span>
+        <span class="chip ok">✅ camera/lift real-mode 基礎制御・9視点構成</span>
+        <span class="chip ok">✅ YOLO/OCR ローカル実行環境</span>
+        <span class="chip ok">✅ drive motor 独立安全再起動</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title">部分的 / 未完了</div>
+    <div class="card-body">
+      <div class="chip-grid">
+        <span class="chip wip">⚪ sofa 成功の再現性・信頼性検証</span>
+        <span class="chip wip">⚪ 他の窄路・全 semantic target の個別検証</span>
+        <span class="chip wip">⚪ Modbus completion timeout の根本原因分離</span>
+        <span class="chip wip">⚪ モーター自動復帰後の自動タスク再開（現状は人手再認可が必須）</span>
+        <span class="chip wip">⚪ カメラ画質・移動中 perception の安定指標</span>
+        <span class="chip wip">⚪ Recovery Agent の実機回転復帰の安全検証</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION: 次のステップ ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label red">&#128680; 次のステップ</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card red">
+    <div class="card-title"><span class="tag bug">P0</span>電気・通信の安定化</div>
+    <div class="card-body">
+      <ul>
+        <li>モーター電源・共通GND・RS-485・USBの再固定とstrain relief追加</li>
+        <li>3台のドライバ入力端での電圧測定（起動・横移動・急旋回・窄路操舵を重点的に）</li>
+        <li><code>/dev/ttyUSB0</code> を <code>/dev/serial/by-id/...</code> に固定しUSB再接続を監視</li>
+        <li>Modbus トランザクション単位でlatency histogram・timeoutバースト・再試行を統計化</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title"><span class="tag wip">P1</span>運動・Localizationの実測指標化</div>
+    <div class="card-body">
+      <ul>
+        <li><code>/nav2/cmd_vel</code>・<code>/cmd_vel</code>・<code>/drive_vel</code>・<code>/drive_odom</code> の頻度とp95/p99 gapを記録</li>
+        <li>操舵誤差の分布を採取し、現行閾値（200 tick）が妥当かを判断</li>
+        <li>GICP score・pose age・settling・recovery結果とDashboard/RViz表示の整合性を検証</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title"><span class="tag wip">P1</span>Camera / Perceptionの改善</div>
+    <div class="card-body">
+      <ul>
+        <li>撮影前に底盘・雲台の静止を確認し、0.5〜1.0秒待ってから撮影</li>
+        <li>露出/フォーカス固定でmotion blurと低照度長時間露光を切り分け</li>
+        <li>9視点ごとの鮮明度・露光時間・検出信頼度を記録し、機体固有の閾値を作る</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title"><span class="tag ok">P2</span>信頼性の受入基準（回帰試験）</div>
+    <div class="card-body">
+      <p>「安定して動く」を定量的な基準として定義する：</p>
+      <ul>
+        <li><code>go to sofa</code> 連続20回、成功率95%以上、衝突・E-stop・motor dropoutゼロ</li>
+        <li>完全なタスク実行中に250ms Modbus completion timeoutがゼロ</li>
+        <li>MANUAL deadman・Bキャンセル・Dashboard MANUALをそれぞれ10回試験し、即時停止かつ旧指令が残らないこと</li>
+        <li>3本の窄路を双方向・異なる開始姿勢でそれぞれ検証</li>
+        <li>実機計測のtimeout/jitter/noiseをsimulationのfault-injection回帰に反映</li>
+      </ul>
+      <div class="note amber">上記基準を満たすまでは、試験は必ず現場の人が立ち会い、Bボタンとハードウェア非常停止をいつでも使える状態で行う。</div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+document.querySelectorAll('.nav-btn[data-nav]').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const id = btn.dataset.nav;
+    const drop = document.getElementById('nav-' + id);
+    const isOpen = drop.classList.contains('open');
+    document.querySelectorAll('.nav-drop.open').forEach(d => d.classList.remove('open'));
+    document.querySelectorAll('.nav-btn.nav-open').forEach(b => b.classList.remove('nav-open'));
+    if (!isOpen) { drop.classList.add('open'); btn.classList.add('nav-open'); }
+  });
+});
+document.addEventListener('click', () => {
+  document.querySelectorAll('.nav-drop.open').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.nav-btn.nav-open').forEach(b => b.classList.remove('nav-open'));
+});
+</script>
+</body>
+</html>

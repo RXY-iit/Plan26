@@ -402,7 +402,7 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
 
     <div class="nav-right">
       <span class="nav-pulse"></span>
-      <div class="nav-badge-pill">Phase 2-3 進行中</div>
+      <div class="nav-badge-pill">Phase 4-5 進行中</div>
     </div>
   </div>
 </nav>
@@ -431,7 +431,7 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
         <div class="stat-dot" style="background:var(--accent)"></div>
         <div>
           <div class="stat-num" id="pctNum">0%</div>
-          <div class="stat-lbl">Phase0-3進捗</div>
+          <div class="stat-lbl">Phase0-5進捗(９月末)</div>
         </div>
       </div>
     </div>
@@ -541,8 +541,9 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
     <!-- Phase 2-3 -->
     <div data-phase-card="phase23" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-top:10px;box-shadow:var(--sh-sm);">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-        <span style="font-size:12px;font-weight:800;background:var(--amber-l);color:var(--amber);border:1px solid rgba(217,119,6,.2);padding:2px 10px;border-radius:6px;font-family:var(--mono);">Phase 2-3</span>
+        <span style="font-size:12px;font-weight:800;background:var(--green-l);color:var(--green);border:1px solid rgba(5,150,105,.2);padding:2px 10px;border-radius:6px;font-family:var(--mono);">Phase 2-3</span>
         <span style="font-size:13px;font-weight:700;color:var(--text);">Skill &amp; Agent 層構築 — Done Definition</span>
+        <span class="todo-status done" style="margin-left:auto;">✅ 完了</span>
       </div>
       <div class="prog-wrap" style="margin-bottom:14px;">
         <div class="prog-label">
@@ -563,23 +564,60 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
           <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag sw">Software</span><span class="tag ai">AI/LLM</span></div>
         </div>
         <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
-          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
-          <span>最小タスク Isaac Sim 上で成功</span>
+          <span style="color:var(--green);font-weight:700;flex-shrink:0;">✅</span>
+          <span>最小タスク Isaac Sim 上で成功(ナビ → 棚へ移動 → 認識)</span>
           <span class="tag sw" style="margin-left:auto;">Software</span>
         </div>
         <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--green);font-weight:700;flex-shrink:0;">✅</span>
+          <span>同タスクを実機で再現・成功（real-bot test / go to sofa 窄路タスク）</span>
+          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--green);font-weight:700;flex-shrink:0;">✅</span>
+          <span>L402 部屋 USD モデルを用いた Isaac Sim シーンでの動作確認</span>
+          <span class="tag sw" style="margin-left:auto;">Software</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 4-5 -->
+    <div data-phase-card="phase45" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-top:10px;box-shadow:var(--sh-sm);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span style="font-size:12px;font-weight:800;background:var(--amber-l);color:var(--amber);border:1px solid rgba(217,119,6,.2);padding:2px 10px;border-radius:6px;font-family:var(--mono);">Phase 4-5</span>
+        <span style="font-size:13px;font-weight:700;color:var(--text);">Recovery Agent &amp; Manipulation 統合 — Done Definition（草案）</span>
+      </div>
+      <div class="prog-wrap" style="margin-bottom:14px;">
+        <div class="prog-label">
+          <span>Phase 4-5 進捗</span>
+          <span id="phase45PctLabel" style="font-weight:700; color:var(--accent)">0%</span>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" id="phase45ProgFill" style="width:0%"></div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
           <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
-          <span>同タスクを実機で再現・成功（real-bot test）</span>
+          <span>実機 Agent / Skill 層の信頼性テスト（反復実行・回帰検証）</span>
           <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
         </div>
         <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
           <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
-          <span>L402 部屋 USD モデルを用いた Isaac Sim シーンでの動作確認</span>
-          <span class="tag sw" style="margin-left:auto;">Software</span>
+          <span>Recovery Agent の実機運用検証（Localization / Local Planner / Motor 復帰）</span>
+          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>アーム制御 Skill の定義・実装</span>
+          <span class="tag hw" style="margin-left:auto;">Hardware</span>
         </div>
         <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
           <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
           <span>アームを含む統合デモ（ナビ → 棚へ移動 → アームで作業）を Isaac Sim で成功</span>
+          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>同統合デモを実機で再現・成功</span>
           <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
         </div>
       </div>
@@ -678,7 +716,7 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
       </div>
       <div class="todo-date">完了: 2026-05-10</div>
       <div class="log-links">
-        <a class="log-link" href="subpages/Arduino-MOSFET-AZD-KD/Arduino-MOSFET-AZD-KD.html" target="_blank">⚙️ 制御システム詳細ページ</a>
+        <a class="log-link" href="subpages/Know-how/Arduino-MOSFET-AZD-KD/Arduino-MOSFET-AZD-KD.html" target="_blank">⚙️ 制御システム詳細ページ</a>
         <a class="log-link vid" href="media/speed60㎜.mov" onclick="event.preventDefault(); openVidModal('media/speed60㎜.mov','🎬 speed60㎜.mov — 60 mm/s 速度テスト')">🎬 speed60㎜.mov — 速度テスト</a>
       </div>
     </div>
@@ -775,7 +813,7 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
       <div class="log-links">
         <a class="log-link" href="#" onclick="event.preventDefault(); openImgModal('media/Mid3601.jpg','📷 LiDAR ホールダー ①')">📷 LiDAR ホールダー ①</a>
         <a class="log-link" href="#" onclick="event.preventDefault(); openImgModal('media/Mid3602.jpg','📷 LiDAR ホールダー ②')">📷 LiDAR ホールダー ②</a>
-        <a class="log-link" href="subpages/robot-overview.html" target="_blank">🤖 ロボット全体設計ページ</a>
+        <a class="log-link" href="subpages/robot-model/robot-overview.html" target="_blank">🤖 ロボット全体設計ページ</a>
       </div>
     </div>
   </div>
@@ -813,7 +851,7 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
       </div>
       <div class="todo-date">完了: 2026-05-10</div>
       <div class="log-links">
-        <a class="log-link" href="subpages/Arduino-MOSFET-AZD-KD/Arduino-MOSFET-AZD-KD.html" target="_blank">⚙️ 制御システム詳細ページ</a>
+        <a class="log-link" href="subpages/Know-how/Arduino-MOSFET-AZD-KD/Arduino-MOSFET-AZD-KD.html" target="_blank">⚙️ 制御システム詳細ページ</a>
         <a class="log-link vid" href="media/speed60㎜.mov" onclick="event.preventDefault(); openVidModal('media/speed60㎜.mov','🎬 speed60㎜.mov — 60 mm/s 速度テスト')">🎬 speed60㎜.mov — 速度テスト</a>
       </div>
     </div>
@@ -896,7 +934,7 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
       <div class="todo-date">完了: 2026-05-22</div>
       <div class="log-links">
         <a class="log-link vid" href="media/navigation.webm" onclick="event.preventDefault(); openVidModal('media/navigation.webm','🎬 navigation.webm — 短距離 Navigation テスト（RViz）')">🎬 navigation.webm — 短距離 Nav テスト</a>
-        <a class="log-link" href="subpages/report-pages/report-2026-05-22.html" target="_blank">📝 Weekly Report 2026-05-22</a>
+        <a class="log-link" href="subpages/report-pages/weekly-report/real-navigation/report-2026-05-22.html" target="_blank">📝 Weekly Report 2026-05-22</a>
       </div>
     </div>
   </div>
@@ -967,8 +1005,8 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
   </div><!-- /phase-ph1 -->
 
   <!-- ── Phase 2-3 collapsible ── -->
-  <button class="phase-toggle ph2" data-phase="ph23" id="toggle-ph23">
-    🔄 Phase 2-3 — Skill &amp; Agent 層構築（進行中）
+  <button class="phase-toggle ph0" data-phase="ph23" id="toggle-ph23">
+    ✅ Phase 2-3 — Skill &amp; Agent 層構築（完了済み）
     <div class="pt-sep"></div>
     <span class="pt-arrow">▾</span>
   </button>
@@ -1033,35 +1071,84 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
     </div>
   </div>
 
-  <div class="phase-sub-label">進行中・未着手</div>
-
-  <div class="todo-item">
-    <div class="todo-cb"></div>
+  <div class="todo-item done-item">
+    <div class="todo-cb checked">✓</div>
     <div class="todo-body">
       <div class="todo-text">Robot Skill 洗い出し・拡張</div>
-      <div class="todo-note">ロボットの能力範囲内の全作業をカバーするよう Skill を体系的に整理・追加する。</div>
-      <div class="todo-tags"><span class="tag sw">Software</span><span class="todo-status pending">未着手</span></div>
-      <div class="todo-date">更新: 2026-06-30</div>
+      <div class="todo-note">navigation・semantic resolve・camera・lift・perception・health/localization を含む typed Skill 群を体系的に整理・拡張。</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="todo-status done">✅ 完了</span></div>
+      <div class="todo-date">完了: 2026-07-13</div>
     </div>
   </div>
 
-  <div class="todo-item">
-    <div class="todo-cb"></div>
+  <div class="todo-item done-item">
+    <div class="todo-cb checked">✓</div>
     <div class="todo-body">
       <div class="todo-text">ダッシュボード設計</div>
-      <div class="todo-note">ロボットの行動履歴・状態を人間が監視・インタラクションしやすい形で表示する UI を設計。将来的に上層 Agent が監視する基盤としても使えるよう設計する。</div>
-      <div class="todo-tags"><span class="tag sw">Software</span><span class="todo-status pending">未着手</span></div>
-      <div class="todo-date">更新: 2026-06-30</div>
+      <div class="todo-note">Mission / Health / Navigation phase・route state・timeout をリアルタイム表示する Dashboard を実装。実機用 Real Robot 監視区も追加。</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="todo-status done">✅ 完了</span></div>
+      <div class="todo-date">完了: 2026-07-13</div>
+    </div>
+  </div>
+
+  <div class="todo-item done-item">
+    <div class="todo-cb checked">✓</div>
+    <div class="todo-body">
+      <div class="todo-text">L402 部屋 USD モデル実装</div>
+      <div class="todo-note">調査フェーズで確定した方針をもとに Isaac Sim 用の L402 部屋（real_lab）モデルを構築。</div>
+      <div class="todo-tags"><span class="tag sw">Software</span><span class="todo-status done">✅ 完了</span></div>
+      <div class="todo-date">完了: 2026-07-13</div>
+      <div class="log-links">
+        <a class="log-link" href="subpages/report-pages/weekly-report/isaac-sim-usd-model/isaac-sim-usd-model-ja.html" target="_blank">📝 週次報告 2026-07-13</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="todo-item done-item">
+    <div class="todo-cb checked">✓</div>
+    <div class="todo-body">
+      <div class="todo-text">最小タスク Isaac Sim 検証・実機テスト（real-bot test）</div>
+      <div class="todo-note">Sim で構築した Agent/Skill 層を実機へ移植。窄路タスク <code>go to sofa</code> の意味解析 → 窄路整列 → 走行 → 到達判定 → DONE のフル動作が実機で成功。</div>
+      <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag sw">Software</span><span class="todo-status done">✅ 完了</span></div>
+      <div class="todo-date">完了: 2026-07-18</div>
+      <div class="log-links">
+        <a class="log-link" href="subpages/report-pages/weekly-report/real-sim2real-agent/sim2real-agent-baseline-ja.html" target="_blank">📝 週次報告 2026-07-18</a>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /phase-ph23 -->
+
+  <!-- ── Phase 4-5 collapsible ── -->
+  <button class="phase-toggle ph2 ph3" data-phase="ph45" id="toggle-ph45">
+    🔄 Phase 4-5 — Recovery Agent &amp; Manipulation 統合（進行中）
+    <div class="pt-sep"></div>
+    <span class="pt-arrow">▾</span>
+  </button>
+  <div class="phase-content" id="phase-ph45">
+
+  <div class="phase-sub-label">概要（草案 — 今後詳細化予定）</div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">実機 Agent / Skill 層の信頼性テスト・回帰検証</div>
+      <div class="todo-note">Sim2Real baseline で判明した Modbus 通信タイムアウト・localization drift・カメラ画質などの課題を中心に、既存の Agent/Skill 層を実機で繰り返し検証し安定性を高める（低階層ロバスト性テスト＆改善から継続）。</div>
+      <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag sw">Software</span><span class="todo-status pending">未着手</span></div>
+      <div class="todo-date">更新: 2026-07-18</div>
+      <div class="log-links">
+        <a class="log-link" href="subpages/report-pages/weekly-report/real-sim2real-agent/sim2real-agent-baseline-ja.html" target="_blank">📝 週次報告 2026-07-18</a>
+      </div>
     </div>
   </div>
 
   <div class="todo-item">
     <div class="todo-cb"></div>
     <div class="todo-body">
-      <div class="todo-text">低階層ロバスト性 テスト＆改善</div>
-      <div class="todo-note">Navigation・Localization・Skill 実行などの低レベル層に対してエッジケースを検証し、安定性を改善する。</div>
-      <div class="todo-tags"><span class="tag sw">Software</span><span class="todo-status pending">未着手</span></div>
-      <div class="todo-date">更新: 2026-06-30</div>
+      <div class="todo-text">Recovery Agent の実機運用検証</div>
+      <div class="todo-note">Localization recovery・Local Planner health recovery・motor 復帰などを実機で検証し、無人運用に耐える信頼性基準を満たすことを目指す。</div>
+      <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag sw">Software</span><span class="todo-status pending">未着手</span></div>
+      <div class="todo-date">更新: 2026-07-18</div>
     </div>
   </div>
 
@@ -1078,26 +1165,6 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
   <div class="todo-item">
     <div class="todo-cb"></div>
     <div class="todo-body">
-      <div class="todo-text">L402 部屋 USD モデル実装</div>
-      <div class="todo-note">調査フェーズで確定した方針をもとに Isaac Sim 用の L402 部屋モデルを構築する。</div>
-      <div class="todo-tags"><span class="tag sw">Software</span><span class="todo-status pending">未着手</span></div>
-      <div class="todo-date">更新: 2026-06-30</div>
-    </div>
-  </div>
-
-  <div class="todo-item">
-    <div class="todo-cb"></div>
-    <div class="todo-body">
-      <div class="todo-text">最小タスク Isaac Sim 検証・実機テスト（real-bot test）</div>
-      <div class="todo-note">「実験室で赤い箱を探す」を Isaac Sim 上で先行検証し、同タスクを実機で再現・成功させる。</div>
-      <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag sw">Software</span><span class="todo-status pending">未着手</span></div>
-      <div class="todo-date">更新: 2026-06-30</div>
-    </div>
-  </div>
-
-  <div class="todo-item">
-    <div class="todo-cb"></div>
-    <div class="todo-body">
       <div class="todo-text">アーム統合デモ（ナビ → 棚移動 → アームで作業）Isaac Sim 検証</div>
       <div class="todo-note">アーム制御 Skill が完成後、ナビゲーションと組み合わせた統合デモを Isaac Sim 上で実施する。</div>
       <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag sw">Software</span><span class="todo-status pending">未着手</span></div>
@@ -1105,7 +1172,17 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
     </div>
   </div>
 
-  </div><!-- /phase-ph23 -->
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">同統合デモを実機で再現・成功</div>
+      <div class="todo-note">Isaac Sim で成功したアーム統合デモを実機で再現する。詳細は今後追記予定。</div>
+      <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag sw">Software</span><span class="todo-status pending">未着手</span></div>
+      <div class="todo-date">更新: 2026-07-18</div>
+    </div>
+  </div>
+
+  </div><!-- /phase-ph45 -->
 
   <!-- ── 中長期 collapsible ── -->
   <button class="phase-toggle future" data-phase="future" id="toggle-future">
@@ -1198,7 +1275,7 @@ function updateStats() {
   document.getElementById('todoCount').textContent  = total - done;
   document.getElementById('pctNum').textContent     = pct + '%';
 
-  ['phase0', 'phase1', 'phase23'].forEach(phase => {
+  ['phase0', 'phase1', 'phase23', 'phase45'].forEach(phase => {
     const card = document.querySelector(`[data-phase-card="${phase}"]`);
     if (!card) return;
     const phaseItems = card.querySelectorAll('div[style*="align-items:flex-start"]');

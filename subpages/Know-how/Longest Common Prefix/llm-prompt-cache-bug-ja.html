@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>llama.cpp Prompt Cache（Longest Common Prefix）起因の空応答バグ | Know-how</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #f8fafc;
+  --surface: #ffffff;
+  --surface2:#f1f5f9;
+  --border:  #e2e8f0;
+  --border2: #cbd5e1;
+  --accent:  #2563eb;
+  --accent-l:#eff6ff;
+  --accent-m:#bfdbfe;
+  --green:   #059669;
+  --green-l: #ecfdf5;
+  --amber:   #d97706;
+  --amber-l: #fffbeb;
+  --red:     #dc2626;
+  --red-l:   #fef2f2;
+  --purple:  #7c3aed;
+  --purple-l:#f5f3ff;
+  --teal:    #0d9488;
+  --teal-l:  #f0fdfa;
+  --text:    #0f172a;
+  --text2:   #334155;
+  --muted:   #64748b;
+  --mono:    'JetBrains Mono','Fira Code','Courier New',monospace;
+  --r: 12px;
+  --sh-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --sh:    0 4px 12px rgba(0,0,0,.08);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Meiryo',-apple-system,sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.8;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+  height: 56px; background: rgba(255,255,255,.97);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  padding: 0 28px; display: flex; align-items: center; gap: 2px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none; margin-right: 16px; flex-shrink: 0;
+}
+.nav-logo-icon {
+  width: 30px; height: 30px; background: var(--text); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.nav-logo-sep { font-size: 20px; color: var(--border2); font-weight: 300; }
+.nav-logo-text { font-size: 12px; color: var(--muted); font-weight: 600; }
+.nav-item { position: relative; }
+.nav-btn {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--muted); text-decoration: none;
+  padding: 6px 11px; border-radius: 7px;
+  border: none; background: none; cursor: pointer; font-family: inherit;
+  transition: background .12s, color .12s; white-space: nowrap;
+}
+.nav-btn:hover { background: var(--surface2); color: var(--text); }
+.nav-btn.cur { color: var(--accent); }
+.nav-caret { font-size: 8px; opacity: .5; transition: transform .15s; }
+.nav-btn.nav-open .nav-caret { transform: rotate(180deg); }
+.nav-drop {
+  position: absolute; top: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  min-width: 240px; background: #fff;
+  border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.11), 0 2px 8px rgba(0,0,0,.05);
+  padding: 8px; z-index: 999;
+  opacity: 0; pointer-events: none;
+  transition: opacity .15s, transform .15s;
+}
+.nav-drop.open { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.nav-drop-link {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; padding: 9px 10px; border-radius: 9px; transition: background .1s;
+}
+.nav-drop-link:hover { background: var(--surface2); }
+.nav-dl-icon { font-size: 18px; flex-shrink: 0; }
+.nav-dl-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.nav-dl-sub { font-size: 11px; color: var(--muted); }
+.nav-drop-sep { height: 1px; background: var(--border); margin: 5px 6px; }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.nav-badge-pill {
+  font-size: 11px; font-weight: 700;
+  background: var(--green-l); color: var(--green);
+  border: 1px solid rgba(5,150,105,.25);
+  padding: 4px 12px; border-radius: 99px; white-space: nowrap;
+}
+.nav-pulse {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--green);
+  animation: npulse 2s infinite; flex-shrink: 0;
+}
+@keyframes npulse {
+  0%,100%{ box-shadow: 0 0 0 0 rgba(5,150,105,.4); }
+  50%     { box-shadow: 0 0 0 5px rgba(5,150,105,0); }
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 92px 24px 48px;
+  background: linear-gradient(135deg, #fff 0%, #fdf4ff 45%, #fff7ed 100%);
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(124,58,237,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,58,237,.035) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.hero-inner { max-width: 880px; margin: 0 auto; position: relative; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: .06em;
+  color: var(--purple); background: var(--purple-l);
+  border: 1px solid rgba(124,58,237,.25);
+  padding: 3px 12px; border-radius: 99px; margin-bottom: 14px;
+}
+h1 { font-size: clamp(20px, 3.6vw, 30px); font-weight: 800; color: var(--text); margin-bottom: 8px; line-height: 1.4; }
+.hero-desc { font-size: 14px; color: var(--muted); line-height: 1.75; }
+.hero-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+.meta-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--text2);
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 5px 13px; border-radius: 8px; box-shadow: var(--sh-sm);
+}
+
+/* ── MAIN ── */
+main { max-width: 880px; margin: 0 auto; padding: 40px 24px 90px; }
+
+.sec-div { display: flex; align-items: center; gap: 12px; margin: 40px 0 18px; }
+.sec-div:first-child { margin-top: 0; }
+.sec-line { flex: 1; height: 1px; background: var(--border); }
+.sec-label {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 16px; border-radius: 99px;
+  font-size: 12px; font-weight: 700; white-space: nowrap;
+}
+.sec-label.purple { background: var(--purple-l); border: 1px solid rgba(124,58,237,.2); color: var(--purple); }
+.sec-label.red    { background: var(--red-l); border: 1px solid rgba(220,38,38,.2); color: var(--red); }
+.sec-label.blue   { background: var(--accent-l); border: 1px solid var(--accent-m); color: var(--accent); }
+.sec-label.green  { background: var(--green-l); border: 1px solid rgba(5,150,105,.25); color: var(--green); }
+.sec-label.amber  { background: var(--amber-l); border: 1px solid rgba(217,119,6,.25); color: var(--amber); }
+
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 20px 24px; margin-bottom: 14px;
+  box-shadow: var(--sh-sm);
+}
+.card.purple { border-left: 3px solid var(--purple); }
+.card.red    { border-left: 3px solid var(--red); }
+.card.blue   { border-left: 3px solid var(--accent); }
+.card.green  { border-left: 3px solid var(--green); }
+.card.amber  { border-left: 3px solid var(--amber); }
+.card-title { font-size: 14.5px; font-weight: 700; color: var(--text); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.card-body { font-size: 13.5px; color: var(--text2); line-height: 1.85; }
+.card-body p { margin-bottom: 8px; }
+.card-body p:last-child { margin-bottom: 0; }
+.card-body ul, .card-body ol { padding-left: 20px; margin: 8px 0; }
+.card-body li { margin-bottom: 5px; }
+
+.tag {
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+  font-family: var(--mono); flex-shrink: 0;
+}
+.tag.bug { background: var(--red-l); color: var(--red); border: 1px solid rgba(220,38,38,.25); }
+.tag.fix { background: var(--green-l); color: var(--green); border: 1px solid rgba(5,150,105,.25); }
+.tag.q   { background: var(--purple-l); color: var(--purple); border: 1px solid rgba(124,58,237,.2); }
+.tag.note{ background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.25); }
+
+pre {
+  background: #0f172a; color: #e2e8f0; border-radius: 9px; padding: 13px 16px;
+  font-family: var(--mono); font-size: 12px; line-height: 1.65;
+  overflow-x: auto; margin: 10px 0;
+}
+code {
+  font-family: var(--mono); font-size: 12px;
+  background: var(--surface2); padding: 1px 6px;
+  border-radius: 4px; border: 1px solid var(--border);
+}
+pre code { background: none; border: none; padding: 0; color: inherit; }
+
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: 10px 0; }
+th {
+  background: var(--surface2); color: var(--text2);
+  font-weight: 700; font-size: 11px; letter-spacing: .03em;
+  padding: 8px 12px; border: 1px solid var(--border); text-align: left;
+}
+td { padding: 8px 12px; border: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+
+/* flow */
+.flow-chain {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  margin: 10px 0; font-family: var(--mono); font-size: 12px;
+}
+.flow-node { padding: 6px 12px; border-radius: 7px; font-weight: 700; line-height: 1.3; }
+.flow-node.red    { background: var(--red-l); color: var(--red); border: 1px solid rgba(220,38,38,.25); }
+.flow-node.amber  { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.25); }
+.flow-node.green  { background: var(--green-l); color: var(--green); border: 1px solid rgba(5,150,105,.3); }
+.flow-node.purple { background: var(--purple-l); color: var(--purple); border: 1px solid rgba(124,58,237,.2); }
+.flow-arrow { color: var(--muted); font-size: 14px; }
+
+/* note */
+.note {
+  padding: 12px 16px; border-radius: 9px; font-size: 13px; margin: 10px 0;
+}
+.note.amber { background: var(--amber-l); border: 1px solid rgba(217,119,6,.25); color: #92400e; }
+.note.purple{ background: var(--purple-l); border: 1px solid rgba(124,58,237,.2); color: #4c1d95; }
+.note.green { background: var(--green-l); border: 1px solid rgba(5,150,105,.25); color: #065f46; }
+.note.red   { background: var(--red-l); border: 1px solid rgba(220,38,38,.2); color: #7f1d1d; }
+
+/* timeline */
+.tl { display: flex; flex-direction: column; gap: 0; margin: 10px 0; }
+.tl-item { display: flex; gap: 14px; padding: 4px 0 16px; position: relative; }
+.tl-item:not(:last-child)::before {
+  content: ''; position: absolute; left: 11px; top: 26px; bottom: -4px; width: 2px; background: var(--border2);
+}
+.tl-dot {
+  width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 12px;
+  background: var(--surface2); border: 2px solid var(--border2); z-index: 1;
+}
+.tl-body { flex: 1; padding-top: 1px; }
+.tl-title { font-size: 13px; font-weight: 700; color: var(--text); }
+.tl-desc { font-size: 12.5px; color: var(--muted); margin-top: 2px; line-height: 1.7; }
+
+@media (max-width: 640px) {
+  .hero { padding: 80px 16px 36px; }
+  main { padding: 32px 16px 70px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../../plan-fy26.html">
+      <div class="nav-logo-icon">🧠</div>
+      <span class="nav-logo-sep">/</span>
+      <span class="nav-logo-text">FY26 Plan</span>
+    </a>
+    <div class="nav-item"><a class="nav-btn" href="../../../plan-fy26.html">ホームページ</a></div>
+    <div class="nav-item"><a class="nav-btn" href="../../../todo.html">進捗</a></div>
+    <div class="nav-item">
+      <button class="nav-btn" data-nav="vision">ビジョン <span class="nav-caret">▾</span></button>
+      <div class="nav-drop" id="nav-vision">
+        <a class="nav-drop-link" href="../../../demo.html">
+          <span class="nav-dl-icon">🎯</span>
+          <div><div class="nav-dl-name">デモ詳細</div><div class="nav-dl-sub">デモシナリオ・要件マップ</div></div>
+        </a>
+        <div class="nav-drop-sep"></div>
+        <a class="nav-drop-link" href="../../../disscussion/arm-demo-level123-ja.html">
+          <span class="nav-dl-icon">🦾</span>
+          <div><div class="nav-dl-name">マニピュレーション実証ロードマップ</div><div class="nav-dl-sub">アーム Demo Level 1-3 分類</div></div>
+        </a>
+        <a class="nav-drop-link" href="../../../disscussion/move-base-level123-ja.html">
+          <span class="nav-dl-icon">🤖</span>
+          <div><div class="nav-dl-name">ナビゲーション Level 1-3 分類</div><div class="nav-dl-sub">自律移動設計方針</div></div>
+        </a>
+      </div>
+    </div>
+    <div class="nav-item">
+      <a class="nav-btn cur" href="../../others-nav.html">その他</a>
+    </div>
+    <div class="nav-right">
+      <span class="nav-pulse"></span>
+      <div class="nav-badge-pill">Know-how</div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">&#129504; Know-how · LLM · llama.cpp</div>
+    <h1>LLM コマンド解析で遭遇した Prompt Cache（Longest Common Prefix）起因の空応答バグ</h1>
+    <p class="hero-desc">
+      Intent Routing の LLM Fallback 層（llama.cpp / qwen2.5-3b-instruct-q4_k_m）で、<code>temperature: 0</code> にもかかわらず
+      同じ入力で結果が変わるという不可解な事象に遭遇。原因調査から最終的な対処までの記録。自分用の備忘録として残す。
+    </p>
+    <div class="hero-meta">
+      <span class="meta-chip">&#129302; llama-server</span>
+      <span class="meta-chip">&#129513; qwen2.5-3b-instruct-q4_k_m</span>
+      <span class="meta-chip">&#128269; cache_prompt / LCP Cache</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+  <!-- 背景 -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label purple">&#128218; 背景</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card purple">
+    <div class="card-body">
+      <p>ロボットへの自然言語コマンドは Deterministic → Embedding → LLM Fallback の三層で解析している（<a href="../../report-pages/weekly-report/Agent-robot-basemovement/agent-robot-basemovement-ja.html">Intent Routing 三層設計</a> 参照）。
+      LLM Fallback 層は前段で解決できなかった曖昧なコマンドのみを受け持ち、ローカル LLM（llama.cpp 上の qwen2.5-3b-instruct-q4_k_m）で構造化 JSON（candidates）に変換している。</p>
+      <p>このシミュレーションではなく実運用（real）に近い形でテストを回していたときに、<code>temperature: 0</code>（決定的であるはず）にもかかわらず、同じプロンプトを繰り返し送ると、たまに正しい結果の代わりに空の <code>{}</code> が返ってくる現象を発見した。</p>
+    </div>
+  </div>
+
+  <!-- 何が起きたか -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label red">&#128165; 何が起きたか</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card red">
+    <div class="card-title"><span class="tag bug">Bug</span>同一入力でも結果が不安定</div>
+    <div class="card-body">
+      <p>プロンプトの構造は「長く固定的な <code>command_reference</code> ブロック」＋「末尾の短い可変 <code>Command: ...</code>」というもの。</p>
+      <pre>You are a robot command parser.
+
+Command reference:
+- navigate ...
+- stop ...
+- search ...
+...（長い固定説明）...
+
+Command: Go to room A</pre>
+      <p>正常時は次のような JSON が返るべきところ：</p>
+      <pre>{ "candidates": [ { "skill": "navigate", "target": "room_a" } ] }</pre>
+      <p>異常時はこうなる：</p>
+      <pre>{}
+または
+{ "candidates": [] }</pre>
+      <div class="note red">
+        JSON としては合法（パースエラーにはならない）なので、普通の try/except では検知できない。「候補が0件」という<strong>意味的な異常</strong>として扱う必要がある。
+      </div>
+    </div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title"><span class="tag q">なぜ？</span>temperature = 0 でも不安定になり得る理由</div>
+    <div class="card-body">
+      <p><code>temperature = 0</code> が保証するのは「同じ内部状態が与えられたとき、毎回同じトークンを選ぶ」ことだけ。</p>
+      <p>「その内部状態（KV Cache）自体が毎回正しく再現される」ことまでは保証しない。今回の問題はまさにここで、<strong>サンプリングではなく Prompt Cache の再利用（reuse）がおかしくなっていた</strong>。</p>
+      <div class="note amber">
+        たとえるなら、計算式（temperature=0）は毎回同じでも、電卓（llama.cpp のキャッシュ）が前回の計算の途中結果を誤って読み込んでしまう、というイメージ。
+      </div>
+    </div>
+  </div>
+
+  <!-- 原因の核心 -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label blue">&#128269; 原因 — Longest Common Prefix (LCP) Cache</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card blue">
+    <div class="card-title">cache_prompt とは</div>
+    <div class="card-body">
+      <p>LLM は毎回プロンプト全体を先頭からトークン処理する必要がある。ただし <code>cache_prompt = true</code>（デフォルト有効）の場合、前回のプロンプトと今回のプロンプトの「共通する先頭部分（Longest Common Prefix）」を検出し、そこまでの KV Cache を再利用して、変化した末尾部分だけを計算する。</p>
+      <div class="flow-chain">
+        <span class="flow-node amber">Prompt A: 固定部分 + "Go forward"</span>
+      </div>
+      <div class="flow-chain">
+        <span class="flow-node amber">Prompt B: 固定部分（共通） + "Turn left"</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-node green">共通部分は再計算せず再利用</span>
+      </div>
+      <p>今回のプロンプトは「長い固定 <code>command_reference</code>（約1070 token）＋短い可変 <code>Command</code>（約30 token）」という、まさに LCP キャッシュが最も効きやすい（＝最も酷使される）形をしていた。</p>
+    </div>
+  </div>
+
+  <div class="card blue">
+    <div class="card-title">何が壊れていたか（推定）</div>
+    <div class="card-body">
+      <p>すべての詳細な内部実装までは特定できていないが、実験結果からは次のような挙動が疑われる：</p>
+      <ul>
+        <li>前回プロンプトの KV 状態の一部が正しく切り詰められていない</li>
+        <li>新旧プロンプトの分岐位置（末尾の差分開始点）の処理がずれる</li>
+        <li>キャッシュに前回コマンドの残留状態が残る</li>
+      </ul>
+      <p>結果として、モデル内部では実際には「固定部分 + 前回のCommand + 残留状態 + 今回のCommand」のような矛盾した文脈を見てしまい、コマンドを解釈できず候補ゼロ（<code>{}</code>）を返していたと考えられる。</p>
+    </div>
+  </div>
+
+  <!-- 検証 -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label green">&#129514; 検証（A/B テスト）</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title">cache_prompt を切ると再現しなくなる</div>
+    <div class="card-body">
+      <p><code>cache_prompt: false</code> にして同一リクエストを6回連続実行 → 6/6 が完全に一致（byte-identical）。これでほぼ「サンプリングのランダム性」や「モデル自体の理解不足」ではなく、<strong>キャッシュ再利用に直接起因する</strong>ことが確認できた。</p>
+      <p>ただし代償として、毎回 ~1100 token のフル cold prompt-eval が発生し、速度が約10倍悪化。その結果、本来の <code>timeout_sec</code> を大量に超過するようになった。</p>
+      <table>
+        <thead><tr><th>条件</th><th>正確性</th><th>速度</th><th>タイムアウト失敗</th></tr></thead>
+        <tbody>
+          <tr><td><code>cache_prompt = false</code></td><td>安定（6/6 一致）</td><td>約10倍遅い</td><td>61 / 126（約48%）</td></tr>
+          <tr><td><code>cache_prompt = true</code></td><td>まれに空結果</td><td>速い</td><td>約 4〜7 / 126（3〜6%）</td></tr>
+        </tbody>
+      </table>
+      <div class="note green">
+        キャッシュを切って正しさを取り戻しても、タイムアウト失敗が「元のバグよりずっと悪化」してしまい、実運用では採用できないという結論になった。
+      </div>
+    </div>
+  </div>
+
+  <!-- 最終対応 -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label amber">&#128295; 最終的な対応</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title"><span class="tag fix">Fix</span>キャッシュは維持 ＋ 空候補時に1回だけ自動リトライ</div>
+    <div class="card-body">
+      <p>速度を落とさず正しさも確保するため、「キャッシュは有効のまま」「異常検知時のみ1回リトライ」という方針にした。</p>
+      <div class="tl">
+        <div class="tl-item">
+          <div class="tl-dot">1</div>
+          <div class="tl-body">
+            <div class="tl-title">通常どおりリクエスト</div>
+            <div class="tl-desc"><code>cache_prompt = true</code> のまま実行。ほとんどの場合はここで完了。</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot">2</div>
+          <div class="tl-body">
+            <div class="tl-title">JSON は正常でも candidates が空かを確認</div>
+            <div class="tl-desc"><code>LlamaCppParser.parse_candidates</code> で「パース成功だが候補ゼロ」を意味的な異常として判定。</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot">3</div>
+          <div class="tl-body">
+            <div class="tl-title">空だった場合のみ、もう1回リクエスト</div>
+            <div class="tl-desc">リトライ時は新しい生成になり、壊れたキャッシュの続きを踏まないため、高確率で正常化する。</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot">4</div>
+          <div class="tl-body">
+            <div class="tl-title">timeout_sec を 2.0 → 8.0 秒に引き上げ</div>
+            <div class="tl-desc">LLM Fallback は「Embedding で解決できなかった全てのケース」で呼ばれる常用パスになったため、cold prompt-eval やリトライ分の余裕を確保。</div>
+          </div>
+        </div>
+      </div>
+      <div class="note amber">
+        キャッシュを疑って一律に「もう1回叩く」のではなく、「候補ゼロ」という<strong>意味的なシグナル</strong>をトリガーにしている点がポイント。単純な例外catchでは検知できないバグだった。
+      </div>
+    </div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title">結果</div>
+    <div class="card-body">
+      <p>リトライ導入 ＋ サーバー再起動（手動テストで汚染されたキャッシュのクリア）後の残存失敗率：</p>
+      <table>
+        <thead><tr><th>テストセット</th><th>件数</th><th>失敗</th><th>失敗率</th></tr></thead>
+        <tbody>
+          <tr><td>EN</td><td>126</td><td>4</td><td>約 3.2%</td></tr>
+          <tr><td>JP</td><td>117</td><td>0</td><td>0%</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12.5px;color:var(--muted);">残る失敗が全てキャッシュバグ由来とは限らない（タイムアウト・本当に解析不能な入力・想定外の表現なども含まれ得るため、失敗ログの分類は別途必要）。</p>
+    </div>
+  </div>
+
+  <!-- 今後のための注意点 -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label purple">&#128221; 今後のための注意点</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card purple">
+    <div class="card-body">
+      <ul>
+        <li>この不具合は「同じ入力を連続で何度も叩く」ケースで最も再現しやすかった。もし再発したら、まずは同一入力の連続実行で切り分ける。</li>
+        <li>より高頻度で再発する場合は、リトライ方式以外に <code>--cache-reuse 0</code> や、固定プレフィックスをもっと短く／繰り返しの少ない構造にする、といった代替策も検討の余地あり。</li>
+        <li><strong>重要</strong>：空の <code>{}</code> を無条件に「キャッシュバグ」と決めつけない。以下は区別する必要がある：
+          <ul>
+            <li>本当に該当コマンドが存在しない（正当な無マッチ）</li>
+            <li>キャッシュ起因の異常な空結果</li>
+            <li>タイムアウト</li>
+            <li>JSON 形式エラー</li>
+            <li>モデル/サーバー自体のエラー</li>
+          </ul>
+          区別しないと、本来サポートしていない入力に対しても無意味なリトライを繰り返すことになる。
+        </li>
+      </ul>
+    </div>
+  </div>
+
+</main>
+
+<script>
+document.querySelectorAll('.nav-btn[data-nav]').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const id = btn.dataset.nav;
+    const drop = document.getElementById('nav-' + id);
+    const isOpen = drop.classList.contains('open');
+    document.querySelectorAll('.nav-drop.open').forEach(d => d.classList.remove('open'));
+    document.querySelectorAll('.nav-btn.nav-open').forEach(b => b.classList.remove('nav-open'));
+    if (!isOpen) { drop.classList.add('open'); btn.classList.add('nav-open'); }
+  });
+});
+document.addEventListener('click', () => {
+  document.querySelectorAll('.nav-drop.open').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.nav-btn.nav-open').forEach(b => b.classList.remove('nav-open'));
+});
+</script>
+</body>
+</html>

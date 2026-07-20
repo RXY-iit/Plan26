@@ -247,8 +247,53 @@ main { max-width: 960px; margin: 0 auto; padding: 44px 24px 100px; }
 }
 .rs-card.placeholder:hover { transform: none; box-shadow: none; border-color: var(--border2); background: transparent; }
 
+/* ── 週次レポート タイムライン（Real / Sim 往復を矢印でつなぐ） ── */
+.rs-heads { display: grid; grid-template-columns: 1fr 32px 1fr; gap: 16px; margin-bottom: 18px; align-items: start; }
+.rs-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px; border-radius: 12px; font-size: 13.5px; font-weight: 800;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.rs-head.real { background: linear-gradient(135deg, var(--amber-l), #fff 75%); border: 1px solid rgba(217,119,6,.2); color: var(--amber); justify-content: flex-end; text-align: right; }
+.rs-head.sim  { background: linear-gradient(135deg, var(--purple-l), #fff 75%); border: 1px solid rgba(124,58,237,.2); color: var(--purple); grid-column: 3; }
+.rs-head-icon { width: 30px; height: 30px; border-radius: 9px; background: #fff; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.rs-head.real .rs-head-icon { border: 1px solid rgba(217,119,6,.3); order: 2; }
+.rs-head.sim  .rs-head-icon { border: 1px solid rgba(124,58,237,.3); }
+.rs-head-icon img { width: 100%; height: 100%; object-fit: contain; border-radius: 6px; }
+
+.rs-timeline { position: relative; padding: 4px 0 8px; }
+.rs-timeline::before {
+  content: ''; position: absolute; left: 50%; top: 4px; bottom: 8px; width: 2px;
+  background: var(--border2); transform: translateX(-50%); z-index: 0;
+}
+.rs-trow { display: grid; grid-template-columns: 1fr 32px 1fr; align-items: center; gap: 16px; position: relative; z-index: 1; }
+.rs-slot { min-width: 0; }
+.rs-spine { display: flex; align-items: center; justify-content: center; }
+.rs-dot {
+  width: 15px; height: 15px; border-radius: 50%; background: var(--border2);
+  border: 3px solid var(--bg); box-shadow: 0 0 0 2px var(--border2); flex-shrink: 0;
+}
+.rs-dot.real { box-shadow: 0 0 0 2px rgba(217,119,6,.5); background: var(--amber); }
+.rs-dot.sim  { box-shadow: 0 0 0 2px rgba(124,58,237,.5); background: var(--purple); }
+.rs-arrow-row { display: grid; grid-template-columns: 1fr 32px 1fr; position: relative; z-index: 1; margin: 2px 0; }
+.rs-arrow-row .rs-arrow {
+  grid-column: 2; text-align: center; color: var(--muted); font-size: 15px;
+  background: var(--bg); line-height: 1;
+}
+.rs-note {
+  text-align: center; font-size: 12px; color: var(--muted);
+  margin-top: 10px; position: relative; z-index: 1;
+}
+
 @media (max-width: 760px) {
   .rs-split { grid-template-columns: 1fr; }
+  .rs-heads { grid-template-columns: 1fr; gap: 8px; }
+  .rs-head.sim { grid-column: 1; }
+  .rs-head.real { justify-content: flex-start; text-align: left; }
+  .rs-head.real .rs-head-icon { order: 0; }
+  .rs-timeline::before { display: none; }
+  .rs-trow { grid-template-columns: 1fr; gap: 8px; }
+  .rs-spine, .rs-arrow-row { display: none; }
 }
 
 @media (max-width: 640px) {
@@ -321,7 +366,7 @@ main { max-width: 960px; margin: 0 auto; padding: 44px 24px 100px; }
   <div class="page-grid">
     <a class="page-card" href="robot-model/robot-overview.html">
       <div class="pc-icon">&#129302;</div>
-      <div class="pc-title">ロボット全体設計</div>
+      <div class="pc-title">ロボット全体設計（補完中）</div>
       <div class="pc-desc">Three.js による機体構成の 3D 可視化。センサーホールダー・昇降機構・制御システムの実装状況まとめ。</div>
       <div class="pc-tags">
         <span class="pc-tag hw">Hardware</span>
@@ -350,7 +395,7 @@ main { max-width: 960px; margin: 0 auto; padding: 44px 24px 100px; }
   </div>
 
   <div class="page-grid">
-    <a class="page-card" href="Arduino-MOSFET-AZD-KD/Arduino-MOSFET-AZD-KD.html">
+    <a class="page-card" href="Know-how/Arduino-MOSFET-AZD-KD/Arduino-MOSFET-AZD-KD.html">
       <div class="pc-icon">&#9889;</div>
       <div class="pc-title">昇降機構制御システム</div>
       <div class="pc-desc">Arduino → MOSFET → AZD-KD の制御アーキテクチャ。配線・パラメータ・ROS2 インターフェース詳細。JOG 60 mm/s 達成。</div>
@@ -360,12 +405,13 @@ main { max-width: 960px; margin: 0 auto; padding: 44px 24px 100px; }
       </div>
     </a>
 
-    <a class="page-card" href="../issues/arm-vertical/arm-vertical.html">
-      <div class="pc-icon">&#128295;</div>
-      <div class="pc-title">アーム上下機構</div>
-      <div class="pc-desc">コネクタ破損 → 再設計の課題記録。根本原因分析と解決策のドキュメント。</div>
+    <a class="page-card" href="Know-how/Longest%20Common%20Prefix/llm-prompt-cache-bug-ja.html">
+      <div class="pc-icon">&#129504;</div>
+      <div class="pc-title">llama.cpp Prompt Cache 起因の空応答バグ</div>
+      <div class="pc-desc">LLM Fallback 解析で temperature=0 でも結果が揺れた原因調査。Longest Common Prefix キャッシュの仕組みと、キャッシュ維持＋自動リトライでの対処をまとめたノート。</div>
       <div class="pc-tags">
-        <span class="pc-tag hw">Hardware</span>
+        <span class="pc-tag sw">LLM</span>
+        <span class="pc-tag teal">llama.cpp</span>
       </div>
     </a>
   </div>
@@ -377,18 +423,18 @@ main { max-width: 960px; margin: 0 auto; padding: 44px 24px 100px; }
     <div class="sec-line"></div>
   </div>
 
-  <div class="rs-split">
+  <p style="font-size:12.5px;color:var(--muted);margin-bottom:16px;">実機（Real）と Isaac Sim（Sim）を行き来しながら進めているため、時系列順に矢印でつないで表示しています。</p>
 
-    <!-- REAL -->
-    <div class="rs-col real">
-      <div class="rs-col-head">
-        <div class="rs-col-icon">&#129302;</div>
-        <div>
-          <div class="rs-col-title"><span class="rs-col-title-tag">Real</span> — 実機</div>
-          <div class="rs-col-sub">実機の基礎底盤・ナビゲーション・Agent 移動基盤</div>
-        </div>
-      </div>
-      <div class="rs-col-body">
+  <div class="rs-heads">
+    <div class="rs-head real"><div class="rs-head-icon">&#129302;</div>Real — 実機</div>
+    <div class="rs-head sim"><div class="rs-head-icon"><img src="images\isaac-sim-icon.jpg" alt="Isaac Sim" /></div>Sim — Isaac Sim</div>
+  </div>
+
+  <div class="rs-timeline">
+
+    <!-- 1: Real - navigation -->
+    <div class="rs-trow">
+      <div class="rs-slot left">
         <a class="rs-card" href="report-pages/weekly-report/real-navigation/report-2026-05-22.html">
           <div class="rs-card-icon">&#127895;</div>
           <div class="rs-card-body">
@@ -401,21 +447,17 @@ main { max-width: 960px; margin: 0 auto; padding: 44px 24px 100px; }
             </div>
           </div>
         </a>
-
-        <div class="rs-card placeholder">&#8618; 実機の基礎底盤・ハードウェア関連レポートは今後追加予定</div>
       </div>
+      <div class="rs-spine"><div class="rs-dot real"></div></div>
+      <div class="rs-slot right"></div>
     </div>
+    <div class="rs-arrow-row"><span class="rs-arrow">&#9660;</span></div>
 
-    <!-- SIM -->
-    <div class="rs-col sim">
-      <div class="rs-col-head">
-        <div class="rs-col-icon">&#127981;</div>
-        <div>
-          <div class="rs-col-title"><span class="rs-col-title-tag">Sim</span> — Isaac Sim</div>
-          <div class="rs-col-sub">USD モデル・環境マッピング・シミュレーションナビゲーション</div>
-        </div>
-      </div>
-      <div class="rs-col-body">
+    <!-- 2: Sim - USD -->
+    <div class="rs-trow">
+      <div class="rs-slot left"></div>
+      <div class="rs-spine"><div class="rs-dot sim"></div></div>
+      <div class="rs-slot right">
         <a class="rs-card" href="report-pages/weekly-report/Isacc-robot-usd/isaac-robot-usd-ja.html">
           <div class="rs-card-icon">&#128295;</div>
           <div class="rs-card-body">
@@ -428,7 +470,15 @@ main { max-width: 960px; margin: 0 auto; padding: 44px 24px 100px; }
             </div>
           </div>
         </a>
-        
+      </div>
+    </div>
+    <div class="rs-arrow-row"><span class="rs-arrow">&#9660;</span></div>
+
+    <!-- 3: Sim - env mapping -->
+    <div class="rs-trow">
+      <div class="rs-slot left"></div>
+      <div class="rs-spine"><div class="rs-dot sim"></div></div>
+      <div class="rs-slot right">
         <a class="rs-card" href="report-pages/weekly-report/issac-sim-env-mapping/isaac-sim-glim-mapping-ja.html">
           <div class="rs-card-icon">&#128248;</div>
           <div class="rs-card-body">
@@ -441,7 +491,15 @@ main { max-width: 960px; margin: 0 auto; padding: 44px 24px 100px; }
             </div>
           </div>
         </a>
+      </div>
+    </div>
+    <div class="rs-arrow-row"><span class="rs-arrow">&#9660;</span></div>
 
+    <!-- 4: Sim - navigation -->
+    <div class="rs-trow">
+      <div class="rs-slot left"></div>
+      <div class="rs-spine"><div class="rs-dot sim"></div></div>
+      <div class="rs-slot right">
         <a class="rs-card" href="report-pages/weekly-report/issac-sim-env-navigation/isaac-sim-navigation-ja.html">
           <div class="rs-card-icon">&#129517;</div>
           <div class="rs-card-body">
@@ -454,8 +512,16 @@ main { max-width: 960px; margin: 0 auto; padding: 44px 24px 100px; }
             </div>
           </div>
         </a>
+      </div>
+    </div>
+    <div class="rs-arrow-row"><span class="rs-arrow">&#9660;</span></div>
 
-         <a class="rs-card" href="report-pages/weekly-report/Agent-robot-basemovement/agent-robot-basemovement-ja.html">
+    <!-- 5: Sim - Agent L2/L3 -->
+    <div class="rs-trow">
+      <div class="rs-slot left"></div>
+      <div class="rs-spine"><div class="rs-dot sim"></div></div>
+      <div class="rs-slot right">
+        <a class="rs-card" href="report-pages/weekly-report/Agent-robot-basemovement/agent-robot-basemovement-ja.html">
           <div class="rs-card-icon">&#129302;</div>
           <div class="rs-card-body">
             <div class="rs-card-title">ロボットAgent (L2,L3)</div>
@@ -468,7 +534,15 @@ main { max-width: 960px; margin: 0 auto; padding: 44px 24px 100px; }
             </div>
           </div>
         </a>
+      </div>
+    </div>
+    <div class="rs-arrow-row"><span class="rs-arrow">&#9660;</span></div>
 
+    <!-- 6: Sim - room USD model -->
+    <div class="rs-trow">
+      <div class="rs-slot left"></div>
+      <div class="rs-spine"><div class="rs-dot sim"></div></div>
+      <div class="rs-slot right">
         <a class="rs-card" href="report-pages/weekly-report/isaac-sim-usd-model/isaac-sim-usd-model-ja.html">
           <div class="rs-card-icon">&#128230;</div>
           <div class="rs-card-body">
@@ -481,12 +555,33 @@ main { max-width: 960px; margin: 0 auto; padding: 44px 24px 100px; }
             </div>
           </div>
         </a>
-
-        <div class="rs-card placeholder">&#8618; Isaac Sim 関連レポートは今後追加予定</div>
       </div>
+    </div>
+    <div class="rs-arrow-row"><span class="rs-arrow">&#9660;</span></div>
+
+    <!-- 7: Real - Sim2Real Agent baseline -->
+    <div class="rs-trow">
+      <div class="rs-slot left">
+        <a class="rs-card" href="report-pages/weekly-report/real-sim2real-agent/sim2real-agent-baseline-ja.html">
+          <div class="rs-card-icon">&#128268;</div>
+          <div class="rs-card-body">
+            <div class="rs-card-title">Sim2Real ｜Agent・Skill実機実装</div>
+            <div class="rs-card-desc">Sim で構築した Agent/Skill 層を実機へ移植。窄路タスク go to sofa の完全成功と、残る信頼性課題をまとめた報告。</div>
+            <div class="rs-card-meta">
+              <span class="pc-tag nav">Agent</span>
+              <span class="pc-tag hw">Real Robot</span>
+              <span class="rs-card-date">2026-07-18</span>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="rs-spine"><div class="rs-dot real"></div></div>
+      <div class="rs-slot right"></div>
     </div>
 
   </div>
+
+  <div class="rs-note">&#8618; 今後も Real ⇄ Sim を往復しながら、この時系列に追加していく予定</div>
 
 </main>
 
