@@ -182,45 +182,61 @@ h1 .hi { color: var(--accent); }
 .stat-value { font-size: 20px; font-weight: 800; color: var(--text); font-family: var(--mono); }
 .stat-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
-/* Progress Widget */
-.progress-widget {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 18px; padding: 28px; box-shadow: var(--sh);
+/* Hero manifesto card — text-only, no image/video */
+.hero-manifesto-card {
+  position: relative; border-radius: 20px; overflow: hidden;
+  background: linear-gradient(160deg, #0f172a 0%, #1e1b4b 100%);
+  box-shadow: var(--sh-lg); isolation: isolate;
+  padding: 30px 28px 26px;
 }
-.ring-container { position: relative; width: 160px; height: 160px; margin: 0 auto 24px; }
-.ring-svg { transform: rotate(-90deg); }
-.ring-track { fill: none; stroke: var(--border); stroke-width: 10; }
-.ring-fill {
-  fill: none; stroke: url(#ringGradL); stroke-width: 10;
-  stroke-linecap: round;
-  stroke-dasharray: 439; stroke-dashoffset: 417;
-  transition: stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1);
+.hero-manifesto-card::before {
+  content: ''; position: absolute; inset: -3px; z-index: -1; border-radius: 23px;
+  background: conic-gradient(from 0deg, #2563eb, #7c3aed, #059669, #2563eb);
+  filter: blur(16px); opacity: .5;
+  animation: heroGlowSpin 6s linear infinite;
 }
-.ring-label {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-}
-.ring-pct { font-family: var(--mono); font-size: 26px; font-weight: 800; color: var(--text); }
-.ring-sub { font-size: 10px; color: var(--muted); }
+@keyframes heroGlowSpin { from { filter: blur(16px) hue-rotate(0deg); } to { filter: blur(16px) hue-rotate(360deg); } }
 
-.phase-mini-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
-.phase-mini { display: flex; align-items: center; gap: 8px; font-size: 12px; }
-.phase-mini-label { color: var(--muted); min-width: 52px; font-family: var(--mono); }
-.phase-mini-bar { flex: 1; height: 4px; background: var(--border); border-radius: 99px; overflow: hidden; }
-.phase-mini-fill { height: 100%; border-radius: 99px; transition: width 1.5s ease; }
-.phase-mini-pct { color: var(--muted); font-family: var(--mono); font-size: 10px; min-width: 28px; text-align: right; }
+.hero-manifesto-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(255,255,255,.08); color: rgba(255,255,255,.85);
+  font-size: 11px; font-weight: 700; letter-spacing: .08em;
+  padding: 5px 13px 5px 10px; border-radius: 99px; border: 1px solid rgba(255,255,255,.16);
+  margin-bottom: 20px;
+}
+.pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: #f87171; flex-shrink: 0; animation: heroDotPulse 1.6s infinite; }
+@keyframes heroDotPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(248,113,113,.55); }
+  50%     { box-shadow: 0 0 0 6px rgba(248,113,113,0); }
+}
 
-.slider-wrap { margin-top: 4px; }
-.slider-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 5px; }
-input[type="range"] {
-  -webkit-appearance: none; width: 100%; height: 4px;
-  background: var(--border); border-radius: 2px; outline: none; cursor: pointer;
+.hero-manifesto-title { font-size: clamp(21px, 2.3vw, 26px); font-weight: 800; color: #fff; line-height: 1.4; margin-bottom: 8px; }
+.hero-manifesto-title .grad-text {
+  background: linear-gradient(90deg, #60a5fa, #a78bfa, #34d399, #60a5fa);
+  background-size: 300% auto;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: gradShift 5s linear infinite;
 }
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 16px; height: 16px;
-  background: var(--accent); border-radius: 50%;
-  box-shadow: 0 0 0 3px rgba(37,99,235,.15); cursor: grab;
+@keyframes gradShift { to { background-position: 300% center; } }
+.hero-manifesto-sub { font-size: 13px; color: rgba(255,255,255,.5); margin-bottom: 22px; }
+
+.hero-manifesto-split { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 22px; }
+.hm-layer { border-radius: 10px; padding: 12px 14px; }
+.hm-layer.upper { background: rgba(124,58,237,.16); border: 1px solid rgba(124,58,237,.4); }
+.hm-layer.lower { background: rgba(217,119,6,.16); border: 1px solid rgba(217,119,6,.4); }
+.hm-layer-label { font-size: 11px; font-weight: 800; letter-spacing: .04em; margin-bottom: 4px; }
+.hm-layer.upper .hm-layer-label { color: #c4b5fd; }
+.hm-layer.lower .hm-layer-label { color: #fcd34d; }
+.hm-layer-desc { font-size: 11px; color: rgba(255,255,255,.6); line-height: 1.5; }
+
+.hero-terminal {
+  background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.1); border-radius: 10px;
+  padding: 14px 16px; font-family: var(--mono); font-size: 12px; line-height: 1.9;
 }
+.hero-terminal-line { color: rgba(255,255,255,.55); }
+.hero-terminal-line.ok { color: #6ee7b7; }
+.hero-terminal-line .cursor { color: rgba(255,255,255,.7); animation: blink 1s step-end infinite; }
+@keyframes blink { 50% { opacity: 0; } }
 
 /* ── SECTIONS ── */
 section { padding: 80px 28px; }
@@ -553,7 +569,7 @@ footer strong { color: rgba(255,255,255,.9); }
 /* RESPONSIVE */
 @media (max-width: 900px) {
   .hero-inner { grid-template-columns: 1fr; }
-  .progress-widget { display: none; }
+  .hero-manifesto-card { display: none; }
   .req-radar-wrap { grid-template-columns: 1fr; }
   #radarSvg { max-width: 260px; margin: 0 auto; }
 }
@@ -627,19 +643,11 @@ footer strong { color: rgba(255,255,255,.9); }
   <div class="hero-grid"></div>
   <div class="hero-glow-a"></div>
   <div class="hero-glow-b"></div>
-  <svg width="0" height="0" style="position:absolute">
-    <defs>
-      <linearGradient id="ringGradL" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#2563eb"/>
-        <stop offset="100%" stop-color="#059669"/>
-      </linearGradient>
-    </defs>
-  </svg>
   <div class="hero-inner">
     <div>
-      <div class="hero-tag">FY2026 Research Annual Plan</div>
-      <h1>移動<span class="hi">マニピュレーター</span><br>研究プラン</h1>
-      <div class="hero-sub">Robot Harness System — FY2026</div>
+      <div class="hero-tag">FY2026 Research Annual Plan · Portable Robot Brain</div>
+      <h1>移動<span class="hi">マニピュレーター</span>で創る<br>移植可能なロボット脳</h1>
+      <div class="hero-sub">Robot Harness System — 「考える脳」と「動く体」を分離する</div>
       <div class="hero-concept">
         <div class="concept-node">👁️ 知覚</div><div class="concept-arrow">→</div>
         <div class="concept-node">🧠 記憶</div><div class="concept-arrow">→</div>
@@ -648,8 +656,8 @@ footer strong { color: rgba(255,255,255,.9); }
         <div class="concept-node">🦾 行動</div>
       </div>
       <p class="hero-desc">
-        知覚・記憶・判断・スキル実行・行動という生物の神経系を模倣した
-        AI ロボットシステムを構築。
+        知覚・記憶・判断・スキル実行・行動という生物の神経系を模倣し、
+        特定のハードウェアに縛られない汎用ロボット脳（Harness OS）を構築する。
         LLM × ROS2 × VLA を統合した10フェーズ・12ヶ月のロードマップ。
       </p>
       <div class="hero-stats">
@@ -668,47 +676,27 @@ footer strong { color: rgba(255,255,255,.9); }
       </div>
     </div>
 
-    <div class="progress-widget reveal">
-      <div class="ring-container">
-        <svg class="ring-svg" width="160" height="160" viewBox="0 0 160 160">
-          <circle class="ring-track" cx="80" cy="80" r="70"/>
-          <circle class="ring-fill" id="mainRing" cx="80" cy="80" r="70"/>
-        </svg>
-        <div class="ring-label">
-          <div class="ring-pct" id="ringPct">5%</div>
-          <div class="ring-sub">全体進捗</div>
+    <div class="hero-manifesto-card reveal">
+      <div class="hero-manifesto-badge"><span class="pulse-dot"></span>CORE THESIS</div>
+      <div class="hero-manifesto-title">「考える脳」と「動く体」を<span class="grad-text">分離する。</span></div>
+      <div class="hero-manifesto-sub">脳を使い回せるロボットシステムへ — Harness OS</div>
+
+      <div class="hero-manifesto-split">
+        <div class="hm-layer upper">
+          <div class="hm-layer-label">上層 Agent</div>
+          <div class="hm-layer-desc">Thinking Model<br>計画・記憶・Recovery</div>
+        </div>
+        <div class="hm-layer lower">
+          <div class="hm-layer-label">下層 Agent</div>
+          <div class="hm-layer-desc">Small Model<br>リアルタイム Skill 実行</div>
         </div>
       </div>
 
-      <div class="phase-mini-list">
-        <div class="phase-mini">
-          <span class="phase-mini-label" style="color:var(--accent);font-weight:700;">Phase 0</span>
-          <div class="phase-mini-bar"><div class="phase-mini-fill" style="width:0%;background:var(--accent)" data-pct="100"></div></div>
-          <span class="phase-mini-pct" style="color:var(--accent);font-weight:700;">100%</span>
-        </div>
-        <div class="phase-mini">
-          <span class="phase-mini-label" style="color:var(--accent);font-weight:700;">Phase 1</span>
-          <div class="phase-mini-bar"><div class="phase-mini-fill" style="width:0%;background:var(--accent)" data-pct="100"></div></div>
-          <span class="phase-mini-pct" style="color:var(--accent);font-weight:700;">100%</span>
-        </div>
-        <div class="phase-mini">
-          <span class="phase-mini-label">Phase 2</span>
-          <div class="phase-mini-bar"><div class="phase-mini-fill" style="width:0%;background:var(--border2)" data-pct="0"></div></div>
-          <span class="phase-mini-pct">0%</span>
-        </div>
-        <div class="phase-mini">
-          <span class="phase-mini-label" style="color:var(--muted);font-size:10px">Ph 3–9</span>
-          <div class="phase-mini-bar"><div class="phase-mini-fill" style="width:0%;background:var(--border2)"></div></div>
-          <span class="phase-mini-pct" style="color:var(--muted)">—</span>
-        </div>
-      </div>
-
-      <div style="margin-top:14px;padding:8px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px;">進捗ページ から計算</div>
-        <div style="font-size:11px;color:var(--text2);line-height:1.7;">
-          Ph0-1: ロボット基盤の安定化&自律移動<br>
-          Ph2–9: Harness System の開発 進行中<br>
-        </div>
+      <div class="hero-terminal">
+        <div class="hero-terminal-line">&gt; harness.status()</div>
+        <div class="hero-terminal-line ok">✓ upper_agent : online</div>
+        <div class="hero-terminal-line ok">✓ lower_agent : online</div>
+        <div class="hero-terminal-line ok">✓ hardware&nbsp;&nbsp;&nbsp;&nbsp;: portable<span class="cursor">_</span></div>
       </div>
     </div>
   </div>
@@ -730,36 +718,60 @@ footer strong { color: rgba(255,255,255,.9); }
       <div class="motiv-card green">
         <div class="motiv-icon">🧠</div>
         <div class="motiv-title">技術的挑戦</div>
-        <div class="motiv-desc">記憶・文脈理解・マルチモーダル認識を統合した AI OS はまだ黎明期。Perception→Memory→Agent→Skill→Robot という神経系アーキテクチャの実装。</div>
+        <div class="motiv-desc">記憶・文脈理解・マルチモーダル認識を統合した AI OS はまだ黎明期。Perception→Memory→Agent→Skill→Robot という神経系アーキテクチャを、上層（思考）と下層（実行）に分離して実装する。</div>
       </div>
       <div class="motiv-card purple">
         <div class="motiv-icon">🎯</div>
         <div class="motiv-title">実現したいこと</div>
-        <div class="motiv-desc">音声指示・過去記憶・視覚情報を統合し、屋外〜屋内をシームレスに移動して物体操作できる「実用レベル」のロボット神経系を構築する。</div>
+        <div class="motiv-desc">「考える脳」と「動く体」を分離し、特定のハードウェアに縛られない<strong>移植可能なロボット脳（Harness OS）</strong>を構築する。ハードウェアが変わっても脳は使い回せる。</div>
       </div>
     </div>
 
-    <!-- Architecture diagram + figures integrated -->
-    <div class="nervous-box reveal" style="padding:0;overflow:hidden;border:1px solid var(--border);border-radius:16px;box-shadow:var(--sh);">
-      <!-- Main arch image -->
-      <div style="position:relative;cursor:pointer;background:#f1f5f9;" onclick="openLightbox(1)">
-        <img src="figure/robot-arch-ver1.png" alt="ロボットアーキテクチャ v1"
-          style="width:100%;max-height:420px;object-fit:contain;display:block;padding:16px;">
+    <!-- Harness OS / Portable Robot Brain — core design philosophy -->
+    <div class="nervous-box reveal" style="padding:0;overflow:hidden;border:1px solid var(--border);border-radius:16px;box-shadow:var(--sh);margin-top:20px;">
+      <!-- Main value image -->
+      <div style="position:relative;cursor:pointer;background:#f1f5f9;" onclick="openLightbox(4)">
+        <img src="subpages/robot-model/images/system-value.png" alt="移植可能なロボット脳（Harness OS）— スタートアップとしての6つの価値軸"
+          style="width:100%;max-height:460px;object-fit:contain;display:block;padding:16px;">
         <div style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,.45);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;">🔍 クリックで拡大</div>
-        <div style="position:absolute;top:10px;left:10px;background:var(--accent);color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:6px;letter-spacing:.06em;">ROBOT HARNESS ARCHITECTURE v1</div>
+        <div style="position:absolute;top:10px;left:10px;background:var(--purple);color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:6px;letter-spacing:.06em;">PORTABLE ROBOT BRAIN — HARNESS OS</div>
       </div>
-      <!-- Pipeline strip -->
-      <div style="padding:16px 24px;border-top:1px solid var(--border);background:var(--surface);">
-        <div class="nervous-flow" style="justify-content:center;">
-          <div class="nf-node">👁️ Perception</div><div class="nf-arrow">→</div>
-          <div class="nf-node">🧠 Memory</div><div class="nf-arrow">→</div>
-          <div class="nf-node">🤖 Agent</div><div class="nf-arrow">→</div>
-          <div class="nf-node">⚙️ Skill System</div><div class="nf-arrow">→</div>
-          <div class="nf-node">🦾 Robot</div>
-        </div>
+      <!-- One-liner -->
+      <div style="padding:20px 24px;border-top:1px solid var(--border);background:var(--surface);text-align:center;">
+        <div style="font-size:15px;font-weight:800;color:var(--text);line-height:1.6;">「考える脳」と「動く体」を分離することで、<br>脳を使い回せるロボットシステムをつくる。</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px;">上層 Agent（Thinking Model）が長期計画・Memory・Recovery を担い、下層 Agent（Small Model）がリアルタイムで Skill を実行する二層構成</div>
       </div>
-      <!-- Priority + sub-figures row -->
+      <!-- Value chips + sub-figures row -->
       <div style="padding:14px 24px 18px;border-top:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+        <div class="priority-banner" style="margin:0;flex:1;min-width:260px;">
+          <span class="priority-label">主な価値</span>
+          <div class="priority-chain">
+            <span class="priority-item p3">移植可能性</span><span class="priority-arrow">›</span>
+            <span class="priority-item p2">段階的自律化</span><span class="priority-arrow">›</span>
+            <span class="priority-item p1">自己監視・自己修復</span><span class="priority-arrow">›</span>
+            <span class="priority-item p4">モジュール設計</span>
+          </div>
+        </div>
+        <!-- Small thumbnails -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <div onclick="openLightbox(5)" style="cursor:pointer;position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--border);flex-shrink:0;">
+            <img src="subpages/robot-model/images/system-image.png" alt="設計の出発点 — 小脳と大脳の比喩" style="width:90px;height:60px;object-fit:cover;display:block;">
+            <div style="position:absolute;inset:0;background:rgba(0,0,0,.0);transition:background .15s;" onmouseover="this.style.background='rgba(0,0,0,.25)'" onmouseout="this.style.background='rgba(0,0,0,0)'"></div>
+            <div style="font-size:9px;color:var(--muted);text-align:center;padding:3px 4px;background:var(--surface);">小脳と大脳の比喩</div>
+          </div>
+          <div onclick="openLightbox(6)" style="cursor:pointer;position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--border);flex-shrink:0;">
+            <img src="subpages/robot-model/images/system-design.png" alt="Harness System 完全アーキテクチャ図" style="width:90px;height:60px;object-fit:cover;display:block;">
+            <div style="position:absolute;inset:0;background:rgba(0,0,0,.0);transition:background .15s;" onmouseover="this.style.background='rgba(0,0,0,.25)'" onmouseout="this.style.background='rgba(0,0,0,0)'"></div>
+            <div style="font-size:9px;color:var(--muted);text-align:center;padding:3px 4px;background:var(--surface);">Harness アーキテクチャ</div>
+          </div>
+        </div>
+        <a href="subpages/robot-model/harness-system-blueprint-ja.html" style="flex-shrink:0;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--purple);background:var(--purple-l);border:1px solid rgba(124,58,237,.25);padding:7px 14px;border-radius:8px;text-decoration:none;">設計 Blueprint を見る →</a>
+      </div>
+    </div>
+
+    <!-- Figures thumbnails row -->
+    <div class="nervous-box reveal" style="padding:0;overflow:hidden;border:1px solid var(--border);border-radius:16px;box-shadow:var(--sh);">
+      <div style="padding:14px 24px 18px;background:var(--surface2);display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
         <div class="priority-banner" style="margin:0;flex:1;min-width:260px;">
             <span class="priority-label">実装優先度</span>
             <div class="priority-chain">
@@ -785,6 +797,11 @@ footer strong { color: rgba(255,255,255,.9); }
             <img src="figure/schedual-2.png" alt="スケジュール (2)" style="width:90px;height:60px;object-fit:cover;display:block;">
             <div style="position:absolute;inset:0;background:rgba(0,0,0,.0);transition:background .15s;" onmouseover="this.style.background='rgba(0,0,0,.25)'" onmouseout="this.style.background='rgba(0,0,0,0)'"></div>
             <div style="font-size:9px;color:var(--muted);text-align:center;padding:3px 4px;background:var(--surface);">スケジュール (2)</div>
+          </div>
+          <div onclick="openLightbox(1)" style="cursor:pointer;position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--border);flex-shrink:0;">
+            <img src="figure/robot-arch-ver1.png" alt="ロボットアーキテクチャ v1" style="width:90px;height:60px;object-fit:cover;display:block;">
+            <div style="position:absolute;inset:0;background:rgba(0,0,0,.0);transition:background .15s;" onmouseover="this.style.background='rgba(0,0,0,.25)'" onmouseout="this.style.background='rgba(0,0,0,0)'"></div>
+            <div style="font-size:9px;color:var(--muted);text-align:center;padding:3px 4px;background:var(--surface);">アーキテクチャ v1</div>
           </div>
         </div>
       </div>
@@ -1464,6 +1481,9 @@ const figures = [
   { src:'figure/robot-arch-ver1.png', cap:'02 — ロボットアーキテクチャ v1' },
   { src:'figure/schedual-1.png',      cap:'03 — スケジュール詳細 (1)' },
   { src:'figure/schedual-2.png',      cap:'04 — スケジュール詳細 (2)' },
+  { src:'subpages/robot-model/images/system-value.png',  cap:'05 — 移植可能なロボット脳（Harness OS）スタートアップとしての6つの価値軸' },
+  { src:'subpages/robot-model/images/system-image.png',  cap:'06 — 設計の出発点：小脳と大脳の比喩・並列アーキテクチャ概要' },
+  { src:'subpages/robot-model/images/system-design.png', cap:'07 — Harness System 完全アーキテクチャ図' },
 ];
 let lbIdx = 0;
 
@@ -1489,23 +1509,6 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') lbNext();
   if (e.key === 'ArrowLeft')  lbPrev();
   if (e.key === 'Escape')     closeLightbox();
-});
-
-/* ── Progress Ring ── */
-function updateProgress(v) {
-  v = parseInt(v);
-  const c = 2 * Math.PI * 70; // 439.8
-  document.getElementById('mainRing').style.strokeDashoffset = c * (1 - v/100);
-  document.getElementById('ringPct').textContent = v + '%';
-  document.getElementById('sliderVal').textContent = v + '%';
-}
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    document.querySelectorAll('.phase-mini-fill[data-pct]').forEach(el => {
-      el.style.width = el.dataset.pct + '%';
-    });
-    updateProgress(5);
-  }, 400);
 });
 
 /* ── Phase Toggle ── */

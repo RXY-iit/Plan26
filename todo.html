@@ -585,7 +585,7 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
     <div data-phase-card="phase45" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-top:10px;box-shadow:var(--sh-sm);">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
         <span style="font-size:12px;font-weight:800;background:var(--amber-l);color:var(--amber);border:1px solid rgba(217,119,6,.2);padding:2px 10px;border-radius:6px;font-family:var(--mono);">Phase 4-5</span>
-        <span style="font-size:13px;font-weight:700;color:var(--text);">Recovery Agent &amp; Manipulation 統合 — Done Definition（草案）</span>
+        <span style="font-size:13px;font-weight:700;color:var(--text);">Recovery Agent &amp; Manipulation 統合 — Done Definition（8月–9月プラン）</span>
       </div>
       <div class="prog-wrap" style="margin-bottom:14px;">
         <div class="prog-label">
@@ -594,20 +594,61 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
         </div>
         <div class="prog-bar"><div class="prog-fill" id="phase45ProgFill" style="width:0%"></div></div>
       </div>
+
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:2px 0 8px;">🩺 Recovery Agent — 実機の自己申告システム＆可視化</div>
       <div style="display:flex;flex-direction:column;gap:7px;">
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>Health Monitor 実装 — Hardware / ROS2 / Control / Perception / Localization / Navigation の階層ごとに状態を 🟢🟡🔴 でリアルタイム可視化（Dashboard / Foxglove 統合）</span>
+          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>実機の自己申告システム — Navigation 失敗時に原因階層（Localization / Motor / 通信など）を自動で切り分けて報告</span>
+          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>Sim2Real Validation Checklist（Hardware / Software / Functional / Robustness の4段階）に基づく実機検証</span>
+          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>Recovery Agent の実機運用検証（Localization 復帰 / Local Planner 復帰 / Motor 復帰）— 無人運用に耐える信頼性を確認</span>
+          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
+        </div>
         <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
           <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
           <span>実機 Agent / Skill 層の信頼性テスト（反復実行・回帰検証）</span>
           <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
         </div>
+      </div>
+
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:18px 0 8px;">🦾 Manipulation — アーム統合 &amp; PARC2026 に向けた VLA</div>
+      <div style="display:flex;flex-direction:column;gap:7px;">
         <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
           <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
-          <span>Recovery Agent の実機運用検証（Localization / Local Planner / Motor 復帰）</span>
+          <span>アーム基礎制御の実機安定動作確認（Home → Pose A → Pose B → Home を連続50回実行し、関節超限・通信失敗・漂移が出ないこと）</span>
+          <span class="tag hw" style="margin-left:auto;">Hardware</span>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>TF / URDF / TCP・カメラ内外パラメータ較正の完了と IK・Cartesian 制御の実装（既知の末端位姿5点へ繰り返し到達できること）</span>
           <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
         </div>
         <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
           <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
-          <span>アーム制御 Skill の定義・実装</span>
+          <span>視覚を使わない固定 Pick &amp; Place 状態機の構築・実機検証（20 回中 18 回以上成功）</span>
+          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>単一物体の視覚抓取を実装・実機成功（検出 → 3D 座標変換 → pick_at_pose 呼び出し）</span>
+          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>アーム制御 Skill（arm.home / stop / move_joints / move_pose / servo_twist、gripper.open / close 等）の定義・実装・Agent 接続</span>
           <span class="tag hw" style="margin-left:auto;">Hardware</span>
         </div>
         <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
@@ -619,6 +660,11 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
           <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
           <span>同統合デモを実機で再現・成功</span>
           <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
+          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span>PARC2026 コンペ参加に向けた VLA 導入・検証（ルールベース pick を baseline とし、学習ポリシー pick_learned / pick_vla を並存実装して比較）</span>
+          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag ai">AI/LLM</span></div>
         </div>
       </div>
     </div>
@@ -1127,15 +1173,47 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
   </button>
   <div class="phase-content" id="phase-ph45">
 
-  <div class="phase-sub-label">概要（草案 — 今後詳細化予定）</div>
+  <div class="phase-sub-label">8月–9月プラン（requirement.md 起点）</div>
+
+  <div class="phase-sub-label" style="margin-top:20px;">🩺 Recovery Agent — 実機の自己申告システム＆可視化</div>
 
   <div class="todo-item">
     <div class="todo-cb"></div>
     <div class="todo-body">
-      <div class="todo-text">実機 Agent / Skill 層の信頼性テスト・回帰検証</div>
-      <div class="todo-note">Sim2Real baseline で判明した Modbus 通信タイムアウト・localization drift・カメラ画質などの課題を中心に、既存の Agent/Skill 層を実機で繰り返し検証し安定性を高める（低階層ロバスト性テスト＆改善から継続）。</div>
+      <div class="todo-text">Health Monitor 実装（Sim2Real Gap 階層別監視）</div>
+      <div class="todo-note">Hardware → ROS2 → Control → Perception → Localization → Navigation の各階層の状態（バッテリー・Topic Hz・cmd_vel応答・Pose安定性・Recovery回数など）を 🟢🟡🔴 でリアルタイム可視化。Dashboard / Foxglove に統合し、Navigation 失敗時に原因階層を即座に切り分けられるようにする。</div>
       <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag sw">Software</span><span class="todo-status pending">未着手</span></div>
-      <div class="todo-date">更新: 2026-07-18</div>
+      <div class="todo-date">更新: 2026-07-23</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">実機の自己申告システム構築</div>
+      <div class="todo-note">Health Monitor の情報をもとに、Navigation 失敗時の原因を Localization / Motor / 通信 / Perception のどの階層かを自動判定し、ロボット自身が状態を報告する仕組みを実装。</div>
+      <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag sw">Software</span><span class="todo-status pending">未着手</span></div>
+      <div class="todo-date">更新: 2026-07-23</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">Sim2Real Validation Checklist に基づく実機検証</div>
+      <div class="todo-note">① Hardware Validation（バッテリー・モータ・Encoder・IMU・LiDAR・Camera・E-Stop・配線）② Software Validation（Topic・TF・DDS・QoS・CPU・Memory・Network・Clock同期）③ Functional Validation（Localization・Control・Navigation・Perception・Mission）④ Robustness Validation（長時間連続運転・低電圧・照明変化・障害物追加・通信遅延）の4段階で体系的に検証。</div>
+      <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag sw">Software</span><span class="todo-status pending">未着手</span></div>
+      <div class="todo-date">更新: 2026-07-23</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">Recovery Agent の実機運用検証</div>
+      <div class="todo-note">Localization recovery・Local Planner health recovery・motor 復帰などを実機で検証し、無人運用に耐える信頼性基準を満たすことを目指す。Sim2Real baseline で判明した Modbus 通信タイムアウト・localization drift・カメラ画質などの課題を中心に対応。</div>
+      <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag sw">Software</span><span class="todo-status pending">未着手</span></div>
+      <div class="todo-date">更新: 2026-07-23</div>
       <div class="log-links">
         <a class="log-link" href="subpages/report-pages/weekly-report/real-sim2real-agent/sim2real-agent-baseline-ja.html" target="_blank">📝 週次報告 2026-07-18</a>
       </div>
@@ -1145,10 +1223,52 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
   <div class="todo-item">
     <div class="todo-cb"></div>
     <div class="todo-body">
-      <div class="todo-text">Recovery Agent の実機運用検証</div>
-      <div class="todo-note">Localization recovery・Local Planner health recovery・motor 復帰などを実機で検証し、無人運用に耐える信頼性基準を満たすことを目指す。</div>
+      <div class="todo-text">実機 Agent / Skill 層の信頼性テスト・回帰検証</div>
+      <div class="todo-note">既存の Agent/Skill 層を実機で反復実行し、回帰検証を通じて安定性を高める（低階層ロバスト性テスト＆改善から継続）。</div>
       <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag sw">Software</span><span class="todo-status pending">未着手</span></div>
       <div class="todo-date">更新: 2026-07-18</div>
+    </div>
+  </div>
+
+  <div class="phase-sub-label" style="margin-top:20px;">🦾 Manipulation — アーム統合 &amp; PARC2026 に向けた VLA</div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">アーム基礎制御の実機安定化（Home / Stop / Joint / Gripper）</div>
+      <div class="todo-note">全関節の零点・方向を較正し、/joint_states 発行・関節位置コマンド・グリッパーコマンド・Home/Stop・ソフト関節リミット・通信タイムアウト保護を実装。検収基準：Home → Pose A → Pose B → Home を連続50回実行し、関節超限・通信失敗・漂移が発生しないこと。</div>
+      <div class="todo-tags"><span class="tag hw">Hardware</span><span class="todo-status pending">未着手</span></div>
+      <div class="todo-date">更新: 2026-07-23</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">TF / URDF / TCP 較正 &amp; IK・Cartesian 制御実装</div>
+      <div class="todo-note">URDF を実機寸法に合わせ、arm_base_link・tool0・TCP を定義。カメラ内参・カメラ-アーム間外参較正（Hand-eye）を実施。move_pose（Cartesian 制御）を実装し、既知の末端位姿5点に繰り返し到達できることを確認。</div>
+      <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag sw">Software</span><span class="todo-status pending">未着手</span></div>
+      <div class="todo-date">更新: 2026-07-23</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">視覚なし固定 Pick &amp; Place 状態機</div>
+      <div class="todo-note">アーム位置・机位置・物体位置/種類・把持方向・置き場所を固定し、HOME→MOVE_TO_PRE_GRASP→OPEN→APPROACH→CLOSE→LIFT→MOVE_TO_PLACE→LOWER→OPEN→RETREAT→HOME の状態機を実装（各ステップにタイムアウト・失敗時 Home 復帰を含む）。検収基準：20 回中 18 回以上成功。</div>
+      <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag sw">Software</span><span class="todo-status pending">未着手</span></div>
+      <div class="todo-date">更新: 2026-07-23</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">単一物体の視覚抓取</div>
+      <div class="todo-note">RGB(-D) 検出 → 像素座標 → 深度 → カメラ座標 3D 点 → TF 変換 → arm_base 座標系での目標位姿 → 固定 Top-down grasp pose 生成 → pick_at_pose 呼び出しの一連を実装。初期は単一物体・卓上固定領域・Top-down grasp に限定。</div>
+      <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag sw">Software</span><span class="todo-status pending">未着手</span></div>
+      <div class="todo-date">更新: 2026-07-23</div>
     </div>
   </div>
 
@@ -1156,7 +1276,7 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
     <div class="todo-cb"></div>
     <div class="todo-body">
       <div class="todo-text">低レベル定義補完：アーム制御 Skill</div>
-      <div class="todo-note">アームの基本動作（リーチ・把持・格納など）を Skill として定義し、Agent から呼び出し可能にする。</div>
+      <div class="todo-note">原子 Skill（arm.home / arm.stop / arm.move_joints / arm.move_pose / arm.servo_twist / gripper.open / gripper.close / arm.get_state）と複合 Skill（pick_at_pose / place_at_pose / press_at_pose / wave / handover）を定義し、Agent から呼び出し可能にする。</div>
       <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag sw">Software</span><span class="todo-status pending">未着手</span></div>
       <div class="todo-date">更新: 2026-06-30</div>
     </div>
@@ -1179,6 +1299,16 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
       <div class="todo-note">Isaac Sim で成功したアーム統合デモを実機で再現する。詳細は今後追記予定。</div>
       <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag sw">Software</span><span class="todo-status pending">未着手</span></div>
       <div class="todo-date">更新: 2026-07-18</div>
+    </div>
+  </div>
+
+  <div class="todo-item">
+    <div class="todo-cb"></div>
+    <div class="todo-body">
+      <div class="todo-text">PARC2026 コンペに向けた VLA 導入・検証</div>
+      <div class="todo-note">固定ルールベースの pick_at_pose を baseline とし、遠隔操作による示教データ収集 → ACT / Diffusion Policy / VLA 学習 → learned_pick / pick_vla Skill として封装し、geometric_pick と並存させて比較する。参考：<a href="https://matsuolab-community.connpass.com/event/398825/" target="_blank" style="color:var(--accent);">PARC2026 コンペ告知</a>。</div>
+      <div class="todo-tags"><span class="tag hw">Hardware</span><span class="tag ai">AI/LLM</span><span class="todo-status pending">未着手</span></div>
+      <div class="todo-date">更新: 2026-07-23</div>
     </div>
   </div>
 
