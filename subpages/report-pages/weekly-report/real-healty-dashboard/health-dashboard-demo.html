@@ -1,0 +1,1260 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Robot Harness Health Dashboard V1 — 静的デモ</title>
+<style>:root {
+  color-scheme: light;
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --line: #d8dde6;
+  --text: #17202a;
+  --muted: #657386;
+  --ok: #147d64;
+  --warn: #a15c00;
+  --bad: #b42318;
+  --accent: #1d5fd1;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+header {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}
+.app-header {
+  gap: 20px;
+}
+.app-header h1 {
+  flex: 1;
+}
+.top-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.top-nav a {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+.top-nav a:hover,
+.top-nav a.active {
+  color: var(--accent);
+  background: #eef3ff;
+}
+h1 {
+  font-size: 18px;
+  margin: 0;
+  font-weight: 700;
+}
+main {
+  display: grid;
+  grid-template-columns: 400px minmax(460px, 1fr) 380px;
+  gap: 12px;
+  padding: 12px;
+  height: calc(100vh - 56px);
+}
+main.no-foxglove {
+  grid-template-columns: minmax(420px, 1fr) minmax(380px, 0.8fr);
+}
+section {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+h2 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+.kv {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 6px 8px;
+  align-items: center;
+}
+.label {
+  color: var(--muted);
+}
+.value {
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #eef3ff;
+  color: var(--accent);
+  font-weight: 650;
+}
+.warn {
+  color: var(--warn);
+}
+.bad {
+  color: var(--bad);
+}
+.ok {
+  color: var(--ok);
+}
+textarea {
+  width: 100%;
+  min-height: 78px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 10px;
+  font: inherit;
+}
+button {
+  border: 1px solid var(--accent);
+  color: white;
+  background: var(--accent);
+  border-radius: 6px;
+  height: 36px;
+  padding: 0 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+button.secondary {
+  color: var(--accent);
+  background: white;
+}
+button.danger {
+  color: var(--bad);
+  background: white;
+  border-color: #e39a94;
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.control-source-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 5px 9px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #f4f6f8;
+  color: var(--muted);
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+}
+.control-source-switch.active {
+  border-color: #65b99f;
+  background: #eefaf6;
+  color: var(--ok);
+}
+.control-source-switch input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.control-source-switch-track {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  flex: 0 0 38px;
+  border-radius: 999px;
+  background: #aab3bf;
+  transition: background 120ms ease;
+}
+.control-source-switch-track span {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  transition: transform 120ms ease;
+}
+.control-source-switch.active .control-source-switch-track {
+  background: var(--ok);
+}
+.control-source-switch.active .control-source-switch-track span {
+  transform: translateX(16px);
+}
+.control-source-switch:focus-within {
+  outline: 2px solid #8db3f4;
+  outline-offset: 2px;
+}
+.quick-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+.quick-grid button {
+  color: var(--accent);
+  background: white;
+  border-color: var(--line);
+  font-weight: 650;
+}
+.choice-panel {
+  margin-top: 12px;
+  border: 1px solid #f0c36a;
+  background: #fff8e8;
+  border-radius: 8px;
+  padding: 10px;
+}
+.choice-panel strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--warn);
+}
+.choice-buttons {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+.choice-buttons button {
+  color: var(--accent);
+  background: white;
+  border-color: #d8b45b;
+  text-align: left;
+  height: auto;
+  min-height: 36px;
+  padding: 8px 10px;
+}
+.summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.summary-card,
+.block {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfe;
+  padding: 8px;
+}
+.summary-card strong {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.summary-card span {
+  display: block;
+  font-size: 15px;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+.health-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin: 8px 0 12px;
+}
+.health-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 8px 0 6px;
+}
+.health-summary-grid.wide {
+  margin-top: 18px;
+}
+.health-summary-card {
+  display: block;
+  height: auto;
+  min-height: 92px;
+  color: var(--text);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.health-summary-card:hover {
+  border-color: #85a7dd;
+}
+.panel-link-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+.recovery-panel {
+  margin: 4px 0 14px;
+}
+.text-link {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.health-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfe;
+  padding: 6px 8px;
+  min-height: 56px;
+}
+.health-card strong {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+.health-card span {
+  display: block;
+  font-size: 17px;
+  font-weight: 800;
+}
+.health-card small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.health-card.ok {
+  background: #eefaf6;
+  border-color: #9ad8c5;
+}
+.health-card.warn {
+  background: #fff8e8;
+  border-color: #e7c16e;
+}
+.health-card.bad {
+  background: #fff1f0;
+  border-color: #f0a29b;
+}
+.health-card.unknown {
+  background: #f4f6f8;
+  border-color: var(--line);
+}
+.block-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.block {
+  min-height: 60px;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease;
+}
+.block.active {
+  background: #eaf2ff;
+  border-color: #78a8ff;
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.block.done {
+  background: #eefaf6;
+  border-color: #9ad8c5;
+}
+.block.failed {
+  background: #fff1f0;
+  border-color: #f0a29b;
+}
+.block.waiting {
+  background: #fff8e8;
+  border-color: #e7c16e;
+}
+.block-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-weight: 750;
+  margin-bottom: 4px;
+}
+.block-meta,
+.block-detail {
+  color: var(--muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.block-detail {
+  margin-top: 6px;
+  color: #2c3846;
+}
+.result-images {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin: 8px 0 12px;
+}
+.result-image {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fbfcfe;
+}
+.result-image.matched {
+  border-color: #58b88a;
+  box-shadow: inset 0 0 0 2px rgba(20, 125, 100, 0.18);
+}
+.result-image img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  background: #eef1f5;
+}
+.result-image div {
+  padding: 6px 8px;
+  color: var(--muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 14px 0 8px;
+}
+.section-head h2 {
+  margin: 0;
+}
+.small {
+  font-size: 12px;
+  color: var(--muted);
+}
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 520px;
+  overflow: auto;
+}
+.event {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px;
+  background: #fbfcfe;
+}
+details {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: #fbfcfe;
+}
+summary {
+  cursor: pointer;
+  font-weight: 750;
+  color: var(--muted);
+}
+.event-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-weight: 700;
+}
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 8px 0 0;
+  color: #26323f;
+  font-size: 12px;
+}
+.gamepad {
+  position: relative;
+  background: #f4f4f0;
+  border: 1px solid var(--line);
+  border-radius: 999px / 60%;
+  padding: 18px 16px;
+  display: grid;
+  grid-template-columns: 1fr 0.8fr 1fr;
+  grid-template-areas:
+    "shoulderL center shoulderR"
+    "dpad center face"
+    "stickL center stickR";
+  row-gap: 10px;
+  align-items: center;
+}
+.gamepad-shoulder {
+  grid-area: shoulderL;
+  justify-self: start;
+}
+.gamepad-shoulder.right {
+  grid-area: shoulderR;
+  justify-self: end;
+}
+.gamepad-dpad {
+  grid-area: dpad;
+  justify-self: center;
+  display: grid;
+  grid-template-columns: repeat(3, 34px);
+  grid-template-rows: repeat(3, 34px);
+  gap: 2px;
+}
+.gamepad-dpad .up { grid-column: 2; grid-row: 1; }
+.gamepad-dpad .left { grid-column: 1; grid-row: 2; }
+.gamepad-dpad .right { grid-column: 3; grid-row: 2; }
+.gamepad-dpad .down { grid-column: 2; grid-row: 3; }
+.gamepad-face {
+  grid-area: face;
+  justify-self: center;
+  display: grid;
+  grid-template-columns: repeat(3, 34px);
+  grid-template-rows: repeat(3, 34px);
+  gap: 2px;
+}
+.gamepad-face .btn-y { grid-column: 2; grid-row: 1; }
+.gamepad-face .btn-x { grid-column: 1; grid-row: 2; }
+.gamepad-face .btn-b { grid-column: 3; grid-row: 2; }
+.gamepad-face .btn-a { grid-column: 2; grid-row: 3; }
+.gamepad-stick {
+  display: grid;
+  grid-template-columns: repeat(3, 30px);
+  grid-template-rows: repeat(3, 30px);
+  gap: 2px;
+  border-radius: 50%;
+  background: #eaeae4;
+  padding: 8px;
+}
+.gamepad-stick.left { grid-area: stickL; justify-self: start; }
+.gamepad-stick.right { grid-area: stickR; justify-self: end; }
+.gamepad-stick .up { grid-column: 2; grid-row: 1; }
+.gamepad-stick .left { grid-column: 1; grid-row: 2; }
+.gamepad-stick .right { grid-column: 3; grid-row: 2; }
+.gamepad-stick .down { grid-column: 2; grid-row: 3; }
+.gamepad-stick .center-label {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--muted);
+}
+.gamepad-center {
+  grid-area: center;
+  justify-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+/* Seven-domain Health Dashboard */
+.health-page {
+  min-height: 100vh;
+  background: var(--bg);
+}
+.brand-block {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+.brand-block a {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 800;
+}
+.brand-block span {
+  color: var(--line);
+}
+.data-stale-banner {
+  background: #fff1f0;
+  border-bottom: 1px solid #f0a29b;
+  color: var(--bad);
+  padding: 9px 20px;
+  font-weight: 800;
+  text-align: center;
+}
+.health-page-body {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 16px;
+}
+.health-overview-section {
+  display: block;
+  box-sizing: border-box;
+  height: 640px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 16px;
+}
+.health-title-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-start;
+}
+.eyebrow {
+  margin: 0 0 2px;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.health-title-row h1 {
+  margin: 0;
+  font-size: 24px;
+}
+.health-intro {
+  margin: 5px 0 0;
+  color: var(--muted);
+}
+.snapshot-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(90px, 1fr));
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fbfcfe;
+}
+.snapshot-meta div {
+  padding: 7px 10px;
+  border-left: 1px solid var(--line);
+}
+.snapshot-meta div:first-child {
+  border-left: 0;
+}
+.snapshot-meta dt,
+.evidence-metrics dt {
+  color: var(--muted);
+  font-size: 11px;
+}
+.snapshot-meta dd,
+.evidence-metrics dd {
+  margin: 2px 0 0;
+  font-weight: 750;
+}
+.health-section-head {
+  margin-top: 18px;
+}
+.capability-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.capability-card {
+  min-height: 94px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--line);
+  border-radius: 7px;
+  background: #fbfcfe;
+}
+.capability-card > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: flex-start;
+}
+.capability-card p {
+  margin: 8px 0 4px;
+  color: #354252;
+}
+.capability-card small {
+  color: var(--muted);
+}
+.capability-card.ok { border-left-color: var(--ok); }
+.capability-card.warn { border-left-color: var(--warn); }
+.capability-card.bad { border-left-color: var(--bad); }
+.health-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 2px 7px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #f4f6f8;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 850;
+  white-space: nowrap;
+}
+.health-status.ok { color: var(--ok); border-color: #9ad8c5; background: #eefaf6; }
+.health-status.warn { color: var(--warn); border-color: #e7c16e; background: #fff8e8; }
+.health-status.bad { color: var(--bad); border-color: #f0a29b; background: #fff1f0; }
+.health-workspace {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+.domain-nav,
+.domain-detail {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.domain-nav {
+  align-self: start;
+  position: sticky;
+  top: 12px;
+  padding: 10px;
+}
+.domain-nav h2 {
+  margin: 2px 4px 9px;
+}
+.domain-nav > button {
+  width: 100%;
+  height: auto;
+  min-height: 54px;
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: 7px;
+  margin-top: 5px;
+  padding: 8px;
+  color: var(--text);
+  background: white;
+  border-color: transparent;
+  text-align: left;
+}
+.domain-nav > button:hover {
+  background: #f5f8fc;
+}
+.domain-nav > button.active {
+  border-color: #9bb9e9;
+  background: #eef3ff;
+}
+.domain-nav > button > span:first-child {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 850;
+}
+.domain-nav > button strong {
+  font-size: 12px;
+}
+.health-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 14px 5px 4px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.health-legend strong {
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.domain-detail {
+  min-width: 0;
+  padding: 14px;
+}
+.domain-detail-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+  padding: 3px 2px 14px;
+  border-bottom: 1px solid var(--line);
+}
+.domain-detail-head > div > span {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 850;
+}
+.domain-detail-head h2 {
+  margin: 2px 0 0;
+  color: var(--text);
+  font-size: 18px;
+  text-transform: none;
+}
+.domain-detail-head p {
+  margin: 5px 0 0;
+  color: var(--muted);
+}
+.evidence-list {
+  display: flex;
+  flex-direction: column;
+}
+.evidence-row {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(300px, 0.8fr);
+  gap: 12px 22px;
+  padding: 13px 4px;
+  border-bottom: 1px solid #e9edf2;
+  scroll-margin-top: 12px;
+}
+.evidence-row.highlighted {
+  margin: 4px -6px;
+  padding: 11px 10px;
+  border: 1px solid #f0c36a;
+  border-radius: 7px;
+  background: #fffaf0;
+}
+.evidence-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.evidence-title strong {
+  margin-right: auto;
+}
+.critical-label {
+  color: var(--warn);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.evidence-main p {
+  margin: 6px 0;
+  color: #354252;
+}
+.evidence-source {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.evidence-source code {
+  color: #344154;
+  background: #f0f3f7;
+  border-radius: 4px;
+  padding: 2px 5px;
+}
+.evidence-kind {
+  color: var(--accent);
+  font-weight: 750;
+}
+.evidence-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin: 0;
+}
+.evidence-metrics div {
+  padding: 6px 8px;
+  border-radius: 5px;
+  background: #f6f8fa;
+}
+.evidence-details {
+  grid-column: 1 / -1;
+  padding: 7px 9px;
+}
+.drive-electrical-panel {
+  grid-column: 1 / -1;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #f8fafc;
+}
+.drive-electrical-panel.ok { border-color: #9ad8c5; background: #f3fbf8; }
+.drive-electrical-panel.warn { border-color: #e7c16e; background: #fffaf0; }
+.drive-electrical-panel.bad { border-color: #f0a29b; background: #fff3f2; }
+.drive-electrical-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.drive-axis-indicator {
+  display: block;
+  overflow: visible;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: white;
+}
+.drive-axis-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.drive-axis-title span,
+.drive-electrical-panel > small,
+.drive-reading-grid span {
+  color: var(--muted);
+  font-size: 10px;
+}
+.drive-reading-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.drive-reading-grid > div {
+  min-width: 0;
+}
+.drive-reading-grid span,
+.drive-reading-grid strong {
+  display: block;
+}
+.drive-reading-grid strong {
+  margin: 2px 0 5px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.drive-reading-grid i {
+  display: block;
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e6ebf1;
+}
+.drive-reading-grid i b {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  border-radius: inherit;
+  background: var(--accent);
+}
+.drive-electrical-panel > small {
+  display: block;
+  margin-top: 8px;
+}
+.system-resource-strip {
+  display: block;
+  overflow: visible;
+  margin-top: 12px;
+  padding: 11px;
+  border: 1px solid var(--line);
+  background: #fbfcfe;
+}
+.system-resource-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 9px;
+}
+.system-resource-head small,
+.system-resource-strip > p,
+.key-evidence-panel > p {
+  color: var(--muted);
+  font-size: 10px;
+}
+.system-resource-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+}
+.process-cpu-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 8px;
+}
+.process-cpu-list > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 7px;
+  padding: 6px 8px;
+  border: 1px solid #e3e8ef;
+  border-radius: 5px;
+  background: white;
+}
+.process-cpu-list span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.process-cpu-list > div > small {
+  grid-column: 1 / -1;
+  color: var(--muted);
+}
+.system-resource-strip > p,
+.key-evidence-panel > p {
+  margin: 8px 1px 0;
+}
+.key-evidence-panel {
+  grid-column: 1 / -1;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #f8fafc;
+}
+.key-evidence-panel.compact {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+.key-evidence-panel.compact > p {
+  flex: 1;
+  margin: 0;
+  align-self: center;
+}
+.quick-metric-grid,
+.system-resource-summary {
+  display: grid;
+}
+.quick-metric-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+.quick-metric-grid.five {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+.quick-metric-grid.four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.dynamixel-indicator {
+  display: block;
+  overflow: visible;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: white;
+}
+.dynamixel-indicator .quick-metric-grid.four {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.quick-metric-box {
+  min-width: 0;
+  padding: 7px 8px;
+  border: 1px solid #e3e8ef;
+  border-radius: 5px;
+  background: white;
+}
+.quick-metric-box > span,
+.quick-metric-box > strong,
+.quick-metric-box > small {
+  display: block;
+}
+.quick-metric-box > span,
+.quick-metric-box > small {
+  color: var(--muted);
+  font-size: 10px;
+}
+.quick-metric-box > strong {
+  margin: 2px 0;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+}
+.rule-text {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 8px;
+  margin-top: 8px;
+  color: #354252;
+}
+.empty-state {
+  padding: 18px;
+  color: var(--muted);
+}
+.gamepad button.round {
+  border-radius: 50%;
+  padding: 0;
+  min-height: 0;
+  height: 30px;
+  width: 30px;
+  font-size: 11px;
+  line-height: 1;
+}
+.gamepad button.round.small {
+  height: 26px;
+  width: 26px;
+}
+
+@media (max-width: 1100px) {
+  main {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  section {
+    overflow-y: visible;
+  }
+  .health-overview-section {
+    height: auto;
+    overflow-y: visible;
+  }
+  .summary,
+  .health-summary-grid,
+  .capability-grid,
+  .block-grid,
+  .result-images {
+    grid-template-columns: 1fr;
+  }
+  .system-resource-summary,
+  .quick-metric-grid.five,
+  .quick-metric-grid.four {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .process-cpu-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .health-title-row,
+  .app-header {
+    flex-wrap: wrap;
+  }
+  .health-workspace {
+    grid-template-columns: 1fr;
+  }
+  .domain-nav {
+    position: static;
+  }
+  .evidence-row {
+    grid-template-columns: 1fr;
+  }
+  .evidence-details {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 680px) {
+  .top-nav {
+    order: 3;
+    width: 100%;
+  }
+  .app-header {
+    height: auto;
+    min-height: 56px;
+    padding: 9px 12px;
+  }
+  .snapshot-meta {
+    grid-template-columns: 1fr;
+  }
+  .snapshot-meta div,
+  .snapshot-meta div:first-child {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+  .snapshot-meta div:first-child {
+    border-top: 0;
+  }
+  .health-page-body {
+    padding: 8px;
+  }
+  .domain-nav > button {
+    grid-template-columns: 26px 1fr;
+  }
+  .domain-nav > button .health-status {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+
+.health-page-body{max-width:1840px}.health-overview-section{height:auto;min-height:610px}
+.health-workspace{grid-template-columns:280px minmax(600px,1fr) 330px;align-items:start}
+.comment-panel{position:sticky;top:12px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px}
+.comment-panel h2{color:var(--text);font-size:16px;text-transform:none;margin:2px 0 8px}.comment-panel .eyebrow{margin-bottom:2px}
+.comment-box{display:block;overflow:visible;margin-top:10px;padding:10px;background:#f8fafc}.comment-box strong{display:block;margin-bottom:5px}
+.comment-box p,.comment-box li{color:#435064;font-size:12px}.comment-box ul{margin:5px 0 0;padding-left:18px}.comment-box code{background:#eef2f7;padding:2px 4px;border-radius:4px;overflow-wrap:anywhere}
+.static-banner{background:#fff8e8;border-bottom:1px solid #e7c16e;color:var(--warn);padding:9px 20px;font-weight:800;text-align:center}
+.snapshot-json{margin-top:12px}.snapshot-json pre,.evidence-details pre{max-height:340px;overflow:auto;white-space:pre-wrap;font-size:11px}
+.metric-band{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;padding:9px;border:1px solid var(--line);border-radius:7px;background:#f8fafc}
+.static-pill{background:#fff8e8;color:var(--warn)}
+.domain-nav #nav>button{width:100%;height:auto;min-height:54px;display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:7px;margin-top:5px;padding:8px;color:var(--text);background:#fff;border-color:transparent;text-align:left}
+.domain-nav #nav>button:hover{background:#f5f8fc}.domain-nav #nav>button.active{border-color:#9bb9e9;background:#eef3ff}
+.domain-nav #nav>button>span:first-child{color:var(--accent);font-size:11px;font-weight:850}.domain-nav #nav>button strong{font-size:12px}.domain-nav #nav>button .health-status{justify-self:end}
+.agent-static-page{max-width:1840px}.agent-static-hero{display:flex;flex-direction:row;justify-content:space-between;align-items:flex-start;overflow:visible;margin-bottom:10px}.agent-static-hero h1{font-size:24px;margin:0}.agent-static-hero p{margin:4px 0}
+.demo-scenario-banner{display:flex;justify-content:space-between;gap:16px;align-items:center;border:1px solid #8db3f4;border-left:4px solid var(--accent);border-radius:8px;background:#eef4ff;padding:9px 12px;margin-bottom:10px}.demo-scenario-banner strong{color:#104dba}.demo-scenario-banner span{font-size:12px;color:var(--muted)}
+.agent-real-layout{display:grid;grid-template-columns:390px minmax(520px,1fr) 390px;gap:12px;align-items:start}.agent-real-layout>section{background:white;border:1px solid var(--line);border-radius:8px;padding:12px;min-width:0}.agent-real-layout h2{font-size:14px;margin:4px 0 9px;color:var(--muted)}.agent-real-layout h3{font-size:14px;margin:14px 0 8px}
+.agent-health-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.agent-health-grid .health-card{padding:8px;min-height:118px}.agent-health-grid .health-card strong,.agent-health-grid .health-card span,.agent-health-grid .health-card small{display:block}.agent-health-grid .health-card span{font-weight:800;margin:6px 0}.agent-health-grid .health-card small{color:var(--muted);line-height:1.4}
+.agent-kv{display:grid;grid-template-columns:125px 1fr;gap:7px;margin:9px 0 14px}.agent-kv span:nth-child(odd){color:var(--muted)}.agent-kv strong{overflow-wrap:anywhere}.demo-inline{font-size:10px;color:#104dba;border:1px solid #8db3f4;border-radius:999px;padding:1px 5px;margin-left:5px;vertical-align:middle}.agent-panel-separator{border:0;border-top:1px solid var(--line);margin:13px 0}
+.intent-route{border:1px solid #8db3f4;background:#eef4ff;border-radius:8px;padding:9px;margin-bottom:10px}.intent-route-head{display:flex;justify-content:space-between;font-weight:750}.route-steps{display:flex;gap:5px;align-items:center;margin-top:7px;font-size:11px;color:var(--muted)}.route-steps b{color:var(--accent)}
+.agent-center-visual{min-height:760px;display:flex;flex-direction:column}.static-map{position:relative;min-height:570px;overflow:hidden;border:1px solid #aebfd8;border-radius:6px;background-color:#f6fbfc;background-image:linear-gradient(#dce8ef 1px,transparent 1px),linear-gradient(90deg,#dce8ef 1px,transparent 1px);background-size:42px 42px}.map-wall{position:absolute;background:#29405c;border-radius:4px}.map-wall.a{left:8%;top:17%;width:43%;height:13px}.map-wall.b{left:51%;top:17%;width:13px;height:38%}.map-wall.c{left:24%;top:66%;width:54%;height:13px}.map-room{position:absolute;border:2px dashed #8ecfc6;background:rgba(197,244,236,.45);border-radius:12px}.map-room.one{left:10%;top:22%;width:35%;height:35%}.map-room.two{left:56%;top:23%;width:32%;height:35%}.demo-route-line{position:absolute;left:31%;top:49%;width:43%;height:26%;border-top:5px dotted #1269e7;border-right:5px dotted #1269e7;border-radius:0 26px 0 0;transform:rotate(-7deg)}.robot-marker,.target-marker{position:absolute;display:flex;align-items:center;justify-content:center;border-radius:50%;font-weight:850;box-shadow:0 2px 8px rgba(0,0,0,.18)}.robot-marker{left:27%;top:69%;width:54px;height:54px;background:#1269e7;color:white}.target-marker{right:17%;top:29%;width:62px;height:62px;background:#fff3d2;border:3px solid #d48a00;color:#8d5700}.map-label{position:absolute;background:rgba(255,255,255,.9);border:1px solid var(--line);padding:4px 7px;border-radius:4px;font-size:12px}.map-label.robot{left:20%;top:80%}.map-label.sofa{right:13%;top:42%}.visual-footer{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}.visual-footer div{border:1px solid var(--line);border-radius:6px;padding:8px;background:#fbfcfe}.visual-footer span,.visual-footer strong{display:block}.visual-footer span{font-size:11px;color:var(--muted)}
+.demo-status-line{margin:8px 0;padding:7px 9px;border-radius:6px;background:#f4f6f8;color:var(--muted);font-size:12px}.demo-status-line.active{background:#eef4ff;color:#104dba}.control-value-line{font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:8px}.agent-control-panel textarea{width:100%;min-height:68px;box-sizing:border-box;resize:vertical;border:1px solid var(--line);border-radius:7px;padding:9px;font:inherit}.agent-control-panel select{height:36px;border:1px solid var(--line);border-radius:6px;background:#f4f6f8}.agent-control-panel .row button{flex:0 0 auto}.agent-control-panel .danger{margin-top:9px}.static-action-note{font-size:11px;color:var(--muted);margin:7px 0 0}.agent-real-layout button{cursor:default}
+.comment-chain{display:grid;gap:8px}.comment-chain>div{padding:8px;border-left:3px solid var(--accent);background:#fff}.comment-chain code{display:block;margin-bottom:4px;color:var(--accent);font-weight:750}.comment-chain span{display:block;color:#435064;font-size:11px}
+.tag-guide{display:grid;gap:7px}.tag-row{display:grid;grid-template-columns:auto 1fr;align-items:start;gap:8px}.tag-row>span:last-child{color:#435064;font-size:11px}.tag-group-title{margin:9px 0 3px;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase}.comment-panel .health-status{vertical-align:top}
+@media(max-width:1450px){.health-workspace{grid-template-columns:250px minmax(520px,1fr)}.comment-panel{position:static;grid-column:1/-1}}
+@media(max-width:1300px){.agent-real-layout{grid-template-columns:360px minmax(460px,1fr)}.agent-control-panel{grid-column:1/-1}.agent-control-panel>.control-inner{display:grid;grid-template-columns:minmax(420px,1fr) minmax(360px,.8fr);gap:16px}}
+@media(max-width:900px){.agent-real-layout{grid-template-columns:1fr}.agent-control-panel{grid-column:auto}.agent-control-panel>.control-inner{display:block}.demo-scenario-banner{align-items:flex-start;flex-direction:column}.static-map{min-height:430px}}
+@media(max-width:900px){.health-workspace{grid-template-columns:1fr}.comment-panel{grid-column:auto}.capability-grid,.health-summary-grid,.system-resource-summary,.drive-electrical-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.capability-grid,.health-summary-grid,.system-resource-summary,.drive-electrical-grid,.metric-band{grid-template-columns:1fr}}
+</style></head><body>
+<div class="health-page"><header class="app-header"><div class="brand-block"><a id="brand-name" href="#">Robot Harness</a><span id="brand-separator">/</span><strong id="page-title">Health Dashboard V1</strong></div><nav class="top-nav"><a id="agent-tab" href="#agent">Agent Dashboard</a><a id="health-tab" class="active" href="#H1">Health Dashboard</a></nav><span class="pill static-pill">STATIC SNAPSHOT</span></header>
+<div class="static-banner">静的スナップショットです。リアルタイム監視ではなく、保持値を現在のロボット状態として使用できません。</div>
+<div class="health-page-body agent-static-page" id="agent-static-page" hidden>
+<section class="agent-static-hero"><div><p class="eyebrow">STATIC AGENT VIEW</p><h1>Robot Harness Agent Dashboard</h1><p class="health-intro">実機 Health snapshot と、説明用の仮想 Agent task を組み合わせた共有用表示です。</p></div><span class="health-status unknown">STATIC / ROS未接続</span></section>
+<div class="demo-scenario-banner"><div><strong>DEMO SCENARIO：GO TO sofa を実行中</strong><br><span>Agent・mission・AUTO mode・経路・event は説明用の仮想データです。実機 snapshot 209 の hardware health は実測値です。</span></div><span>送信・手動操作・Dashboard control・全停止は ROS に接続しません。</span></div>
+<main class="agent-real-layout">
+<section class="agent-left-panel"><h2>ROBOT HEALTH SUMMARY</h2><div id="agent-health-cards" class="health-summary-grid agent-health-grid"></div><h3>ロボット状態</h3><div id="agent-robot-state" class="agent-kv"></div><hr class="agent-panel-separator"><div id="agent-mission-state"></div><h3>ミッションイベント</h3><div id="agent-events" class="timeline"></div></section>
+<section class="agent-center-visual"><div class="section-head"><h2>STATIC NAVIGATION VIEW</h2><span class="small">Foxglove / RViz 未接続</span></div><div class="static-map" aria-label="説明用の仮想経路図"><div class="map-wall a"></div><div class="map-wall b"></div><div class="map-wall c"></div><div class="map-room one"></div><div class="map-room two"></div><div class="demo-route-line"></div><div class="robot-marker">ROBOT</div><div class="target-marker">SOFA</div><span class="map-label robot">現在位置 <b>DEMO</b></span><span class="map-label sofa">目標地点 <b>DEMO</b></span></div><div class="visual-footer"><div><span>Navigation</span><strong>EXECUTING</strong></div><div><span>Goal</span><strong>sofa</strong></div><div><span>Health evidence</span><strong>snapshot 209</strong></div></div><p class="static-action-note">この図は camera、map、TF、LaserScan の実測描画ではありません。共有時にタスクの進行状態を説明するための静的な模式図です。</p></section>
+<section class="agent-control-panel"><div class="control-inner"><div><h2>手動操作（仮想 JOY-CON）</h2><div class="control-value-line">robot_mode: <strong>AUTO</strong><span class="demo-inline">DEMO</span><br>L1 (LB) を押しながらでないと底盤/カメラ/リフトは動きません<br>pan=<span id="demo-pan">—</span>° tilt=<span id="demo-tilt">—</span>° lift=<span id="demo-lift">—</span> mm</div><div class="row"><span>Control source</span><label class="control-source-switch" title="静的表示のため切替不可"><input type="checkbox" tabindex="-1"><span class="control-source-switch-track"><span></span></span><span>Dashboard control OFF</span></label></div><div class="gamepad" aria-label="静的な仮想Joy-Con表示"><button class="secondary gamepad-shoulder" data-static-action>LB / L1</button><button class="secondary gamepad-shoulder right" data-static-action>RB / R1</button><div class="gamepad-dpad"><button class="secondary round small up" data-static-action>▲</button><button class="secondary round small left" data-static-action>◀</button><button class="secondary round small right" data-static-action>▶</button><button class="secondary round small down" data-static-action>▼</button></div><div class="gamepad-center"><span>D-Pad: camera</span><span>M / Back / Start</span><span>（未使用）</span></div><div class="gamepad-face"><button class="secondary round small btn-y" data-static-action>Y</button><button class="secondary round small btn-x" data-static-action>X</button><button class="secondary round small btn-b" data-static-action>B</button><button class="secondary round small btn-a" data-static-action>A</button></div><div class="gamepad-stick left"><button class="secondary round small up" data-static-action>W</button><button class="secondary round small left" data-static-action>A</button><span class="center-label">L</span><button class="secondary round small right" data-static-action>D</button><button class="secondary round small down" data-static-action>S</button></div><div class="gamepad-stick right"><button class="secondary round small left" data-static-action>Q</button><span class="center-label">R</span><button class="secondary round small right" data-static-action>E</button></div></div><p class="static-action-note">L スティック: 底盤移動 (WASD)・R スティック: 回転 (Q/E)・Y: リフト上昇・A: AUTO切替 / L1+Aでリフト下降・B: MANUAL切替 / X: 未使用</p><button class="danger" data-static-action>全停止 / キャンセル</button></div>
+<div><h2>コマンド</h2><textarea id="demo-command" aria-label="静的なコマンド入力">go to sofa</textarea><div class="row"><button data-static-action>送信</button><button class="secondary" data-static-action>キャンセル</button><button class="secondary" data-static-action>🎤</button><select aria-label="language"><option>日本語</option></select></div><div class="quick-grid"><button data-static-action>Go sofa</button><button data-static-action>Go meeting table</button><button data-static-action>Go front-door</button><button data-static-action>Go rxy-table</button><button data-static-action>Go tool-box</button><button data-static-action>Go back-door</button><button data-static-action>左を見る</button><button data-static-action>少し前進</button><button data-static-action>Turn around</button><button data-static-action>ロボット状態</button><button data-static-action>既知の場所</button><button data-static-action>キャンセル</button></div><div class="demo-status-line" id="static-action-status">STATIC：入力欄は編集できますが、ROS command は送信されません。</div></div></div></section>
+</main></div>
+<div class="health-page-body" id="health-static-page"><section class="health-overview-section"><div class="health-title-row"><div><p class="eyebrow">読み取り専用の実測証拠</p><h1>実機ロボット・ヘルス</h1><p class="health-intro">UNKNOWN と NOT_INSTRUMENTED は意図的に正常扱いしません。</p></div><dl class="snapshot-meta" id="meta"></dl></div>
+<div class="health-summary-grid wide" id="summaries"></div><div class="section-head health-section-head"><h2>能力の利用可否</h2><span class="small">V1 の保守的な依存関係ゲート</span></div><div class="capability-grid" id="caps"></div><div id="host"></div>
+<details class="snapshot-json"><summary>埋め込み済み実測 JSON snapshot</summary><pre id="raw"></pre></details></section>
+<div class="health-workspace"><aside class="domain-nav"><h2>7つの診断ドメイン</h2><div id="nav"></div><div class="health-legend"><strong>証拠ポリシー</strong><span>緑：観測済みでルール合格</span><span>黄：低下、推定、復旧済み</span><span>赤：ブロック、エラー、STALE</span><span>灰：不明、未計装</span></div></aside><section class="domain-detail" id="detail"></section><aside class="comment-panel" id="comments"></aside></div></div></div>
+<script id="snapshot" type="application/json">{"schema_version":1,"generated_at":"2026-08-25T06:22:37.171457+00:00","sequence":209,"monitor":{"node":"/health_monitor","publish_rate_hz":1,"input_sample_rate_hz":5,"previous_publish_duration_sec":0.008093567999821971,"executor_threads":2,"mode":"read_only","truth_policy":"unknown_is_not_ok","high_bandwidth_subscriptions":false},"summaries":[{"id":"A1","title":"デバイス・データ取得","status":"AVAILABLE","summary":"V1 の必須証拠が揃っています。","reason_domain_id":null,"reason_item_id":null,"original_title_en":"Device & Data Acquisition","original_summary_en":"Required V1 evidence is available"},{"id":"A2","title":"ROS・プラットフォーム配信","status":"AVAILABLE","summary":"V1 の必須証拠が揃っています。","reason_domain_id":null,"reason_item_id":null,"original_title_en":"ROS & Platform Delivery","original_summary_en":"Required V1 evidence is available"},{"id":"A3","title":"機能・挙動","status":"AVAILABLE","summary":"V1 の必須証拠が揃っています。","reason_domain_id":null,"reason_item_id":null,"original_title_en":"Functional & Behavior","original_summary_en":"Required V1 evidence is available"}],"capabilities":[{"id":"manual_drive","title":"手動走行","status":"AVAILABLE","summary":"V1 の全依存証拠を確認しました。","blocked_by":null,"dependencies":["physical_estop","drive_health","drive_feedback","dynamixel_health","steer_feedback","safety","publisher:/cmd_vel"],"original_title_en":"Manual drive","original_summary_en":"All V1 dependencies are available"},{"id":"auto_navigation","title":"自律ナビゲーション","status":"AVAILABLE","summary":"V1 の全依存証拠を確認しました。","blocked_by":null,"dependencies":["physical_estop","drive_health","drive_feedback","dynamixel_health","steer_feedback","safety","laser_scan","gicp_score","gicp_pose","lifecycle_controller_server","lifecycle_planner_server","lifecycle_bt_navigator","lifecycle_local_costmap"],"original_title_en":"Auto navigation","original_summary_en":"All V1 dependencies are available"},{"id":"stationary_perception","title":"オンデマンド認識（停止時）","status":"UNKNOWN","summary":"この snapshot には認識実行レポートがありません。","blocked_by":"perception_runtime","dependencies":["camera_color_diagnostics","camera_depth_diagnostics","camera_pan","camera_tilt","perception_runtime"],"original_title_en":"On-demand perception (stationary)","original_summary_en":"No mission report contains a perception execution yet"},{"id":"lift","title":"リフト","status":"SUPERVISED_ONLY","summary":"ソフトウェア積算位置であり、物理基準は未確立です。","blocked_by":"lift_position","dependencies":["physical_estop","lift_position"],"original_title_en":"Lift","original_summary_en":"Software-integrated lift position 0.0 mm; command=STOP; reference=UNREFERENCED_SOFTWARE_ESTIMATE"}],"domains":[{"id":"H1","title":"物理・デバイス・ドライバ","status":"AVAILABLE","summary":"V1 の必須証拠が揃っています。","reason_item_id":null,"items":[{"id":"physical_estop","label":"物理非常停止回路","status":"OK","summary":"赤色停止ボタンは解放状態。BLVD ID 1/2/3 の DIN3=1 が一致。","critical":true,"standard":"Installed wiring qualified on 2026-08-19 against the physical button: all BLVD DIN3=1 released, all DIN3=0 pressed/locked; mixed inputs are an error","source":"/drive/health_summary","evidence":"DIRECT_DRIVER_SUMMARY","message_count":418,"last_receive_at":"2026-08-25T06:22:36.931370+00:00","receive_age_sec":0.23753353799929755,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.9977491808362795,"max_receive_gap_sec_5s":0.5066114109995397,"value":{"direct_io":[{"slave_id":1,"wheel_position":"back","raw":196616,"din0":false,"din1":false,"din2":false,"din3":true},{"slave_id":2,"wheel_position":"front_left","raw":196616,"din0":false,"din1":false,"din2":false,"din3":true},{"slave_id":3,"wheel_position":"front_right","raw":196616,"din0":false,"din1":false,"din2":false,"din3":true}],"last_direct_io_age_sec":1.315670019999743},"rate":1.9977491808362795,"original_label_en":"Physical E-stop circuit","original_summary_en":"Physical red stop is released (BLVD IDs 1/2/3 DIN3=1)"},{"id":"drive_hardware_identity","label":"走行ハードウェア識別","status":"VERIFIED","summary":"BLVD-KRD / GFS5G30FR を ID 1=後輪、2=左前、3=右前として実機確認。","source":"2026-08-19 real-robot nameplate photos + hardware/blv_r_drive_motors.md","evidence":"PHYSICAL_INSPECTION_RECORD","critical":false,"standard":"Physically verified from six position-labelled real-robot nameplate photos; this proves installed identity and location, while live communication state is evaluated separately from /drive/health_summary","receive_age_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"value":{"installed_count":3,"nameplate_records":[{"modbus_id":1,"wheel_position":"back","driver_trace_code":"RX5 F178611","gear_head_trace_code":"RX9 A127705","photos":["hardware/motor-image/1-back.jpeg","hardware/motor-image/1-back.jpg"]},{"modbus_id":2,"wheel_position":"front_left","driver_trace_code":"RX5 F178612","gear_head_trace_code":"RX9 A127704","photos":["hardware/motor-image/2-front-left.jpeg","hardware/motor-image/2-front-left.jpg"]},{"modbus_id":3,"wheel_position":"front_right","driver_trace_code":"RX5 F178620","gear_head_trace_code":"RX9 A127706","photos":["hardware/motor-image/3-front-right.jpeg","hardware/motor-image/3-front-right.jpg"]}],"driver":{"manufacturer":"Oriental Motor Co., Ltd.","model":"BLVD-KRD","rated_input":"24-48 VDC, 10.5 A","protection":"IP20 (self-declaration)","manufactured":"2024-10","country":"Made in Japan"},"gear_head":{"manufacturer":"Oriental Motor Co., Ltd.","model":"GFS5G30FR","manufactured":"2024-10","country":"Made in Japan"},"motor":{"model":"BLMR5100K-GFV-B","evidence":"deployment record; not visible in supplied photos"},"runtime_configuration":{"id_to_wheel_position":{"1":"back","2":"front_left","3":"front_right"},"global_id":10,"baudrate":230400,"interface":"/dev/serial/by-id/usb-FTDI_USB-RS485_Cable_FT7E9M3C-if00-port0"}},"rate":null,"original_label_en":"Drive hardware identity","original_summary_en":"Nameplate photos identify BLVD-KRD / GFS5G30FR assemblies at ID 1 back, ID 2 front-left and ID 3 front-right"},{"id":"drive_bus_voltage","label":"走行電源電圧・電流","status":"OBSERVED","summary":"3台から公式 BLVD monitor 値を取得。","critical":false,"standard":"Direct HP-5142-4E ID-share monitors: NET-ID 155 main current (0.001 A), 163 inverter voltage (0.1 V), 164 main supply voltage (0.1 V); 24-48 VDC / 10.5 A is a nameplate rating, not an automatic health threshold","source":"/drive/health_summary","evidence":"DIRECT_DRIVER_SUMMARY","message_count":418,"last_receive_at":"2026-08-25T06:22:36.931370+00:00","receive_age_sec":0.23771293699974194,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.9977491808362795,"max_receive_gap_sec_5s":0.5066114109995397,"value":{"electrical_status":[{"slave_id":1,"wheel_position":"back","main_power_supply_current_raw":116,"main_power_supply_current_a":0.116,"inverter_voltage_raw":258,"inverter_voltage_v":25.8,"main_power_supply_voltage_raw":257,"main_power_supply_voltage_v":25.700000000000003},{"slave_id":2,"wheel_position":"front_left","main_power_supply_current_raw":96,"main_power_supply_current_a":0.096,"inverter_voltage_raw":258,"inverter_voltage_v":25.8,"main_power_supply_voltage_raw":257,"main_power_supply_voltage_v":25.700000000000003},{"slave_id":3,"wheel_position":"front_right","main_power_supply_current_raw":121,"main_power_supply_current_a":0.121,"inverter_voltage_raw":260,"inverter_voltage_v":26,"main_power_supply_voltage_raw":260,"main_power_supply_voltage_v":26}],"last_electrical_age_sec":1.315670019999743},"rate":1.9977491808362795,"original_label_en":"Drive bus voltage / current","original_summary_en":"Fresh official BLVD monitor values received (ID 1 back: 0.116A, inverter 25.8V, main 25.7V, ID 2 front_left: 0.096A, inverter 25.8V, main 25.7V, ID 3 front_right: 0.121A, inverter 26.0V, main 26.0V)"},{"id":"drive_alarm_status","label":"BLVD ドライバ別アラーム","status":"OBSERVED","summary":"ID 1/2/3 の Present alarm は全て 0。","critical":true,"standard":"Direct HP-5142-4E registers: Present alarm NET-ID 64 and Alarm history 1 NET-ID 65, sampled per physical driver without interpreting LED blink count","source":"/drive/health_summary","evidence":"DIRECT_DRIVER_SUMMARY","message_count":418,"last_receive_at":"2026-08-25T06:22:36.931370+00:00","receive_age_sec":0.2378041909996682,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.9977491808362795,"max_receive_gap_sec_5s":0.5066114109995397,"value":{"alarm_status":[{"slave_id":1,"wheel_position":"back","present_alarm":0,"alarm_history_1":132,"alarm_history_baseline":132,"alarm_history_changed_in_session":false,"sample_age_sec":0.5081711700004234},{"slave_id":2,"wheel_position":"front_left","present_alarm":0,"alarm_history_1":132,"alarm_history_baseline":132,"alarm_history_changed_in_session":false,"sample_age_sec":2.426441362999867},{"slave_id":3,"wheel_position":"front_right","present_alarm":0,"alarm_history_1":132,"alarm_history_baseline":132,"alarm_history_changed_in_session":false,"sample_age_sec":1.6252234849998786}],"alarm_event_count":0,"last_alarm_event_age_sec":null,"session_started_at":"2026-08-25T06:19:02.924681+00:00"},"rate":1.9977491808362795,"original_label_en":"BLVD per-driver alarm status","original_summary_en":"Direct Present alarm is 0 on BLVD IDs 1/2/3"},{"id":"drive_health","label":"走行通信・コールバック概要","status":"OBSERVED","summary":"現在の通信は復旧済み。過去の No response 2件をセッション履歴として保持。","critical":true,"standard":"2Hz summary generated inside drive_motor from actual /om_response0 and /om_state0 callbacks","source":"/drive/health_summary","evidence":"DIRECT_DRIVER_SUMMARY","message_count":418,"last_receive_at":"2026-08-25T06:22:36.931370+00:00","receive_age_sec":0.2378631369992945,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.9977491808362795,"max_receive_gap_sec_5s":0.5066114109995397,"value":{"state":{"state_driver":1,"state_message":1,"state_error":0},"state_snapshot_age_sec":0.023240571000314958,"response_count":2528,"runtime_query_count":2520,"response_rate_hz_5s":12.398062082871977,"read_response_rate_hz_5s":6.137687444250526,"last_response_age_sec":0.23814300699996238,"last_read_response_age_sec":0.27204463300040516,"completion_deadline_miss_count":0,"completion_deadline_misses_5s":0,"last_completion_deadline_miss_age_sec":null,"last_completion_deadline_miss_query_kind":null,"last_completion_deadline_miss_elapsed_sec":null,"driver_error_event_count":0,"driver_no_response_event_count":0,"driver_exception_event_count":0,"last_driver_error_age_sec":null,"session_started_at":"2026-08-25T06:19:02.924681+00:00"},"rate":1.9977491808362795,"original_label_en":"Drive transaction and callback summary","original_summary_en":"Fresh completed Modbus responses observed by drive_motor"},{"id":"drive_din3_raw","label":"BLVD Direct I/O DIN3 原値","status":"OBSERVED","summary":"実測または一次情報源から有効な証拠を取得しています。","critical":false,"standard":"Official BLV-R function manual HP-5142: ID-share NET-ID 106 Direct I/O, DIN3 bit 3; polarity must be qualified on the installed wiring","source":"/drive/health_summary","evidence":"DIRECT_DRIVER_SUMMARY","message_count":418,"last_receive_at":"2026-08-25T06:22:36.931370+00:00","receive_age_sec":0.23791087199970207,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.9977491808362795,"max_receive_gap_sec_5s":0.5066114109995397,"value":{"direct_io":[{"slave_id":1,"wheel_position":"back","raw":196616,"din0":false,"din1":false,"din2":false,"din3":true},{"slave_id":2,"wheel_position":"front_left","raw":196616,"din0":false,"din1":false,"din2":false,"din3":true},{"slave_id":3,"wheel_position":"front_right","raw":196616,"din0":false,"din1":false,"din2":false,"din3":true}],"last_direct_io_age_sec":1.315670019999743},"rate":1.9977491808362795,"original_label_en":"BLVD Direct I/O raw DIN3","original_summary_en":"Fresh raw Direct I/O received (ID 1 DIN3=1, ID 2 DIN3=1, ID 3 DIN3=1); installed wiring was qualified as released=1, pressed/locked=0 on 2026-08-19"},{"id":"drive_recovery_event","label":"直近の走行系復旧","status":"IDLE","summary":"現在はイベントまたは実行を待機しています。","critical":false,"standard":"Direct result of the guarded Dashboard restart workflow; recovery success does not erase the original unidentified fault","source":"/agent/real_robot_state","evidence":"STRUCTURED_REPORT","message_count":418,"last_receive_at":"2026-08-25T06:22:36.705453+00:00","receive_age_sec":0.4638511199991626,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":2.000620806862676,"max_receive_gap_sec_5s":0.5097950809995382,"value":{"drive_restart":{"state":"IDLE","message":"No drive motor restart requested.","started_at":null,"finished_at":null,"log_tail":""}},"rate":2.000620806862676,"original_label_en":"Recent drive recovery","original_summary_en":"No drive motor restart requested."},{"id":"drive_feedback","label":"3輪速度フィードバック","status":"OBSERVED","summary":"実測または一次情報源から有効な証拠を取得しています。","critical":true,"standard":"V1 receiver threshold 1.00s; real recovery run on 2026-08-20 observed 4-5Hz with gaps up to 0.804s after 5Hz monitor-side sampling","source":"/drive_odom","evidence":"DIRECT_TOPIC","message_count":310,"last_receive_at":"2026-08-25T06:22:36.488886+00:00","receive_age_sec":0.6804895620007301,"source_stamp_sec":1787638956.4876754,"source_age_sec":0.6816885471343994,"receive_rate_hz_5s":1.5616934008129093,"max_receive_gap_sec_5s":0.8056255040000906,"value":{"vel1_m_s":0,"vel2_m_s":0,"vel3_m_s":0},"rate":1.5616934008129093,"original_label_en":"Three-wheel velocity feedback","original_summary_en":"Fresh finite feedback received"},{"id":"steer_feedback","label":"3軸操舵フィードバック","status":"OBSERVED","summary":"新鮮な有限値を取得。","critical":true,"standard":"V1 receiver threshold 1.00s; freshness only, while tracking-error limits still require a real baseline","source":"/steer_odom","evidence":"DIRECT_TOPIC","message_count":627,"last_receive_at":"2026-08-25T06:22:36.946779+00:00","receive_age_sec":0.22264936400006263,"source_stamp_sec":1787638956.9453368,"source_age_sec":0.22408270835876465,"receive_rate_hz_5s":2.9471449207497336,"max_receive_gap_sec_5s":0.43988406199969177,"value":{"phi1_rad":0.013805827125906944,"phi2_rad":-0.007669903803616762,"phi3_rad":0.00920388475060463},"rate":2.9471449207497336,"original_label_en":"Three-axis steering feedback","original_summary_en":"Fresh finite feedback received"},{"id":"dynamixel_health","label":"DYNAMIXEL 直接読出し状態","status":"OBSERVED","summary":"ID 11/12/13 の直接 read は成功、HW error=0。","critical":true,"standard":"2Hz summary of the existing position-read transaction result and device error byte","source":"/dynamixel/health_summary","evidence":"DIRECT_DRIVER_SUMMARY","message_count":419,"last_receive_at":"2026-08-25T06:22:37.089559+00:00","receive_age_sec":0.07991845600008674,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":2.0160223190121878,"max_receive_gap_sec_5s":0.5805711149996569,"value":{"schema_version":1,"source":"direct DYNAMIXEL transactions","publish_rate_hz":2,"motors":[{"id":11,"identity_observed":true,"model_number":1100,"model_name":"XH540-W270","ping_comm_result":0,"ping_device_error":0,"observed":true,"comm_success":true,"comm_result":0,"device_error":0,"attempts":2548,"successes":2548,"last_success_age_sec":0.0320698,"hardware_status_supported":true,"hardware_observed":true,"hardware_comm_success":true,"hardware_comm_result":0,"hardware_device_error":0,"hardware_error_status":0,"present_current_raw":126,"present_current_a":0.33894,"input_voltage_v":11.9,"temperature_c":28,"hardware_attempts":214,"hardware_successes":214,"last_hardware_success_age_sec":0.384016},{"id":12,"identity_observed":true,"model_number":1100,"model_name":"XH540-W270","ping_comm_result":0,"ping_device_error":0,"observed":true,"comm_success":true,"comm_result":0,"device_error":0,"attempts":2548,"successes":2548,"last_success_age_sec":0.0160498,"hardware_status_supported":true,"hardware_observed":true,"hardware_comm_success":true,"hardware_comm_result":0,"hardware_device_error":0,"hardware_error_status":0,"present_current_raw":-44,"present_current_a":-0.11836,"input_voltage_v":12,"temperature_c":28,"hardware_attempts":214,"hardware_successes":214,"last_hardware_success_age_sec":0.336043},{"id":13,"identity_observed":true,"model_number":1100,"model_name":"XH540-W270","ping_comm_result":0,"ping_device_error":0,"observed":true,"comm_success":true,"comm_result":0,"device_error":0,"attempts":2548,"successes":2548,"last_success_age_sec":0.000083766,"hardware_status_supported":true,"hardware_observed":true,"hardware_comm_success":true,"hardware_comm_result":0,"hardware_device_error":0,"hardware_error_status":0,"present_current_raw":69,"present_current_a":0.18561,"input_voltage_v":12.1,"temperature_c":27,"hardware_attempts":214,"hardware_successes":214,"last_hardware_success_age_sec":0.28801}]},"rate":2.0160223190121878,"original_label_en":"DYNAMIXEL direct read status","original_summary_en":"Fresh successful direct reads from all configured DYNAMIXEL IDs"},{"id":"dynamixel_identity","label":"DYNAMIXEL 機種識別","status":"OBSERVED","summary":"実測または一次情報源から有効な証拠を取得しています。","critical":false,"standard":"Protocol 2.0 ping returns the model number reported directly by each configured device","source":"/dynamixel/health_summary","evidence":"DIRECT_DRIVER_SUMMARY","message_count":419,"last_receive_at":"2026-08-25T06:22:37.089559+00:00","receive_age_sec":0.07997915700070735,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":2.0160223190121878,"max_receive_gap_sec_5s":0.5805711149996569,"value":{"schema_version":1,"source":"direct DYNAMIXEL transactions","publish_rate_hz":2,"motors":[{"id":11,"identity_observed":true,"model_number":1100,"model_name":"XH540-W270","ping_comm_result":0,"ping_device_error":0,"observed":true,"comm_success":true,"comm_result":0,"device_error":0,"attempts":2548,"successes":2548,"last_success_age_sec":0.0320698,"hardware_status_supported":true,"hardware_observed":true,"hardware_comm_success":true,"hardware_comm_result":0,"hardware_device_error":0,"hardware_error_status":0,"present_current_raw":126,"present_current_a":0.33894,"input_voltage_v":11.9,"temperature_c":28,"hardware_attempts":214,"hardware_successes":214,"last_hardware_success_age_sec":0.384016},{"id":12,"identity_observed":true,"model_number":1100,"model_name":"XH540-W270","ping_comm_result":0,"ping_device_error":0,"observed":true,"comm_success":true,"comm_result":0,"device_error":0,"attempts":2548,"successes":2548,"last_success_age_sec":0.0160498,"hardware_status_supported":true,"hardware_observed":true,"hardware_comm_success":true,"hardware_comm_result":0,"hardware_device_error":0,"hardware_error_status":0,"present_current_raw":-44,"present_current_a":-0.11836,"input_voltage_v":12,"temperature_c":28,"hardware_attempts":214,"hardware_successes":214,"last_hardware_success_age_sec":0.336043},{"id":13,"identity_observed":true,"model_number":1100,"model_name":"XH540-W270","ping_comm_result":0,"ping_device_error":0,"observed":true,"comm_success":true,"comm_result":0,"device_error":0,"attempts":2548,"successes":2548,"last_success_age_sec":0.000083766,"hardware_status_supported":true,"hardware_observed":true,"hardware_comm_success":true,"hardware_comm_result":0,"hardware_device_error":0,"hardware_error_status":0,"present_current_raw":69,"present_current_a":0.18561,"input_voltage_v":12.1,"temperature_c":27,"hardware_attempts":214,"hardware_successes":214,"last_hardware_success_age_sec":0.28801}]},"rate":2.0160223190121878,"original_label_en":"DYNAMIXEL model identity","original_summary_en":"Direct model-number ping: ID 11=1100 (XH540-W270), ID 12=1100 (XH540-W270), ID 13=1100 (XH540-W270)"},{"id":"camera_pan","label":"カメラ pan フィードバック","status":"OBSERVED","summary":"実測または一次情報源から有効な証拠を取得しています。","critical":false,"standard":"Existing real_robot_monitor freshness threshold","source":"/chokudomotor/angle","evidence":"DIRECT_TOPIC","message_count":2089,"last_receive_at":"2026-08-25T06:22:37.065722+00:00","receive_age_sec":0.10386187699987204,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":10.011235372456847,"max_receive_gap_sec_5s":0.11412592499982566,"value":{"angle_deg":267.1000061035156},"rate":10.011235372456847,"original_label_en":"Camera pan feedback","original_summary_en":"Fresh finite feedback received"},{"id":"camera_tilt","label":"カメラ tilt フィードバック","status":"OBSERVED","summary":"実測または一次情報源から有効な証拠を取得しています。","critical":false,"standard":"Existing real_robot_monitor freshness threshold","source":"/cameraswingmotor/angle","evidence":"DIRECT_TOPIC","message_count":2089,"last_receive_at":"2026-08-25T06:22:37.065865+00:00","receive_age_sec":0.10375169700000697,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":10.011432238355205,"max_receive_gap_sec_5s":0.11348300400004518,"value":{"angle_deg":101.94999694824219},"rate":10.011432238355205,"original_label_en":"Camera tilt feedback","original_summary_en":"Fresh finite feedback received"},{"id":"lift_position","label":"リフト推定位置","status":"ESTIMATED","summary":"詳細値と判定ルールを確認してください。","critical":false,"standard":"1Hz lift_serial_node summary; position is jog_speed × command time and remains estimated because ABZO/limit/home/alarm feedback is not returned to ROS","source":"/lift/health_summary","evidence":"DIRECT_DRIVER_SUMMARY","message_count":209,"last_receive_at":"2026-08-25T06:22:36.768241+00:00","receive_age_sec":0.4014256079999541,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.001236461699593,"max_receive_gap_sec_5s":1.0001244320001206,"value":{"schema_version":1,"generated_at":"2026-08-25T06:22:36.766176+00:00","source":"lift_serial_node runtime state; position is not encoder feedback","publish_rate_hz":1,"serial":{"port":"/dev/ttyACM0","baud_rate":9600,"open":true,"write_count":0,"write_error_count":0,"last_error":null},"motion":{"command":"STOP","is_homing":false,"estimated_position_mm":0,"position_reference":"UNREFERENCED_SOFTWARE_ESTIMATE","position_evidence":"SOFTWARE_TIME_INTEGRATION"},"configuration":{"jog_speed_mm_s":60,"position_min_mm":0,"position_max_mm":200,"home_position_mm":100,"auto_home_on_start":false,"soft_limits_enabled":false},"hardware_feedback":{"abzo_position_available":false,"upper_limit_available":false,"lower_limit_available":false,"home_complete_available":false,"alarm_ready_available":false}},"rate":1.001236461699593,"original_label_en":"Lift estimated position","original_summary_en":"Software-integrated lift position 0.0 mm; command=STOP; reference=UNREFERENCED_SOFTWARE_ESTIMATE"},{"id":"dynamixel_hardware_status","label":"DYNAMIXEL 電圧・電流・温度","status":"OK","summary":"実測または一次情報源から有効な証拠を取得しています。","critical":false,"standard":"ROBOTIS XH540-W270 control table: Hardware Error Status(70), Present Current(126), Present Input Voltage(144), Present Temperature(146)","source":"/dynamixel/health_summary","evidence":"DIRECT_DRIVER_SUMMARY","message_count":419,"last_receive_at":"2026-08-25T06:22:37.089559+00:00","receive_age_sec":0.08014679700045235,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":2.0160223190121878,"max_receive_gap_sec_5s":0.5805711149996569,"value":{"schema_version":1,"source":"direct DYNAMIXEL transactions","publish_rate_hz":2,"motors":[{"id":11,"identity_observed":true,"model_number":1100,"model_name":"XH540-W270","ping_comm_result":0,"ping_device_error":0,"observed":true,"comm_success":true,"comm_result":0,"device_error":0,"attempts":2548,"successes":2548,"last_success_age_sec":0.0320698,"hardware_status_supported":true,"hardware_observed":true,"hardware_comm_success":true,"hardware_comm_result":0,"hardware_device_error":0,"hardware_error_status":0,"present_current_raw":126,"present_current_a":0.33894,"input_voltage_v":11.9,"temperature_c":28,"hardware_attempts":214,"hardware_successes":214,"last_hardware_success_age_sec":0.384016},{"id":12,"identity_observed":true,"model_number":1100,"model_name":"XH540-W270","ping_comm_result":0,"ping_device_error":0,"observed":true,"comm_success":true,"comm_result":0,"device_error":0,"attempts":2548,"successes":2548,"last_success_age_sec":0.0160498,"hardware_status_supported":true,"hardware_observed":true,"hardware_comm_success":true,"hardware_comm_result":0,"hardware_device_error":0,"hardware_error_status":0,"present_current_raw":-44,"present_current_a":-0.11836,"input_voltage_v":12,"temperature_c":28,"hardware_attempts":214,"hardware_successes":214,"last_hardware_success_age_sec":0.336043},{"id":13,"identity_observed":true,"model_number":1100,"model_name":"XH540-W270","ping_comm_result":0,"ping_device_error":0,"observed":true,"comm_success":true,"comm_result":0,"device_error":0,"attempts":2548,"successes":2548,"last_success_age_sec":0.000083766,"hardware_status_supported":true,"hardware_observed":true,"hardware_comm_success":true,"hardware_comm_result":0,"hardware_device_error":0,"hardware_error_status":0,"present_current_raw":69,"present_current_a":0.18561,"input_voltage_v":12.1,"temperature_c":27,"hardware_attempts":214,"hardware_successes":214,"last_hardware_success_age_sec":0.28801}]},"rate":2.0160223190121878,"original_label_en":"DYNAMIXEL voltage / current / temperature registers","original_summary_en":"Direct XH540-W270 hardware registers are clear (ID 11: 11.9V, 0.339A, 28C, ID 12: 12.0V, -0.118A, 28C, ID 13: 12.1V, 0.186A, 27C)"}],"original_title_en":"Physical, Device & Driver","original_summary_en":"All required V1 evidence is available"},{"id":"H2","title":"ROS・プラットフォーム配信","status":"AVAILABLE","summary":"V1 の必須証拠が揃っています。","reason_item_id":null,"items":[{"id":"publisher:/cmd_vel_raw","label":"Publisher authority /cmd_vel_raw","status":"OK","summary":"実測または一次情報源から有効な証拠を取得しています。","source":"ROS graph endpoint info","evidence":"GRAPH_QUERY","critical":true,"standard":"All publisher endpoints must belong to the explicit source-node allowlist","receive_age_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"value":[{"node_name":"agent_node","node_namespace":"/","topic_type":"geometry_msgs/msg/Twist"},{"node_name":"agent_node","node_namespace":"/","topic_type":"geometry_msgs/msg/Twist"},{"node_name":"nav_mode_switch_node","node_namespace":"/","topic_type":"geometry_msgs/msg/Twist"}],"rate":null,"original_label_en":"Publisher authority /cmd_vel_raw","original_summary_en":"3 publisher endpoint(s) belong to approved source node(s): /agent_node, /nav_mode_switch_node"},{"id":"publisher:/cmd_vel","label":"Publisher authority /cmd_vel","status":"OK","summary":"実測または一次情報源から有効な証拠を取得しています。","source":"ROS graph endpoint info","evidence":"GRAPH_QUERY","critical":true,"standard":"Exactly one final publisher endpoint is required","receive_age_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"value":[{"node_name":"cmd_vel_safety_node","node_namespace":"/","topic_type":"geometry_msgs/msg/Twist"}],"rate":null,"original_label_en":"Publisher authority /cmd_vel","original_summary_en":"Exactly one publisher endpoint observed"},{"id":"publisher:/joy","label":"Publisher authority /joy","status":"OK","summary":"実測または一次情報源から有効な証拠を取得しています。","source":"ROS graph endpoint info","evidence":"GRAPH_QUERY","critical":true,"standard":"Exactly one final publisher endpoint is required","receive_age_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"value":[{"node_name":"joy_source_arbiter_node","node_namespace":"/","topic_type":"sensor_msgs/msg/Joy"}],"rate":null,"original_label_en":"Publisher authority /joy","original_summary_en":"Exactly one publisher endpoint observed"},{"id":"joy_source_authority","label":"Manual control source arbitration","status":"OK","summary":"実測または一次情報源から有効な証拠を取得しています。","critical":true,"standard":"joy_source_arbiter_node is the only canonical /joy publisher; PHYSICAL is default and Dashboard requires an explicit lease","source":"/joy/source_status","evidence":"DIRECT_ARBITER_STATUS","message_count":414,"last_receive_at":"2026-08-25T06:22:36.795371+00:00","receive_age_sec":0.37502497700006643,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.9998742114674908,"max_receive_gap_sec_5s":0.5076521769997271,"value":{"source":"PHYSICAL","dashboard_acquired":false,"reason":"physical source is the default","dashboard_age_sec":null,"physical_active_age_sec":null,"generated_at":1787638956.7935677},"rate":1.9998742114674908,"original_label_en":"Manual control source arbitration","original_summary_en":"Canonical /joy is owned by PHYSICAL; physical source is the default"},{"id":"delivery_robot_mode","label":"ROS 配信 /robot_mode","status":"OBSERVED","summary":"現在値は MANUAL。","critical":true,"standard":"Publisher timer is 2s; V1 max receive age is 3s","source":"/robot_mode","evidence":"DIRECT_TOPIC","message_count":103,"last_receive_at":"2026-08-25T06:22:36.565678+00:00","receive_age_sec":0.6047907100000884,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":0.49980376791925163,"max_receive_gap_sec_5s":2.0017544490001455,"value":"MANUAL","rate":0.49980376791925163,"original_label_en":"ROS delivery /robot_mode","original_summary_en":"Fresh messages observed at this monitor"},{"id":"delivery_safety","label":"ROS 配信 /safety_status","status":"OBSERVED","summary":"現在値は OK。","critical":true,"standard":"Publisher timer is 1s; V1 max receive age is 2s","source":"/safety_status","evidence":"DIRECT_TOPIC","message_count":206,"last_receive_at":"2026-08-25T06:22:36.395277+00:00","receive_age_sec":0.7752101959995343,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.0000231905376538,"max_receive_gap_sec_5s":1.000736230000257,"value":"OK","rate":1.0000231905376538,"original_label_en":"ROS delivery /safety_status","original_summary_en":"Fresh messages observed at this monitor"},{"id":"delivery_drive_feedback","label":"ROS delivery /drive_odom","status":"OBSERVED","summary":"実測または一次情報源から有効な証拠を取得しています。","critical":true,"standard":"Receiver-measured freshness at health_monitor; 1.00s threshold includes the observed 0.804s gap and 5Hz monitor-side sampling jitter","source":"/drive_odom","evidence":"DIRECT_TOPIC","message_count":310,"last_receive_at":"2026-08-25T06:22:36.488886+00:00","receive_age_sec":0.6816348400006973,"source_stamp_sec":1787638956.4876754,"source_age_sec":0.6828334331512451,"receive_rate_hz_5s":1.5616934008129093,"max_receive_gap_sec_5s":0.8056255040000906,"value":{"vel1_m_s":0,"vel2_m_s":0,"vel3_m_s":0},"rate":1.5616934008129093,"original_label_en":"ROS delivery /drive_odom","original_summary_en":"Fresh messages observed at this monitor"},{"id":"delivery_camera_color_diagnostics","label":"RealSense color stream diagnostic delivery","status":"OK","summary":"実測または一次情報源から有効な証拠を取得しています。","critical":false,"standard":"RealSense native frequency diagnostic published every 1s","source":"/diagnostics","evidence":"DRIVER_DIAGNOSTIC","message_count":208,"last_receive_at":"2026-08-25T06:22:36.975595+00:00","receive_age_sec":0.19495699300023261,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.0001575468171984,"max_receive_gap_sec_5s":1.0036664509998445,"value":{"name":"camera: color","hardware_id":"817412070749","level":0,"message":"Desired frequency met","values":{"Events in window":"299","Events since startup":"6391","Duration of window (s)":"9.999682","Actual frequency (Hz)":"29.900950","Target frequency (Hz)":"30.000000","Minimum acceptable frequency (Hz)":"27.000000","Maximum acceptable frequency (Hz)":"33.000000"}},"rate":1.0001575468171984,"original_label_en":"RealSense color stream diagnostic delivery","original_summary_en":"Driver diagnostic reports OK: Desired frequency met"},{"id":"host_resources","label":"ホスト資源","status":"OBSERVED","summary":"ホストカウンタを実測。未確立の workload 閾値は使用しない。","source":"/proc/stat, /proc/loadavg, /proc/meminfo, filesystem, /sys/class/hwmon","evidence":"DIRECT_HOST_COUNTER","critical":true,"standard":"Only hardware-exported temp*_max/temp*_crit are evaluated; CPU/load/disk remain display-only","receive_age_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"value":{"source":"/proc + filesystem + hwmon + systemd-timesyncd marker","cpu_used_percent":44.26751592356688,"logical_cpu_count":16,"process_cpu_window_sec":5.001320915999713,"top_processes":[{"pid":50922,"name":"GICP localizer","host_capacity_percent":7.287397540983607,"one_core_percent":116.5983606557377,"cpu_core_equivalent":1.165983606557377,"command":"/usr/bin/python3 /home/matsunaga-h/robot_ws/install/localization_pkg/lib/localization_pkg/gicp_localizer_node --ros-args -r __node:=gicp_localizer --params-file /home/matsunaga-h/r"},{"pid":50413,"name":"Modbus RTU","host_capacity_percent":4.418545081967213,"one_core_percent":70.69672131147541,"cpu_core_equivalent":0.7069672131147541,"command":"/home/matsunaga-h/robot_ws/install/om_modbus_master/lib/om_modbus_master/om_modbusRTU_node --ros-args --params-file /tmp/launch_params_qce6fpu3"},{"pid":51171,"name":"Nav2 controller","host_capacity_percent":4.072745901639344,"one_core_percent":65.1639344262295,"cpu_core_equivalent":0.6516393442622951,"command":"/opt/ros/humble/lib/nav2_controller/controller_server --ros-args -r __node:=controller_server --params-file /home/matsunaga-h/robot_ws/install/nav_pkg/share/nav_pkg/config/nav2_par"},{"pid":51456,"name":"RViz","host_capacity_percent":2.7535860655737703,"one_core_percent":44.05737704918033,"cpu_core_equivalent":0.4405737704918033,"command":"rviz2 -d /home/matsunaga-h/robot_ws/rviz/nav2_navigation.rviz"},{"pid":51000,"name":"Health Monitor","host_capacity_percent":2.7023565573770494,"one_core_percent":43.23770491803279,"cpu_core_equivalent":0.4323770491803279,"command":"/usr/bin/python3 /home/matsunaga-h/robot_ws/install/robot_agent/lib/robot_agent/health_monitor --ros-args -r __node:=health_monitor"},{"pid":5549,"name":"code","host_capacity_percent":2.2925204918032787,"one_core_percent":36.68032786885246,"cpu_core_equivalent":0.3668032786885246,"command":"/usr/share/code/code --type=gpu-process --ozone-platform=x11 --crashpad-handler-pid=5530 --enable-crash-reporter=79c91a5c-25f0-43d4-8027-f275a9be75a4,no_channel --user-data-dir=/ho"},{"pid":50994,"name":"Agent","host_capacity_percent":2.1644467213114753,"one_core_percent":34.63114754098361,"cpu_core_equivalent":0.3463114754098361,"command":"/usr/bin/python3 /home/matsunaga-h/robot_ws/install/robot_agent/lib/robot_agent/agent_node --ros-args -r __node:=agent_node --params-file /tmp/launch_params_y3yx8pqa"},{"pid":50415,"name":"BLVD drive bridge","host_capacity_percent":2.0876024590163933,"one_core_percent":33.40163934426229,"cpu_core_equivalent":0.33401639344262296,"command":"/usr/bin/python3 /home/matsunaga-h/robot_ws/src/om_modbus_master_V201/om_modbus_master/sample/BLV_R/drive_motor.py"},{"pid":50409,"name":"Livox driver","host_capacity_percent":1.7674180327868851,"one_core_percent":28.278688524590162,"cpu_core_equivalent":0.2827868852459016,"command":"/home/matsunaga-h/robot_ws/install/livox_ros_driver2/lib/livox_ros_driver2/livox_ros_driver2_node --ros-args -r __node:=livox_lidar_publisher --params-file /tmp/launch_params_ts_ih"},{"pid":51187,"name":"ROS component container","host_capacity_percent":1.0758196721311475,"one_core_percent":17.21311475409836,"cpu_core_equivalent":0.1721311475409836,"command":"/opt/ros/humble/lib/rclcpp_components/component_container --ros-args -r __node:=depth_proc_container -r __ns:=/"}],"load_average":{"1m":6.93,"5m":5.25,"15m":4.15},"memory_total_bytes":33183031296,"memory_available_bytes":24292667392,"memory_used_percent":26.791898017682538,"disk_total_bytes":1006450962432,"disk_free_bytes":832326160384,"disk_used_percent":12.213656369602338,"thermal_zone_max_c":88,"hwmon_temperatures":[{"device":"iwlwifi_1","label":"temp1","input_c":55,"max_c":null,"crit_c":null,"headroom_to_max_c":null,"headroom_to_crit_c":null},{"device":"nvme","label":"Sensor 2","input_c":40.85,"max_c":65261.85,"crit_c":null,"headroom_to_max_c":65221,"headroom_to_crit_c":null},{"device":"nvme","label":"Composite","input_c":35.85,"max_c":89.85,"crit_c":94.85,"headroom_to_max_c":53.99999999999999,"headroom_to_crit_c":58.99999999999999},{"device":"nvme","label":"Sensor 1","input_c":35.85,"max_c":65261.85,"crit_c":null,"headroom_to_max_c":65226,"headroom_to_crit_c":null},{"device":"acpitz","label":"temp1","input_c":88,"max_c":null,"crit_c":null,"headroom_to_max_c":null,"headroom_to_crit_c":null},{"device":"coretemp","label":"Core 4","input_c":73,"max_c":100,"crit_c":100,"headroom_to_max_c":27,"headroom_to_crit_c":27},{"device":"coretemp","label":"Core 21","input_c":72,"max_c":100,"crit_c":100,"headroom_to_max_c":28,"headroom_to_crit_c":28},{"device":"coretemp","label":"Core 8","input_c":84,"max_c":100,"crit_c":100,"headroom_to_max_c":16,"headroom_to_crit_c":16},{"device":"coretemp","label":"Core 18","input_c":82,"max_c":100,"crit_c":100,"headroom_to_max_c":18,"headroom_to_crit_c":18},{"device":"coretemp","label":"Core 12","input_c":72,"max_c":100,"crit_c":100,"headroom_to_max_c":28,"headroom_to_crit_c":28},{"device":"coretemp","label":"Core 22","input_c":71,"max_c":100,"crit_c":100,"headroom_to_max_c":29,"headroom_to_crit_c":29},{"device":"coretemp","label":"Core 16","input_c":82,"max_c":100,"crit_c":100,"headroom_to_max_c":18,"headroom_to_crit_c":18},{"device":"coretemp","label":"Core 19","input_c":82,"max_c":100,"crit_c":100,"headroom_to_max_c":18,"headroom_to_crit_c":18},{"device":"coretemp","label":"Package id 0","input_c":85,"max_c":100,"crit_c":100,"headroom_to_max_c":15,"headroom_to_crit_c":15},{"device":"coretemp","label":"Core 23","input_c":71,"max_c":100,"crit_c":100,"headroom_to_max_c":29,"headroom_to_crit_c":29},{"device":"coretemp","label":"Core 17","input_c":82,"max_c":100,"crit_c":100,"headroom_to_max_c":18,"headroom_to_crit_c":18},{"device":"coretemp","label":"Core 20","input_c":71,"max_c":100,"crit_c":100,"headroom_to_max_c":29,"headroom_to_crit_c":29},{"device":"coretemp","label":"Core 0","input_c":73,"max_c":100,"crit_c":100,"headroom_to_max_c":27,"headroom_to_crit_c":27}],"hwmon_max_c":88,"host_ntp_synchronized":true,"observed_at":"2026-08-25T06:22:37.165770+00:00"},"rate":null,"original_label_en":"Host resources","original_summary_en":"Host counters are measured; no workload baseline is inferred"},{"id":"host_clock_sync","label":"ホスト NTP 同期","status":"OK","summary":"systemd-timesyncd marker は synchronized。","source":"/run/systemd/timesync/synchronized","evidence":"DIRECT_HOST_COUNTER","critical":false,"standard":"Direct systemd-timesyncd synchronization marker; does not prove sensor hardware-clock sync","receive_age_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"value":{"synchronized":true},"rate":null,"original_label_en":"Host NTP synchronization","original_summary_en":"systemd-timesyncd synchronization marker exists"},{"id":"sensor_clock_sync","label":"Sensor hardware-clock synchronization","status":"NOT_INSTRUMENTED","summary":"V1 では直接情報源が未実装です。","source":"No source available","evidence":"NOT_INSTRUMENTED","critical":false,"standard":"Header age is not treated as absolute cross-device latency without direct device clock status","receive_age_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"value":null,"rate":null,"original_label_en":"Sensor hardware-clock synchronization","original_summary_en":"Host NTP is observable, but no PTP/device clock-lock status is exposed by current sensor drivers"}],"original_title_en":"ROS & Platform","original_summary_en":"All required V1 evidence is available"},{"id":"H3","title":"コマンド・モーション","status":"AVAILABLE","summary":"V1 の必須証拠が揃っています。","reason_item_id":null,"items":[{"id":"robot_mode","label":"Motion authority mode","status":"OK","summary":"実測または一次情報源から有効な証拠を取得しています。","critical":true,"standard":"Only MANUAL and AUTO are recognized","source":"/robot_mode","evidence":"DIRECT_TOPIC","message_count":103,"last_receive_at":"2026-08-25T06:22:36.565678+00:00","receive_age_sec":0.6049598809995587,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":0.49980376791925163,"max_receive_gap_sec_5s":2.0017544490001455,"value":"MANUAL","rate":0.49980376791925163,"original_label_en":"Motion authority mode","original_summary_en":"Mode authority reports MANUAL"},{"id":"safety","label":"Software safety gate","status":"OK","summary":"実測または一次情報源から有効な証拠を取得しています。","critical":true,"standard":"Direct /safety_status from cmd_vel_safety_node; not the physical E-stop circuit","source":"/safety_status","evidence":"DIRECT_TOPIC","message_count":206,"last_receive_at":"2026-08-25T06:22:36.395277+00:00","receive_age_sec":0.7753770760000407,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.0000231905376538,"max_receive_gap_sec_5s":1.000736230000257,"value":"OK","rate":1.0000231905376538,"original_label_en":"Software safety gate","original_summary_en":"Software safety gate reports OK"},{"id":"cmd_vel_raw","label":"安全ゲート前コマンド","status":"OBSERVED","summary":"実測または一次情報源から有効な証拠を取得しています。","critical":true,"standard":"Receive freshness and current value only","source":"/cmd_vel_raw","evidence":"DIRECT_TOPIC","message_count":974,"last_receive_at":"2026-08-25T06:22:37.120340+00:00","receive_age_sec":0.050349815000117815,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":4.694731778546636,"max_receive_gap_sec_5s":0.22177956299947255,"value":{"linear_x":0,"linear_y":0,"angular_z":0},"rate":4.694731778546636,"original_label_en":"Command before safety gate","original_summary_en":"Fresh messages observed at this monitor"},{"id":"cmd_vel","label":"安全ゲート後コマンド","status":"OBSERVED","summary":"実測または一次情報源から有効な証拠を取得しています。","critical":true,"standard":"Dashboard receiver threshold is 0.50s after 5Hz monitor-side sampling; the independent motor command watchdog remains 0.08s during motion","source":"/cmd_vel","evidence":"DIRECT_TOPIC","message_count":979,"last_receive_at":"2026-08-25T06:22:37.021335+00:00","receive_age_sec":0.14940183199996682,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":4.742393567283287,"max_receive_gap_sec_5s":0.22159362399997917,"value":{"linear_x":0,"linear_y":0,"angular_z":0},"rate":4.742393567283287,"original_label_en":"Command after safety gate","original_summary_en":"Fresh messages observed at this monitor"},{"id":"drive_feedback","label":"観測された車輪運動","status":"OBSERVED","summary":"実フィードバックは新鮮で、静止値。","critical":true,"standard":"Direct driver feedback values with a 1.00s receiver threshold; no command-tracking tolerance is inferred in V1","source":"/drive_odom","evidence":"DIRECT_TOPIC","message_count":310,"last_receive_at":"2026-08-25T06:22:36.488886+00:00","receive_age_sec":0.6818860729999869,"source_stamp_sec":1787638956.4876754,"source_age_sec":0.6830844879150391,"receive_rate_hz_5s":1.5616934008129093,"max_receive_gap_sec_5s":0.8056255040000906,"value":{"vel1_m_s":0,"vel2_m_s":0,"vel3_m_s":0},"rate":1.5616934008129093,"original_label_en":"Observed wheel motion","original_summary_en":"Fresh messages observed at this monitor"},{"id":"steer_feedback","label":"観測された操舵角","status":"OBSERVED","summary":"実操舵フィードバックは新鮮。","critical":true,"standard":"Direct steering feedback values with a 1.00s receiver threshold; no tracking tolerance is inferred in V1","source":"/steer_odom","evidence":"DIRECT_TOPIC","message_count":627,"last_receive_at":"2026-08-25T06:22:36.946779+00:00","receive_age_sec":0.22402051700009906,"source_stamp_sec":1787638956.9453368,"source_age_sec":0.22545385360717773,"receive_rate_hz_5s":2.9471449207497336,"max_receive_gap_sec_5s":0.43988406199969177,"value":{"phi1_rad":0.013805827125906944,"phi2_rad":-0.007669903803616762,"phi3_rad":0.00920388475060463},"rate":2.9471449207497336,"original_label_en":"Observed steering angles","original_summary_en":"Fresh messages observed at this monitor"},{"id":"motion_policy","label":"モーションポリシー報告","status":"IDLE","summary":"policy を評価していないためイベント待ち。","critical":false,"standard":"Reported by nav_mode_switch_node when policy is evaluated","source":"/motion_policy/status","evidence":"DIRECT_TOPIC","message_count":0,"last_receive_at":null,"receive_age_sec":null,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"max_receive_gap_sec_5s":null,"value":null,"rate":null,"original_label_en":"Motion policy report","original_summary_en":"No motion policy event is expected while no policy is being evaluated"}],"original_title_en":"Command & Motion","original_summary_en":"All required V1 evidence is available"},{"id":"H4","title":"センサ・認識","status":"AVAILABLE","summary":"V1 の必須証拠が揃っています。","reason_item_id":null,"items":[{"id":"laser_scan","label":"LiDAR→LaserScan データ経路","status":"OBSERVED","summary":"723 sample 中 295 が有限距離。","critical":true,"standard":"10Hz derived /scan must be fresh and contain at least one finite range","source":"/scan","evidence":"DERIVED_TOPIC","message_count":809,"last_receive_at":"2026-08-25T06:22:36.973696+00:00","receive_age_sec":0.19715120999990177,"source_stamp_sec":1787638956.8683763,"source_age_sec":0.30246806144714355,"receive_rate_hz_5s":3.9138285318547092,"max_receive_gap_sec_5s":0.3132696250004301,"value":{"frame_id":"base_footprint","sample_count":723,"finite_count":295,"min_finite_range_m":1.171791434288025,"range_min_m":0.800000011920929,"range_max_m":25},"rate":3.9138285318547092,"original_label_en":"LiDAR-to-LaserScan data path","original_summary_en":"LaserScan contains 295/723 finite ranges"},{"id":"camera_color_diagnostics","label":"RealSense カラー周波数診断","status":"OK","summary":"Desired frequency met。実測 30.003 Hz。","critical":true,"standard":"Native RealSense FrequencyDiagnostics for configured color stream","source":"/diagnostics","evidence":"DRIVER_DIAGNOSTIC","message_count":208,"last_receive_at":"2026-08-25T06:22:36.975595+00:00","receive_age_sec":0.19528536300003907,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.0001575468171984,"max_receive_gap_sec_5s":1.0036664509998445,"value":{"name":"camera: color","hardware_id":"817412070749","level":0,"message":"Desired frequency met","values":{"Events in window":"299","Events since startup":"6391","Duration of window (s)":"9.999682","Actual frequency (Hz)":"29.900950","Target frequency (Hz)":"30.000000","Minimum acceptable frequency (Hz)":"27.000000","Maximum acceptable frequency (Hz)":"33.000000"}},"rate":1.0001575468171984,"original_label_en":"RealSense color frequency diagnostic","original_summary_en":"Driver diagnostic reports OK: Desired frequency met"},{"id":"camera_depth_diagnostics","label":"RealSense 深度周波数診断","status":"OK","summary":"Desired frequency met。実測 29.503 Hz。","critical":true,"standard":"Native RealSense FrequencyDiagnostics for configured depth stream","source":"/diagnostics","evidence":"DRIVER_DIAGNOSTIC","message_count":208,"last_receive_at":"2026-08-25T06:22:36.975585+00:00","receive_age_sec":0.19532392800010712,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.0001537663906395,"max_receive_gap_sec_5s":1.0036371449996295,"value":{"name":"camera: depth","hardware_id":"817412070749","level":0,"message":"Desired frequency met","values":{"Events in window":"293","Events since startup":"6321","Duration of window (s)":"9.999692","Actual frequency (Hz)":"29.300901","Target frequency (Hz)":"30.000000","Minimum acceptable frequency (Hz)":"27.000000","Maximum acceptable frequency (Hz)":"33.000000"}},"rate":1.0001537663906395,"original_label_en":"RealSense depth frequency diagnostic","original_summary_en":"Driver diagnostic reports OK: Desired frequency met"},{"id":"camera_temperatures","label":"RealSense デバイス温度","status":"OK","summary":"ASIC 37°C、Projector 32°C。","critical":false,"standard":"Direct ASIC/projector temperature values from the RealSense diagnostic updater","source":"/diagnostics","evidence":"DIRECT_DEVICE_DIAGNOSTIC","message_count":208,"last_receive_at":"2026-08-25T06:22:36.975559+00:00","receive_age_sec":0.19538749200000893,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.0001359447285527,"max_receive_gap_sec_5s":1.0036256909997974,"value":{"name":"camera: Temperatures","hardware_id":"817412070749","level":0,"message":"OK","values":{"Asic Temperature":"37","Projector Temperature":"33"}},"rate":1.0001359447285527,"original_label_en":"RealSense device temperatures","original_summary_en":"Driver diagnostic reports OK: OK"},{"id":"lidar_device_status","label":"Livox デバイス heartbeat・エラービット","status":"OK","summary":"MID-360 の native state は新鮮。diagnostic/HMS は clear。","critical":true,"standard":"Native Livox SDK2 state push must be fresh; MID-360 cur_work_state must be SAMPLING/READY and four lidar_diag_status module levels must be 0; HMS info is retained while warning/error/fatal levels degrade or fail health. status_code is optional for MID-360/SDK2 1.3.1, but is checked when exposed. time_sync_type=0 is informational because this robot has no configured external clock source","source":"/livox/device_health","evidence":"DIRECT_DEVICE_DIAGNOSTIC","message_count":209,"last_receive_at":"2026-08-25T06:22:36.366668+00:00","receive_age_sec":0.804330562999894,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.0000195023803218,"max_receive_gap_sec_5s":1.004383788999803,"value":{"schema_version":1,"source":"Livox SDK2 SetLivoxLidarInfoCallback","publish_rate_hz":1,"devices":[{"handle":2466359488,"ip":"192.168.1.147","device_type":9,"callback_count":215,"push_age_sec":0.732986414,"state_json_valid":true,"state":{"pcl_data_type":1,"pattern_mode":0,"lidar_ipcfg":{"lidar_ip":"192.168.1.147","lidar_subnet_mask":"255.255.255.0","lidar_gateway":"192.168.1.1"},"state_info_host_ipcfg":{"ip":"192.168.1.50","dst_port":56201,"src_port":56200},"ponitcloud_host_ipcfg":{"ip":"192.168.1.50","dst_port":56301,"src_port":56300},"imu_host_ipcfg":{"ip":"192.168.1.50","dst_port":56401,"src_port":56400},"install_attitude":{"roll_deg":0,"pitch_deg":0,"yaw_deg":0,"x_mm":0,"y_mm":0,"z_mm":0},"fov_cfg0":{"yaw_start":0,"yaw_stop":0,"pitch_start":-7,"pitch_stop":52},"fov_cfg1":{"yaw_start":0,"yaw_stop":0,"pitch_start":-7,"pitch_stop":52},"fov_cfg_en":0,"detect_mode":0,"func_io_cfg":{"IN0":0,"IN1":0,"OUT0":0,"OUT1":0},"work_tgt_mode":1,"imu_data_en":1,"sn":"47MDM5L0020347","product_info":"DevType:Mid-360 FmType:App FmVer:13180221 BuildTime:2023/12/19","version_app":[13,18,2,21],"version_loader":[13,17,99,20],"version_hardware":[0,0,0,0],"mac":[228,122,44,150,233,222],"cur_work_state":1,"core_temp":5155,"powerup_cnt":233,"local_time_now":225364059000,"last_sync_time":0,"time_offset":0,"time_sync_type":0,"lidar_diag_status":0,"FW_TYPE":1,"hms_code":[0,0,0,0,0,0,0,0]}}]},"rate":1.0000195023803218,"original_label_en":"Livox device heartbeat / error bits","original_summary_en":"Fresh native Livox SDK2 state is clear for 192.168.1.147; 192.168.1.147: status_code not exposed"},{"id":"perception_runtime","label":"直近の認識実行","status":"IDLE","summary":"現在はイベントまたは実行を待機しています。","source":"/agent/mission_state","evidence":"STRUCTURED_REPORT","critical":false,"standard":"Event-driven evidence; IDLE is not proof that inference would succeed","receive_age_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"value":null,"rate":null,"original_label_en":"Latest perception execution","original_summary_en":"No mission report contains a perception execution yet"}],"original_title_en":"Sensor & Perception","original_summary_en":"All required V1 evidence is available"},{"id":"H5","title":"自己位置推定","status":"AVAILABLE","summary":"V1 の必須証拠が揃っています。","reason_item_id":null,"items":[{"id":"gicp_score","label":"GICP 試行自己スコア","status":"OK","summary":"0.1366 ≤ 設定閾値 0.2500。","critical":true,"standard":"gicp_localizer.yaml fitness_score_threshold=0.25","source":"/gicp_loc/score","evidence":"DIRECT_TOPIC","message_count":415,"last_receive_at":"2026-08-25T06:22:36.707017+00:00","receive_age_sec":0.4640767950004374,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":2.020798119359048,"max_receive_gap_sec_5s":0.5699237440003344,"value":{"inlier_rmse":0.13497917354106903},"rate":2.020798119359048,"original_label_en":"GICP attempt self-score","original_summary_en":"GICP self-score passed configured acceptance threshold (0.1350 \u003c= 0.2500)"},{"id":"gicp_pose","label":"最後に受理された GICP pose","status":"OBSERVED","summary":"受理済み pose は新鮮。","critical":true,"standard":"Pose is only published after an accepted correction; receive age is acceptance age","source":"/gicp_loc/pose","evidence":"ACCEPTED_ALGORITHM_OUTPUT","message_count":415,"last_receive_at":"2026-08-25T06:22:36.707595+00:00","receive_age_sec":0.46354264300043724,"source_stamp_sec":1787638956.7066145,"source_age_sec":0.4645206928253174,"receive_rate_hz_5s":2.020938574514374,"max_receive_gap_sec_5s":0.5697345759999735,"value":{"frame_id":"map","x":-0.07978729430773172,"y":-0.3336344613428008,"z":-0.01788572403149772,"quaternion":{"x":0.04514340333933652,"y":0.2504455551882164,"z":-0.14403230575774198,"w":0.9562916876766925}},"rate":2.020938574514374,"original_label_en":"Last accepted GICP pose","original_summary_en":"Fresh messages observed at this monitor"},{"id":"fast_lio_odom","label":"FAST-LIO odometry（任意モード）","status":"UNKNOWN","summary":"--no-fast-lio のため message なし。","critical":false,"standard":"Optional: absent in default GICP-only launch","source":"/fast_lio/odometry","evidence":"DIRECT_TOPIC","message_count":0,"last_receive_at":null,"receive_age_sec":null,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"max_receive_gap_sec_5s":null,"value":null,"rate":null,"original_label_en":"FAST-LIO odometry (optional mode)","original_summary_en":"No message has reached this monitor"},{"id":"localization_independent_validation","label":"自己位置の独立整合性検証","status":"NOT_INSTRUMENTED","summary":"wheel odometry・FAST-LIO delta・GICP correction の独立比較は未実装。","source":"No combined monitor available","evidence":"NOT_INSTRUMENTED","critical":false,"standard":"A good GICP self-score alone does not prove absolute pose correctness","receive_age_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"value":null,"rate":null,"original_label_en":"Independent localization consistency","original_summary_en":"V1 does not yet compare wheel odometry, FAST-LIO delta and GICP corrections"}],"original_title_en":"Localization","original_summary_en":"All required V1 evidence is available"},{"id":"H6","title":"ナビゲーション","status":"AVAILABLE","summary":"V1 の必須証拠が揃っています。","reason_item_id":null,"items":[{"id":"lifecycle_controller_server","label":"Lifecycle controller_server","status":"OK","summary":"active (3)。","critical":true,"standard":"Direct GetState response from /controller_server/get_state","source":"/controller_server/get_state","evidence":"DIRECT_SERVICE_RESPONSE","message_count":207,"last_receive_at":"2026-08-25T06:22:36.139250+00:00","receive_age_sec":1.0319397890007167,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.027747714501286,"max_receive_gap_sec_5s":1.0319397890007167,"value":{"id":3,"label":"active"},"rate":1.027747714501286,"original_label_en":"Lifecycle controller_server","original_summary_en":"Lifecycle service reports active"},{"id":"lifecycle_planner_server","label":"Lifecycle planner_server","status":"OK","summary":"active (3)。","critical":true,"standard":"Direct GetState response from /planner_server/get_state","source":"/planner_server/get_state","evidence":"DIRECT_SERVICE_RESPONSE","message_count":207,"last_receive_at":"2026-08-25T06:22:36.139205+00:00","receive_age_sec":1.0320171350003875,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.0277416890709168,"max_receive_gap_sec_5s":1.0320171350003875,"value":{"id":3,"label":"active"},"rate":1.0277416890709168,"original_label_en":"Lifecycle planner_server","original_summary_en":"Lifecycle service reports active"},{"id":"lifecycle_bt_navigator","label":"Lifecycle bt_navigator","status":"OK","summary":"active (3)。","critical":true,"standard":"Direct GetState response from /bt_navigator/get_state","source":"/bt_navigator/get_state","evidence":"DIRECT_SERVICE_RESPONSE","message_count":206,"last_receive_at":"2026-08-25T06:22:36.139153+00:00","receive_age_sec":1.0321357149996402,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.0277378451165822,"max_receive_gap_sec_5s":1.0321357149996402,"value":{"id":3,"label":"active"},"rate":1.0277378451165822,"original_label_en":"Lifecycle bt_navigator","original_summary_en":"Lifecycle service reports active"},{"id":"lifecycle_local_costmap","label":"Lifecycle local_costmap","status":"OK","summary":"active (3)。","critical":true,"standard":"Direct GetState response from /local_costmap/local_costmap/get_state","source":"/local_costmap/local_costmap/get_state","evidence":"DIRECT_SERVICE_RESPONSE","message_count":207,"last_receive_at":"2026-08-25T06:22:36.139058+00:00","receive_age_sec":1.0322572820005007,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.0277178359994115,"max_receive_gap_sec_5s":1.0322572820005007,"value":{"id":3,"label":"active"},"rate":1.0277178359994115,"original_label_en":"Lifecycle local_costmap","original_summary_en":"Lifecycle service reports active"},{"id":"local_costmap_output_freshness","label":"Local costmap 出力鮮度","status":"NOT_INSTRUMENTED","summary":"full OccupancyGrid 購読を除外したため、出力更新までは証明しない。","source":"No low-bandwidth source available","evidence":"NOT_INSTRUMENTED","critical":false,"standard":"Add a source-side heartbeat/counter instead of resubscribing the full costmap","receive_age_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"value":null,"rate":null,"original_label_en":"Local costmap output freshness","original_summary_en":"The high-bandwidth OccupancyGrid subscription was removed; lifecycle active does not prove output updates"},{"id":"global_plan","label":"最新 global plan","status":"IDLE","summary":"ナビゲーション待機中なので plan 未生成。","critical":false,"standard":"Event-driven evidence; not critical while navigation is idle","source":"/plan","evidence":"DIRECT_TOPIC","message_count":0,"last_receive_at":null,"receive_age_sec":null,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"max_receive_gap_sec_5s":null,"value":null,"rate":null,"original_label_en":"Latest global plan","original_summary_en":"No global plan is expected while navigation is idle"},{"id":"navigation_progress","label":"Agent ナビゲーション進捗","status":"IDLE","summary":"現在はイベントまたは実行を待機しています。","critical":false,"standard":"Structured report from active goto_pose; not direct Nav2 action feedback","source":"/agent/navigation_progress","evidence":"STRUCTURED_REPORT","message_count":0,"last_receive_at":null,"receive_age_sec":null,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"max_receive_gap_sec_5s":null,"value":null,"rate":null,"original_label_en":"Agent navigation progress","original_summary_en":"No navigation progress is expected before an active goto_pose"},{"id":"navigation_route","label":"Agent ナビゲーション経路状態","status":"IDLE","summary":"現在はイベントまたは実行を待機しています。","critical":false,"standard":"Event-driven route report; not critical while navigation is idle","source":"/agent/navigation_route_state","evidence":"STRUCTURED_REPORT","message_count":0,"last_receive_at":null,"receive_age_sec":null,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"max_receive_gap_sec_5s":null,"value":null,"rate":null,"original_label_en":"Agent navigation route state","original_summary_en":"No navigation route event is expected while navigation is idle"}],"original_title_en":"Navigation","original_summary_en":"All required V1 evidence is available"},{"id":"H7","title":"Agent・ミッション","status":"AVAILABLE","summary":"V1 の必須証拠が揃っています。","reason_item_id":null,"items":[{"id":"agent_heartbeat","label":"Agent heartbeat","status":"OBSERVED","summary":"新鮮な Agent heartbeat。mode=MANUAL、safety=OK、localization=OK。","critical":true,"standard":"agent_node publishes /agent/health_state every 2s","source":"/agent/health_state","evidence":"STRUCTURED_REPORT","message_count":104,"last_receive_at":"2026-08-25T06:22:36.424308+00:00","receive_age_sec":0.747047726999881,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":0.49996808928667114,"max_receive_gap_sec_5s":2.000129865999952,"value":{"overall":"WARN","components":{"mode":{"level":"WARN","summary":"MANUAL","details":{"robot_mode_age_sec":1.8585302829742432}},"safety":{"level":"OK","summary":"OK","details":{"safety_status_age_sec":0.028322458267211914}},"localization":{"level":"OK","summary":"OK","details":{"latest_odom_pose":[-0.08147008937499689,-0.3221530555232504,-0.29140986010898384],"stationary_drift_m":0.013578237705024783,"stationary_drift_yaw_rad":0.0036575016002022287,"stationary_drift_warn_m":0.05,"stationary_drift_warn_yaw_rad":0.1,"localization_warning":"OK","localization_healthy":true,"gicp_score":0.13545747101306915,"gicp_score_age_sec":0.1978318691253662,"localization_pose_age_sec":0.19650983810424805,"gicp_good_samples_after_initialpose":414,"gicp_min_good_samples":3,"localization_data_stale_sec":3,"last_trusted_pose":[-0.08147008937499689,-0.3221530555232504,-0.29140986010898384],"last_trusted_pose_age_sec":0.19651103019714355,"initialpose_age_sec":null,"initialpose_settling":false,"initialpose_settle_sec":10,"mode":"real"}},"local_planner":{"level":"OK","summary":"active","details":{"required":false,"required_reason":"active_skill=idle","controller_state":"active","controller_state_id":3,"controller_state_age_sec":1.998596429824829,"controller_state_stale_sec":5,"nav2_cmd_age_sec":null,"nav2_cmd_speed":0,"summary":"active"}}},"recommended_action":"continue_with_caution","active_recovery":null,"timestamp":"2026-08-25T06:22:36.423159+00:00"},"rate":0.49996808928667114,"original_label_en":"Agent heartbeat","original_summary_en":"Fresh Agent heartbeat report received"},{"id":"agent_status","label":"最新 Agent status","status":"IDLE","summary":"まだ status event はありません。","critical":false,"standard":"Event-driven text; age does not indicate failure","source":"/agent/status","evidence":"STRUCTURED_REPORT","message_count":0,"last_receive_at":null,"receive_age_sec":null,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"max_receive_gap_sec_5s":null,"value":null,"rate":null,"original_label_en":"Latest Agent status","original_summary_en":"No Agent status event has been emitted yet"},{"id":"mission_state","label":"最新 mission state","status":"IDLE","summary":"最初の mission 前なのでイベントなし。","critical":false,"standard":"Event-driven mission state; not required before the first mission","source":"/agent/mission_state","evidence":"STRUCTURED_REPORT","message_count":0,"last_receive_at":null,"receive_age_sec":null,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"max_receive_gap_sec_5s":null,"value":null,"rate":null,"original_label_en":"Latest mission state","original_summary_en":"No mission state is expected before the first mission"}],"original_title_en":"Agent & Mission","original_summary_en":"All required V1 evidence is available"}],"demo_schema":"realbot-health-static-demo-v1","provenance":{"kind":"COMPLETE_REAL_ROBOT_ROS_SNAPSHOT","captured_topic":"/agent/health_dashboard_state","ros_domain_id":13,"note_ja":"重启後に実機から取得した1フレーム。表示用の日本語ラベルを追加したが、raw_snapshot に元の ROS JSON を未変更で保持。","static_warning":"リアルタイム状態ではない"},"raw_snapshot":{"schema_version":1,"generated_at":"2026-08-25T06:22:37.171457+00:00","sequence":209,"monitor":{"node":"/health_monitor","publish_rate_hz":1,"input_sample_rate_hz":5,"previous_publish_duration_sec":0.008093567999821971,"executor_threads":2,"mode":"read_only","truth_policy":"unknown_is_not_ok","high_bandwidth_subscriptions":false},"summaries":[{"id":"A1","title":"Device & Data Acquisition","status":"AVAILABLE","summary":"Required V1 evidence is available","reason_domain_id":null,"reason_item_id":null},{"id":"A2","title":"ROS & Platform Delivery","status":"AVAILABLE","summary":"Required V1 evidence is available","reason_domain_id":null,"reason_item_id":null},{"id":"A3","title":"Functional & Behavior","status":"AVAILABLE","summary":"Required V1 evidence is available","reason_domain_id":null,"reason_item_id":null}],"capabilities":[{"id":"manual_drive","title":"Manual drive","status":"AVAILABLE","summary":"All V1 dependencies are available","blocked_by":null,"dependencies":["physical_estop","drive_health","drive_feedback","dynamixel_health","steer_feedback","safety","publisher:/cmd_vel"]},{"id":"auto_navigation","title":"Auto navigation","status":"AVAILABLE","summary":"All V1 dependencies are available","blocked_by":null,"dependencies":["physical_estop","drive_health","drive_feedback","dynamixel_health","steer_feedback","safety","laser_scan","gicp_score","gicp_pose","lifecycle_controller_server","lifecycle_planner_server","lifecycle_bt_navigator","lifecycle_local_costmap"]},{"id":"stationary_perception","title":"On-demand perception (stationary)","status":"UNKNOWN","summary":"No mission report contains a perception execution yet","blocked_by":"perception_runtime","dependencies":["camera_color_diagnostics","camera_depth_diagnostics","camera_pan","camera_tilt","perception_runtime"]},{"id":"lift","title":"Lift","status":"SUPERVISED_ONLY","summary":"Software-integrated lift position 0.0 mm; command=STOP; reference=UNREFERENCED_SOFTWARE_ESTIMATE","blocked_by":"lift_position","dependencies":["physical_estop","lift_position"]}],"domains":[{"id":"H1","title":"Physical, Device & Driver","status":"AVAILABLE","summary":"All required V1 evidence is available","reason_item_id":null,"items":[{"id":"physical_estop","label":"Physical E-stop circuit","status":"OK","summary":"Physical red stop is released (BLVD IDs 1/2/3 DIN3=1)","critical":true,"standard":"Installed wiring qualified on 2026-08-19 against the physical button: all BLVD DIN3=1 released, all DIN3=0 pressed/locked; mixed inputs are an error","source":"/drive/health_summary","evidence":"DIRECT_DRIVER_SUMMARY","message_count":418,"last_receive_at":"2026-08-25T06:22:36.931370+00:00","receive_age_sec":0.23753353799929755,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.9977491808362795,"max_receive_gap_sec_5s":0.5066114109995397,"value":{"direct_io":[{"slave_id":1,"wheel_position":"back","raw":196616,"din0":false,"din1":false,"din2":false,"din3":true},{"slave_id":2,"wheel_position":"front_left","raw":196616,"din0":false,"din1":false,"din2":false,"din3":true},{"slave_id":3,"wheel_position":"front_right","raw":196616,"din0":false,"din1":false,"din2":false,"din3":true}],"last_direct_io_age_sec":1.315670019999743}},{"id":"drive_hardware_identity","label":"Drive hardware identity","status":"VERIFIED","summary":"Nameplate photos identify BLVD-KRD / GFS5G30FR assemblies at ID 1 back, ID 2 front-left and ID 3 front-right","source":"2026-08-19 real-robot nameplate photos + hardware/blv_r_drive_motors.md","evidence":"PHYSICAL_INSPECTION_RECORD","critical":false,"standard":"Physically verified from six position-labelled real-robot nameplate photos; this proves installed identity and location, while live communication state is evaluated separately from /drive/health_summary","receive_age_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"value":{"installed_count":3,"nameplate_records":[{"modbus_id":1,"wheel_position":"back","driver_trace_code":"RX5 F178611","gear_head_trace_code":"RX9 A127705","photos":["hardware/motor-image/1-back.jpeg","hardware/motor-image/1-back.jpg"]},{"modbus_id":2,"wheel_position":"front_left","driver_trace_code":"RX5 F178612","gear_head_trace_code":"RX9 A127704","photos":["hardware/motor-image/2-front-left.jpeg","hardware/motor-image/2-front-left.jpg"]},{"modbus_id":3,"wheel_position":"front_right","driver_trace_code":"RX5 F178620","gear_head_trace_code":"RX9 A127706","photos":["hardware/motor-image/3-front-right.jpeg","hardware/motor-image/3-front-right.jpg"]}],"driver":{"manufacturer":"Oriental Motor Co., Ltd.","model":"BLVD-KRD","rated_input":"24-48 VDC, 10.5 A","protection":"IP20 (self-declaration)","manufactured":"2024-10","country":"Made in Japan"},"gear_head":{"manufacturer":"Oriental Motor Co., Ltd.","model":"GFS5G30FR","manufactured":"2024-10","country":"Made in Japan"},"motor":{"model":"BLMR5100K-GFV-B","evidence":"deployment record; not visible in supplied photos"},"runtime_configuration":{"id_to_wheel_position":{"1":"back","2":"front_left","3":"front_right"},"global_id":10,"baudrate":230400,"interface":"/dev/serial/by-id/usb-FTDI_USB-RS485_Cable_FT7E9M3C-if00-port0"}}},{"id":"drive_bus_voltage","label":"Drive bus voltage / current","status":"OBSERVED","summary":"Fresh official BLVD monitor values received (ID 1 back: 0.116A, inverter 25.8V, main 25.7V, ID 2 front_left: 0.096A, inverter 25.8V, main 25.7V, ID 3 front_right: 0.121A, inverter 26.0V, main 26.0V)","critical":false,"standard":"Direct HP-5142-4E ID-share monitors: NET-ID 155 main current (0.001 A), 163 inverter voltage (0.1 V), 164 main supply voltage (0.1 V); 24-48 VDC / 10.5 A is a nameplate rating, not an automatic health threshold","source":"/drive/health_summary","evidence":"DIRECT_DRIVER_SUMMARY","message_count":418,"last_receive_at":"2026-08-25T06:22:36.931370+00:00","receive_age_sec":0.23771293699974194,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.9977491808362795,"max_receive_gap_sec_5s":0.5066114109995397,"value":{"electrical_status":[{"slave_id":1,"wheel_position":"back","main_power_supply_current_raw":116,"main_power_supply_current_a":0.116,"inverter_voltage_raw":258,"inverter_voltage_v":25.8,"main_power_supply_voltage_raw":257,"main_power_supply_voltage_v":25.700000000000003},{"slave_id":2,"wheel_position":"front_left","main_power_supply_current_raw":96,"main_power_supply_current_a":0.096,"inverter_voltage_raw":258,"inverter_voltage_v":25.8,"main_power_supply_voltage_raw":257,"main_power_supply_voltage_v":25.700000000000003},{"slave_id":3,"wheel_position":"front_right","main_power_supply_current_raw":121,"main_power_supply_current_a":0.121,"inverter_voltage_raw":260,"inverter_voltage_v":26,"main_power_supply_voltage_raw":260,"main_power_supply_voltage_v":26}],"last_electrical_age_sec":1.315670019999743}},{"id":"drive_alarm_status","label":"BLVD per-driver alarm status","status":"OBSERVED","summary":"Direct Present alarm is 0 on BLVD IDs 1/2/3","critical":true,"standard":"Direct HP-5142-4E registers: Present alarm NET-ID 64 and Alarm history 1 NET-ID 65, sampled per physical driver without interpreting LED blink count","source":"/drive/health_summary","evidence":"DIRECT_DRIVER_SUMMARY","message_count":418,"last_receive_at":"2026-08-25T06:22:36.931370+00:00","receive_age_sec":0.2378041909996682,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.9977491808362795,"max_receive_gap_sec_5s":0.5066114109995397,"value":{"alarm_status":[{"slave_id":1,"wheel_position":"back","present_alarm":0,"alarm_history_1":132,"alarm_history_baseline":132,"alarm_history_changed_in_session":false,"sample_age_sec":0.5081711700004234},{"slave_id":2,"wheel_position":"front_left","present_alarm":0,"alarm_history_1":132,"alarm_history_baseline":132,"alarm_history_changed_in_session":false,"sample_age_sec":2.426441362999867},{"slave_id":3,"wheel_position":"front_right","present_alarm":0,"alarm_history_1":132,"alarm_history_baseline":132,"alarm_history_changed_in_session":false,"sample_age_sec":1.6252234849998786}],"alarm_event_count":0,"last_alarm_event_age_sec":null,"session_started_at":"2026-08-25T06:19:02.924681+00:00"}},{"id":"drive_health","label":"Drive transaction and callback summary","status":"OBSERVED","summary":"Fresh completed Modbus responses observed by drive_motor","critical":true,"standard":"2Hz summary generated inside drive_motor from actual /om_response0 and /om_state0 callbacks","source":"/drive/health_summary","evidence":"DIRECT_DRIVER_SUMMARY","message_count":418,"last_receive_at":"2026-08-25T06:22:36.931370+00:00","receive_age_sec":0.2378631369992945,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.9977491808362795,"max_receive_gap_sec_5s":0.5066114109995397,"value":{"state":{"state_driver":1,"state_message":1,"state_error":0},"state_snapshot_age_sec":0.023240571000314958,"response_count":2528,"runtime_query_count":2520,"response_rate_hz_5s":12.398062082871977,"read_response_rate_hz_5s":6.137687444250526,"last_response_age_sec":0.23814300699996238,"last_read_response_age_sec":0.27204463300040516,"completion_deadline_miss_count":0,"completion_deadline_misses_5s":0,"last_completion_deadline_miss_age_sec":null,"last_completion_deadline_miss_query_kind":null,"last_completion_deadline_miss_elapsed_sec":null,"driver_error_event_count":0,"driver_no_response_event_count":0,"driver_exception_event_count":0,"last_driver_error_age_sec":null,"session_started_at":"2026-08-25T06:19:02.924681+00:00"}},{"id":"drive_din3_raw","label":"BLVD Direct I/O raw DIN3","status":"OBSERVED","summary":"Fresh raw Direct I/O received (ID 1 DIN3=1, ID 2 DIN3=1, ID 3 DIN3=1); installed wiring was qualified as released=1, pressed/locked=0 on 2026-08-19","critical":false,"standard":"Official BLV-R function manual HP-5142: ID-share NET-ID 106 Direct I/O, DIN3 bit 3; polarity must be qualified on the installed wiring","source":"/drive/health_summary","evidence":"DIRECT_DRIVER_SUMMARY","message_count":418,"last_receive_at":"2026-08-25T06:22:36.931370+00:00","receive_age_sec":0.23791087199970207,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.9977491808362795,"max_receive_gap_sec_5s":0.5066114109995397,"value":{"direct_io":[{"slave_id":1,"wheel_position":"back","raw":196616,"din0":false,"din1":false,"din2":false,"din3":true},{"slave_id":2,"wheel_position":"front_left","raw":196616,"din0":false,"din1":false,"din2":false,"din3":true},{"slave_id":3,"wheel_position":"front_right","raw":196616,"din0":false,"din1":false,"din2":false,"din3":true}],"last_direct_io_age_sec":1.315670019999743}},{"id":"drive_recovery_event","label":"Recent drive recovery","status":"IDLE","summary":"No drive motor restart requested.","critical":false,"standard":"Direct result of the guarded Dashboard restart workflow; recovery success does not erase the original unidentified fault","source":"/agent/real_robot_state","evidence":"STRUCTURED_REPORT","message_count":418,"last_receive_at":"2026-08-25T06:22:36.705453+00:00","receive_age_sec":0.4638511199991626,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":2.000620806862676,"max_receive_gap_sec_5s":0.5097950809995382,"value":{"drive_restart":{"state":"IDLE","message":"No drive motor restart requested.","started_at":null,"finished_at":null,"log_tail":""}}},{"id":"drive_feedback","label":"Three-wheel velocity feedback","status":"OBSERVED","summary":"Fresh finite feedback received","critical":true,"standard":"V1 receiver threshold 1.00s; real recovery run on 2026-08-20 observed 4-5Hz with gaps up to 0.804s after 5Hz monitor-side sampling","source":"/drive_odom","evidence":"DIRECT_TOPIC","message_count":310,"last_receive_at":"2026-08-25T06:22:36.488886+00:00","receive_age_sec":0.6804895620007301,"source_stamp_sec":1787638956.4876754,"source_age_sec":0.6816885471343994,"receive_rate_hz_5s":1.5616934008129093,"max_receive_gap_sec_5s":0.8056255040000906,"value":{"vel1_m_s":0,"vel2_m_s":0,"vel3_m_s":0}},{"id":"steer_feedback","label":"Three-axis steering feedback","status":"OBSERVED","summary":"Fresh finite feedback received","critical":true,"standard":"V1 receiver threshold 1.00s; freshness only, while tracking-error limits still require a real baseline","source":"/steer_odom","evidence":"DIRECT_TOPIC","message_count":627,"last_receive_at":"2026-08-25T06:22:36.946779+00:00","receive_age_sec":0.22264936400006263,"source_stamp_sec":1787638956.9453368,"source_age_sec":0.22408270835876465,"receive_rate_hz_5s":2.9471449207497336,"max_receive_gap_sec_5s":0.43988406199969177,"value":{"phi1_rad":0.013805827125906944,"phi2_rad":-0.007669903803616762,"phi3_rad":0.00920388475060463}},{"id":"dynamixel_health","label":"DYNAMIXEL direct read status","status":"OBSERVED","summary":"Fresh successful direct reads from all configured DYNAMIXEL IDs","critical":true,"standard":"2Hz summary of the existing position-read transaction result and device error byte","source":"/dynamixel/health_summary","evidence":"DIRECT_DRIVER_SUMMARY","message_count":419,"last_receive_at":"2026-08-25T06:22:37.089559+00:00","receive_age_sec":0.07991845600008674,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":2.0160223190121878,"max_receive_gap_sec_5s":0.5805711149996569,"value":{"schema_version":1,"source":"direct DYNAMIXEL transactions","publish_rate_hz":2,"motors":[{"id":11,"identity_observed":true,"model_number":1100,"model_name":"XH540-W270","ping_comm_result":0,"ping_device_error":0,"observed":true,"comm_success":true,"comm_result":0,"device_error":0,"attempts":2548,"successes":2548,"last_success_age_sec":0.0320698,"hardware_status_supported":true,"hardware_observed":true,"hardware_comm_success":true,"hardware_comm_result":0,"hardware_device_error":0,"hardware_error_status":0,"present_current_raw":126,"present_current_a":0.33894,"input_voltage_v":11.9,"temperature_c":28,"hardware_attempts":214,"hardware_successes":214,"last_hardware_success_age_sec":0.384016},{"id":12,"identity_observed":true,"model_number":1100,"model_name":"XH540-W270","ping_comm_result":0,"ping_device_error":0,"observed":true,"comm_success":true,"comm_result":0,"device_error":0,"attempts":2548,"successes":2548,"last_success_age_sec":0.0160498,"hardware_status_supported":true,"hardware_observed":true,"hardware_comm_success":true,"hardware_comm_result":0,"hardware_device_error":0,"hardware_error_status":0,"present_current_raw":-44,"present_current_a":-0.11836,"input_voltage_v":12,"temperature_c":28,"hardware_attempts":214,"hardware_successes":214,"last_hardware_success_age_sec":0.336043},{"id":13,"identity_observed":true,"model_number":1100,"model_name":"XH540-W270","ping_comm_result":0,"ping_device_error":0,"observed":true,"comm_success":true,"comm_result":0,"device_error":0,"attempts":2548,"successes":2548,"last_success_age_sec":0.000083766,"hardware_status_supported":true,"hardware_observed":true,"hardware_comm_success":true,"hardware_comm_result":0,"hardware_device_error":0,"hardware_error_status":0,"present_current_raw":69,"present_current_a":0.18561,"input_voltage_v":12.1,"temperature_c":27,"hardware_attempts":214,"hardware_successes":214,"last_hardware_success_age_sec":0.28801}]}},{"id":"dynamixel_identity","label":"DYNAMIXEL model identity","status":"OBSERVED","summary":"Direct model-number ping: ID 11=1100 (XH540-W270), ID 12=1100 (XH540-W270), ID 13=1100 (XH540-W270)","critical":false,"standard":"Protocol 2.0 ping returns the model number reported directly by each configured device","source":"/dynamixel/health_summary","evidence":"DIRECT_DRIVER_SUMMARY","message_count":419,"last_receive_at":"2026-08-25T06:22:37.089559+00:00","receive_age_sec":0.07997915700070735,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":2.0160223190121878,"max_receive_gap_sec_5s":0.5805711149996569,"value":{"schema_version":1,"source":"direct DYNAMIXEL transactions","publish_rate_hz":2,"motors":[{"id":11,"identity_observed":true,"model_number":1100,"model_name":"XH540-W270","ping_comm_result":0,"ping_device_error":0,"observed":true,"comm_success":true,"comm_result":0,"device_error":0,"attempts":2548,"successes":2548,"last_success_age_sec":0.0320698,"hardware_status_supported":true,"hardware_observed":true,"hardware_comm_success":true,"hardware_comm_result":0,"hardware_device_error":0,"hardware_error_status":0,"present_current_raw":126,"present_current_a":0.33894,"input_voltage_v":11.9,"temperature_c":28,"hardware_attempts":214,"hardware_successes":214,"last_hardware_success_age_sec":0.384016},{"id":12,"identity_observed":true,"model_number":1100,"model_name":"XH540-W270","ping_comm_result":0,"ping_device_error":0,"observed":true,"comm_success":true,"comm_result":0,"device_error":0,"attempts":2548,"successes":2548,"last_success_age_sec":0.0160498,"hardware_status_supported":true,"hardware_observed":true,"hardware_comm_success":true,"hardware_comm_result":0,"hardware_device_error":0,"hardware_error_status":0,"present_current_raw":-44,"present_current_a":-0.11836,"input_voltage_v":12,"temperature_c":28,"hardware_attempts":214,"hardware_successes":214,"last_hardware_success_age_sec":0.336043},{"id":13,"identity_observed":true,"model_number":1100,"model_name":"XH540-W270","ping_comm_result":0,"ping_device_error":0,"observed":true,"comm_success":true,"comm_result":0,"device_error":0,"attempts":2548,"successes":2548,"last_success_age_sec":0.000083766,"hardware_status_supported":true,"hardware_observed":true,"hardware_comm_success":true,"hardware_comm_result":0,"hardware_device_error":0,"hardware_error_status":0,"present_current_raw":69,"present_current_a":0.18561,"input_voltage_v":12.1,"temperature_c":27,"hardware_attempts":214,"hardware_successes":214,"last_hardware_success_age_sec":0.28801}]}},{"id":"camera_pan","label":"Camera pan feedback","status":"OBSERVED","summary":"Fresh finite feedback received","critical":false,"standard":"Existing real_robot_monitor freshness threshold","source":"/chokudomotor/angle","evidence":"DIRECT_TOPIC","message_count":2089,"last_receive_at":"2026-08-25T06:22:37.065722+00:00","receive_age_sec":0.10386187699987204,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":10.011235372456847,"max_receive_gap_sec_5s":0.11412592499982566,"value":{"angle_deg":267.1000061035156}},{"id":"camera_tilt","label":"Camera tilt feedback","status":"OBSERVED","summary":"Fresh finite feedback received","critical":false,"standard":"Existing real_robot_monitor freshness threshold","source":"/cameraswingmotor/angle","evidence":"DIRECT_TOPIC","message_count":2089,"last_receive_at":"2026-08-25T06:22:37.065865+00:00","receive_age_sec":0.10375169700000697,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":10.011432238355205,"max_receive_gap_sec_5s":0.11348300400004518,"value":{"angle_deg":101.94999694824219}},{"id":"lift_position","label":"Lift estimated position","status":"ESTIMATED","summary":"Software-integrated lift position 0.0 mm; command=STOP; reference=UNREFERENCED_SOFTWARE_ESTIMATE","critical":false,"standard":"1Hz lift_serial_node summary; position is jog_speed × command time and remains estimated because ABZO/limit/home/alarm feedback is not returned to ROS","source":"/lift/health_summary","evidence":"DIRECT_DRIVER_SUMMARY","message_count":209,"last_receive_at":"2026-08-25T06:22:36.768241+00:00","receive_age_sec":0.4014256079999541,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.001236461699593,"max_receive_gap_sec_5s":1.0001244320001206,"value":{"schema_version":1,"generated_at":"2026-08-25T06:22:36.766176+00:00","source":"lift_serial_node runtime state; position is not encoder feedback","publish_rate_hz":1,"serial":{"port":"/dev/ttyACM0","baud_rate":9600,"open":true,"write_count":0,"write_error_count":0,"last_error":null},"motion":{"command":"STOP","is_homing":false,"estimated_position_mm":0,"position_reference":"UNREFERENCED_SOFTWARE_ESTIMATE","position_evidence":"SOFTWARE_TIME_INTEGRATION"},"configuration":{"jog_speed_mm_s":60,"position_min_mm":0,"position_max_mm":200,"home_position_mm":100,"auto_home_on_start":false,"soft_limits_enabled":false},"hardware_feedback":{"abzo_position_available":false,"upper_limit_available":false,"lower_limit_available":false,"home_complete_available":false,"alarm_ready_available":false}}},{"id":"dynamixel_hardware_status","label":"DYNAMIXEL voltage / current / temperature registers","status":"OK","summary":"Direct XH540-W270 hardware registers are clear (ID 11: 11.9V, 0.339A, 28C, ID 12: 12.0V, -0.118A, 28C, ID 13: 12.1V, 0.186A, 27C)","critical":false,"standard":"ROBOTIS XH540-W270 control table: Hardware Error Status(70), Present Current(126), Present Input Voltage(144), Present Temperature(146)","source":"/dynamixel/health_summary","evidence":"DIRECT_DRIVER_SUMMARY","message_count":419,"last_receive_at":"2026-08-25T06:22:37.089559+00:00","receive_age_sec":0.08014679700045235,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":2.0160223190121878,"max_receive_gap_sec_5s":0.5805711149996569,"value":{"schema_version":1,"source":"direct DYNAMIXEL transactions","publish_rate_hz":2,"motors":[{"id":11,"identity_observed":true,"model_number":1100,"model_name":"XH540-W270","ping_comm_result":0,"ping_device_error":0,"observed":true,"comm_success":true,"comm_result":0,"device_error":0,"attempts":2548,"successes":2548,"last_success_age_sec":0.0320698,"hardware_status_supported":true,"hardware_observed":true,"hardware_comm_success":true,"hardware_comm_result":0,"hardware_device_error":0,"hardware_error_status":0,"present_current_raw":126,"present_current_a":0.33894,"input_voltage_v":11.9,"temperature_c":28,"hardware_attempts":214,"hardware_successes":214,"last_hardware_success_age_sec":0.384016},{"id":12,"identity_observed":true,"model_number":1100,"model_name":"XH540-W270","ping_comm_result":0,"ping_device_error":0,"observed":true,"comm_success":true,"comm_result":0,"device_error":0,"attempts":2548,"successes":2548,"last_success_age_sec":0.0160498,"hardware_status_supported":true,"hardware_observed":true,"hardware_comm_success":true,"hardware_comm_result":0,"hardware_device_error":0,"hardware_error_status":0,"present_current_raw":-44,"present_current_a":-0.11836,"input_voltage_v":12,"temperature_c":28,"hardware_attempts":214,"hardware_successes":214,"last_hardware_success_age_sec":0.336043},{"id":13,"identity_observed":true,"model_number":1100,"model_name":"XH540-W270","ping_comm_result":0,"ping_device_error":0,"observed":true,"comm_success":true,"comm_result":0,"device_error":0,"attempts":2548,"successes":2548,"last_success_age_sec":0.000083766,"hardware_status_supported":true,"hardware_observed":true,"hardware_comm_success":true,"hardware_comm_result":0,"hardware_device_error":0,"hardware_error_status":0,"present_current_raw":69,"present_current_a":0.18561,"input_voltage_v":12.1,"temperature_c":27,"hardware_attempts":214,"hardware_successes":214,"last_hardware_success_age_sec":0.28801}]}}]},{"id":"H2","title":"ROS & Platform","status":"AVAILABLE","summary":"All required V1 evidence is available","reason_item_id":null,"items":[{"id":"publisher:/cmd_vel_raw","label":"Publisher authority /cmd_vel_raw","status":"OK","summary":"3 publisher endpoint(s) belong to approved source node(s): /agent_node, /nav_mode_switch_node","source":"ROS graph endpoint info","evidence":"GRAPH_QUERY","critical":true,"standard":"All publisher endpoints must belong to the explicit source-node allowlist","receive_age_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"value":[{"node_name":"agent_node","node_namespace":"/","topic_type":"geometry_msgs/msg/Twist"},{"node_name":"agent_node","node_namespace":"/","topic_type":"geometry_msgs/msg/Twist"},{"node_name":"nav_mode_switch_node","node_namespace":"/","topic_type":"geometry_msgs/msg/Twist"}]},{"id":"publisher:/cmd_vel","label":"Publisher authority /cmd_vel","status":"OK","summary":"Exactly one publisher endpoint observed","source":"ROS graph endpoint info","evidence":"GRAPH_QUERY","critical":true,"standard":"Exactly one final publisher endpoint is required","receive_age_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"value":[{"node_name":"cmd_vel_safety_node","node_namespace":"/","topic_type":"geometry_msgs/msg/Twist"}]},{"id":"publisher:/joy","label":"Publisher authority /joy","status":"OK","summary":"Exactly one publisher endpoint observed","source":"ROS graph endpoint info","evidence":"GRAPH_QUERY","critical":true,"standard":"Exactly one final publisher endpoint is required","receive_age_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"value":[{"node_name":"joy_source_arbiter_node","node_namespace":"/","topic_type":"sensor_msgs/msg/Joy"}]},{"id":"joy_source_authority","label":"Manual control source arbitration","status":"OK","summary":"Canonical /joy is owned by PHYSICAL; physical source is the default","critical":true,"standard":"joy_source_arbiter_node is the only canonical /joy publisher; PHYSICAL is default and Dashboard requires an explicit lease","source":"/joy/source_status","evidence":"DIRECT_ARBITER_STATUS","message_count":414,"last_receive_at":"2026-08-25T06:22:36.795371+00:00","receive_age_sec":0.37502497700006643,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.9998742114674908,"max_receive_gap_sec_5s":0.5076521769997271,"value":{"source":"PHYSICAL","dashboard_acquired":false,"reason":"physical source is the default","dashboard_age_sec":null,"physical_active_age_sec":null,"generated_at":1787638956.7935677}},{"id":"delivery_robot_mode","label":"ROS delivery /robot_mode","status":"OBSERVED","summary":"Fresh messages observed at this monitor","critical":true,"standard":"Publisher timer is 2s; V1 max receive age is 3s","source":"/robot_mode","evidence":"DIRECT_TOPIC","message_count":103,"last_receive_at":"2026-08-25T06:22:36.565678+00:00","receive_age_sec":0.6047907100000884,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":0.49980376791925163,"max_receive_gap_sec_5s":2.0017544490001455,"value":"MANUAL"},{"id":"delivery_safety","label":"ROS delivery /safety_status","status":"OBSERVED","summary":"Fresh messages observed at this monitor","critical":true,"standard":"Publisher timer is 1s; V1 max receive age is 2s","source":"/safety_status","evidence":"DIRECT_TOPIC","message_count":206,"last_receive_at":"2026-08-25T06:22:36.395277+00:00","receive_age_sec":0.7752101959995343,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.0000231905376538,"max_receive_gap_sec_5s":1.000736230000257,"value":"OK"},{"id":"delivery_drive_feedback","label":"ROS delivery /drive_odom","status":"OBSERVED","summary":"Fresh messages observed at this monitor","critical":true,"standard":"Receiver-measured freshness at health_monitor; 1.00s threshold includes the observed 0.804s gap and 5Hz monitor-side sampling jitter","source":"/drive_odom","evidence":"DIRECT_TOPIC","message_count":310,"last_receive_at":"2026-08-25T06:22:36.488886+00:00","receive_age_sec":0.6816348400006973,"source_stamp_sec":1787638956.4876754,"source_age_sec":0.6828334331512451,"receive_rate_hz_5s":1.5616934008129093,"max_receive_gap_sec_5s":0.8056255040000906,"value":{"vel1_m_s":0,"vel2_m_s":0,"vel3_m_s":0}},{"id":"delivery_camera_color_diagnostics","label":"RealSense color stream diagnostic delivery","status":"OK","summary":"Driver diagnostic reports OK: Desired frequency met","critical":false,"standard":"RealSense native frequency diagnostic published every 1s","source":"/diagnostics","evidence":"DRIVER_DIAGNOSTIC","message_count":208,"last_receive_at":"2026-08-25T06:22:36.975595+00:00","receive_age_sec":0.19495699300023261,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.0001575468171984,"max_receive_gap_sec_5s":1.0036664509998445,"value":{"name":"camera: color","hardware_id":"817412070749","level":0,"message":"Desired frequency met","values":{"Events in window":"299","Events since startup":"6391","Duration of window (s)":"9.999682","Actual frequency (Hz)":"29.900950","Target frequency (Hz)":"30.000000","Minimum acceptable frequency (Hz)":"27.000000","Maximum acceptable frequency (Hz)":"33.000000"}}},{"id":"host_resources","label":"Host resources","status":"OBSERVED","summary":"Host counters are measured; no workload baseline is inferred","source":"/proc/stat, /proc/loadavg, /proc/meminfo, filesystem, /sys/class/hwmon","evidence":"DIRECT_HOST_COUNTER","critical":true,"standard":"Only hardware-exported temp*_max/temp*_crit are evaluated; CPU/load/disk remain display-only","receive_age_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"value":{"source":"/proc + filesystem + hwmon + systemd-timesyncd marker","cpu_used_percent":44.26751592356688,"logical_cpu_count":16,"process_cpu_window_sec":5.001320915999713,"top_processes":[{"pid":50922,"name":"GICP localizer","host_capacity_percent":7.287397540983607,"one_core_percent":116.5983606557377,"cpu_core_equivalent":1.165983606557377,"command":"/usr/bin/python3 /home/matsunaga-h/robot_ws/install/localization_pkg/lib/localization_pkg/gicp_localizer_node --ros-args -r __node:=gicp_localizer --params-file /home/matsunaga-h/r"},{"pid":50413,"name":"Modbus RTU","host_capacity_percent":4.418545081967213,"one_core_percent":70.69672131147541,"cpu_core_equivalent":0.7069672131147541,"command":"/home/matsunaga-h/robot_ws/install/om_modbus_master/lib/om_modbus_master/om_modbusRTU_node --ros-args --params-file /tmp/launch_params_qce6fpu3"},{"pid":51171,"name":"Nav2 controller","host_capacity_percent":4.072745901639344,"one_core_percent":65.1639344262295,"cpu_core_equivalent":0.6516393442622951,"command":"/opt/ros/humble/lib/nav2_controller/controller_server --ros-args -r __node:=controller_server --params-file /home/matsunaga-h/robot_ws/install/nav_pkg/share/nav_pkg/config/nav2_par"},{"pid":51456,"name":"RViz","host_capacity_percent":2.7535860655737703,"one_core_percent":44.05737704918033,"cpu_core_equivalent":0.4405737704918033,"command":"rviz2 -d /home/matsunaga-h/robot_ws/rviz/nav2_navigation.rviz"},{"pid":51000,"name":"Health Monitor","host_capacity_percent":2.7023565573770494,"one_core_percent":43.23770491803279,"cpu_core_equivalent":0.4323770491803279,"command":"/usr/bin/python3 /home/matsunaga-h/robot_ws/install/robot_agent/lib/robot_agent/health_monitor --ros-args -r __node:=health_monitor"},{"pid":5549,"name":"code","host_capacity_percent":2.2925204918032787,"one_core_percent":36.68032786885246,"cpu_core_equivalent":0.3668032786885246,"command":"/usr/share/code/code --type=gpu-process --ozone-platform=x11 --crashpad-handler-pid=5530 --enable-crash-reporter=79c91a5c-25f0-43d4-8027-f275a9be75a4,no_channel --user-data-dir=/ho"},{"pid":50994,"name":"Agent","host_capacity_percent":2.1644467213114753,"one_core_percent":34.63114754098361,"cpu_core_equivalent":0.3463114754098361,"command":"/usr/bin/python3 /home/matsunaga-h/robot_ws/install/robot_agent/lib/robot_agent/agent_node --ros-args -r __node:=agent_node --params-file /tmp/launch_params_y3yx8pqa"},{"pid":50415,"name":"BLVD drive bridge","host_capacity_percent":2.0876024590163933,"one_core_percent":33.40163934426229,"cpu_core_equivalent":0.33401639344262296,"command":"/usr/bin/python3 /home/matsunaga-h/robot_ws/src/om_modbus_master_V201/om_modbus_master/sample/BLV_R/drive_motor.py"},{"pid":50409,"name":"Livox driver","host_capacity_percent":1.7674180327868851,"one_core_percent":28.278688524590162,"cpu_core_equivalent":0.2827868852459016,"command":"/home/matsunaga-h/robot_ws/install/livox_ros_driver2/lib/livox_ros_driver2/livox_ros_driver2_node --ros-args -r __node:=livox_lidar_publisher --params-file /tmp/launch_params_ts_ih"},{"pid":51187,"name":"ROS component container","host_capacity_percent":1.0758196721311475,"one_core_percent":17.21311475409836,"cpu_core_equivalent":0.1721311475409836,"command":"/opt/ros/humble/lib/rclcpp_components/component_container --ros-args -r __node:=depth_proc_container -r __ns:=/"}],"load_average":{"1m":6.93,"5m":5.25,"15m":4.15},"memory_total_bytes":33183031296,"memory_available_bytes":24292667392,"memory_used_percent":26.791898017682538,"disk_total_bytes":1006450962432,"disk_free_bytes":832326160384,"disk_used_percent":12.213656369602338,"thermal_zone_max_c":88,"hwmon_temperatures":[{"device":"iwlwifi_1","label":"temp1","input_c":55,"max_c":null,"crit_c":null,"headroom_to_max_c":null,"headroom_to_crit_c":null},{"device":"nvme","label":"Sensor 2","input_c":40.85,"max_c":65261.85,"crit_c":null,"headroom_to_max_c":65221,"headroom_to_crit_c":null},{"device":"nvme","label":"Composite","input_c":35.85,"max_c":89.85,"crit_c":94.85,"headroom_to_max_c":53.99999999999999,"headroom_to_crit_c":58.99999999999999},{"device":"nvme","label":"Sensor 1","input_c":35.85,"max_c":65261.85,"crit_c":null,"headroom_to_max_c":65226,"headroom_to_crit_c":null},{"device":"acpitz","label":"temp1","input_c":88,"max_c":null,"crit_c":null,"headroom_to_max_c":null,"headroom_to_crit_c":null},{"device":"coretemp","label":"Core 4","input_c":73,"max_c":100,"crit_c":100,"headroom_to_max_c":27,"headroom_to_crit_c":27},{"device":"coretemp","label":"Core 21","input_c":72,"max_c":100,"crit_c":100,"headroom_to_max_c":28,"headroom_to_crit_c":28},{"device":"coretemp","label":"Core 8","input_c":84,"max_c":100,"crit_c":100,"headroom_to_max_c":16,"headroom_to_crit_c":16},{"device":"coretemp","label":"Core 18","input_c":82,"max_c":100,"crit_c":100,"headroom_to_max_c":18,"headroom_to_crit_c":18},{"device":"coretemp","label":"Core 12","input_c":72,"max_c":100,"crit_c":100,"headroom_to_max_c":28,"headroom_to_crit_c":28},{"device":"coretemp","label":"Core 22","input_c":71,"max_c":100,"crit_c":100,"headroom_to_max_c":29,"headroom_to_crit_c":29},{"device":"coretemp","label":"Core 16","input_c":82,"max_c":100,"crit_c":100,"headroom_to_max_c":18,"headroom_to_crit_c":18},{"device":"coretemp","label":"Core 19","input_c":82,"max_c":100,"crit_c":100,"headroom_to_max_c":18,"headroom_to_crit_c":18},{"device":"coretemp","label":"Package id 0","input_c":85,"max_c":100,"crit_c":100,"headroom_to_max_c":15,"headroom_to_crit_c":15},{"device":"coretemp","label":"Core 23","input_c":71,"max_c":100,"crit_c":100,"headroom_to_max_c":29,"headroom_to_crit_c":29},{"device":"coretemp","label":"Core 17","input_c":82,"max_c":100,"crit_c":100,"headroom_to_max_c":18,"headroom_to_crit_c":18},{"device":"coretemp","label":"Core 20","input_c":71,"max_c":100,"crit_c":100,"headroom_to_max_c":29,"headroom_to_crit_c":29},{"device":"coretemp","label":"Core 0","input_c":73,"max_c":100,"crit_c":100,"headroom_to_max_c":27,"headroom_to_crit_c":27}],"hwmon_max_c":88,"host_ntp_synchronized":true,"observed_at":"2026-08-25T06:22:37.165770+00:00"}},{"id":"host_clock_sync","label":"Host NTP synchronization","status":"OK","summary":"systemd-timesyncd synchronization marker exists","source":"/run/systemd/timesync/synchronized","evidence":"DIRECT_HOST_COUNTER","critical":false,"standard":"Direct systemd-timesyncd synchronization marker; does not prove sensor hardware-clock sync","receive_age_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"value":{"synchronized":true}},{"id":"sensor_clock_sync","label":"Sensor hardware-clock synchronization","status":"NOT_INSTRUMENTED","summary":"Host NTP is observable, but no PTP/device clock-lock status is exposed by current sensor drivers","source":"No source available","evidence":"NOT_INSTRUMENTED","critical":false,"standard":"Header age is not treated as absolute cross-device latency without direct device clock status","receive_age_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"value":null}]},{"id":"H3","title":"Command & Motion","status":"AVAILABLE","summary":"All required V1 evidence is available","reason_item_id":null,"items":[{"id":"robot_mode","label":"Motion authority mode","status":"OK","summary":"Mode authority reports MANUAL","critical":true,"standard":"Only MANUAL and AUTO are recognized","source":"/robot_mode","evidence":"DIRECT_TOPIC","message_count":103,"last_receive_at":"2026-08-25T06:22:36.565678+00:00","receive_age_sec":0.6049598809995587,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":0.49980376791925163,"max_receive_gap_sec_5s":2.0017544490001455,"value":"MANUAL"},{"id":"safety","label":"Software safety gate","status":"OK","summary":"Software safety gate reports OK","critical":true,"standard":"Direct /safety_status from cmd_vel_safety_node; not the physical E-stop circuit","source":"/safety_status","evidence":"DIRECT_TOPIC","message_count":206,"last_receive_at":"2026-08-25T06:22:36.395277+00:00","receive_age_sec":0.7753770760000407,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.0000231905376538,"max_receive_gap_sec_5s":1.000736230000257,"value":"OK"},{"id":"cmd_vel_raw","label":"Command before safety gate","status":"OBSERVED","summary":"Fresh messages observed at this monitor","critical":true,"standard":"Receive freshness and current value only","source":"/cmd_vel_raw","evidence":"DIRECT_TOPIC","message_count":974,"last_receive_at":"2026-08-25T06:22:37.120340+00:00","receive_age_sec":0.050349815000117815,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":4.694731778546636,"max_receive_gap_sec_5s":0.22177956299947255,"value":{"linear_x":0,"linear_y":0,"angular_z":0}},{"id":"cmd_vel","label":"Command after safety gate","status":"OBSERVED","summary":"Fresh messages observed at this monitor","critical":true,"standard":"Dashboard receiver threshold is 0.50s after 5Hz monitor-side sampling; the independent motor command watchdog remains 0.08s during motion","source":"/cmd_vel","evidence":"DIRECT_TOPIC","message_count":979,"last_receive_at":"2026-08-25T06:22:37.021335+00:00","receive_age_sec":0.14940183199996682,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":4.742393567283287,"max_receive_gap_sec_5s":0.22159362399997917,"value":{"linear_x":0,"linear_y":0,"angular_z":0}},{"id":"drive_feedback","label":"Observed wheel motion","status":"OBSERVED","summary":"Fresh messages observed at this monitor","critical":true,"standard":"Direct driver feedback values with a 1.00s receiver threshold; no command-tracking tolerance is inferred in V1","source":"/drive_odom","evidence":"DIRECT_TOPIC","message_count":310,"last_receive_at":"2026-08-25T06:22:36.488886+00:00","receive_age_sec":0.6818860729999869,"source_stamp_sec":1787638956.4876754,"source_age_sec":0.6830844879150391,"receive_rate_hz_5s":1.5616934008129093,"max_receive_gap_sec_5s":0.8056255040000906,"value":{"vel1_m_s":0,"vel2_m_s":0,"vel3_m_s":0}},{"id":"steer_feedback","label":"Observed steering angles","status":"OBSERVED","summary":"Fresh messages observed at this monitor","critical":true,"standard":"Direct steering feedback values with a 1.00s receiver threshold; no tracking tolerance is inferred in V1","source":"/steer_odom","evidence":"DIRECT_TOPIC","message_count":627,"last_receive_at":"2026-08-25T06:22:36.946779+00:00","receive_age_sec":0.22402051700009906,"source_stamp_sec":1787638956.9453368,"source_age_sec":0.22545385360717773,"receive_rate_hz_5s":2.9471449207497336,"max_receive_gap_sec_5s":0.43988406199969177,"value":{"phi1_rad":0.013805827125906944,"phi2_rad":-0.007669903803616762,"phi3_rad":0.00920388475060463}},{"id":"motion_policy","label":"Motion policy report","status":"IDLE","summary":"No motion policy event is expected while no policy is being evaluated","critical":false,"standard":"Reported by nav_mode_switch_node when policy is evaluated","source":"/motion_policy/status","evidence":"DIRECT_TOPIC","message_count":0,"last_receive_at":null,"receive_age_sec":null,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"max_receive_gap_sec_5s":null,"value":null}]},{"id":"H4","title":"Sensor & Perception","status":"AVAILABLE","summary":"All required V1 evidence is available","reason_item_id":null,"items":[{"id":"laser_scan","label":"LiDAR-to-LaserScan data path","status":"OBSERVED","summary":"LaserScan contains 295/723 finite ranges","critical":true,"standard":"10Hz derived /scan must be fresh and contain at least one finite range","source":"/scan","evidence":"DERIVED_TOPIC","message_count":809,"last_receive_at":"2026-08-25T06:22:36.973696+00:00","receive_age_sec":0.19715120999990177,"source_stamp_sec":1787638956.8683763,"source_age_sec":0.30246806144714355,"receive_rate_hz_5s":3.9138285318547092,"max_receive_gap_sec_5s":0.3132696250004301,"value":{"frame_id":"base_footprint","sample_count":723,"finite_count":295,"min_finite_range_m":1.171791434288025,"range_min_m":0.800000011920929,"range_max_m":25}},{"id":"camera_color_diagnostics","label":"RealSense color frequency diagnostic","status":"OK","summary":"Driver diagnostic reports OK: Desired frequency met","critical":true,"standard":"Native RealSense FrequencyDiagnostics for configured color stream","source":"/diagnostics","evidence":"DRIVER_DIAGNOSTIC","message_count":208,"last_receive_at":"2026-08-25T06:22:36.975595+00:00","receive_age_sec":0.19528536300003907,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.0001575468171984,"max_receive_gap_sec_5s":1.0036664509998445,"value":{"name":"camera: color","hardware_id":"817412070749","level":0,"message":"Desired frequency met","values":{"Events in window":"299","Events since startup":"6391","Duration of window (s)":"9.999682","Actual frequency (Hz)":"29.900950","Target frequency (Hz)":"30.000000","Minimum acceptable frequency (Hz)":"27.000000","Maximum acceptable frequency (Hz)":"33.000000"}}},{"id":"camera_depth_diagnostics","label":"RealSense depth frequency diagnostic","status":"OK","summary":"Driver diagnostic reports OK: Desired frequency met","critical":true,"standard":"Native RealSense FrequencyDiagnostics for configured depth stream","source":"/diagnostics","evidence":"DRIVER_DIAGNOSTIC","message_count":208,"last_receive_at":"2026-08-25T06:22:36.975585+00:00","receive_age_sec":0.19532392800010712,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.0001537663906395,"max_receive_gap_sec_5s":1.0036371449996295,"value":{"name":"camera: depth","hardware_id":"817412070749","level":0,"message":"Desired frequency met","values":{"Events in window":"293","Events since startup":"6321","Duration of window (s)":"9.999692","Actual frequency (Hz)":"29.300901","Target frequency (Hz)":"30.000000","Minimum acceptable frequency (Hz)":"27.000000","Maximum acceptable frequency (Hz)":"33.000000"}}},{"id":"camera_temperatures","label":"RealSense device temperatures","status":"OK","summary":"Driver diagnostic reports OK: OK","critical":false,"standard":"Direct ASIC/projector temperature values from the RealSense diagnostic updater","source":"/diagnostics","evidence":"DIRECT_DEVICE_DIAGNOSTIC","message_count":208,"last_receive_at":"2026-08-25T06:22:36.975559+00:00","receive_age_sec":0.19538749200000893,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.0001359447285527,"max_receive_gap_sec_5s":1.0036256909997974,"value":{"name":"camera: Temperatures","hardware_id":"817412070749","level":0,"message":"OK","values":{"Asic Temperature":"37","Projector Temperature":"33"}}},{"id":"lidar_device_status","label":"Livox device heartbeat / error bits","status":"OK","summary":"Fresh native Livox SDK2 state is clear for 192.168.1.147; 192.168.1.147: status_code not exposed","critical":true,"standard":"Native Livox SDK2 state push must be fresh; MID-360 cur_work_state must be SAMPLING/READY and four lidar_diag_status module levels must be 0; HMS info is retained while warning/error/fatal levels degrade or fail health. status_code is optional for MID-360/SDK2 1.3.1, but is checked when exposed. time_sync_type=0 is informational because this robot has no configured external clock source","source":"/livox/device_health","evidence":"DIRECT_DEVICE_DIAGNOSTIC","message_count":209,"last_receive_at":"2026-08-25T06:22:36.366668+00:00","receive_age_sec":0.804330562999894,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.0000195023803218,"max_receive_gap_sec_5s":1.004383788999803,"value":{"schema_version":1,"source":"Livox SDK2 SetLivoxLidarInfoCallback","publish_rate_hz":1,"devices":[{"handle":2466359488,"ip":"192.168.1.147","device_type":9,"callback_count":215,"push_age_sec":0.732986414,"state_json_valid":true,"state":{"pcl_data_type":1,"pattern_mode":0,"lidar_ipcfg":{"lidar_ip":"192.168.1.147","lidar_subnet_mask":"255.255.255.0","lidar_gateway":"192.168.1.1"},"state_info_host_ipcfg":{"ip":"192.168.1.50","dst_port":56201,"src_port":56200},"ponitcloud_host_ipcfg":{"ip":"192.168.1.50","dst_port":56301,"src_port":56300},"imu_host_ipcfg":{"ip":"192.168.1.50","dst_port":56401,"src_port":56400},"install_attitude":{"roll_deg":0,"pitch_deg":0,"yaw_deg":0,"x_mm":0,"y_mm":0,"z_mm":0},"fov_cfg0":{"yaw_start":0,"yaw_stop":0,"pitch_start":-7,"pitch_stop":52},"fov_cfg1":{"yaw_start":0,"yaw_stop":0,"pitch_start":-7,"pitch_stop":52},"fov_cfg_en":0,"detect_mode":0,"func_io_cfg":{"IN0":0,"IN1":0,"OUT0":0,"OUT1":0},"work_tgt_mode":1,"imu_data_en":1,"sn":"47MDM5L0020347","product_info":"DevType:Mid-360 FmType:App FmVer:13180221 BuildTime:2023/12/19","version_app":[13,18,2,21],"version_loader":[13,17,99,20],"version_hardware":[0,0,0,0],"mac":[228,122,44,150,233,222],"cur_work_state":1,"core_temp":5155,"powerup_cnt":233,"local_time_now":225364059000,"last_sync_time":0,"time_offset":0,"time_sync_type":0,"lidar_diag_status":0,"FW_TYPE":1,"hms_code":[0,0,0,0,0,0,0,0]}}]}},{"id":"perception_runtime","label":"Latest perception execution","status":"IDLE","summary":"No mission report contains a perception execution yet","source":"/agent/mission_state","evidence":"STRUCTURED_REPORT","critical":false,"standard":"Event-driven evidence; IDLE is not proof that inference would succeed","receive_age_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"value":null}]},{"id":"H5","title":"Localization","status":"AVAILABLE","summary":"All required V1 evidence is available","reason_item_id":null,"items":[{"id":"gicp_score","label":"GICP attempt self-score","status":"OK","summary":"GICP self-score passed configured acceptance threshold (0.1350 \u003c= 0.2500)","critical":true,"standard":"gicp_localizer.yaml fitness_score_threshold=0.25","source":"/gicp_loc/score","evidence":"DIRECT_TOPIC","message_count":415,"last_receive_at":"2026-08-25T06:22:36.707017+00:00","receive_age_sec":0.4640767950004374,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":2.020798119359048,"max_receive_gap_sec_5s":0.5699237440003344,"value":{"inlier_rmse":0.13497917354106903}},{"id":"gicp_pose","label":"Last accepted GICP pose","status":"OBSERVED","summary":"Fresh messages observed at this monitor","critical":true,"standard":"Pose is only published after an accepted correction; receive age is acceptance age","source":"/gicp_loc/pose","evidence":"ACCEPTED_ALGORITHM_OUTPUT","message_count":415,"last_receive_at":"2026-08-25T06:22:36.707595+00:00","receive_age_sec":0.46354264300043724,"source_stamp_sec":1787638956.7066145,"source_age_sec":0.4645206928253174,"receive_rate_hz_5s":2.020938574514374,"max_receive_gap_sec_5s":0.5697345759999735,"value":{"frame_id":"map","x":-0.07978729430773172,"y":-0.3336344613428008,"z":-0.01788572403149772,"quaternion":{"x":0.04514340333933652,"y":0.2504455551882164,"z":-0.14403230575774198,"w":0.9562916876766925}}},{"id":"fast_lio_odom","label":"FAST-LIO odometry (optional mode)","status":"UNKNOWN","summary":"No message has reached this monitor","critical":false,"standard":"Optional: absent in default GICP-only launch","source":"/fast_lio/odometry","evidence":"DIRECT_TOPIC","message_count":0,"last_receive_at":null,"receive_age_sec":null,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"max_receive_gap_sec_5s":null,"value":null},{"id":"localization_independent_validation","label":"Independent localization consistency","status":"NOT_INSTRUMENTED","summary":"V1 does not yet compare wheel odometry, FAST-LIO delta and GICP corrections","source":"No combined monitor available","evidence":"NOT_INSTRUMENTED","critical":false,"standard":"A good GICP self-score alone does not prove absolute pose correctness","receive_age_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"value":null}]},{"id":"H6","title":"Navigation","status":"AVAILABLE","summary":"All required V1 evidence is available","reason_item_id":null,"items":[{"id":"lifecycle_controller_server","label":"Lifecycle controller_server","status":"OK","summary":"Lifecycle service reports active","critical":true,"standard":"Direct GetState response from /controller_server/get_state","source":"/controller_server/get_state","evidence":"DIRECT_SERVICE_RESPONSE","message_count":207,"last_receive_at":"2026-08-25T06:22:36.139250+00:00","receive_age_sec":1.0319397890007167,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.027747714501286,"max_receive_gap_sec_5s":1.0319397890007167,"value":{"id":3,"label":"active"}},{"id":"lifecycle_planner_server","label":"Lifecycle planner_server","status":"OK","summary":"Lifecycle service reports active","critical":true,"standard":"Direct GetState response from /planner_server/get_state","source":"/planner_server/get_state","evidence":"DIRECT_SERVICE_RESPONSE","message_count":207,"last_receive_at":"2026-08-25T06:22:36.139205+00:00","receive_age_sec":1.0320171350003875,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.0277416890709168,"max_receive_gap_sec_5s":1.0320171350003875,"value":{"id":3,"label":"active"}},{"id":"lifecycle_bt_navigator","label":"Lifecycle bt_navigator","status":"OK","summary":"Lifecycle service reports active","critical":true,"standard":"Direct GetState response from /bt_navigator/get_state","source":"/bt_navigator/get_state","evidence":"DIRECT_SERVICE_RESPONSE","message_count":206,"last_receive_at":"2026-08-25T06:22:36.139153+00:00","receive_age_sec":1.0321357149996402,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.0277378451165822,"max_receive_gap_sec_5s":1.0321357149996402,"value":{"id":3,"label":"active"}},{"id":"lifecycle_local_costmap","label":"Lifecycle local_costmap","status":"OK","summary":"Lifecycle service reports active","critical":true,"standard":"Direct GetState response from /local_costmap/local_costmap/get_state","source":"/local_costmap/local_costmap/get_state","evidence":"DIRECT_SERVICE_RESPONSE","message_count":207,"last_receive_at":"2026-08-25T06:22:36.139058+00:00","receive_age_sec":1.0322572820005007,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":1.0277178359994115,"max_receive_gap_sec_5s":1.0322572820005007,"value":{"id":3,"label":"active"}},{"id":"local_costmap_output_freshness","label":"Local costmap output freshness","status":"NOT_INSTRUMENTED","summary":"The high-bandwidth OccupancyGrid subscription was removed; lifecycle active does not prove output updates","source":"No low-bandwidth source available","evidence":"NOT_INSTRUMENTED","critical":false,"standard":"Add a source-side heartbeat/counter instead of resubscribing the full costmap","receive_age_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"value":null},{"id":"global_plan","label":"Latest global plan","status":"IDLE","summary":"No global plan is expected while navigation is idle","critical":false,"standard":"Event-driven evidence; not critical while navigation is idle","source":"/plan","evidence":"DIRECT_TOPIC","message_count":0,"last_receive_at":null,"receive_age_sec":null,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"max_receive_gap_sec_5s":null,"value":null},{"id":"navigation_progress","label":"Agent navigation progress","status":"IDLE","summary":"No navigation progress is expected before an active goto_pose","critical":false,"standard":"Structured report from active goto_pose; not direct Nav2 action feedback","source":"/agent/navigation_progress","evidence":"STRUCTURED_REPORT","message_count":0,"last_receive_at":null,"receive_age_sec":null,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"max_receive_gap_sec_5s":null,"value":null},{"id":"navigation_route","label":"Agent navigation route state","status":"IDLE","summary":"No navigation route event is expected while navigation is idle","critical":false,"standard":"Event-driven route report; not critical while navigation is idle","source":"/agent/navigation_route_state","evidence":"STRUCTURED_REPORT","message_count":0,"last_receive_at":null,"receive_age_sec":null,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"max_receive_gap_sec_5s":null,"value":null}]},{"id":"H7","title":"Agent & Mission","status":"AVAILABLE","summary":"All required V1 evidence is available","reason_item_id":null,"items":[{"id":"agent_heartbeat","label":"Agent heartbeat","status":"OBSERVED","summary":"Fresh Agent heartbeat report received","critical":true,"standard":"agent_node publishes /agent/health_state every 2s","source":"/agent/health_state","evidence":"STRUCTURED_REPORT","message_count":104,"last_receive_at":"2026-08-25T06:22:36.424308+00:00","receive_age_sec":0.747047726999881,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":0.49996808928667114,"max_receive_gap_sec_5s":2.000129865999952,"value":{"overall":"WARN","components":{"mode":{"level":"WARN","summary":"MANUAL","details":{"robot_mode_age_sec":1.8585302829742432}},"safety":{"level":"OK","summary":"OK","details":{"safety_status_age_sec":0.028322458267211914}},"localization":{"level":"OK","summary":"OK","details":{"latest_odom_pose":[-0.08147008937499689,-0.3221530555232504,-0.29140986010898384],"stationary_drift_m":0.013578237705024783,"stationary_drift_yaw_rad":0.0036575016002022287,"stationary_drift_warn_m":0.05,"stationary_drift_warn_yaw_rad":0.1,"localization_warning":"OK","localization_healthy":true,"gicp_score":0.13545747101306915,"gicp_score_age_sec":0.1978318691253662,"localization_pose_age_sec":0.19650983810424805,"gicp_good_samples_after_initialpose":414,"gicp_min_good_samples":3,"localization_data_stale_sec":3,"last_trusted_pose":[-0.08147008937499689,-0.3221530555232504,-0.29140986010898384],"last_trusted_pose_age_sec":0.19651103019714355,"initialpose_age_sec":null,"initialpose_settling":false,"initialpose_settle_sec":10,"mode":"real"}},"local_planner":{"level":"OK","summary":"active","details":{"required":false,"required_reason":"active_skill=idle","controller_state":"active","controller_state_id":3,"controller_state_age_sec":1.998596429824829,"controller_state_stale_sec":5,"nav2_cmd_age_sec":null,"nav2_cmd_speed":0,"summary":"active"}}},"recommended_action":"continue_with_caution","active_recovery":null,"timestamp":"2026-08-25T06:22:36.423159+00:00"}},{"id":"agent_status","label":"Latest Agent status","status":"IDLE","summary":"No Agent status event has been emitted yet","critical":false,"standard":"Event-driven text; age does not indicate failure","source":"/agent/status","evidence":"STRUCTURED_REPORT","message_count":0,"last_receive_at":null,"receive_age_sec":null,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"max_receive_gap_sec_5s":null,"value":null},{"id":"mission_state","label":"Latest mission state","status":"IDLE","summary":"No mission state is expected before the first mission","critical":false,"standard":"Event-driven mission state; not required before the first mission","source":"/agent/mission_state","evidence":"STRUCTURED_REPORT","message_count":0,"last_receive_at":null,"receive_age_sec":null,"source_stamp_sec":null,"source_age_sec":null,"receive_rate_hz_5s":null,"max_receive_gap_sec_5s":null,"value":null}]}]},"host":{"status":"OBSERVED","cpu_used_percent":44.26751592356688,"logical_cpu_count":16,"process_cpu_window_sec":5.001320915999713,"load_average":{"1m":6.93,"5m":5.25,"15m":4.15},"memory_used_percent":26.791898017682538,"max_temperature_c":88,"temperature_limit_c":0,"top_processes":[{"pid":50922,"name":"GICP localizer","host_capacity_percent":7.287397540983607,"one_core_percent":116.5983606557377,"cpu_core_equivalent":1.165983606557377,"command":"/usr/bin/python3 /home/matsunaga-h/robot_ws/install/localization_pkg/lib/localization_pkg/gicp_localizer_node --ros-args -r __node:=gicp_localizer --params-file /home/matsunaga-h/r"},{"pid":50413,"name":"Modbus RTU","host_capacity_percent":4.418545081967213,"one_core_percent":70.69672131147541,"cpu_core_equivalent":0.7069672131147541,"command":"/home/matsunaga-h/robot_ws/install/om_modbus_master/lib/om_modbus_master/om_modbusRTU_node --ros-args --params-file /tmp/launch_params_qce6fpu3"},{"pid":51171,"name":"Nav2 controller","host_capacity_percent":4.072745901639344,"one_core_percent":65.1639344262295,"cpu_core_equivalent":0.6516393442622951,"command":"/opt/ros/humble/lib/nav2_controller/controller_server --ros-args -r __node:=controller_server --params-file /home/matsunaga-h/robot_ws/install/nav_pkg/share/nav_pkg/config/nav2_par"},{"pid":51456,"name":"RViz","host_capacity_percent":2.7535860655737703,"one_core_percent":44.05737704918033,"cpu_core_equivalent":0.4405737704918033,"command":"rviz2 -d /home/matsunaga-h/robot_ws/rviz/nav2_navigation.rviz"},{"pid":51000,"name":"Health Monitor","host_capacity_percent":2.7023565573770494,"one_core_percent":43.23770491803279,"cpu_core_equivalent":0.4323770491803279,"command":"/usr/bin/python3 /home/matsunaga-h/robot_ws/install/robot_agent/lib/robot_agent/health_monitor --ros-args -r __node:=health_monitor"},{"pid":5549,"name":"code","host_capacity_percent":2.2925204918032787,"one_core_percent":36.68032786885246,"cpu_core_equivalent":0.3668032786885246,"command":"/usr/share/code/code --type=gpu-process --ozone-platform=x11 --crashpad-handler-pid=5530 --enable-crash-reporter=79c91a5c-25f0-43d4-8027-f275a9be75a4,no_channel --user-data-dir=/ho"},{"pid":50994,"name":"Agent","host_capacity_percent":2.1644467213114753,"one_core_percent":34.63114754098361,"cpu_core_equivalent":0.3463114754098361,"command":"/usr/bin/python3 /home/matsunaga-h/robot_ws/install/robot_agent/lib/robot_agent/agent_node --ros-args -r __node:=agent_node --params-file /tmp/launch_params_y3yx8pqa"},{"pid":50415,"name":"BLVD drive bridge","host_capacity_percent":2.0876024590163933,"one_core_percent":33.40163934426229,"cpu_core_equivalent":0.33401639344262296,"command":"/usr/bin/python3 /home/matsunaga-h/robot_ws/src/om_modbus_master_V201/om_modbus_master/sample/BLV_R/drive_motor.py"},{"pid":50409,"name":"Livox driver","host_capacity_percent":1.7674180327868851,"one_core_percent":28.278688524590162,"cpu_core_equivalent":0.2827868852459016,"command":"/home/matsunaga-h/robot_ws/install/livox_ros_driver2/lib/livox_ros_driver2/livox_ros_driver2_node --ros-args -r __node:=livox_lidar_publisher --params-file /tmp/launch_params_ts_ih"},{"pid":51187,"name":"ROS component container","host_capacity_percent":1.0758196721311475,"one_core_percent":17.21311475409836,"cpu_core_equivalent":0.1721311475409836,"command":"/opt/ros/humble/lib/rclcpp_components/component_container --ros-args -r __node:=depth_proc_container -r __ns:=/"}]}}</script>
+<script>
+(function(){"use strict";const S=JSON.parse(document.getElementById("snapshot").textContent);
+const JP={AVAILABLE:"利用可能",OK:"正常",OBSERVED:"取得済み",VERIFIED:"実機確認済み",ACTIVE:"稼働中",IDLE:"待機",RECOVERED:"復旧済み",SUPERVISED_ONLY:"監視運用のみ",REPORTED:"記録値",ESTIMATED:"推定",WARN:"警告",DEGRADED:"低下",UNKNOWN:"不明",NOT_INSTRUMENTED:"未計装",ERROR:"エラー",FAILED:"失敗",OFFLINE:"オフライン",BLOCKED:"ブロック",STALE:"期限切れ",BAD:"異常"};
+const C={
+H1:{s:["/drive/health_summary","/drive_odom","/steer_odom","/dynamixel/health_summary","実機銘板写真"],n:["物理非常停止は3台の BLVD DIN3 と実ボタンの A/B 確認結果です。","銘板識別と現在の通信状態を別の証拠として扱います。","RECOVERED は現在正常でもセッション中の過去エラーを保持します。"],l:[
+ ["/drive/health_summary","drive_motor.py が /om_response0 と /om_state0 の実 callback、応答数、timeout、error を集約。さらに FTDI USB-RS485 → om_modbusRTU_node → BLVD-KRD ID 1/2/3 の ID-share monitor を読む。電流/電圧は NET-ID 155/163/164、alarm は 64/65、DIN3 は Direct I/O 106 が下位情報源。"],
+ ["/dynamixel/health_summary","read_write_node が DYNAMIXEL SDK Protocol 2.0 TxRx で ID 11/12/13 を直接読む。下位情報は XH540-W270 control table の Hardware Error Status(70)、Present Current(126)、Present Input Voltage(144)、Present Temperature(146) と通信結果。2 Hz JSON はその集約。"],
+ ["実機銘板写真","BLVD-KRD / GFS5G30FR の機種・設置位置を人が確認した静的証拠。通信中の device identity read ではないため、live health とは分離する。"]]},
+H2:{s:["/robot_mode","/safety_status","/proc","/sys/class/hwmon"],n:["CPU・load・memory は表示専用です。","温度はカーネルが max/crit を公開した場合だけ判定します。","Health Dashboard は読み取り専用で運転ロジックを変更しません。"],l:[
+ ["/proc/stat","前回との差分から全論理 CPU の busy/idle 比率を計算。Total CPU 44% は16論理CPU全体に対する値で、1プロセスの1コア=100%表記とは分母が異なる。"],
+ ["/proc/loadavg","1/5/15分 load average。CPU使用率ではなく、実行待ち・割り込み不能タスク量の指標。16論理CPUとの比と時間変化を見る。"],
+ ["/proc/meminfo","MemTotal と MemAvailable から memory used を計算。単発値より、継続増加や available の減少を監視する。"],
+ ["/sys/class/thermal + /sys/class/hwmon","thermal_zone*/temp と temp*_input を読み、表示には最大値を使う。temp*_max / temp*_crit が存在する sensor だけ、その hardware/driver 公開閾値で判定。閾値がない sensor に独自基準を作らない。"],
+ ["プロセス CPU","/proc/[pid]/stat の約5秒差分。太字は1コア=100%、小字は全16論理CPU容量に換算。GICP、Modbus、Nav2、Health Monitor の継続的な上昇を確認する。"]]},
+H3:{s:["/cmd_vel_raw","/cmd_vel","/drive_odom","/steer_odom"],n:["安全ゲート前後と実フィードバックを分離します。","新鮮な値は追従精度の保証ではありません。","静止時のゼロ command は正常値です。"]},
+H4:{s:["/scan","RealSense /diagnostics","/livox/device_health","/agent/mission_state"],n:["/scan は派生データ経路、/livox/device_health は SDK2 の直接デバイス状態です。","この MID-360 SDK state では status_code は未提供です。欠落だけで低下判定しません。","認識 runtime は mission event がない時 IDLE です。"],l:[
+ ["/livox/device_health","既存 livox_ros_driver2 process 内の Livox SDK2 SetLivoxLidarInfoCallback が MID-360 の native state JSON を受信。driver は callback count と push age を付加し、点群とは別の小型 JSON を1 Hzで publish。別 SDK client や点群からの推定ではない。"],
+ ["RealSense /diagnostics","realsense2_camera driver が生成。color/depth frequency は実 frame ごとの FrequencyDiagnostics tick と設定 FPS から計算し、温度は librealsense sensor option が公開する ASIC/Projector 値を読む。image 内容を解析した値ではない。"],
+ ["/scan","MID-360 点群から pointcloud_to_laserscan が生成する派生 LaserScan。有限 range 数、受信 freshness、gap はデータ経路の証拠で、Livox native device diagnostic の代替ではない。"]]},
+H5:{s:["/gicp_loc/score","/gicp_loc/pose","/fast_lio/odometry"],n:["GICP score 合格は照合試行の自己整合性だけを意味します。","絶対位置の外部 ground truth は V1 では未計装です。","--no-fast-lio 時の FAST-LIO UNKNOWN は任意経路未使用を示します。"]},
+H6:{s:["Nav2 lifecycle GetState","/plan","local costmap"],n:["lifecycle active はノード状態を直接確認します。","active だけでは costmap 内容の更新までは証明しません。","full costmap 購読は Health Monitor の CPU 負荷削減のため除外しています。"]},
+H7:{s:["/agent/health_state","/agent/status","/agent/mission_state"],n:["heartbeat は Agent の構造化レポートで、ハードウェア直接値ではありません。","mission 前の status/mission IDLE は正常です。","Agent WARN は component 詳細と七域の直接証拠を分けて解釈します。"]}
+};
+const TAGS=[
+ ["緑：合格・有効",[["AVAILABLE","能力または診断 domain の必須依存証拠が揃っている。"],["OK","定義済みの判定ルールに合格した。"],["OBSERVED","新鮮な実測値を取得した。ただし健康閾値の合格まで意味しない場合がある。"],["VERIFIED","銘板写真や実機 A/B のように、人が一次証拠を確認済み。live telemetry とは限らない。"],["ACTIVE","lifecycle や処理状態が稼働中。"],["IDLE","現在イベントが期待されない待機状態。故障ではない。"]]],
+ ["黄：注意・制約",[["DEGRADED","利用可能だが gap、warning、推定などの劣化証拠がある。"],["ESTIMATED","直接位置などではなく計算・積算による推定。"],["REPORTED","文書や上位 report による値で、現在の直接観測ではない。"],["RECOVERED","現在は復旧したが、同一 session の過去エラーを保持。"],["SUPERVISED_ONLY","自動で十分に保証できず、人の監視下だけで扱う。"],["WARN","上位 component が注意を要求している。詳細原因を確認する。"]]],
+ ["赤：異常・使用不可",[["ERROR","直接 error または判定ルール上の異常。"],["FAILED","処理・skill・transaction が失敗。"],["OFFLINE","必要 node/device が接続されていない。"],["BLOCKED","依存条件により能力を実行できない。"],["STALE","値は残っているが freshness 上限を超え、現在値として信用できない。"],["BAD","異常系をまとめる互換 status。"]]],
+ ["灰：正常と断定不可",[["UNKNOWN","情報不足、未受信、または意味が確定していない。"],["NOT_INSTRUMENTED","信頼できる直接 source/interface がまだ実装されていない。"]]]
+];
+function e(v){return String(v==null?"":v).replace(/[&<>"']/g,function(x){return({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[x]})}
+function cl(s){s=String(s||"UNKNOWN").toLowerCase();if(["ok","available","observed","verified","active","idle"].includes(s))return"ok";if(["degraded","estimated","reported","recovered","supervised_only","warn"].includes(s))return"warn";if(["error","failed","offline","blocked","stale","bad"].includes(s))return"bad";return"unknown"}
+function b(s){return'<span class="health-status '+cl(s)+'">'+e(s)+' / '+e(JP[s]||"未定義")+'</span>'}
+function n(v,d){v=Number(v);return Number.isFinite(v)?v.toFixed(d==null?2:d):"—"}
+function m(l,v,q){return'<div class="quick-metric-box"><span>'+e(l)+'</span><strong>'+e(v)+'</strong>'+(q?'<small>'+e(q)+'</small>':'')+'</div>'}
+function shownSummary(i){if(i.id==="drive_health"){const v=i.value||{},errors=Number(v.driver_error_event_count||0),misses=Number(v.completion_deadline_miss_count||0);return errors===0&&misses===0?"この drive session では完了済み Modbus response が新鮮で、driver error と deadline miss は 0 件です。":"現在の通信状態と、同一 session 内に保持された過去エラーを併記しています。"}return i.summary}
+function lowerChain(c){if(!c.l||!c.l.length)return"";return'<section class="comment-box"><strong>summary topic の下位情報源</strong><div class="comment-chain">'+c.l.map(function(x){return'<div><code>'+e(x[0])+'</code><span>'+e(x[1])+'</span></div>'}).join("")+'</div></section>'}
+function tagGuide(){return'<section class="comment-box"><strong>状態 tag・色の意味</strong>'+TAGS.map(function(group){return'<div class="tag-group-title">'+e(group[0])+'</div><div class="tag-guide">'+group[1].map(function(x){return'<div class="tag-row">'+b(x[0])+'<span>'+e(x[1])+'</span></div>'}).join("")+'</div>'}).join("")+'</section>'}
+function findItem(id){for(const d of S.domains||[])for(const i of d.items||[])if(i.id===id)return i;return null}
+function host(){const h=S.host,p=h.top_processes||[];return'<section class="system-resource-strip"><div class="system-resource-head"><strong>ホスト負荷・温度</strong><small>直接取得: /proc・thermal/hwmon、約 '+n(h.process_cpu_window_sec,1)+' s window</small></div><div class="system-resource-summary">'+m("Total CPU",n(h.cpu_used_percent,1)+"%","全16論理CPU容量")+m("Load 1m / cores",n(h.load_average["1m"],2)+" / "+h.logical_cpu_count)+m("Memory used",n(h.memory_used_percent,1)+"%")+m("Max temperature",n(h.max_temperature_c,0)+" °C",h.temperature_limit_c?"kernel max "+h.temperature_limit_c+" °C":"kernel limit 未取得")+'</div><div class="process-cpu-list">'+p.map(function(x){return'<div><span>'+e(x.name)+'</span><strong>'+n(x.one_core_percent,1)+'%</strong><small>全体容量の約 '+n(x.host_capacity_percent,1)+'%</small></div>'}).join("")+'</div><p>太字は 1コア=100% 表記です。CPU/load は自動停止条件ではありません。詳細な情報源と確認ポイントは H2 の COMMENT / 補足を参照してください。</p></section>'}
+function special(i){const v=i.value||{};
+if(i.id==="drive_bus_voltage")return'<div class="drive-electrical-panel '+cl(i.status)+'"><div class="drive-electrical-grid">'+v.electrical_status.map(function(x){return'<section class="drive-axis-indicator"><div class="drive-axis-title"><strong>'+e(x.wheel_position)+'</strong><span>ID '+x.slave_id+'</span></div><div class="drive-reading-grid"><div><span>主電源</span><strong>'+n(x.main_power_supply_voltage_v,1)+' V</strong></div><div><span>インバータ</span><strong>'+n(x.inverter_voltage_v,1)+' V</strong></div><div><span>主電流</span><strong>'+n(x.main_power_supply_current_a,3)+' A</strong></div></div></section>'}).join("")+'</div><small>銘板定格 24–48 VDC・10.5 A。自動健康閾値ではありません。</small></div>';
+if(i.id==="lidar_device_status"){const d=v.devices[0],x=d.state;return'<div class="metric-band">'+m("動作状態","SAMPLING ("+x.cur_work_state+")","1=SAMPLING · 9=READY · 4=ERROR")+m("コア温度",n(x.core_temp/100,2)+" °C","raw "+x.core_temp)+m("Time sync","NONE ("+x.time_sync_type+")","外部時刻源なし")+m("Diagnostic","0x"+Number(x.lidar_diag_status).toString(16).padStart(4,"0"),"system/scan/ranging/comm")+m("HMS","CLEAR / なし",d.callback_count+" callbacks")+m("256-bit status","NOT EXPOSED / 未提供","この SDK state では任意")+'</div>'}
+if(i.id==="gicp_score"){const threshold=Number.isFinite(Number(v.acceptance_threshold))?Number(v.acceptance_threshold):0.25;return'<div class="metric-band">'+m("Inlier RMSE",n(v.inlier_rmse,4),"小さいほど良い")+m("受理閾値","≤ "+n(threshold,2),Number(v.inlier_rmse)<=threshold?"PASS":"REJECT")+'</div>'}
+if(i.id==="dynamixel_health")return'<div class="metric-band">'+v.motors.map(function(x){return m("ID "+x.id+" "+x.model_name,n(x.input_voltage_v,1)+" V / "+n(x.present_current_a,3)+" A",x.temperature_c+" °C · HW error 0x"+Number(x.hardware_error_status).toString(16).padStart(2,"0"))}).join("")+'</div>';
+if(i.id==="drive_alarm_status")return'<div class="metric-band">'+v.alarm_status.map(function(x){return m("ID "+x.slave_id+" "+x.wheel_position,"current 0x"+Number(x.present_alarm).toString(16).padStart(2,"0"),"history 0x"+Number(x.alarm_history_1).toString(16).padStart(2,"0"))}).join("")+'</div>';
+return""}
+function item(i){const na=i.evidence==="NOT_INSTRUMENTED"?"N/A · 未計装":(["PHYSICAL_INSPECTION_RECORD","DOCUMENTED_CONFIGURATION"].includes(i.evidence)?"N/A · static":"—");return'<article class="evidence-row"><div class="evidence-main"><div class="evidence-title"><strong>'+e(i.label)+'</strong>'+(i.critical?'<span class="critical-label">必須</span>':'')+b(i.status)+'</div><p>'+e(shownSummary(i))+'</p><div class="evidence-source"><span>情報源</span><code>'+e(i.source)+'</code><span class="evidence-kind">'+e(i.evidence)+'</span></div></div><dl class="evidence-metrics"><div><dt>受信 age</dt><dd>'+(i.receive_age_sec==null?na:n(i.receive_age_sec,2)+" s")+'</dd></div><div><dt>header age</dt><dd>'+(i.source_age_sec==null?na:n(i.source_age_sec,2)+" s")+'</dd></div><div><dt>Rate (5 s)</dt><dd>'+(i.rate==null?na:n(i.rate,2)+" Hz")+'</dd></div><div><dt>Snapshot</dt><dd>STATIC</dd></div></dl>'+special(i)+'<details class="evidence-details"><summary>値と判定ルール</summary><div class="rule-text"><strong>原文ルール</strong><span>'+e(i.standard)+'</span></div><pre>'+e(JSON.stringify(i.value,null,2))+'</pre></details></article>'}
+function comment(id){const c=C[id];document.getElementById("comments").innerHTML='<p class="eyebrow">COMMENT / 補足</p><h2>'+id+' の読み方</h2><section class="comment-box"><strong>直接・一次情報源</strong><ul>'+c.s.map(function(x){return"<li><code>"+e(x)+"</code></li>"}).join("")+'</ul></section>'+lowerChain(c)+'<section class="comment-box"><strong>判断時の注意</strong><ul>'+c.n.map(function(x){return"<li>"+e(x)+"</li>"}).join("")+'</ul></section>'+tagGuide()+'<section class="comment-box"><strong>snapshot の制約</strong><p>'+e(S.provenance.note_ja)+'</p><p>生成基準時刻: <code>'+e(S.generated_at)+'</code></p></section>'}
+function renderAgent(){const mode=findItem("delivery_robot_mode"),safety=findItem("delivery_safety"),heartbeat=findItem("agent_heartbeat"),pan=findItem("camera_pan"),tilt=findItem("camera_tilt"),lift=findItem("lift_position"),loc=heartbeat&&heartbeat.value&&heartbeat.value.components&&heartbeat.value.components.localization&&heartbeat.value.components.localization.details||{};document.getElementById("agent-health-cards").innerHTML=S.summaries.map(function(x){return'<div class="health-card '+cl(x.status)+'"><strong>'+e(x.title)+'</strong><span>'+e(JP[x.status]||x.status)+'</span><small>'+e(x.summary)+'</small></div>'}).join("");document.getElementById("agent-robot-state").innerHTML='<span>robot_mode</span><strong>AUTO <span class="demo-inline">DEMO</span></strong><span>safety</span><strong>'+e(safety&&safety.value||"UNKNOWN")+' <small>(実測)</small></strong><span>localization</span><strong>'+e(loc.localization_warning||"UNKNOWN")+' <small>(実測)</small></strong><span>drift_m</span><strong>'+n(loc.stationary_drift_m,3)+' <small>(実測)</small></strong><span>agent</span><strong>EXECUTING <span class="demo-inline">DEMO</span></strong><span>prompt</span><strong>go to sofa <span class="demo-inline">DEMO</span></strong><span>実測 mode</span><strong>'+e(mode&&mode.value||"UNKNOWN")+' <small>(snapshot 209)</small></strong>';document.getElementById("agent-mission-state").innerHTML='<div class="summary"><div class="summary-card"><strong>状態</strong><span>EXECUTE_STEP</span></div><div class="summary-card"><strong>コマンド</strong><span>go to sofa</span></div><div class="summary-card"><strong>意図</strong><span>goto_place → sofa</span></div><div class="summary-card"><strong>結果</strong><span>実行中</span></div></div><div class="intent-route"><div class="intent-route-head"><span>INTENT ROUTING</span><span>active <span class="demo-inline">DEMO</span></span></div><div class="route-steps"><b>Deterministic</b><span>→</span><span>Embedding</span><span>→</span><span>LLM fallback</span></div><p class="static-action-note">Deterministic route で goto_place / sofa として解釈した想定です。</p></div><h3>エージェント</h3><div class="block-grid"><div class="block done"><div class="block-title"><span>Mission Agent</span><span>done</span></div><div class="block-meta">command routing</div></div><div class="block active"><div class="block-title"><span>Navigation Agent</span><span>active</span></div><div class="block-meta">Nav2 goal execution</div></div><div class="block waiting"><div class="block-title"><span>Health / Recovery Agent</span><span>idle</span></div><div class="block-meta">recovery request なし</div></div><div class="block waiting"><div class="block-title"><span>Perception Agent</span><span>idle</span></div><div class="block-meta">今回の task では未使用</div></div></div><h3>スキル実行計画 <span class="demo-inline">DEMO</span></h3><div class="block done"><div class="block-title"><span>1. resolve_semantic_target</span><span>done</span></div><div class="block-detail">target name “sofa” を既知地点として解決</div></div><div class="block active"><div class="block-title"><span>2. goto_pose</span><span>active</span></div><div class="block-detail">Nav2 goal active・feedback 受信中という想定</div></div><div class="block waiting"><div class="block-title"><span>3. await_robot_stationary</span><span>waiting</span></div><div class="block-detail">到着後の停止確認待ち</div></div><details><summary>仮想 mission JSON</summary><pre>'+e(JSON.stringify({demo:true,state:"EXECUTE_STEP",command:"go to sofa",intent:{task:"goto_place",target:"sofa",route:"deterministic"},active_skill:"goto_pose",result:"running"},null,2))+'</pre></details>';document.getElementById("agent-events").innerHTML=[["T+00.0 s","command_received","go to sofa"],["T+00.1 s","intent_parsed","goto_place / sofa"],["T+00.2 s","skill_started","resolve_semantic_target"],["T+00.4 s","skill_started","goto_pose"],["T+08.0 s","navigation_progress","Nav2 feedback received"]].map(function(x){return'<article class="event"><div class="event-title"><span>'+e(x[1])+'</span><span>'+e(x[0])+'</span></div><div class="block-detail">'+e(x[2])+' <span class="demo-inline">DEMO</span></div></article>'}).join("");document.getElementById("demo-pan").textContent=n(pan&&pan.value&&pan.value.angle_deg,1);document.getElementById("demo-tilt").textContent=n(tilt&&tilt.value&&tilt.value.angle_deg,1);document.getElementById("demo-lift").textContent=n(lift&&lift.value&&lift.value.motion&&lift.value.motion.estimated_position_mm,1);document.querySelectorAll("[data-static-action]").forEach(function(x){x.addEventListener("click",function(ev){ev.preventDefault();const s=document.getElementById("static-action-status");s.textContent="STATIC：『"+x.textContent.trim()+"』は表示のみです。ROS command は送信していません。";s.classList.add("active")})});document.querySelector(".control-source-switch").addEventListener("click",function(ev){ev.preventDefault();const s=document.getElementById("static-action-status");s.textContent="STATIC：Dashboard control は OFF のままです。WebSocket / ROS には接続していません。";s.classList.add("active")})}
+function showPage(name){const agent=name==="agent",title=document.getElementById("page-title");document.getElementById("agent-static-page").hidden=!agent;document.getElementById("health-static-page").hidden=agent;document.getElementById("agent-tab").classList.toggle("active",agent);document.getElementById("health-tab").classList.toggle("active",!agent);document.getElementById("brand-name").textContent=agent?"Robot Harness Agent Dashboard":"Robot Harness";document.getElementById("brand-separator").hidden=agent;title.hidden=agent;title.textContent="Health Dashboard V1";if(agent)location.hash="agent"}
+function select(id){const d=S.domains.find(function(x){return x.id===id})||S.domains[0];window.selectedDomainId=d.id;document.querySelectorAll("#nav button").forEach(function(x){x.classList.toggle("active",x.dataset.id===d.id)});document.getElementById("detail").innerHTML='<div class="domain-detail-head"><div><span>'+d.id+'</span><h2>'+e(d.title)+'</h2><p>'+e(d.summary)+'</p></div>'+b(d.status)+'</div><div class="evidence-list">'+d.items.map(item).join("")+'</div>';comment(d.id);location.hash=d.id}
+document.getElementById("meta").innerHTML='<div><dt>Sequence</dt><dd>'+S.sequence+'</dd></div><div><dt>生成時刻 (JST)</dt><dd>'+new Date(S.generated_at).toLocaleString("ja-JP",{timeZone:"Asia/Tokyo"})+'</dd></div><div><dt>データ種別</dt><dd>STATIC</dd></div>';
+document.getElementById("summaries").innerHTML=S.summaries.map(function(x){return'<button class="health-card health-summary-card '+cl(x.status)+'"><strong><span>'+e(x.title)+'</span><span>'+x.status+'</span></strong><span>'+e(JP[x.status])+'</span><small>'+e(x.summary)+'</small></button>'}).join("");
+document.getElementById("caps").innerHTML=S.capabilities.map(function(x){return'<div class="capability-card '+cl(x.status)+'"><div><strong>'+e(x.title)+'</strong>'+b(x.status)+'</div><p>'+e(x.summary)+'</p>'+(x.blocked_by?'<small>理由: '+e(x.blocked_by)+'</small>':'')+'</div>'}).join("");
+document.getElementById("host").innerHTML=host();document.getElementById("raw").textContent=JSON.stringify(S,null,2);
+document.getElementById("nav").innerHTML=S.domains.map(function(x){return'<button data-id="'+x.id+'"><span>'+x.id+'</span><strong>'+e(x.title)+'</strong>'+b(x.status)+'</button>'}).join("");
+document.querySelectorAll("#nav button").forEach(function(x){x.onclick=function(){showPage("health");select(x.dataset.id)}});
+document.getElementById("agent-tab").onclick=function(event){event.preventDefault();showPage("agent")};
+document.getElementById("health-tab").onclick=function(event){event.preventDefault();showPage("health");select(window.selectedDomainId||"H1")};
+renderAgent();if((location.hash||"").toLowerCase()==="#agent")showPage("agent");else{showPage("health");select((location.hash||"#H1").slice(1).toUpperCase())}
+})();
+</script>
+</body></html>

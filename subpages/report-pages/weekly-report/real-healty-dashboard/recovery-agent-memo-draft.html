@@ -1,0 +1,493 @@
+<title>Recovery Agent 分层备忘</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f3ec;
+  --surface:#ffffff;
+  --surface-2:#edeade;
+  --ink:#242319;
+  --ink-dim:#5f5c4e;
+  --line:#ddd8c8;
+  --line-strong:#c9c3ac;
+  --accent:#2f6f82;
+  --accent-ink:#1c4a58;
+  --accent-bg:#e4eff0;
+  --ok:#3f7d4a;
+  --ok-bg:#e6efe2;
+  --warn:#a8711f;
+  --warn-bg:#f4e9d4;
+  --crit:#a13e2f;
+  --crit-bg:#f3e0da;
+  --mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+  --serif:'Noto Serif SC','Source Han Serif SC','Songti SC',serif;
+  --sans:'Noto Sans SC','Source Han Sans SC','Hiragino Sans GB',sans-serif;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#191a15;
+    --surface:#212219;
+    --surface-2:#292a20;
+    --ink:#eae6d8;
+    --ink-dim:#a9a58f;
+    --line:#3a3b2e;
+    --line-strong:#4c4d3d;
+    --accent:#7fb8c9;
+    --accent-ink:#bfe0e9;
+    --accent-bg:#213338;
+    --ok:#8ec394;
+    --ok-bg:#213325;
+    --warn:#d9a85a;
+    --warn-bg:#3a2f1a;
+    --crit:#e08a76;
+    --crit-bg:#3a2420;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#191a15;
+  --surface:#212219;
+  --surface-2:#292a20;
+  --ink:#eae6d8;
+  --ink-dim:#a9a58f;
+  --line:#3a3b2e;
+  --line-strong:#4c4d3d;
+  --accent:#7fb8c9;
+  --accent-ink:#bfe0e9;
+  --accent-bg:#213338;
+  --ok:#8ec394;
+  --ok-bg:#213325;
+  --warn:#d9a85a;
+  --warn-bg:#3a2f1a;
+  --crit:#e08a76;
+  --crit-bg:#3a2420;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  line-height:1.85;
+  font-size:16px;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--accent-bg);color:var(--accent-ink)}
+a{color:var(--accent-ink);text-decoration-color:var(--line-strong);text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.wrap{max-width:760px;margin:0 auto;padding:64px 24px 120px}
+
+header.doc-head{margin-bottom:56px}
+.eyebrow{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink-dim);display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap;
+}
+.eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--accent)}
+h1{
+  font-family:var(--serif);font-weight:700;font-size:clamp(28px,4.2vw,40px);
+  line-height:1.35;text-wrap:balance;color:var(--ink);margin-bottom:14px;
+}
+.doc-sub{color:var(--ink-dim);font-size:15px;max-width:58ch;line-height:1.8}
+.doc-sub b{color:var(--ink);font-weight:600}
+
+.badge{
+  display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);
+  font-size:10.5px;font-weight:600;letter-spacing:.04em;padding:2px 9px;border-radius:99px;
+  white-space:nowrap;line-height:1.6;
+}
+.badge.confirmed{background:var(--ok-bg);color:var(--ok)}
+.badge.proposed{background:var(--accent-bg);color:var(--accent-ink)}
+.badge.open{background:var(--warn-bg);color:var(--warn)}
+.badge.gap{background:var(--crit-bg);color:var(--crit)}
+
+.legend{
+  display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12.5px;color:var(--ink-dim);
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  padding:14px 0;margin:0 0 48px;
+}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+
+section.sec{margin-bottom:54px}
+.sec-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.sec-num{font-family:var(--mono);font-size:13px;color:var(--ink-dim);flex-shrink:0}
+.sec-head h2{font-family:var(--serif);font-weight:700;font-size:22px;color:var(--ink)}
+.sec-en{font-family:var(--mono);font-size:11px;color:var(--ink-dim);letter-spacing:.03em;margin:2px 0 18px 0}
+.sec-body{font-size:15px;color:var(--ink)}
+.sec-body p{margin-bottom:13px;max-width:64ch}
+.sec-body p.tight{margin-bottom:8px}
+.sec-body ul,.sec-body ol{padding-left:22px;margin:10px 0 16px;max-width:64ch}
+.sec-body li{margin-bottom:7px}
+.sec-body strong{font-weight:700;color:var(--ink)}
+
+.callout{
+  border-left:3px solid var(--accent);background:var(--surface);
+  border-radius:0 var(--r) var(--r) 0;padding:14px 18px;margin:14px 0 18px;font-size:14px;
+}
+.callout.warn{border-color:var(--warn)}
+.callout.gap{border-color:var(--crit)}
+.callout-tag{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:5px;display:block}
+
+.tbl-wrap{overflow-x:auto;margin:16px 0 22px;border:1px solid var(--line);border-radius:var(--r)}
+table{width:100%;border-collapse:collapse;font-size:13.3px;background:var(--surface)}
+th{
+  font-family:var(--mono);font-weight:600;font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--ink-dim);background:var(--surface-2);text-align:left;padding:10px 13px;border-bottom:1px solid var(--line);
+  white-space:nowrap;
+}
+td{padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink)}
+tr:last-child td{border-bottom:none}
+td code,.sec-body code{font-family:var(--mono);font-size:12px;background:var(--surface-2);padding:1px 5px;border-radius:4px;color:var(--accent-ink)}
+
+.opts{display:flex;flex-direction:column;gap:12px;margin:16px 0 20px}
+.opt{border:1px solid var(--line);border-radius:var(--r);padding:14px 18px;background:var(--surface)}
+.opt.rec{border-color:var(--ok);background:var(--ok-bg)}
+.opt-head{display:flex;align-items:center;gap:10px;font-weight:700;font-size:14.5px;margin-bottom:6px;flex-wrap:wrap}
+.opt-head .k{font-family:var(--mono);font-size:11px;color:var(--ink-dim);font-weight:600}
+.opt-head .rec-pill{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.04em;color:var(--ok);background:var(--surface);border:1px solid var(--ok);padding:1px 8px;border-radius:99px}
+.opt p{font-size:13.6px;color:var(--ink-dim);max-width:none}
+
+.qlist{list-style:none;display:flex;flex-direction:column;gap:14px;margin:14px 0 8px}
+.qlist li{border:1px solid var(--line);border-radius:var(--r);padding:13px 17px;background:var(--surface);font-size:14px}
+.qlist li b{display:block;color:var(--ink);margin-bottom:4px}
+.qlist li span{color:var(--ink-dim);font-size:13.3px}
+
+.case{border:1px solid var(--line);border-radius:var(--r);padding:18px 22px;margin:0 0 18px;background:var(--surface)}
+.case .tagrow{display:flex;gap:7px;margin-bottom:11px;flex-wrap:wrap}
+.case .tagrow span{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.02em;padding:2px 9px;border-radius:99px;background:var(--surface-2);color:var(--ink-dim)}
+.case .tagrow span.real{background:var(--ok-bg);color:var(--ok)}
+.case .tagrow span.illus{background:var(--warn-bg);color:var(--warn)}
+.case h3{font-family:var(--serif);font-weight:700;font-size:16.5px;margin-bottom:12px;color:var(--ink);text-wrap:balance}
+.case dl{display:grid;grid-template-columns:96px 1fr;gap:9px 14px;font-size:13.6px}
+.case dt{font-family:var(--mono);font-size:10px;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-dim);padding-top:2px}
+.case dd{color:var(--ink);line-height:1.75}
+.case dd b{font-weight:700}
+@media (max-width:560px){
+  .case dl{grid-template-columns:1fr}
+  .case dt{padding-top:8px}
+}
+
+.compare-wrap{overflow-x:auto;margin:18px 0 10px;border:1px solid var(--line);border-radius:var(--r)}
+table.compare{width:100%;border-collapse:collapse;font-size:13.2px;background:var(--surface)}
+table.compare th{font-family:var(--mono);font-weight:600;font-size:10px;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-dim);background:var(--surface-2);text-align:left;padding:10px 14px;border-bottom:1px solid var(--line)}
+table.compare td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+table.compare tr:last-child td{border-bottom:none}
+table.compare td.before{color:var(--ink-dim)}
+table.compare td.after{color:var(--ink);font-weight:500}
+table.compare td.dim{font-family:var(--mono);font-size:11px;color:var(--ink-dim);white-space:nowrap}
+
+.divider{height:1px;background:var(--line);margin:0 0 54px}
+
+footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-dim);font-family:var(--mono)}
+
+@media (max-width:600px){
+  .wrap{padding:44px 18px 90px}
+  th,td{padding:8px 10px}
+}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+<div class="wrap">
+
+  <header class="doc-head">
+    <div class="eyebrow"><span class="dot"></span>WORKING NOTES · robot_ws / real lab · 2026-08-26</div>
+    <h1>Recovery Agent 分层备忘</h1>
+    <p class="doc-sub">在 <b>Health Dashboard V1</b>（七診断ドメイン + 三層サマリー）已经上线的基础上，整理「下层实时恢复」与「上层长期分析」两个 Agent 的具体设计思路，并回答「上下层怎么连」这个还没想清楚的问题。带 <span class="badge open" style="vertical-align:1px">待确认</span> 标记的地方是需要你继续调查或做决定的。</p>
+  </header>
+
+  <div class="legend">
+    <span><span class="badge confirmed">已确认</span>来自现有报告 / dashboard 数据</span>
+    <span><span class="badge proposed">建议</span>这次讨论新提出的综合方案</span>
+    <span><span class="badge open">待确认</span>需要你调查或拍板</span>
+    <span><span class="badge gap">缺口</span>现状里明确缺失的能力</span>
+  </div>
+
+  <!-- 0 -->
+  <section class="sec">
+    <div class="sec-head"><span class="sec-num">00</span><h2>定位：两层各管什么</h2><span class="badge confirmed">已确认</span></div>
+    <div class="sec-en">SCOPE — WHAT EACH LAYER OWNS</div>
+    <div class="sec-body">
+      <p>沿用你原来那张架构图的三条基本原则，Recovery Agent 不是一个新系统，而是给已有的「上层 Agent（Thinking Model，非实时）／下层 Agent（~3B，实时）」架构装上「自愈」这一项能力：</p>
+      <ul>
+        <li><b>下层 Recovery：</b>秒～分钟级。roscore/driver 卡死、传感器接触不良、通信丢帧这类<strong>当场能查、当场能修</strong>的问题，检测和处置都要标准化成 Skill，不临场发挥。</li>
+        <li><b>上层 Recovery：</b>小时～周级。看的不是单次故障，而是「这一趟任务的日志里，有没有说明系统本身缺了什么」——你举的掉电例子就是典型：不是去修那次掉电，而是去问「为什么我们连掉电这件事都没能力发现」。</li>
+      </ul>
+      <p class="tight">换句话说：下层解决「已知问题」，上层负责发现「未知的未知」（有没有该测但没测的东西）。这个分工也决定了下面第 3 节「怎么连」的答案——两者本来就不该用同一套节奏通信。</p>
+    </div>
+  </section>
+
+  <!-- 1 -->
+  <section class="sec">
+    <div class="sec-head"><span class="sec-num">01</span><h2>现状盘点：已经有的地基</h2><span class="badge confirmed">已确认</span></div>
+    <div class="sec-en">CURRENT STATE — WHAT V1 ALREADY GIVES YOU</div>
+    <div class="sec-body">
+      <p>这部分是从 <code>real-healty-dashboard-ja.html</code> 和 <code>health-dashboard-demo.html</code> 的快照 JSON 里核对过的，不是我猜的：</p>
+      <ul>
+        <li><code>/health_monitor</code> 节点，<strong>read-only</strong> 模式，5&nbsp;Hz 采样、1&nbsp;Hz 发布，<code>truth_policy = unknown_is_not_ok</code>——这条策略本身已经很适合当 Recovery Agent 的判断基础：没被证明是好的，就当作不是好的，不会因为「没数据」而误判为正常。</li>
+        <li><strong>七个诊断域</strong>（H1 物理/设备/驱动、H2 ROS/平台分发、H3 指令/运动、H4 传感/感知、H5 定位、H6 导航、H7 Agent/任务），每个 item 有 <code>OK / OBSERVED / ESTIMATED / VERIFIED / IDLE / UNKNOWN / NOT_INSTRUMENTED</code> 等证据状态，外加三层汇总 A1–A3 和按依赖关系收口的 <code>capabilities</code>（如 <code>manual_drive</code> / <code>auto_navigation</code> 各自列明依赖哪些 item）。</li>
+        <li>这次上线过程里<strong>已经实测修复过</strong>的 9 类真实故障：CPU 持续高温、Joy-Con 与虚拟操作抢路由、Dashboard 操作权判定错误、Modbus 指令与状态读取抢通信、ROS 延迟被误判为断线、异常恢复后状态没清干净、重复启动残留旧进程、Dashboard 直接订阅高频传感器数据、日志高频写入拖垮 CPU/磁盘。</li>
+        <li>你自己已经写好的路线图 <strong>M1–M4</strong>（见下方第 6 节），以及第一个 demo 目标：<strong>Motor Driver 通信异常（检测→安全停止→重启→验证→恢复）</strong>。</li>
+      </ul>
+      <div class="callout">
+        <span class="callout-tag">为什么值得先说这段</span>
+        这份现状本身就是下层 Recovery Agent 最好的原材料——七诊断域的证据状态机 + 已经踩过的 9 个坑，等于已经把「要检测什么」的清单写了大半，第 2 节直接在这个基础上补「查到之后怎么办」。
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="sec">
+    <div class="sec-head"><span class="sec-num">02</span><h2>下层 Recovery Agent：症状 → 检查 → 处置</h2><span class="badge proposed">建议</span></div>
+    <div class="sec-en">LOWER AGENT — DETERMINISTIC RUNBOOK</div>
+    <div class="sec-body">
+      <p>你的思路是对的：下层要的是「快速实时检测 + 对应操作」的汇总表，而不是让下层临场推理。下面把已经踩过的 9 个坑，按你 M2/M3 的分级整理成一张可以直接拿去当 Recovery Skill 清单雏形的表——<strong>已修复的坑，正好是风险最低、最该第一批自动化的坑</strong>，因为原因和解法都已经验证过一次。</p>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>症状（来自哪个诊断项）</th><th>自动检查</th><th>处置 Skill</th><th>升级条件</th></tr>
+          <tr><td>驱动通信中断<br><span style="color:var(--ink-dim)">drive_health / drive_alarm_status</span></td><td>present alarm、DIN3、bus voltage 复核</td><td><code>restart_driver_link</code>：软锁 estop → 重连通信 → 重读健康值</td><td>3 次内未恢复 → 转 M3 人工确认</td></tr>
+          <tr><td>节点重复/残留进程</td><td>PID / node 注册重复检测</td><td><code>kill_stale_node</code>：清理旧进程后重新拉起</td><td>清理后仍冲突 → 升级</td></tr>
+          <tr><td>传感器 topic 掉帧/离线<br><span style="color:var(--ink-dim)">camera_*_diagnostics / lidar_device_status</span></td><td>频率骤降或诊断聚合报警</td><td><code>reconnect_sensor</code>：driver 重启/端口重枚举，校验 Hz 恢复</td><td>重连 2 次无效 → 升级</td></tr>
+          <tr><td>CPU 过热逼近临界<br><span style="color:var(--ink-dim)">host_resources.max_temperature_c</span></td><td>阈值 + 变化率</td><td><code>throttle_workload</code>：降采样/停非关键节点/日志降频</td><td>持续升温 → 限速或中止任务</td></tr>
+          <tr><td>操作权限仲裁错误<br><span style="color:var(--ink-dim)">joy_source_authority</span></td><td>仲裁状态与实际输入源比对</td><td><code>reset_authority_arbiter</code></td><td>反复抖动 → 升级</td></tr>
+        </table>
+      </div>
+      <p class="tight">三条建议，都是为了不让下层"手滑"：</p>
+      <ul>
+        <li><strong>Recovery Skill 和 <code>goto_pose</code> 是同一类东西</strong>——放进架构图的 L2 Skill Layer，要有明确的前置条件和执行后校验，不是脚本堆砌。这样上层以后想"扩充能力"时，走的也是图里已经画好的「能力扩张」路径。</li>
+        <li><strong>下层只能从这张清单里选，不能自由重启/改代码</strong>——这条是你自己在报告里已经写的原则，值得在实现时真正当成硬约束（比如 Skill 注册表是只读配置，不是下层能临时生成的）。</li>
+        <li><strong>连续 N 次异常才触发，不是单次</strong>——你们已经踩过「ROS 延迟被误判成断线」这个坑，说明检测本身需要去抖动/二次确认，这条要写进每个 Skill 的触发条件里，而不是只修一次特例。</li>
+      </ul>
+      <div class="callout">
+        <span class="callout-tag">给上层的原材料</span>
+        无论恢复成功还是失败，每次触发都要写结构化日志——成功的恢复本身也是信号（比如同一个 Skill 一周触发 20 次，说明该修根本原因了）。这条日志正是第 3 节上层 Agent 要读的东西，所以下面这条建议实际上要在 M2 开工时就定下来，见第 6 节的 M0.5。
+      </div>
+    </div>
+  </section>
+
+  <!-- 2b -->
+  <section class="sec">
+    <div class="sec-head"><span class="sec-num">02b</span><h2>下层案例集：具体到"哪个电机坏了"</h2><span class="badge proposed">建议 · 1 例已验证</span></div>
+    <div class="sec-en">CASE FILES — ONE PART FROM THE ROBOT, ONE FAILURE, ONE FIX</div>
+    <div class="sec-body">
+      <p>把上面的表格拆回一个个具体场景。每个案例都写清楚：<b>过去没有下层 Agent 时人要怎么发现和处理</b>，跟<b>现在下层 Agent 怎么处理</b>，两者的差别就是这套东西的价值所在。除了案例 4（CPU 过热）是这次上线过程里真实发生并已验证的，其余是基于已知硬件（BLVD-KRD 驱动器、Dynamixel 云台、MID-360 雷达）设计的典型场景，用来说明方法本身怎么落地。</p>
+
+      <div class="case">
+        <div class="tagrow"><span>H1 · drive_health</span><span>BLVD-KRD Modbus</span><span class="illus">场景示例</span></div>
+        <h3>案例 1 — 后轮驱动器（ID=1）Modbus 通信突然无响应</h3>
+        <dl>
+          <dt>场景</dt><dd>任务执行中，负责后轮的驱动器（ID=1）突然停止响应 Modbus 轮询——常见原因是接线端子松动或总线瞬时电压跌落，不是驱动器真的坏了。</dd>
+          <dt>过去会怎样</dt><dd>操作员靠"车子拖着走"或直接卡住才察觉异常，然后要么现场断电重启整套电控，要么远程登录一台台驱动器排查是哪个 ID 掉线——<b>从"感觉不对"到"确认是 ID=1 的问题"，通常要人到场花几分钟到十几分钟</b>，而且如果只是通信抖了一下，整机重启是杀鸡用牛刀。</dd>
+          <dt>下层怎么处理</dt><dd>drive_health 连续 3 次读到 <code>NO_RESPONSE</code> 才触发（去抖，不因为一次抖动就动作）→ 软锁 estop 防止单侧驱动继续偏摆 → 只对 ID=1 这一路执行 <code>restart_driver_link</code> 重连 Modbus → 重读 present alarm/DIN3 确认恢复后解锁。</dd>
+          <dt>效果对比</dt><dd>通信抖动这类最常见的情况可以在<b>秒级内自动闭环</b>，操作员全程不需要在场；就算 3 次都没恢复，升级给人时也已经附上"是 ID=1、什么错误码"的结论，人不用从零排查。</dd>
+        </dl>
+      </div>
+
+      <div class="case">
+        <div class="tagrow"><span>H1 · dynamixel_health</span><span>云台伺服</span><span class="illus">场景示例</span></div>
+        <h3>案例 2 — 相机云台伺服（ID=11）HW error，卡在固定角度</h3>
+        <dl>
+          <dt>场景</dt><dd>云台伺服因瞬时过载或温度报 <code>HW error=1</code>，摄像头卡住不再跟随指令转动。</dd>
+          <dt>过去会怎样</dt><dd>这类问题最容易被<b>误诊断方向</b>——因为表现出来的是"感知好像没看到东西/画面固定不动"，工程师第一反应往往是去查感知算法或标定，很久之后才想到去看伺服本身的硬件状态。</dd>
+          <dt>下层怎么处理</dt><dd>dynamixel_health 一检测到 HW error 位，直接判定为硬件层问题（不进入感知排查分支）→ 清 alarm 寄存器 → 复位到安全角度 → 重读 HW error 确认清零。</dd>
+          <dt>效果对比</dt><dd>把"本该几秒钟解决、却容易被错误分类到感知问题、可能耗费半天排查方向"的情况，在报错的那一刻就正确归类并处理掉。</dd>
+        </dl>
+      </div>
+
+      <div class="case">
+        <div class="tagrow"><span>H4 · camera / lidar diagnostics</span><span class="illus">场景示例</span></div>
+        <h3>案例 3 — 摄像头掉帧到个位数 Hz，未崩溃但数据变差</h3>
+        <dl>
+          <dt>场景</dt><dd><code>camera_color_diagnostics</code> 从 30&nbsp;Hz 掉到个位数，或 <code>lidar_device_status</code> 报 HMS 告警——程序不崩溃，只是数据质量在下降。</dd>
+          <dt>过去会怎样</dt><dd>因为不崩溃，这类问题通常要等<b>下游先出问题</b>才被注意到——比如导航突然"变笨"或 GICP 定位分数恶化，这时候已经用坏数据做过一段决策了，才会回头追溯到是传感器掉帧。</dd>
+          <dt>下层怎么处理</dt><dd><code>reconnect_sensor</code> 触发 driver 重启/端口重枚举；同时因为 <code>auto_navigation</code> 这个 capability 本身就声明依赖该传感器数据，恢复完成前可以先把它降级为 supervised-only，阻断坏数据继续往下游传播。</dd>
+          <dt>效果对比</dt><dd>从"下游出问题才倒查回传感器"变成"传感器一掉帧就在源头处理、同时阻断传播"——这正是七诊断域里已经画好的 <code>capabilities</code> 依赖关系图真正该被用起来的地方。</dd>
+        </dl>
+      </div>
+
+      <div class="case">
+        <div class="tagrow"><span>host_resources</span><span class="real">✓ 真实已验证案例</span></div>
+        <h3>案例 4 — CPU 持续高温（95℃ 附近，逼近 100℃ 临界）</h3>
+        <dl>
+          <dt>场景</dt><dd>这是唯一一个<b>已经真实发生并被人工修复过</b>的案例：这次导入 Dashboard 时发现 CPU package 温度长期维持在 95℃ 附近，原因是高频数据订阅和逐条日志写入占满了 CPU/磁盘。人工去掉这些不必要负载后，最新实测降到 80℃ 左右。</dd>
+          <dt>过去会怎样</dt><dd>这种"温水煮青蛙"式的问题<b>是靠人在做别的事（上线 Dashboard）时顺手发现的</b>——如果不是正好在这个时间点有人盯着系统看，这个问题可能会一直持续到触发硬件降频保护，甚至加速硬件老化。</dd>
+          <dt>下层怎么接管</dt><dd>把这次人工诊断的动作标准化成 <code>throttle_workload</code> Skill：<code>host_resources.max_temperature_c</code> 超过预设阈值时自动降采样、暂停非关键节点、把日志降频——不再需要"正好有人顺手发现"。</dd>
+          <dt>效果对比</dt><dd>从"偶然被发现才修一次"变成"每次逼近阈值都自动处理"——<b>这就是有没有下层 Recovery Agent 的本质区别：同一个已知问题，是变成一次性修复，还是变成常态化的保护机制。</b></dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="sec">
+    <div class="sec-head"><span class="sec-num">03</span><h2>上层 Recovery Agent：日志与反思循环</h2><span class="badge proposed">建议</span></div>
+    <div class="sec-en">UPPER AGENT — OFFLINE REFLECTION LOOP</div>
+    <div class="sec-body">
+      <p>你举的例子非常准："出去一趟，回来发现日志里有掉电"，上层该想的不是"这次怎么办"，而是"我们的监测里是不是该有 battery check"。这本质上是一个离线的、基于日志的差距分析（gap analysis），和 SRE 的事后复盘（postmortem）、经典自适应系统里的 <strong>MAPE-K 循环</strong>（Monitor–Analyze–Plan–Execute，围绕一份共享 Knowledge 运转）是同一类结构：下层对应 Monitor+Execute（实时），上层对应 Analyze+Plan（可以慢，但要有干净的历史数据可读）。</p>
+
+      <div class="callout gap">
+        <span class="callout-tag">缺口 · 用你自己的例子验证</span>
+        对照现有 7 个诊断域，<strong>确实没有"电源/电池"这个专项</strong>——H1 里的 <code>drive_bus_voltage</code> 是驱动器总线电压，不是电池 SOC/电量。也就是说，你的直觉是对的：现状 schema 里就是缺这一项，这不是假设，是可以直接对着现有数据核实的结论。
+      </div>
+
+      <p><strong>要让上层"能想"，日志系统需要从"广播快照"升级成"可回溯的任务记录"：</strong></p>
+      <ul>
+        <li><strong>任务/episode 记录</strong>：每次任务一条，含开始/结束时间、模式、途中各诊断域的<em>状态迁移事件</em>（什么时候从 OK 变异常、什么时候恢复——而不是存全量快照）、触发过哪些 Recovery Skill 及结果、人工介入次数、任务最终结果。</li>
+        <li><strong>复用现有证据词汇</strong>：新事件继续用 <code>OK/OBSERVED/ESTIMATED/UNKNOWN</code> 这套状态语言，不要为日志另造一套，上层处理起来才统一。</li>
+        <li><strong>环境量的关键拐点</strong>：温度、（未来的）电压曲线不需要全量存，抓拐点即可，但要先有"能测"这个前提——这一条本身就是第 5 节"待确认"清单里的第一条。</li>
+      </ul>
+
+      <p><strong>上层的工作节奏，建议两档，都不是实时：</strong></p>
+      <ul>
+        <li>任务结束时触发一次「单次复盘」；</li>
+        <li>每日/每周跑一次「趋势复盘」，才谈得上"哪类异常最频繁""哪类异常有解法但没检测"。</li>
+      </ul>
+      <p class="tight">产出不是直接改配置，而是<strong>结构化提案</strong>——"建议新增 H1: battery_voltage 监测项"、"建议新增 Skill: safe_return_on_low_power"——进人工确认队列。这和你自己"权限逐步放开"的原则是一致的：上层一开始也只有建议权，没有改配置权。</p>
+    </div>
+  </section>
+
+  <!-- 3b -->
+  <section class="sec">
+    <div class="sec-head"><span class="sec-num">03b</span><h2>上层能分析什么：4 个具体例子</h2><span class="badge proposed">建议 · 3 例基于真实 snapshot</span></div>
+    <div class="sec-en">CASE FILES — WHAT THE UPPER AGENT ACTUALLY LOOKS AT</div>
+    <div class="sec-body">
+      <p>你的理解是对的：上层的好处是"减少人的工作、让系统能自己变得更完善"。但这句话太抽象，下面 4 个例子里，<b>后三个不是我假设的，是我对着你现在的 <code>health-dashboard-demo.html</code> snapshot JSON 核实过的真实数据</b>——也就是说，就算上层 Agent 还没做出来，这些"待补的能力"今天就已经客观存在于你的系统里了，只是没人把它们汇总成一份有优先级、有证据支撑的报告。</p>
+
+      <div class="case">
+        <div class="tagrow"><span>电源 / 电池</span><span class="illus">你提出的例子</span></div>
+        <h3>例 1 — 掉电事件之后，反推"该测什么"而不是"这次怎么办"</h3>
+        <dl>
+          <dt>场景</dt><dd>机器人出去执行一次任务，中途意外掉电，回来后你翻日志才注意到。</dd>
+          <dt>没有上层时</dt><dd>这次教训停留在你脑子里，能不能变成"下次系统里加一项电池监测"这个决定，取决于你之后有没有正好想起来、正好有空去写——<b>大概率会被下一周更紧急的事情挤掉。</b></dd>
+          <dt>上层怎么分析</dt><dd>复盘这次任务日志时，发现"任务在 T 时刻异常终止，但七个诊断域里没有任何一项能解释这次终止"——按你们自己已经定的 <code>truth_policy = unknown_is_not_ok</code> 原则，"解释不了的异常终止"本来就该被标红，而不是被放过。据此生成提案：<b>"建议在 H1 新增 battery_voltage/battery_soc 监测项，并配套 low_power_return Skill"</b>。</dd>
+          <dt>价值所在</dt><dd>不是"分析数据"，而是<b>注意到数据里根本不存在能解释异常的字段</b>——这种"发现缺失"的事，人不主动坐下来想就不会发生，但可以变成每次任务后的例行动作，而不需要占用工程师专门的时间。</dd>
+        </dl>
+      </div>
+
+      <div class="case">
+        <div class="tagrow"><span>H2 / H5 / H6</span><span class="real">✓ 真实存在于当前 snapshot</span></div>
+        <h3>例 2 — Dashboard 上已经标灰、但没人系统性追踪的 3 处缺口</h3>
+        <dl>
+          <dt>场景</dt><dd>我核对了你现在这份 snapshot，发现有 3 个诊断项目前的状态就是 <code>NOT_INSTRUMENTED</code>（灰色）：<code>H2 sensor_clock_sync</code>（"V1 では直接情報源が未実装"）、<code>H5 localization_independent_validation</code>（wheel odometry / FAST-LIO / GICP 三者没有交叉验证）、<code>H6 local_costmap_output_freshness</code>。</dd>
+          <dt>没有上层时</dt><dd>灰色不是红色，不会打断任何人，工程师日常扫一眼 dashboard 很容易一带而过——3 个灰色项目会一直"晾"在那里，直到某次因为其中一项没做而真的出了事，才会有人想起"啊我们早知道这里没测"。</dd>
+          <dt>上层怎么分析</dt><dd>把这些静态灰色标记和实际发生的事件关联起来排优先级——比如如果这周 <code>gicp_score</code> 有几次逼近 0.25 的告警阈值，而 <code>localization_independent_validation</code> 恰好就是灰色（没有交叉验证能力），上层就能把"这项该优先补"放进本周报告第一条，并附上"本周 gicp_score 逼近阈值 N 次"作为证据，而不是三个灰色项目被一视同仁地丢在待办清单最后。</dd>
+          <dt>价值所在</dt><dd>把"被动的、平时没人管的问题清单"，变成"主动的、按实际风险排过序、有数据支撑"的建议——这正是"减少人的工作"最直接的体现：本来要工程师自己把灰色标记和一周的运行数据在脑子里对上号，现在是例行报告自动做的事。</dd>
+        </dl>
+      </div>
+
+      <div class="case">
+        <div class="tagrow"><span>跨任务聚合</span><span class="illus">方法说明（数字为举例）</span></div>
+        <h3>例 3 — 同一个 Skill 反复触发在同一个物理部件上（预测性维护）</h3>
+        <dl>
+          <dt>场景</dt><dd>举例说明：假设 <code>restart_driver_link</code> 这个 Skill 一周内被触发了 20 次，其中 15 次的对象都是 ID=2（左前轮驱动），而不是均匀分布在三个驱动器上。</dd>
+          <dt>没有上层时</dt><dd>单看任何一次日志都看不出这个规律，因为每次"最终都恢复成功了"，看起来只是个已经解决的小问题——这种跨越多次任务、需要横向统计的规律，靠人工翻日志几乎不会主动去做，除非已经严重到影响任务。</dd>
+          <dt>上层怎么分析</dt><dd>跨多次任务聚合同一 Skill 的触发对象，发现"总是同一个 ID"的模式，提出<b>"建议物理检查 ID=2 驱动器接线/连接器，可能存在早期老化迹象"</b>——这种横向统计对上层只是一条按天/周跑一次的聚合查询。</dd>
+          <dt>价值所在</dt><dd>把"每次都自动修好、看起来没问题"的表象，变成"其实是硬件在退化"的预警——这是自动恢复机制本身的一个副作用风险（越能自动修，问题就越不容易被人注意到），上层agent正好是补上这个风险的机制。</dd>
+        </dl>
+      </div>
+
+      <div class="case">
+        <div class="tagrow"><span>趋势追踪</span><span class="illus">方法说明（数字为举例）</span></div>
+        <h3>例 4 — 恢复本身在变慢，说明"已解决"的问题正在复发</h3>
+        <dl>
+          <dt>场景</dt><dd>举例说明：<code>throttle_workload</code> 触发后温度回落所需的时间逐周变长（比如从"降频后 2 分钟内回落"变成"需要 10 分钟"）。</dd>
+          <dt>没有上层时</dt><dd>因为每次"最终都降下来了"，容易被当作已解决问题不再关注，直到有一天真的降不下去、触发硬件保护性停机才被重新重视。</dd>
+          <dt>上层怎么分析</dt><dd>把"恢复所需时间"本身也作为一个随时间追踪的指标，在它明显变差、但还没有真正失效前就提前报警，比如提示"散热部件可能需要检查"。</dd>
+          <dt>价值所在</dt><dd>防止一个"已经修复"的问题在没人注意的情况下慢慢演变成新的、更严重的问题——这也是只有<b>跨越时间维度持续追踪</b>才能看到的模式，单次事件视角天然看不到。</dd>
+        </dl>
+      </div>
+
+      <p style="margin-top:8px"><b>汇总一下"过去 vs 现在"</b>——这几个例子共同回答的问题是：一个没有分层 Recovery Agent 的机器人系统，到底缺什么。</p>
+      <div class="compare-wrap">
+        <table class="compare">
+          <tr><th>维度</th><th>没有 Recovery Agent</th><th>有分层 Recovery Agent 之后</th></tr>
+          <tr><td class="dim">小故障发现</td><td class="before">靠人现场感觉到异常，或任务失败后回溯排查</td><td class="after">下层实时检测并自动处置，多数情况不需要人在场</td></tr>
+          <tr><td class="dim">恢复速度/人力</td><td class="before">从"感觉不对"到定位问题常要人到场花数分钟到十几分钟</td><td class="after">常见情况秒级自动闭环，人只在升级情形下介入</td></tr>
+          <tr><td class="dim">系统性问题发现</td><td class="before">依赖工程师"顺手"发现（如案例 4 的 CPU 过热），靠运气和主动性</td><td class="after">上层按固定节奏系统性扫描日志，不依赖谁"想起来"</td></tr>
+          <tr><td class="dim">未覆盖的监控项</td><td class="before">灰色/未实装的项目容易被日常忽略，直到出事才被重视</td><td class="after">通过"无法解释的异常"和历史数据反推缺口优先级，变成常规提案</td></tr>
+          <tr><td class="dim">经验沉淀</td><td class="before">停留在个人经验里，可能随人员变动或时间流逝而丢失</td><td class="after">沉淀为结构化提案和可追溯的日志，团队共享</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="sec">
+    <div class="sec-head"><span class="sec-num">04</span><h2>上下层怎么连</h2><span class="badge proposed">建议</span></div>
+    <div class="sec-en">THE OPEN QUESTION — HOW THE TWO AGENTS TALK</div>
+    <div class="sec-body">
+      <p>这是你明确说"还没想清楚"的部分。核心矛盾在于：如果做成同步 API（下层遇到搞不定的问题，实时调用上层要答案），就违反了架构图里自己写的"上层非实时、非同步"原则——下层会被上层的推理耗时拖住，分层就失去意义了。三个选项对比：</p>
+      <div class="opts">
+        <div class="opt">
+          <div class="opt-head"><span class="k">A</span> 同步 API / RPC 调用</div>
+          <p>下层遇到未知情况直接"问"上层。响应快、逻辑直观，但会把上层的推理延迟耦合进实时链路，和"上层非实时"的原则直接冲突。不建议作为主通道，顶多作为极少数"必须立刻问人/问模型"的兜底分支。</p>
+        </div>
+        <div class="opt">
+          <div class="opt-head"><span class="k">B</span> ROS 话题/服务异步广播</div>
+          <p>和现在 <code>/agent/health_dashboard_state</code> 的实现方式一致，架构风格统一。但话题更适合"状态广播"，不太适合承载"需要留痕、需要人工确认"的结构化提案。</p>
+        </div>
+        <div class="opt rec">
+          <div class="opt-head"><span class="k">C</span> 共享日志/提案队列 <span class="rec-pill">推荐</span></div>
+          <p>下层只管把结构化日志写进共享存储（SQLite / JSONL 均可）；上层是完全独立、按自己节奏调度的进程，读日志、调用外部 LLM API 分析，把结论写回同一存储里的"待确认提案"队列。下层/Dashboard 只需要能读"有几条待确认提案"，不需要理解上层怎么产生的——两边通过数据管道解耦，而不是调用关系。</p>
+        </div>
+      </div>
+      <p>这个"共享状态而非直接调用"的模式不是我编的，是 2024 年一篇关于对话 Agent 分层的论文（Talker–Reasoner 架构）里明确验证过的设计：快的一层（Talker）持续跑，慢的一层（Reasoner）异步把结论写进共享内存，快的一层"读得到就用，读不到就先用旧的"，两层永远不互相阻塞。你们的"下层持续执行、上层独立思考"和这个模式几乎是同一件事，只是把"共享内存"换成更适合机器人场景、需要留痕审计的"共享日志/数据库"。</p>
+      <div class="callout">
+        <span class="callout-tag">回答"是不是要用 API"</span>
+        分开看两件事：<strong>上层内部</strong>调用外部 LLM（Claude/GPT 等）API 做归纳分析，这是合理甚至大概率必须的；但<strong>上层和下层之间</strong>不建议做成 API 调用关系，而是"日志进、提案出"的数据管道关系。最小实现甚至可以先是一个每天跑一次的 Python 脚本：读 SQLite → 调 LLM API → 把结果写成一份提案表或 Markdown 报告，不需要一开始就是常驻 ROS 节点或"正式 Agent"身份。等验证有用了，再考虑要不要包一层调度/UI。这个节奏也和你自己 M4 排在第 6 周才做是吻合的——不需要在 M1–M3 阶段就把上层做重。
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="sec">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Demo / 验证方案</h2><span class="badge proposed">建议</span></div>
+    <div class="sec-en">DEMONSTRATION STRATEGY</div>
+    <div class="sec-body">
+      <p><strong>下层的第一个 demo：</strong>你已经选的 Motor Driver 通信异常（检测→安全停止→重启→验证→恢复）是个好选择——原因和解法都在这次上线过程里被人工验证过一次，风险边界清楚，且七诊断域里已经有完整证据链（<code>drive_health / drive_alarm_status / drive_din3_raw</code>）。建议把故障做成<strong>可软件复现</strong>（模拟"驱动无响应"而不必物理拔线），这样能反复回归测试，而不是靠"再等一次真的坏"。</p>
+      <p><strong>上层的 demo 比较尴尬</strong>——长期趋势类的洞察短期内没有足够真实数据积累（M4 排到第 6 周，事件本身也低频）。两个绕开这个问题的思路：</p>
+      <ul>
+        <li><strong>回溯验证：</strong>把这次上线过程里已经发现的 9 个真实 bug，人工整理成一批结构化历史日志（哪怕是事后补录的），喂给上层 Agent，看它能不能从这批原始记录里<em>独立复现出你自己已经得出的结论</em>（比如"该做日志降频""该加 CPU 温度告警"）。如果能，就是一个不需要等新数据的、有说服力的概念验证。</li>
+        <li><strong>刻意留缺口的场景：</strong>就用你举的掉电例子——故意跑一次低电量任务，只记录"任务异常中止、无法归因"（目前确实拿不到电池数据），看上层 Agent 能不能提出"应增加电源监测"。这验证的是更难的能力：<strong>发现"缺失的监控项"</strong>，而不只是分析已有数据里的规律。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="sec">
+    <div class="sec-head"><span class="sec-num">06</span><h2>路线图微调</h2><span class="badge confirmed">已确认基础上微调</span></div>
+    <div class="sec-en">ROADMAP — YOUR M1–M4 PLUS ONE INSERT</div>
+    <div class="sec-body">
+      <p>你原来的 M1–M4 节奏是合理的，只建议在 M2 开工前插一步：</p>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>阶段</th><th>时间</th><th>内容</th></tr>
+          <tr><td>M1 · 可观测化</td><td>第 1 周</td><td>Dashboard V1 稳定化，异常时自动保存日志/状态</td></tr>
+          <tr><td style="color:var(--accent-ink);font-weight:700">M0.5 · 日志 schema 先行<span class="badge proposed" style="margin-left:8px">新增</span></td><td>M2 开工前</td><td>定下第 3 节的最小 episode 日志结构，复用现有证据状态词汇——M2 产生的"执行了什么 Skill、结果如何"就是 M4 上层要分析的原始素材，这一步不做，M4 会返工</td></tr>
+          <tr><td>M2 · 确定性自动恢复</td><td>第 2–3 周</td><td>实现 Node 重启、Driver 重连等 Recovery Skill</td></tr>
+          <tr><td>M3 · 任务级恢复</td><td>第 4–5 周</td><td>按异常选择 Skill、管理 Retry / 降级运行 / 人工确认</td></tr>
+          <tr><td>M4 · 长期分析改善</td><td>第 6 周</td><td>上层 Agent 分析运行记录，产出趋势报告与提案</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 7 -->
+  <section class="sec">
+    <div class="sec-head"><span class="sec-num">07</span><h2>需要你继续确认的问题</h2><span class="badge open">待确认</span></div>
+    <div class="sec-en">OPEN QUESTIONS — NOT SOMETHING I CAN ANSWER FROM THE DOCS</div>
+    <div class="sec-body">
+      <ul class="qlist">
+        <li><b>电源可观测性的硬件现状</b><span>现在硬件层面能不能拿到电池 SOC/电压？如果拿不到，这是传感器层面的缺口，不只是 schema 层面加一项那么简单。</span></li>
+        <li><b>下层的"安全停止"接口</b><span>ROS 层面现在有没有统一的 safe-stop 接口可以给 Recovery Skill 调用，还是需要新写一个？</span></li>
+        <li><b>日志/存储选型</b><span>团队现在有没有已经在用的日志或时序数据基础设施（比如 rosbag2、InfluxDB），可以直接复用来存 episode 记录，而不是从零建。</span></li>
+        <li><b>上层用什么模型/API</b><span>本地小模型还是云端 API？如果是云端，日志里的现场数据要不要脱敏、网络策略是否允许。</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    Recovery Agent 分层备忘 · draft v1 · 基于 real-healty-dashboard-ja.html / health-dashboard-demo.html 的现有数据整理，供继续讨论迭代
+  </footer>
+
+</div>
