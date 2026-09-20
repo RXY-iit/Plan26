@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Touch Anything</title>
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#f5f6f3;
+    --surface:#ffffff;
+    --surface-2:#eceeea;
+    --ink:#1b2422;
+    --ink-soft:#59645f;
+    --ink-faint:#8b948f;
+    --line:#dbdfda;
+    --accent:#0e8c86;
+    --accent-ink:#075753;
+    --accent-soft:#e3f3f1;
+    --warn:#a6720f;
+    --warn-soft:#f7ecd8;
+    --shadow:0 1px 2px rgba(20,30,28,.05);
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#10161a; --surface:#171f23; --surface-2:#1f292d;
+      --ink:#e8edec; --ink-soft:#a3b2ae; --ink-faint:#71827d; --line:#2b3539;
+      --accent:#3fd0c4; --accent-ink:#bdf0e9; --accent-soft:rgba(63,208,196,.13);
+      --warn:#e3ac48; --warn-soft:rgba(227,172,72,.14);
+      --shadow:0 1px 3px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#10161a; --surface:#171f23; --surface-2:#1f292d;
+    --ink:#e8edec; --ink-soft:#a3b2ae; --ink-faint:#71827d; --line:#2b3539;
+    --accent:#3fd0c4; --accent-ink:#bdf0e9; --accent-soft:rgba(63,208,196,.13);
+    --warn:#e3ac48; --warn-soft:rgba(227,172,72,.14);
+    --shadow:0 1px 3px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box;}
+  html{background:var(--bg);}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
+    line-height:1.85; -webkit-font-smoothing:antialiased; scroll-behavior:smooth;
+  }
+  h1,h2,h3{font-family:"Zen Kaku Gothic New","Noto Sans JP",sans-serif;text-wrap:balance;color:var(--ink);}
+  .wrap{max-width:760px;margin:0 auto;padding:56px 24px 96px;}
+  a{color:var(--accent-ink);}
+  code,.mono{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,monospace;}
+  .tnum{font-variant-numeric:tabular-nums;}
+
+  /* masthead */
+  .frame{position:relative;border:1px solid var(--line);background:var(--surface);padding:34px 30px 26px;box-shadow:var(--shadow);}
+  .frame svg.marks{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+  .eyebrow{font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink);margin:0 0 14px;}
+  h1.title{font-size:34px;font-weight:900;margin:0 0 10px;letter-spacing:.01em;}
+  .tagline{margin:0 0 22px;color:var(--ink-soft);font-size:15px;max-width:50ch;}
+  .status-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+  .chip{display:inline-flex;align-items:center;gap:6px;font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.02em;padding:5px 10px;}
+  .chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;}
+  .chip-ok{background:var(--accent-soft);color:var(--accent-ink);}
+  .chip-watch{background:var(--warn-soft);color:var(--warn);}
+  .meta-row{font-size:12.5px;color:var(--ink-faint);border-top:1px solid var(--line);padding-top:14px;}
+
+  nav.toc{display:flex;flex-wrap:wrap;gap:8px;margin:28px 0 8px;}
+  nav.toc a{font-size:12.5px;color:var(--ink-soft);border:1px solid var(--line);padding:6px 11px;text-decoration:none;background:var(--surface);}
+  nav.toc a:hover{border-color:var(--accent);color:var(--accent-ink);}
+
+  section{margin-top:64px;scroll-margin-top:20px;}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px;}
+  .sec-num{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--accent-ink);letter-spacing:.06em;}
+  h2{font-size:21px;font-weight:700;margin:0;}
+  .sec-rule{height:1px;background:var(--line);margin:14px 0 22px;}
+  section > p{color:var(--ink);max-width:64ch;}
+  section > p + p{margin-top:1em;}
+  h3.sub{font-size:15px;font-weight:700;margin:26px 0 8px;padding-top:2px;}
+  h3.sub .tag{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--accent-ink);margin-right:8px;letter-spacing:.04em;}
+
+  /* table */
+  .tblwrap{overflow-x:auto;border:1px solid var(--line);margin-top:18px;}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;background:var(--surface);}
+  thead th{text-align:left;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  tbody td{padding:10px 14px;border-bottom:1px solid var(--line);color:var(--ink-soft);vertical-align:top;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:nth-child(even){background:var(--surface-2);}
+  td.num,th.num{text-align:right;font-family:"JetBrains Mono",monospace;}
+  .caption{font-size:12.5px;color:var(--ink-faint);margin-top:8px;}
+
+  /* principles list (design thinking) */
+  ul.principles{list-style:none;margin:20px 0 0;padding:0;}
+  ul.principles li{padding:14px 0;border-bottom:1px solid var(--line);font-size:14px;color:var(--ink-soft);}
+  ul.principles li:last-child{border-bottom:none;}
+  ul.principles strong{color:var(--ink);font-weight:700;}
+
+  /* prep stepper */
+  ol.stepper{list-style:none;margin:22px 0 0 3px;padding:0;border-left:2px solid var(--line);}
+  ol.stepper li{position:relative;padding:0 0 24px 26px;font-size:14px;color:var(--ink-soft);}
+  ol.stepper li:last-child{padding-bottom:2px;}
+  ol.stepper .node{position:absolute;left:-13px;top:-1px;width:24px;height:24px;border-radius:50%;background:var(--surface);border:1.5px solid var(--accent);color:var(--accent-ink);font-family:"JetBrains Mono",monospace;font-size:10.5px;font-weight:600;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 4px var(--bg);}
+  ol.stepper h3{font-size:14.5px;margin:0 0 6px;color:var(--ink);font-weight:700;}
+  ol.stepper ul{margin:8px 0 0;padding-left:18px;}
+  ol.stepper li>ul>li{margin-bottom:4px;}
+
+  /* pipeline flow chain */
+  .flowchain{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:22px 0 8px;}
+  .flowchain .fc-item{
+    display:flex;flex-direction:column;align-items:center;gap:2px;
+    border:1px solid var(--line);background:var(--surface);
+    padding:8px 12px;min-width:76px;text-align:center;
+  }
+  .flowchain .fc-verb{font-family:"Zen Kaku Gothic New",sans-serif;font-weight:700;font-size:14px;color:var(--accent-ink);}
+  .flowchain .fc-gloss{font-size:10.5px;color:var(--ink-faint);}
+  .flowchain .fc-arrow{color:var(--ink-faint);font-size:14px;}
+  .stage h3{font-size:14.5px;margin:0 0 4px;color:var(--ink);font-weight:700;}
+  .stage .stage-lead{font-size:13.5px;color:var(--ink-faint);margin:0 0 8px;}
+
+  /* demo / video placeholder */
+  .demo-box{border:1px dashed var(--line);background:var(--surface-2);padding:40px 20px;text-align:center;margin-top:20px;}
+  .demo-box svg{color:var(--ink-faint);margin-bottom:10px;}
+  .demo-box p{margin:0;color:var(--ink-faint);font-size:13px;}
+
+  /* problem -> fix cards */
+  .issue{border:1px solid var(--line);border-left:3px solid var(--warn);background:var(--surface);padding:18px 20px;margin-top:16px;}
+  .issue-label{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.08em;color:var(--ink-faint);text-transform:uppercase;margin:0 0 10px;}
+  .issue-row{display:flex;gap:10px;align-items:flex-start;font-size:14px;margin-bottom:0;}
+  .issue-row + .issue-row{margin-top:10px;}
+  .issue-tag{flex:none;width:56px;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.04em;padding-top:2px;}
+  .issue-tag.problem{color:var(--warn);}
+  .issue-tag.fix{color:var(--accent-ink);}
+  .issue-row p{margin:0;color:var(--ink-soft);}
+
+  pre{background:var(--surface-2);border:1px solid var(--line);padding:16px 18px;overflow-x:auto;font-size:13px;line-height:1.7;font-family:"JetBrains Mono",monospace;color:var(--ink);}
+  pre .c{color:var(--ink-faint);}
+
+  footer{margin-top:80px;padding-top:20px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-faint);}
+  footer p{margin:0 0 6px;}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+  /* figures / videos */
+  .fig{margin:18px 0 0;border:1px solid var(--line);background:var(--surface);}
+  .fig img,.fig video{width:100%;height:auto;display:block;}
+  .fig video{background:#000;max-height:520px;}
+  .fig figcaption{font-size:12.5px;color:var(--ink-faint);padding:9px 12px;border-top:1px solid var(--line);line-height:1.7;}
+  .fig-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px;}
+  .fig-2 .fig{margin:0;}
+  .fig-2 .fig img{height:280px;object-fit:contain;background:var(--surface-2);}
+  @media (max-width:600px){.fig-2{grid-template-columns:1fr;}.fig-2 .fig img{height:auto;}}
+  .backlink{margin:14px 0 0;font-size:12.5px;}
+  td.num{white-space:nowrap;}
+  table.spec td:first-child{white-space:nowrap;color:var(--ink);}
+  ol.plain{margin:14px 0 0;padding-left:22px;font-size:14px;color:var(--ink-soft);}
+  ol.plain li{margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="frame">
+    <svg class="marks" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <g stroke="var(--accent)" stroke-width="0.6" fill="none" opacity="0.55">
+        <polyline points="1.2,7 1.2,1.2 7,1.2"/>
+        <polyline points="93,1.2 98.8,1.2 98.8,7"/>
+        <polyline points="98.8,93 98.8,98.8 93,98.8"/>
+        <polyline points="7,98.8 1.2,98.8 1.2,93"/>
+      </g>
+    </svg>
+    <p class="eyebrow">ROS 2 PACKAGE — touch_anything / SO-101</p>
+    <h1 class="title">Touch Anything</h1>
+    <p class="tagline">LLMによる対象理解（現在は人が代替）と、幾何・視覚サーボによる従来型制御を組み合わせ、指定した任意の対象にロボットアームで接触するシステム。</p>
+    <div class="status-row">
+      <span class="chip chip-ok">FAR：安定</span>
+      <span class="chip chip-ok">NEAR：視覚閉ループ確立</span>
+      <span class="chip chip-watch">再現性：サンプル収集継続中</span>
+      <span class="chip chip-watch">最終接近：連続視覚サーボへ移行中</span>
+    </div>
+    <p class="meta-row">更新 2026-09-20 ／ 対象モード <span class="mono">code2real&amp;sim</span> ・ <span class="mono">REAL_DASHBOARD_TEST</span></p>
+  </header>
+  <p class="backlink"><a href="real-arm-agent-ja.html">← 週次報告（実機 ARM 追加・Touch Anything）へ戻る</a></p>
+
+  <nav class="toc" aria-label="目次">
+    <a href="#intro">01 概要</a>
+    <a href="#hardware">02 ハードウェア構成</a>
+    <a href="#thinking">03 アルゴリズム設計</a>
+    <a href="#prep">04 開発の歩み</a>
+    <a href="#demo">05 現在の成果</a>
+    <a href="#issues">06 問題と対策</a>
+    <a href="#servo">07 最終接近の改善</a>
+  </nav>
+
+  <section id="intro">
+    <div class="sec-head"><span class="sec-num">01</span><h2>概要 — Touch Anything とは</h2></div>
+    <div class="sec-rule"></div>
+    <p>Touch Anything は、「どれを触るか」という<strong>意図理解（将来はLLM／VLM）</strong>と、「どう安全に近づき、どう触るか」という<strong>幾何・視覚サーボによる従来型制御</strong>を組み合わせて、任意の対象物にロボットアームで接触するためのシステム。最終形では、自然言語の指示からLLM/VLMが対象を認識・指示し、アーム側がそれを受けて自律的に接近・接触する構成を目指している。</p>
+    <p>V1時点ではLLM/VLMによる「対象の認識・指示」部分は未実装で、<strong>操作者がD435の画像上で対象を1点クリックすることで代替</strong>している。これは恒久的な仕様ではなく暫定の代替であり、その下流にある接近・整列・接触・成功判定のロジックは、指示の出し手が人であってもLLMであっても共通して使えるように設計している。</p>
+    <p>つまり Touch Anything は「認識・意図理解レイヤー（将来LLM／現在は人）」と「接近・整列・接触の制御レイヤー（幾何・視覚サーボ・状態機械）」を分離したシステムで、V1はまず後者を実機で確立することを目的にしている。</p>
+  </section>
+
+  <section id="hardware">
+    <div class="sec-head"><span class="sec-num">02</span><h2>現在のハードウェア構成</h2></div>
+    <div class="sec-rule"></div>
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>項目</th><th>内容</th><th>備考</th></tr></thead>
+        <tbody>
+          <tr><td>移動ベース</td><td>全向駆動台車</td><td>FAST-LIO2＋GICPで自己位置推定、Nav2 MPPIでナビゲーション。Touch中はベース静止固定</td></tr>
+          <tr><td>リフト</td><td>0–2500 mm 昇降機構</td><td>現状は速度×時間の積分推定のみで未参照。V1では人が確認した固定位置で運用</td></tr>
+          <tr><td>アーム</td><td>SO-ARM101（6軸）</td><td>Feetech STS3215 ×6、12 V駆動。followerのみ接続、leaderは未接続</td></tr>
+          <tr><td>手先カメラ</td><td>Sonix/ARC USB2.0 CAM1</td><td>640×480 RGB（深度なし）。爪先に対して剛体固定、NEAR/PRESSの視覚閉ループに使用</td></tr>
+          <tr><td>主カメラ</td><td>RealSense D435</td><td>Pan/Tilt機構上。RGB-D、対象の粗い3D位置（FARの目標点）取得に使用</td></tr>
+          <tr><td>PC</td><td>Intel Core i5-1340P／RAM 30 GB</td><td>CUDAなし。SAM 2.1等はCPU推論</td></tr>
+          <!-- <tr><td>デバイス識別</td><td>USBシリアル／by-id固定</td><td>follower・lift・手先カメラのUSB列挙名（<span class="mono">ttyACM0</span>等）が重複し得るため固定識別が必須</td></tr> -->
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">アーム設置は現状12 V卓上運用。移動ベースへの搭載・リフト連動は本文執筆時点で今後の課題。</p>
+    <figure class="fig"><img src="media/touch-test.jpg" alt="Touch Anything 実機試験環境"><figcaption>実機試験環境。番号付きボタン（1〜3）と色付きボタンを並べた試験パネルに対して、SO-ARM101 を向けている。</figcaption></figure>
+  </section>
+
+  <section id="thinking">
+    <div class="sec-head"><span class="sec-num">03</span><h2>設計思想</h2></div>
+    <div class="sec-rule"></div>
+    <p>下流の制御ロジックは、認識レイヤーが人かLLMかに関わらず同じものが使えるよう、次の考え方で組み立てている。</p>
+    <ul class="principles">
+      <li><strong>決定論的なベースラインを先に確立する。</strong> LLM/VLAにいきなり全関節を触らせるのではなく、まず幾何・視覚サーボによる確定的な制御で「触れる」ことを実機で成立させる。Agent/VLAは将来、境界が明確なSkill（観察・接近・接触）だけを呼び出す構成にする。</li>
+      <li><strong>役割の異なる2つのカメラを粗密二段階で使う。</strong> 視野が広く粗い3DがとれるD435でFAR接近を行い、対象に近づいた後は手先カメラに引き継いでNEARの高倍率な視覚整列を行う。</li>
+      <li><strong>単眼カメラに深度を語らせない。</strong> 手先カメラは深度を持たないため、距離のスケールはD435由来の値に限定し、手先カメラの画素情報はY/Zの視覚補正にのみ使う。</li>
+      <li><strong>指令値ではなく実測を正とする。</strong> コマンドとして送った位置ではなく、TFやjoint feedbackなど「実際に起きたこと」だけを到達判定・成功判定の根拠にする。</li>
+      <li><strong>フェーズは不可逆にラッチする。</strong> 実測の進捗（例：+X方向の到達量）を境にFAR→NEARへ一方向に遷移させ、往復振動によって同じやり直しを繰り返さないようにする。</li>
+      <li><strong>要所は人が確認する。</strong> LLM/VLMによる意味的な確認が未実装な現段階では、対象の同一性確認とPress実行前確認を人が担い、安全側に倒す。</li>
+    </ul>
+  </section>
+
+  <section id="prep">
+    <div class="sec-head"><span class="sec-num">04</span><h2>開発の歩み — ゼロからデモまで</h2></div>
+    <div class="sec-rule"></div>
+    <p>実際の作業は「識別 → 方位・pose決定 → 目標前方へ移動 → Armカメラへ引き継ぎ → 接近 → 押下」という一連の流れに沿って積み上がってきた。各段階でやったことを短い動詞見出しで振り返る。</p>
+
+    <div class="flowchain" aria-hidden="true">
+      <div class="fc-item"><span class="fc-verb">見る</span><span class="fc-gloss">識別</span></div>
+      <span class="fc-arrow">→</span>
+      <div class="fc-item"><span class="fc-verb">測る</span><span class="fc-gloss">方位・pose</span></div>
+      <span class="fc-arrow">→</span>
+      <div class="fc-item"><span class="fc-verb">動く</span><span class="fc-gloss">目標前方へ</span></div>
+      <span class="fc-arrow">→</span>
+      <div class="fc-item"><span class="fc-verb">引き継ぐ</span><span class="fc-gloss">Armカメラへ</span></div>
+      <span class="fc-arrow">→</span>
+      <div class="fc-item"><span class="fc-verb">詰める</span><span class="fc-gloss">接近</span></div>
+      <span class="fc-arrow">→</span>
+      <div class="fc-item"><span class="fc-verb">触れる</span><span class="fc-gloss">押下</span></div>
+    </div>
+
+    <ol class="stepper">
+      <li class="stage">
+        <span class="node">1</span>
+        <h3>見る — 対象を識別する</h3>
+        <p class="stage-lead">D435画像上で対象を人が指定し、SAMで領域を切り出す。</p>
+        <ul>
+          <li>Touch/Pressに必要な視覚分割・ハンドアイ関係・IK・接触判定・安全境界を洗い出し、grasping自体は対象外として保留。VLMの代わりに人のクリックで対象を指定する方針にした</li>
+          <li>touch_anything ROS 2パッケージを実装。SAM 2.1のオンデマンドロード、RViz上でのプロンプト指定、3Dプレビュー、マーカー表示、状態機械を構築した</li>
+        </ul>
+      </li>
+      <li class="stage">
+        <span class="node">2</span>
+        <h3>測る — 方位とposeを決める</h3>
+        <p class="stage-lead">対象の3D位置と、そこへ向かうためのアーム姿勢を精度よく決めるための較正を積み上げる。</p>
+        <ul>
+          <li>カメラ較正ツールを作成し、D435・Arm Camera・CameraInfo・深度・Pan/Tilt・Arm生位置・タイムスタンプ・ChArUcoコーナーを同時取得できるようにした</li>
+          <li>実寸の印刷ボード（square 33.8 mm／marker 16.5 mm）でArm Camera内参と両カメラ・機構の外参を審査した</li>
+          <li>Pan／Tilt／Lift／Arm baseを再計測・拘束し、Pan回転時にLift/Armが連れ回らないことを確認してTF木の従属関係を修正した</li>
+          <li>130組の同時データ（うち90組は6軸raw position）を集約し、実測の離地高さを強拘束として保持した</li>
+          <li><span class="mono">so101_kinematic_handeye_calibration</span> を作成し、47姿勢から関節scale/offsetとeye-in-hand外参を再解いた</li>
+          <li>高さ・方向別のTouch prepare pose reference、Pan/Tilt、実関節seedを記録し、旧来の汎用参照姿勢を廃止した</li>
+        </ul>
+        <figure class="fig"><img src="media/calibration.jpg" alt="較正の様子"><figcaption>ChArUco ボードを用いた D435・Arm Camera・ARM 間の較正の様子。</figcaption></figure>
+      </li>
+      <li class="stage">
+        <span class="node">3</span>
+        <h3>動く — 目標の手前へ移動する</h3>
+        <p class="stage-lead">Arm gatewayの安全な実行基盤を用意し、参照姿勢へ向けてガード付きでFAR接近を行う。</p>
+        <ul>
+          <li>Arm gatewayのcode2real&amp;sim Preview/Execute、フィードバック／HOLD、温度・電流・速度、ソフトリミット、復帰状態、Dashboard制御を実装した</li>
+          <li>実機テストを重ねてTF取得タイミング、Pan/Tilt停滞判定、Arm未通電監視の不具合を修正した</li>
+        </ul>
+      </li>
+      <li class="stage">
+        <span class="node">4</span>
+        <h3>引き継ぐ — Armカメラへハンドオフする</h3>
+        <p class="stage-lead">FARで対象付近まで来たらD435からArmカメラへ対象を引き継ぎ、人が同一対象であることを再確認する。</p>
+        <ul>
+          <li>実機テストで目標の引き継ぎミス、誤対象への切り替わり、近距離での対象の裁断（クリッピング）を修正した</li>
+        </ul>
+      </li>
+      <li class="stage">
+        <span class="node">5</span>
+        <h3>詰める — 視覚サーボで接近する</h3>
+        <p class="stage-lead">FARでマスクを画面中心に保ちながら+X方向へ進め、実測+Xが35 mmを超えたらNEARへ不可逆に切り替え、固定爪先とSAM質心の画素関係でY/Zを追い込む。</p>
+        <ul>
+          <li>接近戦略をFAR（マスクを画面中心へ+X方向前進）→NEAR（現在Xを固定し、固定爪先―SAM質心の画素関係でY/Zを段階補正）に収束させた</li>
+          <li>実荷重下の誤差に対しフェーズ別のフィードフォワードを追加（FARはZ方向に上偏置、NEARはZ優先で実データフィット済みのゲイン／バイアス）。最終判定は必ず実測 <span class="mono">arm/touch_tip</span> TFで行うようにした</li>
+          <li>同一デカルトwaypointへの閉ループ補正を追加。軌道終了後も未到達なら実測末端から残差を補正し、収束しなければ視覚ループへ戻すようにした</li>
+          <li>実機テストでFAR/NEARの往復振動、デカルト到達の誤判定、追従誤差を修正した</li>
+        </ul>
+      </li>
+      <li class="stage">
+        <span class="node">6</span>
+        <h3>触れる — 確認してから押し込む</h3>
+        <p class="stage-lead">整列が整ったら人がPressを確認し、+X方向へ押し込む。失敗してもやり直さずNEARへ後退して再整列する。</p>
+        <ul>
+          <li>「固定爪先が二値マスク内にあること」という硬い条件を撤廃。遮蔽でマスクが縮小・分裂しても、NEARラッチ済み＋Tip―質心誤差35 px以下＋人の明示確認のみをPress許可条件にした</li>
+          <li>Press実行前に人の確認を追加。失敗時は権限を取り消し、保持していたNEARのX平面へ後退してカメラ姿勢を保ったTip整列に戻すようにした（失敗したPress waypointを追いかけ続けない）</li>
+          <li>実機テストで過早な成功判定を修正した</li>
+          <li>HIGH／MID／LOWの高さでPressデモを完了。誤差要因は認識・計画から荷重下の実行・起動時の過渡振動へ移ってきている</li>
+          <li>（継続中）固定0.75秒の待機を10 Hzの実測Tip安定性判定に置き換え、発令直前→初回EXECUTINGの起動瞬間変位の記録を開始した</li>
+        </ul>
+      </li>
+    </ol>
+  </section>
+
+  <section id="demo">
+    <div class="sec-head"><span class="sec-num">05</span><h2>現在の成果</h2></div>
+    <div class="sec-rule"></div>
+    <p>HIGH／MID／LOWなど複数の実機高さでPressデモが完了。実機アームは軽量な対象物への接触・押し込みまで到達している。直近の主な誤差要因は認識・計画から、荷重下の実行誤差や起動直後の過渡振動へと移ってきている。</p>
+    <div class="fig-2" style="grid-template-columns:1fr;">
+      <figure class="fig"><video controls preload="metadata" muted><source src="media/touch-demo.mp4" type="video/mp4"></video><figcaption>Touch Anything 実機デモ（目標指定から接近・接触まで）。</figcaption></figure>
+      <figure class="fig"><video controls preload="metadata" muted><source src="media/touch-anything-demo.mp4" type="video/mp4"></video><figcaption>Touch Anything 実行録画（通し・長尺版）。</figcaption></figure>
+      <figure class="fig"><img src="media/press.png" alt="正常な接近時の RViz"><figcaption>正常動作時の RViz（Touch Anything パネル）。Arm Camera 上で爪先と対象が整列し、PRESS フェーズに到達した状態。</figcaption></figure>
+    </div>
+    <div class="tblwrap" style="margin-top:26px;">
+      <table>
+        <thead><tr><th>処理時間の目安</th><th class="num">中央値</th></tr></thead>
+        <tbody>
+          <tr><td>SAM初回ロード〜準備完了</td><td class="num tnum">7.86 s</td></tr>
+          <tr><td>既ロード時のD435再取得</td><td class="num tnum">3.70 s</td></tr>
+          <tr><td>1ステップ実行〜安定</td><td class="num tnum">1.53 s</td></tr>
+          <tr><td>Arm側の自動再取得</td><td class="num tnum">3.90 s</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">IK／Preview自体は数msで律速要因ではない。主なコストはSAM再分割と stop–observe–execute の繰り返し。</p>
+  </section>
+
+  <section id="issues">
+    <div class="sec-head"><span class="sec-num">06</span><h2>遭遇した問題と対策</h2></div>
+    <div class="sec-rule"></div>
+    <p>実機で踏んだ問題と、その対策を時系列にまとめる。</p>
+
+    <div class="issue">
+      <p class="issue-label">初期の視覚定位偏差（解消済み）</p>
+      <div class="issue-row"><span class="issue-tag problem">問題</span><p>開発初期の実験で、視覚定位に偏差があり、最終接近位置が目標からずれた。下図はそのときの RViz の状態で、開発過程の問題事例として残している。</p></div>
+      <div class="issue-row"><span class="issue-tag fix">対策</span><p>問題を初期位置の推定誤差に、対策を追加の Calibration によるカメラ・ARM 間の位置関係の補正に書き換えました。以前ここに付けていた press-error の画像は外しています。</p></div>
+      <!-- <figure class="fig"><img src="media/press-error.png" alt="視覚定位偏差による誤差の例"><figcaption>初期実験での誤差例（RViz）。視覚定位の偏差により、最終接近位置がずれた状態。</figcaption></figure> -->
+    </div>
+
+    <div class="issue">
+      <p class="issue-label">固定TFの流用リスク</p>
+      <div class="issue-row"><span class="issue-tag problem">問題</span><p>既存D435はナビゲーション用の固定姿勢TFで、精密タスクにそのまま流用すると誤差の原因になる。</p></div>
+      <div class="issue-row"><span class="issue-tag fix">対策</span><p>手先カメラは最初から完全な関節TFチェーンに組み込み、露光時刻に対応するTFを都度引く設計にした。</p></div>
+    </div>
+
+    <div class="issue">
+      <p class="issue-label">USBデバイス名の衝突</p>
+      <div class="issue-row"><span class="issue-tag problem">問題</span><p>follower・lift・leaderが過去に <span class="mono">/dev/ttyACM0</span> 等のUSB列挙名を共有しており、誤ったポートを開く危険があった。</p></div>
+      <div class="issue-row"><span class="issue-tag fix">対策</span><p>USBシリアル／<span class="mono">by-id</span> で安定識別し、抜き差し差分で対応関係を確認した上で固定した。</p></div>
+    </div>
+
+    <div class="issue">
+      <p class="issue-label">FAR⇄NEARの往復振動</p>
+      <div class="issue-row"><span class="issue-tag problem">問題</span><p>FARとNEARの判定条件が曖昧だと、境界付近で行ったり来たりして接近が進まなくなる。</p></div>
+      <div class="issue-row"><span class="issue-tag fix">対策</span><p>実測+X進捗が基準（35 mm）を超えた時点でNEARへ不可逆にラッチし、以後Y/Z補正がXへ多少結合してもFARへは戻さないようにした。</p></div>
+    </div>
+
+    <div class="issue">
+      <p class="issue-label">視覚的な「偽の整列」（今回のデバッグ）</p>
+      <div class="issue-row"><span class="issue-tag problem">問題</span><p>NEARの整列は、固定した下爪先端の画素位置とSAM検出質心の画素位置を一致させる設計。ところがこれは「カメラ・爪先・対象が同じ視線上に並んだ」ことしか保証せず、その視線上のどこに対象があるかは分からない。実機では、Y/Z整列用のIKが手首関節を固定したまま肩・肘だけで位置を解いていたため、カメラごと回転させて安価に「整列して見える」解に落ち着き、実際には対象から離れていく事例が発生した。</p></div>
+      <div class="issue-row"><span class="issue-tag fix">対策</span><p>前の内容を置き換えました。問題は Y/Z 同時補正で見かけ上は整列しても Press 位置がずれること、対策は補正順を Z → Y に変更して解決したこと、です。この項目に press-error（変更前）と press（変更後）を並べた比較画像を入れています。見出しには「解消済み」を付けました。</p></div>
+    </div>
+
+    <div class="issue">
+      <p class="issue-label">荷重下でのZ方向系統誤差</p>
+      <div class="issue-row"><span class="issue-tag problem">問題</span><p>実際にアームが荷重を受けると、コマンド通りには動かず、特にZ方向に約21–25 mmの系統的な下振れが生じていた。</p></div>
+      <div class="issue-row"><span class="issue-tag fix">対策</span><p>実測データからフィットしたフィードフォワード補正（フェーズごとのgain／bias）を追加した上で、各ステップの最終判定は必ず実測TFで行い、コマンド位置を到達の証拠として扱わないようにした。</p></div>
+    </div>
+
+    <div class="issue">
+      <p class="issue-label">遮蔽・追跡ずれによる誤対象化と過早成功判定</p>
+      <div class="issue-row"><span class="issue-tag problem">問題</span><p>爪先による遮蔽やSAMの再分割ゆらぎで、対象マスクが縮小・分裂したり、別の物体に飛び移ったりすることがあった。</p></div>
+      <div class="issue-row"><span class="issue-tag fix">対策</span><p>人が対象を確認した瞬間のLab色を不変の基準として保持し、色変化に加えて残りX距離とTip―質心誤差という幾何条件を同時に満たした場合のみ成功と判定するようにした。</p></div>
+    </div>
+
+    <div class="issue">
+      <p class="issue-label">起動直後の過渡振動（未解決・継続調査）</p>
+      <div class="issue-row"><span class="issue-tag problem">問題</span><p>動作停止から次の動作を発令した直後に、荷重による沈み込みや振動が起きることがある。固定0.75秒の空待ちでは条件によって不足・過剰になる。</p></div>
+      <div class="issue-row"><span class="issue-tag fix">対策</span><p>固定待機を、実測Tipの10Hz安定性判定（最短0.20秒〜最長1.20秒）に置き換え済み。発令直前と初回EXECUTING時の実測位置差（startup transient）の記録も開始しており、姿勢依存の追加前送りが必要かは継続して調査中。</p></div>
+    </div>
+  </section>
+
+
+  <section id="servo">
+    <div class="sec-head"><span class="sec-num">07</span><h2>最終接近フェーズの改善 — 連続視覚サーボへ</h2></div>
+    <div class="sec-rule"></div>
+    <p>06 までの対策で FAR → NEAR → Press の一連は実機で成立したが、<strong>最後の精密接近と Press は依然として安定しない</strong>。ここでは、問題 → 原因 → 新しい制御構成 → 実機で見つかった問題 → 次の検証、の順に整理する。</p>
+
+    <h3 class="sub"><span class="tag">7.1</span>問題と原因</h3>
+    <div class="issue">
+      <p class="issue-label">停止・再始動を繰り返す接近方式</p>
+      <div class="issue-row"><span class="issue-tag problem">問題</span><p>従来の接近は「SAM 再分割 → 軌道生成 → 実行 → 停止・整定待ち → 再観測」を 1 ステップずつ繰り返す。実際の観測間隔は約 6〜13 秒に達し、目標位置と ARM 動作の更新が不連続になっていた。</p></div>
+      <div class="issue-row"><span class="issue-tag fix">原因</span><p>停止のたびに荷重による沈み込みや振動が起き、再始動でも新たな誤差が乗る。補償モデルが扱う誤差が、方向・姿勢・機械状態で変わる不安定なものになる。</p></div>
+    </div>
+    <div class="issue">
+      <p class="issue-label">ARM 自体の精度限界と単発視覚への依存</p>
+      <div class="issue-row"><span class="issue-tag problem">問題</span><p>SO-ARM101 は低コストなアームで、絶対位置精度・繰り返し位置精度が限られる（ギアのバックラッシュや荷重による下振れ）。</p></div>
+      <div class="issue-row"><span class="issue-tag fix">原因</span><p>ある一時点の視覚定位結果だけで最終 Press を実行すると、この機械誤差と視覚推定誤差がそのまま蓄積する。</p></div>
+    </div>
+
+    <h3 class="sub"><span class="tag">7.2</span>新しい制御構成</h3>
+    <p>方針は、<strong>単一の目標位置で最終運動を決めるのをやめ、接近中は視覚特徴量を実時間で計算し続け、画像誤差のフィードバックで運動方向を修正しながら最終 Press 位置へ収束させる</strong>こと（画像ベース視覚サーボ）。SAM は「どの物体か」を最初に確定する役割だけを担い、その後の高速な更新は軽量な追跡に任せる。</p>
+    <div class="tblwrap">
+      <table class="spec">
+        <thead><tr><th>層</th><th>手法</th><th class="num">頻度</th><th>役割</th></tr></thead>
+        <tbody>
+          <tr><td>目標初期化</td><td>SAM 2.1 + 人の確認</td><td class="num">1 回</td><td>意味的な目標と初期マスクの確定</td></tr>
+          <tr><td>連続追跡</td><td>Pyramid KLT</td><td class="num">約 25 Hz</td><td>目標位置・マスクの連続更新（SAM の再実行なし）</td></tr>
+          <tr><td>再同定</td><td>ORB 特徴（設計）</td><td class="num">必要時</td><td>KLT が外れたときの目標再特定。両方失敗した場合のみ SAM 再実行・人の再確認</td></tr>
+          <tr><td>視覚制御</td><td>画像誤差の閉ループ</td><td class="num">10 Hz</td><td>Y/Z の整列と +X の前進を連続的に補正</td></tr>
+          <tr><td>Press 判定</td><td>人が確認した目標領域の色・外観変化</td><td class="num">画像レート</td><td>ボタンの変色や対象の移動で成功を判定</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">目標の同一性は、人が確認した時点の基準（キーフレーム・マスク・色）を不変に保持する。追跡結果で基準を更新し続けると、背景へ漂流したときに背景を永久に「目標」と学習してしまうため。</p>
+
+    <h3 class="sub"><span class="tag">7.3</span>連続動作の実行 — 10 ステップの動作ブロック</h3>
+    <p>視覚側が連続になっても、指令が「軌道を最後まで実行 → 停止 → 次」のままでは停止・再始動が残る。そこで、VLA の action chunking に近い形で、<strong>0.5 秒分（10 ステップ）の関節目標をまとめて送り、新しい観測のたびに未実行の後半を置き換える</strong>方式にした。学習モデルではなく幾何・IK による生成で、既存の安全チェーン（関節範囲・速度制限・電流・温度など）はそのまま有効。</p>
+    <div class="tblwrap">
+      <table class="spec">
+        <thead><tr><th>項目</th><th class="num">値</th><th>意味</th></tr></thead>
+        <tbody>
+          <tr><td>動作ブロック</td><td class="num">10 × 50 ms</td><td>0.5 秒分。終点は IK 目標に厳密に一致、途中は滑らかな補間</td></tr>
+          <tr><td>再計画周期</td><td class="num">100 ms</td><td>10 Hz で観測を反映し、未実行の後半を原子的に置換</td></tr>
+          <tr><td>観測遅延の補正</td><td class="num">≤ 250 ms</td><td>観測の古さに応じ、実測速度で先読みした状態から生成</td></tr>
+          <tr><td>ウォッチドッグ</td><td class="num">350 ms</td><td>更新が途絶えたら、0.5 秒のブロックを走り切る前に HOLD</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">時間の大小関係：通常の再計画 0.10 s ＜ 追跡の鮮度上限 0.20 s ＜ ウォッチドッグ 0.35 s ＜ ブロック長 0.50 s。短い計算の揺らぎでは止まらず、上位が落ちたときは確実に止まる。</p>
+
+    <h3 class="sub"><span class="tag">7.4</span>実機で見つかった問題と対策</h3>
+    <div class="issue">
+      <p class="issue-label">Z 方向の下振れ（2026-09-18 実機）</p>
+      <div class="issue-row"><span class="issue-tag problem">問題</span><p>約 2.5 秒の連続動作で、ARM 先端が Z 方向に最大 約 44.8 mm 下がり、目標が視野から外れていった。追跡・制御は正常に動いていた。</p></div>
+      <div class="issue-row"><span class="issue-tag fix">原因</span><p>実機較正で確認済みの「目標が画像の右側 → 先端は +Z へ」という関係と、制御器が出した Z の向きが逆だった。さらに FAR 用の上方補償（+22 mm）が最初の目標にしか効かず、2 周期目以降は「前回の目標と現在位置の残差」が引き継がれず補償が消えていた。</p></div>
+      <div class="issue-row"><span class="issue-tag fix">対策</span><p>実機の像素応答を使う閉ループ補償に置き換え、補償の残差を周期をまたいで保持するよう修正した。</p></div>
+    </div>
+    <div class="issue">
+      <p class="issue-label">運動中に追跡が「止まる」（2026-09-19 実機）</p>
+      <div class="issue-row"><span class="issue-tag problem">問題</span><p>動作ブロックの重ね合わせ実行は実機で動作したが、約 0.7 秒で「追跡不能」として停止した。同じ映像を離線で再生すると 1228 フレーム中 1208 フレームが追跡成功、喪失は 0 で、目標を見失ったわけではなかった。</p></div>
+      <div class="issue-row"><span class="issue-tag fix">原因</span><p>Touch プロセス内の追跡タイマが約 6.45 秒実行されていなかった。診断用の小さなトピック（目標点・姿勢・マーカー）が、信頼性重視の配信設定で 0.5 秒周期に発行されており、配信のブロックが追跡処理を最大数秒止めていた。</p></div>
+      <div class="issue-row"><span class="issue-tag fix">対策</span><p>診断トピックを BEST_EFFORT・最新 1 件のみに変更し、自動接近・視覚サーボ中・実行要求中は周期配信そのものを止めるようにした。</p></div>
+    </div>
+    <div class="issue">
+      <p class="issue-label">停止後の余動</p>
+      <div class="issue-row"><span class="issue-tag problem">問題</span><p>視覚制御が「危険」と判断して STOP しても、旧実装は最後の未到達目標を関節指令に残したまま。機構がその目標へ動き続ける可能性があった。</p></div>
+      <div class="issue-row"><span class="issue-tag fix">対策</span><p>STOP 時は 6 軸すべての目標位置を現在の実測位置に書き換え、読み戻しで確認してから HOLDING を報告する。確立に失敗したらウォッチドッグ／フォールト経路へ進む。</p></div>
+    </div>
+
+    <h3 class="sub"><span class="tag">7.5</span>現在の検証状況</h3>
+    <div class="tblwrap">
+      <table class="spec">
+        <thead><tr><th>項目</th><th>状況</th></tr></thead>
+        <tbody>
+          <tr><td>実機：動作ブロックの重ね合わせ実行</td><td>ログ上で確認（8 回の指令すべてに有効な 10 ステップ、再計画数が指令と共に増加）</td></tr>
+          <tr><td>モック環境（START + 12 回の更新）</td><td>ブロック消費が指令間で進行、停止後の関節ドリフト 0.0 rad、ウォッチドッグの意図的な発火で HOLD を確認</td></tr>
+          <tr><td>自動テスト</td><td>関連パッケージのテスト 155 件が通過</td></tr>
+          <tr><td>実機での Press までの連続動作</td><td><strong>未検証</strong>（次の Isaac Sim 検証後に実施）</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub"><span class="tag">7.6</span>次の検証 — Isaac-first</h3>
+    <p>実機試験は時間と安全のコストが高いため、まず Isaac Sim で実機と同じトピック・テレメトリ構成を再現して方式を固め、実機は 1 回の監督付き検証に絞る。</p>
+    <ol class="plain">
+      <li>Isaac Sim で Arm Camera・関節状態・TF・視覚サーボ用トピックを実機と同じスキーマで再現する（アクチュエータとカメラのバックエンドだけを差し替え、プロトコルは分岐させない）。</li>
+      <li>画像遅延・IK 遅延・DDS の背圧・関節応答の遅れ・Z 方向のモデル誤差を注入し、動作ブロックの置換、追跡の締切遵守、STOP 直後の凍結を確認する。</li>
+      <li>FAR → NEAR の全行程で追跡喪失・タイムアウト・Z 下振れが出なくなるまで、Z 補償・速度制限・ブロック長を調整する。</li>
+      <li>同じパラメータを実機へ反映し、人が監督する FAR → NEAR を 1 回実施する（Press 実行前は確認待機で HOLD）。</li>
+    </ol>
+    <p class="caption">実機での合格条件：Z 下振れ 12 mm 以内、ウォッチドッグ不作動、再計画数の増加とブロック位置の進行が確認できること、実測先端との残差で Z 補償が収束すること。これらが揃うまでは、動作ブロックによって実際の位置精度が上がったとは判断しない。</p>
+  </section>
+
+  <footer>
+    <p>本ページは <span class="mono">todo-my/arm-baseline/skills-arm/TOUCH-ANYTHING-V1-IMPLEMENTATION-20260905.md</span>（2026-09-07更新）および実機デバッグの記録に基づく要約です。数値・閾値の正本は原文を参照してください。</p>
+    <p>作成日：2026-09-07 ／ 更新：2026-09-20（図・動画の追加、07 最終接近フェーズの改善を追記）</p>
+  </footer>
+
+</div>
+</body>
+</html>

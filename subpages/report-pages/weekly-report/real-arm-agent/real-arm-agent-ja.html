@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>週次報告 — 実機 ARM 追加・Touch Anything | FY2026</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #f8fafc;
+  --surface: #ffffff;
+  --surface2:#f1f5f9;
+  --border:  #e2e8f0;
+  --border2: #cbd5e1;
+  --accent:  #2563eb;
+  --accent-l:#eff6ff;
+  --accent-m:#bfdbfe;
+  --green:   #059669;
+  --green-l: #ecfdf5;
+  --amber:   #d97706;
+  --amber-l: #fffbeb;
+  --red:     #dc2626;
+  --red-l:   #fef2f2;
+  --purple:  #7c3aed;
+  --purple-l:#f5f3ff;
+  --teal:    #0d9488;
+  --teal-l:  #f0fdfa;
+  --text:    #0f172a;
+  --text2:   #334155;
+  --muted:   #64748b;
+  --mono:    'JetBrains Mono','Fira Code','Courier New',monospace;
+  --r: 12px;
+  --sh-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --sh:    0 4px 12px rgba(0,0,0,.08);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Meiryo',-apple-system,sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.8;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+  height: 56px; background: rgba(255,255,255,.97);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  padding: 0 28px; display: flex; align-items: center; gap: 2px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none; margin-right: 16px; flex-shrink: 0;
+}
+.nav-logo-icon {
+  width: 30px; height: 30px; background: var(--text); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.nav-logo-sep { font-size: 20px; color: var(--border2); font-weight: 300; }
+.nav-logo-text { font-size: 12px; color: var(--muted); font-weight: 600; }
+.nav-item { position: relative; }
+.nav-btn {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--muted); text-decoration: none;
+  padding: 6px 11px; border-radius: 7px;
+  border: none; background: none; cursor: pointer; font-family: inherit;
+  transition: background .12s, color .12s; white-space: nowrap;
+}
+.nav-btn:hover { background: var(--surface2); color: var(--text); }
+.nav-btn.cur { color: var(--accent); }
+.nav-caret { font-size: 8px; opacity: .5; transition: transform .15s; }
+.nav-btn.nav-open .nav-caret { transform: rotate(180deg); }
+.nav-drop {
+  position: absolute; top: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  min-width: 240px; background: #fff;
+  border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.11), 0 2px 8px rgba(0,0,0,.05);
+  padding: 8px; z-index: 999;
+  opacity: 0; pointer-events: none;
+  transition: opacity .15s, transform .15s;
+}
+.nav-drop.open { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.nav-drop-link {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; padding: 9px 10px; border-radius: 9px; transition: background .1s;
+}
+.nav-drop-link:hover { background: var(--surface2); }
+.nav-dl-icon { font-size: 18px; flex-shrink: 0; }
+.nav-dl-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.nav-dl-sub { font-size: 11px; color: var(--muted); }
+.nav-drop-sep { height: 1px; background: var(--border); margin: 5px 6px; }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.nav-badge-pill {
+  font-size: 11px; font-weight: 700;
+  background: var(--amber-l); color: var(--amber);
+  border: 1px solid rgba(217,119,6,.25);
+  padding: 4px 12px; border-radius: 99px; white-space: nowrap;
+}
+.nav-pulse {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--amber);
+  animation: npulse 2s infinite; flex-shrink: 0;
+}
+@keyframes npulse {
+  0%,100%{ box-shadow: 0 0 0 0 rgba(217,119,6,.4); }
+  50%     { box-shadow: 0 0 0 5px rgba(217,119,6,0); }
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 92px 24px 52px;
+  background: linear-gradient(135deg, #fff 0%, #fff7ed 50%, #fef2f2 100%);
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(217,119,6,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(217,119,6,.035) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.hero-inner { max-width: 960px; margin: 0 auto; position: relative; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: .06em;
+  color: var(--amber); background: var(--amber-l);
+  border: 1px solid rgba(217,119,6,.25);
+  padding: 3px 12px; border-radius: 99px; margin-bottom: 14px;
+}
+h1 { font-size: clamp(22px, 4vw, 36px); font-weight: 800; color: var(--text); margin-bottom: 8px; line-height: 1.3; }
+.hero-desc { font-size: 15px; color: var(--muted); margin-bottom: 26px; line-height: 1.7; }
+.hero-meta { display: flex; gap: 10px; flex-wrap: wrap; }
+.meta-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--text2);
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 5px 13px; border-radius: 8px; box-shadow: var(--sh-sm);
+}
+
+/* ── MAIN ── */
+main { max-width: 960px; margin: 0 auto; padding: 44px 24px 100px; }
+
+.sec-div { display: flex; align-items: center; gap: 12px; margin: 46px 0 22px; }
+.sec-line { flex: 1; height: 1px; background: var(--border); }
+.sec-label {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 16px; border-radius: 99px;
+  font-size: 12px; font-weight: 700; white-space: nowrap;
+}
+.sec-label.blue   { background: var(--accent-l); border: 1px solid var(--accent-m); color: var(--accent); }
+.sec-label.green  { background: var(--green-l); border: 1px solid rgba(5,150,105,.25); color: var(--green); }
+.sec-label.amber  { background: var(--amber-l); border: 1px solid rgba(217,119,6,.25); color: var(--amber); }
+.sec-label.red    { background: var(--red-l); border: 1px solid rgba(220,38,38,.2); color: var(--red); }
+.sec-label.purple { background: var(--purple-l); border: 1px solid rgba(124,58,237,.2); color: var(--purple); }
+.sec-label.teal   { background: var(--teal-l); border: 1px solid rgba(13,148,136,.25); color: var(--teal); }
+
+.summary-banner {
+  background: linear-gradient(135deg, var(--amber-l), #fff7ed);
+  border: 1px solid rgba(217,119,6,.2);
+  border-radius: var(--r); padding: 22px 26px; margin-bottom: 28px;
+}
+.summary-banner h2 { font-size: 15px; font-weight: 800; color: var(--amber); margin-bottom: 10px; }
+.summary-banner ul { list-style: none; padding: 0; }
+.summary-banner li {
+  font-size: 14px; color: var(--text2); padding: 4px 0;
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.summary-banner li::before { content: '✓'; color: var(--amber); font-weight: 800; flex-shrink: 0; }
+
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 22px 24px; margin-bottom: 14px;
+  box-shadow: var(--sh-sm);
+}
+.card.blue   { border-left: 3px solid var(--accent); }
+.card.green  { border-left: 3px solid var(--green); }
+.card.amber  { border-left: 3px solid var(--amber); }
+.card.red    { border-left: 3px solid var(--red); }
+.card.purple { border-left: 3px solid var(--purple); }
+.card.teal   { border-left: 3px solid var(--teal); }
+.card-title {
+  font-size: 15px; font-weight: 700; color: var(--text);
+  margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.card-body { font-size: 13.5px; color: var(--text2); line-height: 1.85; }
+.card-body p { margin-bottom: 8px; }
+.card-body ul, .card-body ol { padding-left: 19px; margin: 8px 0; }
+.card-body li { margin-bottom: 5px; }
+
+.tag {
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+  font-family: var(--mono); flex-shrink: 0;
+}
+.tag.sw  { background: var(--accent-l); color: var(--accent); border: 1px solid var(--accent-m); }
+.tag.ok  { background: var(--green-l); color: var(--green); border: 1px solid rgba(5,150,105,.3); }
+.tag.wip { background: var(--amber-l); color: var(--amber); border: 1px solid rgba(217,119,6,.3); }
+.tag.bug { background: var(--red-l); color: var(--red); border: 1px solid rgba(220,38,38,.25); }
+.tag.hw  { background: var(--purple-l); color: var(--purple); border: 1px solid rgba(124,58,237,.2); }
+
+.chip-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 5px 12px; font-size: 12px; font-weight: 600; color: var(--text2);
+}
+.chip.ok  { background: var(--green-l); border-color: rgba(5,150,105,.25); color: var(--green); }
+.chip.ng  { background: var(--red-l); border-color: rgba(220,38,38,.2); color: var(--red); }
+.chip.wip { background: var(--amber-l); border-color: rgba(217,119,6,.25); color: var(--amber); }
+
+.vid-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 16px; }
+.vid-card { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: #0f172a; box-shadow: var(--sh); }
+.vid-card video { width: 100%; height: auto; display: block; max-height: 520px; background: #000; }
+.vid-cap { padding: 10px 14px; font-size: 12px; font-weight: 600; color: rgba(255,255,255,.75); background: #1e293b; border-top: 1px solid rgba(255,255,255,.06); }
+.vid-cap small { display: block; font-size: 11px; color: rgba(255,255,255,.4); font-weight: 400; margin-top: 2px; }
+
+.img-card { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: #fff; box-shadow: var(--sh); margin-top: 16px; }
+.img-card img { width: 100%; height: auto; display: block; }
+.img-cap { padding: 10px 14px; font-size: 12px; font-weight: 600; color: var(--text2); background: var(--surface2); border-top: 1px solid var(--border); }
+.img-cap small { display: block; font-size: 11px; color: var(--muted); font-weight: 400; margin-top: 2px; }
+
+.note {
+  padding: 12px 16px; border-radius: 9px; font-size: 13px; margin: 10px 0;
+}
+.note.amber { background: var(--amber-l); border: 1px solid rgba(217,119,6,.25); color: #92400e; }
+.note.blue  { background: var(--accent-l); border: 1px solid var(--accent-m); color: #1e40af; }
+.note.green { background: var(--green-l); border: 1px solid rgba(5,150,105,.25); color: #065f46; }
+.note.red   { background: var(--red-l); border: 1px solid rgba(220,38,38,.2); color: #7f1d1d; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+th {
+  background: var(--surface2); color: var(--text2);
+  font-weight: 700; font-size: 11px; letter-spacing: .04em;
+  padding: 9px 14px; border: 1px solid var(--border); text-align: left;
+}
+td { padding: 9px 14px; border: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+tr:nth-child(even) td { background: #fafafa; }
+
+@media (max-width: 640px) {
+  .hero { padding: 80px 16px 40px; }
+  main { padding: 32px 16px 80px; }
+}
+/* ── 追加スタイル（週次報告：ARM） ── */
+.fig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+.fig-grid .img-card { margin: 0; margin-top: 0; }
+.flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 6px; margin: 14px 0; }
+.flow-step {
+  border: 1px solid var(--border); background: var(--surface2); border-radius: 10px;
+  padding: 8px 12px; font-size: 12px; text-align: center; min-width: 92px; line-height: 1.5;
+}
+.flow-step b { display: block; font-size: 13px; color: var(--text); }
+.flow-step small { color: var(--muted); font-size: 11px; }
+.flow-arrow { align-self: center; color: var(--muted); font-size: 14px; }
+@media (max-width: 640px) { .fig-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="../../../../plan-fy26.html">
+      <div class="nav-logo-icon">🧠</div>
+      <span class="nav-logo-sep">/</span>
+      <span class="nav-logo-text">FY26 Plan</span>
+    </a>
+    <div class="nav-item"><a class="nav-btn" href="../../../../plan-fy26.html">ホームページ</a></div>
+    <div class="nav-item"><a class="nav-btn" href="../../../../todo.html">進捗</a></div>
+    <div class="nav-item">
+      <button class="nav-btn" data-nav="vision">ビジョン <span class="nav-caret">▾</span></button>
+      <div class="nav-drop" id="nav-vision">
+        <a class="nav-drop-link" href="../../../../demo.html">
+          <span class="nav-dl-icon">🎯</span>
+          <div><div class="nav-dl-name">デモ詳細</div><div class="nav-dl-sub">デモシナリオ・要件マップ</div></div>
+        </a>
+        <div class="nav-drop-sep"></div>
+        <a class="nav-drop-link" href="../../../../disscussion/arm-demo-level123-ja.html">
+          <span class="nav-dl-icon">🦾</span>
+          <div><div class="nav-dl-name">マニピュレーション実証ロードマップ</div><div class="nav-dl-sub">アーム Demo Level 1-3 分類</div></div>
+        </a>
+        <a class="nav-drop-link" href="../../../../disscussion/move-base-level123-ja.html">
+          <span class="nav-dl-icon">🤖</span>
+          <div><div class="nav-dl-name">ナビゲーション Level 1-3 分類</div><div class="nav-dl-sub">自律移動設計方針</div></div>
+        </a>
+      </div>
+    </div>
+    <div class="nav-item">
+      <a class="nav-btn" href="../../../others-nav.html">その他</a>
+    </div>
+    <div class="nav-right">
+      <span class="nav-pulse"></span>
+      <div class="nav-badge-pill">Touch Anything 最終接近を改善中</div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">&#129470; Real Robot · ARM 追加 / Touch Anything</div>
+    <h1>実機 ARM 追加：基本 3 モードと<br>Touch Anything スキル 週次報告</h1>
+    <p class="hero-desc">
+      移動ベースにロボットアーム（SO-ARM101）を追加し、実機上で基本運転モードの整備と Touch Anything スキルの開発・検証を進めた。<br>
+      最終接近・Press 段階の安定化に向けて、単発の視覚結果に頼らない連続視覚フィードバック方式へ移行中。
+    </p>
+    <div class="hero-meta">
+      <span class="meta-chip">&#128197; 2026-09-20</span>
+      <span class="meta-chip">&#129302; Real Robot（移動ベース + SO-ARM101）</span>
+      <span class="meta-chip">&#128073; Touch Anything / Visual Servo</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+  <!-- サマリー -->
+  <div class="summary-banner">
+    <h2>今回の要点</h2>
+    <ul>
+      <li><span>移動ベースへ ARM を追加し、<b>Real to Sim / Teleoperation / Code to Sim &amp; Real</b> の 3 つの基本運転モードを設計・実機で動作確認</span></li>
+      <li><span>3 モードの上に、<b>Touch Anything</b>（目標識別 → 位置推定 → 接近 → Touch / Press）を実機で構築。Depth Camera・Wrist Camera・ARM 間の較正も実施し、将来の ARM Agent Skill として位置づけ</span></li>
+      <li><span>最終接近・Press 段階には安定性の課題が残る。原因を整理し、<b>連続視覚フィードバック（Visual Servoing）</b>への移行と、動作ブロックの重ね合わせ実行を実装。実機の次回検証は Isaac Sim での事前検証後に実施</span></li>
+    </ul>
+  </div>
+
+  <div class="note blue" style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+    <span>&#128221; Touch Anything の設計思想・開発の歩み・遭遇した問題と対策・最終接近の改善内容は、別ページにまとめています。</span>
+    <a href="TOUCH-ANYTHING-KNOWHOW-20260907.html" style="font-weight:700; color:var(--accent); text-decoration:none; white-space:nowrap;">Touch Anything Know-how を見る →</a>
+  </div>
+
+  <!-- ── SECTION 1: ARM 基本モード ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label amber">&#129470; 1. ARM 基本 3 モードの設計と検証</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-body">
+      <p>移動ロボットに ARM を追加するにあたり、安全な起動から遠隔操作、プログラム制御までを切り分けて扱えるよう、3 つの基本運転モードを設計した。いずれも実機で動作を確認済み。</p>
+      <table>
+        <tr><th>モード</th><th>関節の状態</th><th>主な用途</th></tr>
+        <tr><td><b>Real to Sim</b></td><td>Torque OFF（自由に動かせる）</td><td>起動時の安全な準備状態、状態確認、Real-to-Sim の状態同期</td></tr>
+        <tr><td><b>Teleoperation</b></td><td>Leader / Follower 構成</td><td>人手による遠隔操作、動作の示教、学習用データ収集</td></tr>
+        <tr><td><b>Code to Sim &amp; Real</b></td><td>Torque ON（プログラム制御）</td><td>IK 制御、記録動作の再生、VLA Policy、Agent Skill の実行</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card blue">
+    <div class="card-title"><span class="tag ok">MODE 1</span> Real to Sim Mode</div>
+    <div class="card-body">
+      <ul>
+        <li>起動直後は全関節が Torque OFF で、出力トルクなしに自由に動かせる。</li>
+        <li>ARM 起動後の安全な準備状態として、また Real-to-Sim の状態同期に使用する。</li>
+      </ul>
+      <div class="vid-grid">
+        <div class="vid-card">
+          <video controls preload="metadata" muted><source src="media/real2sim.mp4" type="video/mp4">お使いのブラウザは動画再生に対応していません。</video>
+          <div class="vid-cap">Real to Sim Mode の動作<small>手で動かした実機の姿勢がシミュレーション側へ反映される</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title"><span class="tag ok">MODE 2</span> Teleoperation Mode</div>
+    <div class="card-body">
+      <ul>
+        <li>Leader / Follower 構成。実際にタスクを実行するのは Follower ARM。</li>
+        <li>Leader ARM は人手による遠隔操作と動作示教に用いる。</li>
+        <li>今後、模倣学習・VLA などの実操作データが必要になった際も、Leader ARM による示教でデータ収集ができる。</li>
+      </ul>
+      <div class="vid-grid">
+        <div class="vid-card">
+          <video controls preload="metadata" muted><source src="media/teleoperate.mp4" type="video/mp4">お使いのブラウザは動画再生に対応していません。</video>
+          <div class="vid-cap">Teleoperation Mode の動作<small>Leader ARM の操作に Follower ARM が追従</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card purple">
+    <div class="card-title"><span class="tag hw">MODE 3</span> Code to Sim &amp; Real Mode</div>
+    <div class="card-body">
+      <ul>
+        <li>ARM をプログラムから直接制御するモードで、各関節は Torque ON。</li>
+        <li>IK 制御、記録済み動作の再生、VLA Policy など、プログラム化された制御方式を実行できる。</li>
+        <li>将来の実タスク実行と Agent Skill 呼び出しを主な対象とする。Touch Anything はこのモード上で動作する。</li>
+      </ul>
+      <div class="vid-grid">
+        <div class="vid-card">
+          <video controls preload="metadata" muted><source src="media/code2real-sim.mp4" type="video/mp4">お使いのブラウザは動画再生に対応していません。</video>
+          <div class="vid-cap">Code to Sim &amp; Real Mode の動作<small>プログラム指令で実機 ARM を駆動</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 2: Touch Anything ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label teal">&#128073; 2. Touch Anything アルゴリズム</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card teal">
+    <div class="card-body">
+      <p>3 モードの検証後、Code to Sim &amp; Real Mode 上で <b>Touch Anything</b> スキルを開発した。全体フローは次のとおり。</p>
+      <div class="flow">
+        <div class="flow-step"><b>Depth Camera</b><small>シーン取得</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><b>VLM</b><small>画像から対象を選択<br>（現状は人のクリックで代替）</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><b>SAM 2</b><small>対象を分割</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><b>深度</b><small>対象の 3 次元位置</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><b>ARM 接近</b><small>Wrist Camera 付き ARM へ位置を引き渡し</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><b>近距離補正</b><small>Wrist Camera の視覚補正</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><b>Touch / Press</b><small>最終接触</small></div>
+      </div>
+      <div class="note green">
+        <b>Agent Skill としての位置づけ：</b>「目標識別 + 位置推定 + 接近 + Touch」を一つの汎用スキルとしてカプセル化し、Agent が類似タスクに遭遇するたびに大規模モデルへ各ステップの制御を生成させなくて済むようにする。想定用途は、エレベーターのボタン押下、機器ボタンの操作、指定物体への接触、高い位置精度を要する局所操作など。
+      </div>
+
+      <div class="fig-grid">
+        <figure class="img-card">
+          <img src="media/touch-test.jpg" alt="Touch Anything 試験環境" />
+          <figcaption class="img-cap">Touch Anything 実機試験環境<small>番号付きボタン（1〜3）と色付きボタンを並べた試験パネルに対して ARM を向けている</small></figcaption>
+        </figure>
+        <figure class="img-card">
+          <img src="media/calibration.jpg" alt="較正の様子" />
+          <figcaption class="img-cap">Depth Camera・Wrist Camera・ARM 間の較正<small>ChArUco ボードを用いて、目標位置の座標変換精度を高めるための較正を実施</small></figcaption>
+        </figure>
+      </div>
+
+      <div class="vid-grid">
+        <div class="vid-card">
+          <video controls preload="metadata" muted><source src="media/touch-demo.mp4" type="video/mp4">お使いのブラウザは動画再生に対応していません。</video>
+          <div class="vid-cap">Touch Anything 実機デモ<small>目標指定から接近・接触まで</small></div>
+        </div>
+        <div class="vid-card">
+          <video controls preload="metadata" muted><source src="media/touch-anything-demo.mp4" type="video/mp4">お使いのブラウザは動画再生に対応していません。</video>
+          <div class="vid-cap">Touch Anything 実行録画（通し）<small>長尺版</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 3: 最終接近 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label red">&#127919; 3. 最終接近・Press 段階の課題と改善方針</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title"><span class="tag ok">解決済み</span> 開発中に見つかった問題</div>
+    <div class="card-body">
+      <ul>
+        <li><b>初期位置の推定誤差：</b>追加の Calibration でカメラと ARM の位置関係を補正し、改善した。</li>
+        <li><b>視覚的な「偽の整列」：</b>Y/Z を同時に補正していたため、見かけ上は整列していても実際の Press 位置がずれることがあった。補正順を「Z → Y」に変更して解決した。</li>
+      </ul>
+      <div class="fig-grid">
+        <figure class="img-card">
+          <img src="media/press-error.png" alt="偽の整列によるずれの例" />
+          <figcaption class="img-cap">補正方式の変更前（RViz）<small>見かけ上は整列していても、Press 位置にずれが生じた例</small></figcaption>
+        </figure>
+        <figure class="img-card">
+          <img src="media/press.png" alt="正常な接近時の RViz" />
+          <figcaption class="img-cap">補正方式の変更後（RViz）<small>Arm Camera 上で爪先と対象が整列し、PRESS フェーズに到達した状態</small></figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+
+  <div class="card red">
+    <div class="card-title"><span class="tag bug">課題</span> 現在残っている主な課題</div>
+    <div class="card-body">
+      <p>Touch Anything の主体フローは一通り動作するようになったが、<b>最終 Press 直前の位置合わせ精度が十分ではない</b>。主な原因として、接近中の動作・補正が連続的ではなく、最終位置に誤差が残ることが考えられる。</p>
+    </div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title"><span class="tag wip">原因</span> 原因分析</div>
+    <div class="card-body">
+      <ul>
+        <li><b>目標位置と ARM 動作の更新が不連続：</b>従来は「SAM で再分割 → 軌道生成 → 実行 → 停止・整定待ち → 再観測」を 1 ステップずつ繰り返しており、実際の観測間隔は 6〜13 秒に達していた。停止のたびに荷重による沈み込みや振動が生じ、再始動時にも新たな誤差が乗る。</li>
+        <li><b>SO-ARM101 の精度の限界：</b>低コストなアームであり、絶対位置精度・繰り返し位置精度が限られる（荷重下では Z 方向に系統的な下振れが出る）。</li>
+        <li><b>単発の視覚結果への依存：</b>ある一時点の視覚定位結果だけで最終 Press を実行すると、誤差が蓄積しやすい。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title"><span class="tag ok">新方針</span> 連続視覚フィードバック（Visual Servoing）</div>
+    <div class="card-body">
+      <p>最終位置を単一の目標位置から決めるのをやめ、<b>ARM が接近している間、視覚特徴量を実時間で計算し続け、連続的なフィードバックで運動方向を修正して最終 Press 位置へ収束させる</b>方式に切り替える。ARM 自体の位置誤差と、単発の視覚推定誤差の両方の影響を小さくすることが狙い。</p>
+      <div class="flow">
+        <div class="flow-step"><b>SAM 2</b><small>最初に対象を確定（1 回のみ）</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><b>KLT 追跡</b><small>連続追跡（約 25 Hz）</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><b>画像誤差制御</b><small>10 Hz で Y/Z・+X を補正</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><b>10 ステップ動作ブロック</b><small>毎周期で置き換えて連続実行</small></div>
+      </div>
+      <ul>
+        <li>追跡が外れたときのみ ORB 特徴で再同定し、それでも失敗した場合に SAM の再実行または人の再確認へ進む。</li>
+        <li>実行側は 0.5 秒分（10 ステップ）の動作ブロックを持ち、新しい観測のたびに未実行の後半を置き換える。追跡・計算・実行が重なって動くため、停止・再始動による誤差が生じにくい。</li>
+        <li>制御ループが止まった場合は独立したウォッチドッグが完了前に HOLD へ移行し、停止時は現在姿勢を保持する。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card blue">
+    <div class="card-title"><span class="tag sw">実機検証</span> ここまでの実機での確認結果</div>
+    <div class="card-body">
+      <table>
+        <tr><th>項目</th><th>結果</th></tr>
+        <tr><td>運動中の連続追跡・目標更新・動作ブロック実行</td><td><span class="tag ok">実機で動作確認</span> 動作ブロックの重ね合わせ実行と再計画が実機ログ上で確認できた</td></tr>
+        <tr><td>Z 方向の下振れ（最大 約 44.8 mm）</td><td><span class="tag ok">原因特定・修正</span> 画像ヤコビアンから得る Z 補正の向きが実機の応答と合っていなかった。実測末端との残差を使う閉ループ補償に修正</td></tr>
+        <tr><td>運動中に追跡が止まる現象</td><td><span class="tag ok">原因特定・修正</span> 目標を見失ったのではなく、診断用の DDS 配信が Touch プロセスの追跡タイマを最大約 6 秒ブロックしていた。運動中は診断配信を停止し、QoS を軽量化</td></tr>
+        <tr><td>停止後の余動</td><td><span class="tag ok">修正</span> 停止時は現在姿勢へ HOLD する動作に変更</td></tr>
+        <tr><td>実機での Press までの連続動作</td><td><span class="tag wip">検証待ち</span> 次項の Isaac Sim 検証を通過してから実施</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card purple">
+    <div class="card-title"><span class="tag hw">次のステップ</span> 検証計画（Isaac-first）</div>
+    <div class="card-body">
+      <p>実機での試行は時間と安全面のコストが高いため、まず Isaac Sim で同一のトピック・テレメトリ構成を再現し、そこで方式を固めてから実機で 1 回だけ検証する。</p>
+      <ol>
+        <li>Isaac Sim 上で Arm Camera・関節状態・TF・視覚サーボ用トピックを実機と同じスキーマで再現する。</li>
+        <li>画像遅延、IK 遅延、DDS の背圧、関節応答の遅れ、Z 方向のモデル誤差を注入し、動作ブロックの置き換え・追跡の締切遵守・停止直後の凍結を確認する。</li>
+        <li>FAR → NEAR の全行程で追跡喪失・タイムアウト・Z 下振れが出ない状態になるまで、Z 補償・速度制限・ブロック長を調整する。</li>
+        <li>同じパラメータを実機に反映し、人が監督する FAR → NEAR を 1 回実施する（Press 実行前は確認待機で HOLD）。判定は Z 下振れ 12 mm 以内、ウォッチドッグ不作動、動作ブロックの再計画数が指令と共に増加していること。</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="note blue">
+    &#128204; 詳細な問題分析と各段階の開発記録は
+    <a href="TOUCH-ANYTHING-KNOWHOW-20260907.html" style="font-weight:700; color:var(--accent);">Touch Anything Know-how</a>
+    の「07 最終接近フェーズの改善」に記載しています。
+  </div>
+
+</main>
+
+<script>
+document.querySelectorAll('.nav-btn[data-nav]').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const id = btn.dataset.nav;
+    const drop = document.getElementById('nav-' + id);
+    const isOpen = drop.classList.contains('open');
+    document.querySelectorAll('.nav-drop.open').forEach(d => d.classList.remove('open'));
+    document.querySelectorAll('.nav-btn.nav-open').forEach(b => b.classList.remove('nav-open'));
+    if (!isOpen) { drop.classList.add('open'); btn.classList.add('nav-open'); }
+  });
+});
+document.addEventListener('click', () => {
+  document.querySelectorAll('.nav-drop.open').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.nav-btn.nav-open').forEach(b => b.classList.remove('nav-open'));
+});
+</script>
+</body>
+</html>

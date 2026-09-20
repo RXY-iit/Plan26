@@ -486,6 +486,7 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
       <span class="hero-badge green">✅ 60 mm/s 達成</span>
       <span class="hero-badge amber">⚡ JOG モード</span>
       <span class="hero-badge blue">🔗 ROS2 統合済み</span>
+      <span class="hero-badge blue">📍 ABZO 絶対位置フィードバック追加</span>
     </div>
   </div>
 </div>
@@ -1120,39 +1121,167 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
 
 
   <!-- ────────────────────────────────────────── -->
-  <!-- セクション 8: 今後の予定 -->
+  <!-- セクション 8: ABZO絶対位置フィードバック追加 -->
   <!-- ────────────────────────────────────────── -->
   <div class="divider">
     <div class="divider-line"></div>
-    <div class="divider-label" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border);">8. 今後の予定</div>
+    <div class="divider-label" style="background:var(--accent-l);color:var(--accent);border:1px solid var(--accent-m);">8. ABZO 絶対位置フィードバック追加</div>
     <div class="divider-line"></div>
   </div>
 
   <div class="section-hd" style="margin-top:0;">
-    <div class="section-icon sw">📋</div>
+    <div class="section-icon sw">📍</div>
     <div>
-      <div class="section-title">今後の予定</div>
-      <div class="section-sub">残タスクと精度向上に向けた作業</div>
+      <div class="section-title">絶対位置フィードバック（ABZO / RS-485）</div>
+      <div class="section-sub">2026-09-19 追加 — Waveshare USB TO RS485 経由で AZD-KD の ABZO 絶対位置を読み取り専用で取得</div>
     </div>
   </div>
 
-  <div class="checklist">
-
-    <div class="check-item">
-      <div class="check-box"></div>
-      <div>
-        <div style="font-weight:700;margin-bottom:2px;">実際の移動距離と推定位置の誤差評価</div>
-        <div style="font-size:12px;color:var(--muted);">60 mm/s 積分による <code>/lift/position</code> と実寸の差を測定・キャリブレーション。</div>
+  <div class="card">
+    <div class="card-title">追加の狙いと位置づけ</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:10px;">
+      これまでの FW/RV JOG 制御チェーンとは別に、<strong>読み取り専用の Modbus RTU リンク</strong>を新設し、AZD-KD 内蔵の ABZO バッテリレス絶対値エンコーダーから昇降機構の絶対位置を取得できるようにした。
+      これにより <code>/lift/position</code> の JOG 速度積分による推定値ではなく、実機の絶対位置を直接監視できる。
+    </p>
+    <div class="arch-flow">
+      <div class="arch-node sw">
+        Ubuntu 22 PC（ROS2）
+        <div class="arch-node-sub">lift_serial_node（運動制御・積分推定）+ lift_abzo_monitor_node（絶対位置監視）</div>
+      </div>
+      <div class="arch-arrow">
+        <div class="arch-arrow-line"></div>
+        <div class="arch-arrow-label">既存：USB Serial（Arduino） / 新規：USB RS-485（Waveshare）</div>
+        <div class="arch-arrow-line"></div>
+        <div class="arch-arrow-head">▼</div>
+      </div>
+      <div class="arch-node hw">
+        制御リンク：Arduino UNO → MOSFET → AZD-KD CN4（FW/RV）
+        <div class="arch-node-sub">既存の JOG 運動制御はそのまま変更なし</div>
+      </div>
+      <div class="arch-arrow">
+        <div class="arch-arrow-line"></div>
+        <div class="arch-arrow-label">並行して新設</div>
+        <div class="arch-arrow-line"></div>
+        <div class="arch-arrow-head">▼</div>
+      </div>
+      <div class="arch-node motor">
+        フィードバックリンク：Waveshare USB TO RS485 → AZD-KD CN6/CN7 → ABZO
+        <div class="arch-node-sub">Modbus RTU function 03（読み取り専用）、書き込みレジスタなし</div>
       </div>
     </div>
-    <div class="check-item">
-      <div class="check-box"></div>
-      <div>
-        <div style="font-weight:700;margin-bottom:2px;">position_min / max を実寸に合わせて調整</div>
-        <div style="font-size:12px;color:var(--muted);">実機行程を実測し、ソフトウェアリミットと AZD-KD ハード限位の間に十分な安全マージンを確保。</div>
-      </div>
+    <div style="margin-top:14px;padding:10px 14px;background:var(--amber-l);border:1px solid rgba(217,119,6,.2);border-radius:8px;font-size:12px;color:var(--text2);">
+      <strong style="color:var(--amber);">注意：</strong> このリンクは位置の「監視」専用。昇降の実動作は従来どおり CN4 の FW/RV 入力（Arduino D8/D9）で行われ、RS-485 側からの書き込みは行わない。
     </div>
   </div>
+
+  <div class="img-card">
+    <div class="img-card-hd">📷 Waveshare USB TO RS485 コンバータ（実機）</div>
+    <img src="./figures/USB-RS485.jpg" alt="Waveshare USB TO RS485 コンバータと端子台" loading="lazy" />
+    <div class="img-card-cap">FTDI FT232RL 採用の USB-RS485 コンバータ。A+ / B- / GND の3端子のみ使用し、Lift の AZD-KD 専用（BLVD 走行モーター系の RS-485 バスとは共用しない）。</div>
+  </div>
+
+  <div class="img-card">
+    <div class="img-card-hd">📷 AZD-KD 面板スイッチ（ID / SW1 / BAUD）</div>
+    <img src="./figures/AZD-KDsetting.jpg" alt="AZD-KD 面板の ID・SW1・BAUD ロータリースイッチ" loading="lazy" />
+    <div class="img-card-cap">Modbus 通信用の現場設定：ID=1、BAUD=4（115200 bps）、SW1 No.2=ON（Modbus RTU）、No.3/No.4=ON（端末抵抗120Ω有効）。設定変更は電源再投入後に反映。</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">RS-485 配線対照表（CN6 / CN7）</div>
+    <table class="data-table">
+      <thead>
+        <tr><th>Waveshare 端子</th><th></th><th>AZD-KD CN6/CN7</th><th>備考</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="wire-from">A+</span></td>
+          <td class="wire-arrow">→</td>
+          <td><span class="wire-to">Pin3 TR+</span></td>
+          <td style="font-size:12px;color:var(--muted);">RS-485 differential +</td>
+        </tr>
+        <tr>
+          <td><span class="wire-from">B-</span></td>
+          <td class="wire-arrow">→</td>
+          <td><span class="wire-to">Pin6 TR-</span></td>
+          <td style="font-size:12px;color:var(--muted);">RS-485 differential -</td>
+        </tr>
+        <tr>
+          <td><span class="wire-from">GND</span></td>
+          <td class="wire-arrow">→</td>
+          <td><span class="wire-to">Pin2 GND</span></td>
+          <td style="font-size:12px;color:var(--muted);">通信基準GND（USBの5Vは未接続）</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="margin-top:12px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--muted);">
+      CN6・CN7 は並列端子のためどちらか一方のみ使用。両端（PC側コンバータ内蔵120Ω／AZD-KD側SW1 No.3+No.4）で終端した点対点構成。CN6/CN7 も非絶縁のため、PC-ドライバー間にガルバニック絶縁はない。
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">MEXE02 通信設定（実機確認済み）</div>
+    <table class="data-table">
+      <thead>
+        <tr><th>項目</th><th>値</th><th>根拠</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>通信プロトコル</td><td><strong>Modbus RTU</strong></td><td style="font-size:12px;color:var(--muted);">SW1 No.2 設定 + 実機通信確認</td></tr>
+        <tr><td>Slave address</td><td><strong>1</strong></td><td style="font-size:12px;color:var(--muted);">ID ロータリースイッチと寄存器読み戻し一致</td></tr>
+        <tr><td>Baud rate</td><td><strong>115200 bit/s</strong></td><td style="font-size:12px;color:var(--muted);">BAUD=4</td></tr>
+        <tr><td>データビット / パリティ / ストップビット</td><td><strong>8 / Even / 1</strong></td><td style="font-size:12px;color:var(--muted);">8E1 実機通信で確認</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">ABZO 絶対位置キャリブレーション</div>
+    <table class="data-table">
+      <thead>
+        <tr><th>キャリブレーション点</th><th>実物位置</th><th>feedback_steps</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>機械下端</td><td><strong>0 mm</strong></td><td><code>-404</code></td></tr>
+        <tr><td>機械上端</td><td><strong>200 mm</strong></td><td><code>20707</code></td></tr>
+        <tr><td>全ストローク</td><td><strong>200 mm</strong></td><td><code>21111</code>（20707 - (-404)）</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:12px;padding:10px 14px;background:#0f172a;border-radius:8px;">
+      <code style="background:transparent;border:none;color:#e2e8f0;font-size:12px;">mm = steps × 0.009473734072 + 3.827388565</code>
+    </div>
+    <div style="margin-top:10px;font-size:12px;color:var(--muted);">
+      2026-09-19 に実機で上下端まで手動フルストロークして取得した実測2点キャリブレーション（電子ギアの理論値からの逆算ではない）。ROS 側のソフトウェア可動範囲 <strong>10–190 mm</strong>（両端各10mmのkeep-outマージン）はこの標定を基準に設定。
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">ROS2 トピック（新規・絶対位置監視）</div>
+    <table class="data-table">
+      <thead>
+        <tr><th>トピック</th><th>型</th><th>内容</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>/lift/abzo_position_raw</code></td>
+          <td><span style="font-family:var(--mono);font-size:11px;color:var(--muted);">std_msgs/Int32</span></td>
+          <td style="font-size:13px;">ABZO feedback steps（生値）</td>
+        </tr>
+        <tr>
+          <td><code>/lift/abzo_position_mm</code></td>
+          <td><span style="font-family:var(--mono);font-size:11px;color:var(--muted);">std_msgs/Float32</span></td>
+          <td style="font-size:13px;">キャリブレーション済み絶対位置 [mm]</td>
+        </tr>
+        <tr>
+          <td><code>/lift/abzo_state</code></td>
+          <td><span style="font-family:var(--mono);font-size:11px;color:var(--muted);">std_msgs/String</span></td>
+          <td style="font-size:13px;">位置・アラーム・READY/MOVE・温度・電圧などを含む JSON（schema v3）</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="margin-top:12px;padding:10px 14px;background:var(--red-l);border:1px solid rgba(220,38,38,.2);border-radius:8px;font-size:12px;color:var(--text2);">
+      <strong style="color:var(--red);">未確認事項：</strong> AZD-KD 内部の物理限位（FW-LS/RV-LS/HOMES）およびソフトウェア限位（FW-SLS/RV-SLS）の入力割り当てはまだ MEXE02 で確認・導出できていない（<code>physical_limit_inputs_configured=false</code> / <code>software_limits_configured=false</code>）。上下端スキャン中に過負荷アラーム <code>30h</code>（OVERLOAD）が実測されている。ROS の <code>10–190 mm</code> ガードは稼働中のソフトウェア保護であり、AZD-KD 内部限位が有効であることの証明ではない。
+    </div>
+  </div>
+
 
 </main>
 
@@ -1169,7 +1298,7 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
 
 <footer>
   <a href="../../../todo.html">← Todo へ戻る</a> &nbsp;|&nbsp;
-  FY2026 Robot Harness System &nbsp;|&nbsp; 最終更新: 2026-05-10
+  FY2026 Robot Harness System &nbsp;|&nbsp; 最終更新: 2026-09-19
 </footer>
 
 <script>
