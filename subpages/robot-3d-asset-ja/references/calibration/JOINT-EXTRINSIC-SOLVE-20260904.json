@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "deployment_status": "DEPLOYED_PENDING_REAL_VALIDATION",
+  "optimizer_success": true,
+  "optimizer_message": "`xtol` termination condition is satisfied.",
+  "sample_count": 130,
+  "split": "deterministic every fifth sample held out",
+  "train_metrics": {
+    "count": 104,
+    "translation_rms_m": 0.010596304686846074,
+    "translation_median_m": 0.009631336855704106,
+    "translation_max_m": 0.020797775397442403,
+    "rotation_rms_deg": 1.9457307643252486,
+    "rotation_median_deg": 1.5185986054536804,
+    "rotation_max_deg": 5.9392255122422535
+  },
+  "validation_metrics": {
+    "count": 26,
+    "translation_rms_m": 0.012435437333561634,
+    "translation_median_m": 0.010575254709603785,
+    "translation_max_m": 0.0207362485892326,
+    "rotation_rms_deg": 2.1520984683842403,
+    "rotation_median_deg": 1.3735787277885567,
+    "rotation_max_deg": 4.8342128809815845
+  },
+  "all_metrics": {
+    "count": 130,
+    "translation_rms_m": 0.010988783315206856,
+    "translation_median_m": 0.009769000661124308,
+    "translation_max_m": 0.020797775397442403,
+    "rotation_rms_deg": 1.988718212647969,
+    "rotation_median_deg": 1.454017763121049,
+    "rotation_max_deg": 5.9392255122422535
+  },
+  "hard_facts": {
+    "base_link_height_above_ground_m": 0.1125,
+    "arm_base_height_above_ground_m": 1.005,
+    "arm_mount_base_link_xyz_rpy": [
+      0.32084,
+      0.01262,
+      0.8924999999999998,
+      0.0,
+      0.0,
+      -0.01532
+    ],
+    "pan_axis_height_above_ground_m": 0.735,
+    "tilt_axis_height_above_ground_m": 0.77,
+    "pan_tilt_motion_does_not_move_arm": true
+  },
+  "observability": {
+    "absolute_base_xy_yaw": "FIXED_TO_EXISTING_INSTALLATION_ANCHOR",
+    "absolute_board_pose": "NOT_MEASURED",
+    "relative_dual_camera_extrinsic": "OBSERVABLE_FROM_SHARED_BOARD"
+  },
+  "solution": {
+    "pan_axis_point_base_m": [
+      0.27534714532075716,
+      -0.00043873345047995603,
+      0.6224999999999999
+    ],
+    "pan_axis_unit_base": [
+      0.548946560354701,
+      0.06256142443307827,
+      0.8335128925503473
+    ],
+    "tilt_axis_point_reference_base_m": [
+      0.3003471453207572,
+      -0.00043873345047995603,
+      0.6575
+    ],
+    "tilt_axis_unit_reference_base": [
+      -0.003876900095496861,
+      0.9973748737319207,
+      -0.07230719807795688
+    ],
+    "holder_reference_xyz_m": [
+      0.3182424099233187,
+      0.00044564574584602686,
+      0.6311493098863494
+    ],
+    "holder_reference_rpy_rad": [
+      -0.08445601082619111,
+      0.7448949156565008,
+      -0.027769809401778655
+    ],
+    "gripper_to_arm_camera_optical_xyz_m": [
+      0.005322287314291712,
+      0.054910286339317105,
+      -0.05164341675714863
+    ],
+    "gripper_to_arm_camera_optical_rpy_rad": [
+      2.530848248611389,
+      0.025610528221874596,
+      -0.14916274219036155
+    ],
+    "axis_dot_product": -2.7755575615628914e-17
+  },
+  "urdf_solution": {
+    "camera_pan_joint_xyz_m": [
+      0.27534714532075716,
+      -0.00043873345047995603,
+      0.6224999999999999
+    ],
+    "camera_pan_joint_rpy_rad": [
+      -0.08955685540305368,
+      0.5792623621855104,
+      -0.04911598279427132
+    ],
+    "camera_tilt_joint_xyz_m": [
+      0.0017371988628413493,
+      -0.0026196450837605856,
+      0.04289661524812971
+    ],
+    "camera_tilt_joint_rpy_rad": [
+      -1.5707963267948966,
+      -0.581108340978008,
+      0.004638247830744674
+    ],
+    "realsense_holder_joint_xyz_m": [
+      0.01790593667688123,
+      0.026217766275025367,
+      0.00271802400575874
+    ],
+    "realsense_holder_joint_rpy_rad": [
+      1.5609920630222491,
+      -0.025811462779642635,
+      0.7447960196736481
+    ],
+    "arm_camera_body_joint_xyz_m": [
+      0.005322287314291712,
+      0.054910286339317105,
+      -0.05164341675714863
+    ],
+    "arm_camera_body_joint_rpy_rad": [
+      2.530848248611389,
+      0.025610528221874596,
+      -0.14916274219036155
+    ]
+  },
+  "physical_constraint_normalized_residuals": [
+    -2.7755575615628914e-15,
+    1.9643245510105483,
+    0.8445330415350946,
+    0.10402339744082655,
+    1.9526576373451505,
+    -1.2954083716473743,
+    0.27837927802568996,
+    0.9556900284007241,
+    1.0432104586527435,
+    1.2174583305890385,
+    1.153496423404743,
+    1.4830450761351033,
+    1.1364964458640214
+  ],
+  "public_model_usage": "COMPARISON_ONLY_NOT_IN_OPTIMIZER",
+  "source_sessions": [
+    "session_20260903_010858_115137",
+    "session_20260903_014710_255810",
+    "session_20260903_020201_959088",
+    "session_20260903_023525_587586"
+  ],
+  "optimizer_parameters": [
+    0.27534714532075716,
+    -0.00043873345047995603,
+    0.5302381139378287,
+    0.06042929146914608,
+    0.8051062453204703,
+    0.1443904630784313,
+    1.0052791086989281,
+    0.15341856690035213,
+    0.3182424099233187,
+    0.00044564574584602686,
+    0.6311493098863494,
+    -0.07016639827217619,
+    0.7454581304428423,
+    0.004994987291444463,
+    0.005322287314291712,
+    0.054910286339317105,
+    -0.05164341675714863,
+    2.526595236158679,
+    -0.1785337532440855,
+    -0.09183959100373787
+  ]
+}

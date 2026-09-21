@@ -1,0 +1,406 @@
+{
+  "version": "v003",
+  "language": "ja",
+  "missing_translations": 0,
+  "unchanged_raw_asset_count": 98,
+  "raw_assets": [
+    {
+      "file": "renders/arm-detail.png",
+      "sha256": "eb32f596a9e2e68ae30b78a5d2a7ab554b7cff141009af4c2a37947fa1506675"
+    },
+    {
+      "file": "renders/assembled.png",
+      "sha256": "48edd73e5d56cbbccda97123cdbdc3a8eaeee05f26aec20d4dfcebc5fd92f56e"
+    },
+    {
+      "file": "renders/exploded.png",
+      "sha256": "50d0a9502f51950e73e417979925beb5238b879a2511ad2f9ed40c4b14948e87"
+    },
+    {
+      "file": "web/reference-pages.css",
+      "sha256": "9866dcff84e4b127e0c4e1441bf59bbb4058f0aec979df76084f4649f136c195"
+    },
+    {
+      "file": "web/robot_web_lod1.glb",
+      "sha256": "6459406a5cebf6cb5087f3748ef10f250fe4d117a1ae79257695a46f5d25b0f3"
+    },
+    {
+      "file": "web/style.css",
+      "sha256": "cdf04d8693d948a42543a2560e2ebe04f2745f1854daf8c98b0b9554706dee2d"
+    },
+    {
+      "file": "web/robot_web.glb",
+      "sha256": "3de0ee5e8489b6ea45b6507d5b5a00528b7ce5b223f8ceb735fbaabc23c0857b"
+    },
+    {
+      "file": "blender/robot_master_v003.blend",
+      "sha256": "147d369ca81b06c3f13e4dd79ca2ed84b3410b662cf478d9677338d001138a08"
+    },
+    {
+      "file": "blender/robot_master_v001.blend",
+      "sha256": "7c9e3019f75aedc014fe926544bd9471eee61ff76af87d23d9d0fe810a9af610"
+    },
+    {
+      "file": "blender/robot_master_v002.blend",
+      "sha256": "82fd8659d68f8fbd01e620d5655598aa81912ae758582cc61f173c1d870c900d"
+    },
+    {
+      "file": "blender/derived/mid360.stl",
+      "sha256": "a2f4cffba5c8579bc6a0e79e57b517fef9552f6a04596505361428446307054e"
+    },
+    {
+      "file": "blender/derived/xc330.stl",
+      "sha256": "09e0a7ce582e8e3daec496f69fa89b9e01cb3ed84b71627ef839f5cf93e13865"
+    },
+    {
+      "file": "blender/derived/xh540.stl",
+      "sha256": "8ed190c49bc359ee97b34ddceec2b1ba519976dd9edc97d111474e1ac13af791"
+    },
+    {
+      "file": "references-v2/products/battery-product.jpg",
+      "sha256": "412df7cfab98155370fbef2bf943de576108c1d121f25baa06b5168c0af89089"
+    },
+    {
+      "file": "references-v2/products/lift-dimensions.png",
+      "sha256": "0670d1874fee23017f61a63d1135473823656f4df725b47602e3708a61a99ad4"
+    },
+    {
+      "file": "references-v2/products/drive-dimensions.jpg",
+      "sha256": "6142da8308af0ab6100ce3d4a98832971f68bc4866f5e3884d053789d4f3a8bd"
+    },
+    {
+      "file": "references-v2/products/lift-photo.jpg",
+      "sha256": "1b81ffb47d6e23bbd049b050c599085f8edff504f58c3062784e950cfb5c9858"
+    },
+    {
+      "file": "references-v2/cad/mid360.stp",
+      "sha256": "b93e9b51282ed319b6aa755e76a132c0eb03306da5f3b9676bcabf2e2ae25f02"
+    },
+    {
+      "file": "references-v2/cad/xc330.stp",
+      "sha256": "e2f7b060801a1d6a21f23bca2554f29a402f7d73b8498cb201c9e6adf3139eb6"
+    },
+    {
+      "file": "references-v2/cad/mid360-fov.stp",
+      "sha256": "549598daaa7336d3a804b33aeace6cc4507dffb28fb9772e45fd780c9df05869"
+    },
+    {
+      "file": "references-v2/cad/xh540.stp",
+      "sha256": "6e0df65638b3a23b12c7ee1114d4d06f5ec2de9e84e3ffddd7e115e8f8faf39f"
+    },
+    {
+      "file": "references-v2/photos/IMG_0361.jpg",
+      "sha256": "9bfd8b9c8aa720aef5c4375ae3fe691b93230846136e63872ab3332e99e20e75"
+    },
+    {
+      "file": "references-v2/photos/IMG_0367.jpg",
+      "sha256": "c9248a5adb87826102babcfeb7d841ab089d69f887ed8b14ef13501775b0682a"
+    },
+    {
+      "file": "references-v2/photos/IMG_0372.jpg",
+      "sha256": "ea263668a64331b0495aa9ac52fc7d18fbf118d6c264261d11899b01e0e07e07"
+    },
+    {
+      "file": "references-v2/photos/IMG_0366.jpg",
+      "sha256": "1d18beb5fb66f0eefc1135659e3cab32c11a3bfc25452d6d176a826d290755a6"
+    },
+    {
+      "file": "references-v2/photos/robot-overview.jpg",
+      "sha256": "a431f95944452622553b09706013ccdf73448ff66a616f1aefee7cd9fa0c45ba"
+    },
+    {
+      "file": "references-v2/photos/Mid3602.jpg",
+      "sha256": "37ddef25516ab96135ea95bc35d0488740804a1908635bdec4f268b6a4de2bde"
+    },
+    {
+      "file": "references-v2/photos/Mid3601.jpg",
+      "sha256": "0ee15f66def6382ecbda226ff14433a06a66b920069c271d3cc6701188106213"
+    },
+    {
+      "file": "references-v2/photos/camera-visiable-range.png",
+      "sha256": "87a16cc8a7e5cdf8db4bd9a0d89ea553e3f12c0f73989261ea569e1f8373b0ec"
+    },
+    {
+      "file": "references-v2/photos/new-camera-holder2.png",
+      "sha256": "51cf0829e08c3bb709c4455d88c108f26bb597d2507aecce97d2a84a4214bb05"
+    },
+    {
+      "file": "references-v2/photos/new-camera-holder.png",
+      "sha256": "724b9eb44b57c835ebf9315f6933a9b0056677acd61a6b3f06752026aea51942"
+    },
+    {
+      "file": "references-v2/photos/LIVOX-Mid-360-LiDAR-Sensor-FIG-3.webp",
+      "sha256": "3d65ab2cc9acb09106160d95f134e4457ccab6f89872cd4cfa28878954b6c408"
+    },
+    {
+      "file": "references-v2/photos/camera-hodler2.jpg",
+      "sha256": "d3993f37c1a2a4fb9b1d5dc4663847e525d16091f1f553172c657587f57589f4"
+    },
+    {
+      "file": "references-v2/photos/camera-hodler1.jpg",
+      "sha256": "950c22292f24cf3140892d24681e9dd52bf9fd3eed3783862dbf6e88a99b8f40"
+    },
+    {
+      "file": "references-v2/photos/IMG_0368.jpg",
+      "sha256": "5f62be1f64b6cba4d8f4aa9bec8f067c47ce9272ccf563c1c6fa25b5d3c3b739"
+    },
+    {
+      "file": "references-v2/cad/validation/xc330_20260920T140953Z.png",
+      "sha256": "7e184a4b726fd8f3b22a97b6e477f05e4065d049edd61fc1afa4dcf5a8d4431b"
+    },
+    {
+      "file": "references-v2/cad/validation/mid360_20260920T140953Z.png",
+      "sha256": "b81c90b0b41721259bc984e836ee35815783f4b0ed1bcb336965cc9c79c3c73e"
+    },
+    {
+      "file": "references-v2/cad/validation/xh540_20260920T140953Z.png",
+      "sha256": "ab4134f58befb82860faec1d6a62829d5b193d1ce5f140104404f5788eb14c08"
+    },
+    {
+      "file": "references/runtime-config/real_camera_poses.yaml",
+      "sha256": "1bc8c369975771a02a2da358f11f2348de3742d192fb6321019d30e98a83ae1d"
+    },
+    {
+      "file": "references/runtime-config/fast_lio_mid360.yaml",
+      "sha256": "2d9af286f8c177618d6aac1fd6ac77f0dcadec147ecd418e329255f598cda61c"
+    },
+    {
+      "file": "references/runtime-config/arm_real_dashboard_test.yaml",
+      "sha256": "003096d314ed7dcc9cb4c666bca3d43b12e86fb504e131ea5de51396bd2d518f"
+    },
+    {
+      "file": "references/runtime-config/navigation.launch.py",
+      "sha256": "e4f6b01c04fdc4906449f91201fb1af02cf661dc23c17602cdfcacd8a5fb7564"
+    },
+    {
+      "file": "references/runtime-config/camera_scan_profiles.yaml",
+      "sha256": "43626e2769d235bdbf5c819e9a7c16302ac70beb3c42f8a26a2087359ae6164b"
+    },
+    {
+      "file": "references/runtime-config/nav2_params.yaml",
+      "sha256": "391695ab2c43d385f726c7bed05b25e1d922c2fc50366403cf012712d0f62152"
+    },
+    {
+      "file": "references/runtime-config/arm_mount_tf_publisher.py",
+      "sha256": "6fdcb1fc71bc2f24a903ef47748f45ca5cc4291036dd47f9ac85527e1e2fc4f8"
+    },
+    {
+      "file": "references/runtime-config/MID360_config.json",
+      "sha256": "2b9dce75ca05bb1b879f78f5845996b54ae1f08d1aefa4cde969e28cb8443eb3"
+    },
+    {
+      "file": "references/runtime-config/arm_camera_calibrated.yaml",
+      "sha256": "f6ebd3415f45b10f35fce1fcbfded3cec7287f88bc1fbb52f9812c8a37357492"
+    },
+    {
+      "file": "references/runtime-config/test_all.launch.py",
+      "sha256": "f449fe941faa7862a6156048d5df4cf3e67d0fa7ee9d1c598d2b91e6b59a6612"
+    },
+    {
+      "file": "references/hardware-docs/lift_mechanism/HM-60313J.pdf",
+      "sha256": "a72f95fe219794051f9385ae5747f8ddeaf95d83f4f5cccb9d935d1c2d7b3b51"
+    },
+    {
+      "file": "references/photos/real-robot/IMG_0362.heic",
+      "sha256": "0ff328ab0cedfd88cc2d70b0267419bc514859665e81ea49796a96b43e49fb5c"
+    },
+    {
+      "file": "references/photos/real-robot/IMG_0177.jpg",
+      "sha256": "a9f2c6f1ca13e3d029745c5258d31e6fbe7366fcb74b5fb1ffca00c20b9c88f5"
+    },
+    {
+      "file": "references/photos/real-robot/IMG_0176.jpg",
+      "sha256": "864802e1559411e752f8879b8417fda2f44348c6cfdb34c920b639dbc42ac1c7"
+    },
+    {
+      "file": "references/photos/real-robot/IMG_0363.heic",
+      "sha256": "779aba175de11affb27268e975b2403ea74d57aefdf1e2c529b237330e3258e7"
+    },
+    {
+      "file": "references/photos/real-robot/IMG_0364.heic",
+      "sha256": "530853fec760e5d6fe52457d412f77f6cf431557c2a69ffaff63a9edf212a74f"
+    },
+    {
+      "file": "references/photos/real-robot/IMG_0372.heic",
+      "sha256": "a8b0baa036d9782e58f90e56ac4dc4d511c43604349f7e5bf85c276001cccd1b"
+    },
+    {
+      "file": "references/photos/real-robot/IMG_0368.heic",
+      "sha256": "941443c3bdecfb2e1132a171910936f899ea0c3f89d2d0f6334f8651597ebee4"
+    },
+    {
+      "file": "references/photos/real-robot/IMG_0369.heic",
+      "sha256": "17d44694b9e6d93c1ca91052c334552fbfaba30b957cb484184cd78aebb1c78d"
+    },
+    {
+      "file": "references/photos/real-robot/IMG_0365.heic",
+      "sha256": "1c594521b46ba697bc39566aba778f13dccfaa921c997a0f84dd6ff2f98eb764"
+    },
+    {
+      "file": "references/photos/real-robot/IMG_0370.heic",
+      "sha256": "10823665b9b333cda8195aa1aaacd2cb8c93441d9699d9eef8e27f563ea52a20"
+    },
+    {
+      "file": "references/photos/real-robot/IMG_0366.heic",
+      "sha256": "bf0c02266e872c0e69134b81c354a669bc74a978194e28392bce82b811bcf0f4"
+    },
+    {
+      "file": "references/photos/real-robot/IMG_0367.heic",
+      "sha256": "ccdd12494b70b0ee024f0128352dbd1d45b83a98995f7948e12d99687d2512a1"
+    },
+    {
+      "file": "references/photos/real-robot/IMG_0371.heic",
+      "sha256": "9f5896280eb168851cb13dd21cd4a9c558c583bf124cfe45827d72e5f2ceb246"
+    },
+    {
+      "file": "references/photos/real-robot/IMG_0361.heic",
+      "sha256": "cdbea5977f5f1ecd2f14898deea5271f757421630536ff82ca9c55f23d94b03c"
+    },
+    {
+      "file": "references/photos/real-robot/IMG_0179.jpg",
+      "sha256": "d1fa5989c448030d052b42dbfa4168db203d3e26c45d77819f681af68e455676"
+    },
+    {
+      "file": "references/photos/drive-motors/2-front-left.jpeg",
+      "sha256": "ebd6eb59408d2c09e43247de2d4eb86ff5be160a9f96c19f5aa7ac28274545de"
+    },
+    {
+      "file": "references/photos/drive-motors/1-back.jpg",
+      "sha256": "4389baa856aea33b67c4f1782396bf07f8302a3ef8d2ef4b6c03b44c4c868753"
+    },
+    {
+      "file": "references/photos/drive-motors/3-front-right.jpg",
+      "sha256": "23fb1991f9c953d9911bb1d470d502c601b1cc09cfda32acdd3b6d5c9624fa8e"
+    },
+    {
+      "file": "references/photos/drive-motors/1-back.jpeg",
+      "sha256": "b09c8993c96e98149994284d2d3783f6eb1c1c09ed3d66aa3c5d96e9ba699953"
+    },
+    {
+      "file": "references/photos/drive-motors/2-front-left.jpg",
+      "sha256": "bb5e4285e6b7e8465144213cdb4c204e7ce0d622774e4271a4858ba63ec74516"
+    },
+    {
+      "file": "references/photos/drive-motors/3-front-right.jpeg",
+      "sha256": "97cabf601b141437bd0b99d5e4b7ba639eef78424728561273e8be6fa2032e21"
+    },
+    {
+      "file": "references/photos/measurements/measurements_20260920.png",
+      "sha256": "9b9802998235a9b5b8aae0d97652ad2301c4263e6e5129ab5745b9f07802ecea"
+    },
+    {
+      "file": "references/meshes/so_arm101/upper_arm_so101_v1.stl",
+      "sha256": "475056e03a17e71919b82fd88ab9a0b898ab50164f2a7943652a6b2941bb2d4f"
+    },
+    {
+      "file": "references/meshes/so_arm101/motor_holder_so101_base_v1.stl",
+      "sha256": "31242ae6fb59d8b15c66617b88ad8e9bded62d57c35d11c0c43a70d2f4caa95b"
+    },
+    {
+      "file": "references/meshes/so_arm101/sts3215_03a_v1.stl",
+      "sha256": "a37c871fb502483ab96c256baf457d36f2e97afc9205313d9c5ab275ef941cd0"
+    },
+    {
+      "file": "references/meshes/so_arm101/wrist_roll_follower_so101_v1.stl",
+      "sha256": "4b17b410a12d64ec39554abc3e8054d8a97384b2dc4a8d95a5ecb2a93670f5f4"
+    },
+    {
+      "file": "references/meshes/so_arm101/sts3215_03a_no_horn_v1.stl",
+      "sha256": "75ef3781b752e4065891aea855e34dc161a38a549549cd0970cedd07eae6f887"
+    },
+    {
+      "file": "references/meshes/so_arm101/under_arm_so101_v1.stl",
+      "sha256": "d01d1f2de365651dcad9d6669e94ff87ff7652b5bb2d10752a66a456a86dbc71"
+    },
+    {
+      "file": "references/meshes/so_arm101/base_so101_v2.stl",
+      "sha256": "bb12b7026575e1f70ccc7240051f9d943553bf34e5128537de6cd86fae33924d"
+    },
+    {
+      "file": "references/meshes/so_arm101/moving_jaw_so101_v1.stl",
+      "sha256": "785a9dded2f474bc1d869e0d3dae398a3dcd9c0c345640040472210d2861fa9d"
+    },
+    {
+      "file": "references/meshes/so_arm101/motor_holder_so101_wrist_v1.stl",
+      "sha256": "887f92e6013cb64ea3a1ab8675e92da1e0beacfd5e001f972523540545e08011"
+    },
+    {
+      "file": "references/meshes/so_arm101/base_motor_holder_so101_v1.stl",
+      "sha256": "8cd2f241037ea377af1191fffe0dd9d9006beea6dcc48543660ed41647072424"
+    },
+    {
+      "file": "references/meshes/so_arm101/rotation_pitch_so101_v1.stl",
+      "sha256": "9be900cc2a2bf718102841ef82ef8d2873842427648092c8ed2ca1e2ef4ffa34"
+    },
+    {
+      "file": "references/meshes/so_arm101/wrist_roll_pitch_so101_v2.stl",
+      "sha256": "6c7ec5525b4d8b9e397a30ab4bb0037156a5d5f38a4adf2c7d943d6c56eda5ae"
+    },
+    {
+      "file": "references/meshes/so_arm101/waveshare_mounting_plate_so101_v2.stl",
+      "sha256": "e197e24005a07d01bbc06a8c42311664eaeda415bf859f68fa247884d0f1a6e9"
+    },
+    {
+      "file": "references/meshes/realsense/plug.stl",
+      "sha256": "91a0bc6ec83fa24b5dcd4de0d1c0ed78032af2e7ed233b4b232bdbf906fea744"
+    },
+    {
+      "file": "references/meshes/realsense/plug_collision.stl",
+      "sha256": "fc210c929bba2c9cf3f4ec074d4e6a38549904e9a1eddee9661f34ef7c610f5f"
+    },
+    {
+      "file": "references/meshes/realsense/d435.dae",
+      "sha256": "42f3b66f47a1f8f425a2e4dc07c1d9c283183167d8441f520a15623d98f9bf78"
+    },
+    {
+      "file": "references/urdf/expanded/robot_runtime_simplified.urdf",
+      "sha256": "f4c15a680664e482f76801eb3e871dea92ac63d03f4c9e490add87656b068d6d"
+    },
+    {
+      "file": "references/urdf/expanded/so_arm101.urdf",
+      "sha256": "91950b542e04004675a7f769c218c38f9d9217f0c5e14dd13ebe99f7479503a0"
+    },
+    {
+      "file": "references/urdf/so_arm101_description/so_arm101_visual.urdf.xacro",
+      "sha256": "af1787e881350a047a83ed3bd380ad371519d91ee93c67741a7ddb15b39da2c8"
+    },
+    {
+      "file": "references/urdf/so_arm101_description/so_arm101_mock.urdf.xacro",
+      "sha256": "3c5963073233ab6c61f75462db3d77fae1c3a866f12fb1f635b130a70bed876b"
+    },
+    {
+      "file": "references/urdf/so_arm101_description/so_arm101_macro.xacro",
+      "sha256": "8d667f49831a6d9143f116c50f19815270de410340750fc5b7c9ac7f5914eb5f"
+    },
+    {
+      "file": "references/urdf/realsense2_description/_materials.urdf.xacro",
+      "sha256": "11ad1502a90114a20f02f707744b84e001e6c1c1ba5026b2509bcbcd525e5d48"
+    },
+    {
+      "file": "references/urdf/realsense2_description/_usb_plug.urdf.xacro",
+      "sha256": "63e6c96710eeecde1a6c981dd6d88f1958b4f0f6d50b80dd8c30a35f0a001732"
+    },
+    {
+      "file": "references/urdf/realsense2_description/_d435.urdf.xacro",
+      "sha256": "9a1b170e35f617eb1ae9aebbf38a921cdd2b4b8d82032051deac9f06b1fd02fe"
+    },
+    {
+      "file": "references/urdf/robot_description/livox_mid360.urdf.xacro",
+      "sha256": "0575de811979b0923cbd4063d392bd1a7756a13ba2045b74c057ed56668ca3ba"
+    },
+    {
+      "file": "references/urdf/robot_description/robot.urdf.xacro",
+      "sha256": "0a1ee0c9bc56f4b497fc8a5e1964b38bdd3358378b9a9a70d249f4305b6f1419"
+    },
+    {
+      "file": "development/feedback/image-20260920224710003.png",
+      "sha256": "062090ae74809f1980f4805983f11f984dd068115918779b46c22d865eb8ce77"
+    }
+  ],
+  "checks": {
+    "public_html_structure_and_all_link_paths": "pass",
+    "preview_server_logic": "pass",
+    "source_geometry_images_runtime_configuration": "pass",
+    "javascript_ast_and_822_component_numbers": "pass"
+  }
+}

@@ -1,0 +1,352 @@
+"""Reproducible Blender asset build. Run with Blender --background --python this_file.
+All source geometry stays unchanged. Coordinates are ROS metres, Z up.
+"""
+import bpy, math, json, hashlib, sys, xml.etree.ElementTree as ET
+from pathlib import Path
+from mathutils import Matrix, Vector, Euler
+
+ROOT = Path(__file__).resolve().parents[2]
+DATA = json.loads((ROOT/'data/components.json').read_text())
+PARTS = {c['id']: c for c in DATA['components']}
+OUT = ROOT/'renders'
+OUT.mkdir(exist_ok=True)
+bpy.ops.object.select_all(action='SELECT')
+bpy.ops.object.delete(use_global=False)
+for c in list(bpy.data.collections):
+    if c.name != 'Collection': bpy.data.collections.remove(c)
+scene=bpy.context.scene
+scene.unit_settings.system='METRIC'
+scene.unit_settings.scale_length=1.0
+scene.render.engine='CYCLES'
+scene.cycles.samples=32
+scene.cycles.use_denoising=True
+scene.render.resolution_x=1400
+scene.render.resolution_y=1400
+scene.render.resolution_percentage=100
+scene.world.color=(0.45,0.45,0.45)
+scene.view_settings.view_transform='AgX'
+collections={}
+for name in ['00_REFERENCE','10_BASE','20_MOBILITY','30_LIFT','40_ARM','50_PERCEPTION','60_ELECTRICAL','70_CABLES','80_HELPERS','90_EXPLODED','STUDIO']:
+    c=bpy.data.collections.new(name);scene.collection.children.link(c);collections[name]=c
+GROUP={'robot':'00_REFERENCE','base':'10_BASE','mobility':'20_MOBILITY','lift':'30_LIFT','arm':'40_ARM','perception':'50_PERCEPTION','electrical':'60_ELECTRICAL','cables':'70_CABLES'}
+
+def mat(name,color,metal=0,rough=.4):
+    m=bpy.data.materials.new(name);m.diffuse_color=(*color,1);m.use_nodes=True
+    p=m.node_tree.nodes.get('Principled BSDF');p.inputs['Base Color'].default_value=(*color,1);p.inputs['Metallic'].default_value=metal;p.inputs['Roughness'].default_value=rough
+    return m
+AL=mat('Anodized aluminium',(.50,.55,.59),.75,.3)
+DARK=mat('Black anodized',(.034,.044,.052),.55,.32)
+RUBBER=mat('Rubber',(.019,.024,.027),0,.8)
+TEAL=mat('SO101 cyan printed polymer',(.008,.37,.43),0,.37)
+PCB=mat('PCB green',(.015,.20,.13),.15,.5)
+AMBER=mat('PLACEHOLDER • geometry unverified',(.78,.35,.10),.25,.45)
+RED=mat('Stop button',(.67,.018,.028),.1,.25)
+GLASS=mat('Optical glass',(.014,.045,.068),.6,.12)
+BLUE=mat('Helper cyan',(.02,.43,.6),.1,.4)
+WHITE=mat('Studio',(.84,.86,.86),0,.7)
+
+def relink(o,col):
+    for c in list(o.users_collection):c.objects.unlink(o)
+    collections[col].objects.link(o)
+def empty(name,col,parent=None,xyz=(0,0,0),rpy=(0,0,0)):
+    o=bpy.data.objects.new(name,None);collections[col].objects.link(o);o.empty_display_size=.025;o.empty_display_type='PLAIN_AXES';o.parent=parent;o.location=xyz;o.rotation_euler=rpy;return o
+def finish(o,name,parent,material,col=None):
+    o.name=name;o.parent=parent
+    relink(o,col or (parent.users_collection[0].name if parent else 'STUDIO'))
+    o.data.materials.clear();o.data.materials.append(material)
+    return o
+def box(name,xyz,size,parent,material=AL,bevel=.001):
+    bpy.ops.mesh.primitive_cube_add(size=1,location=xyz);o=bpy.context.object;o.dimensions=size
+    bpy.ops.object.transform_apply(location=False,rotation=False,scale=True)
+    finish(o,name,parent,material)
+    if bevel:
+        m=o.modifiers.new('Manufacturing edge','BEVEL');m.width=bevel;m.segments=2
+    return o
+def cyl(name,xyz,radius,depth,parent,material=AL,rpy=(0,0,0),vertices=40):
+    bpy.ops.mesh.primitive_cylinder_add(vertices=vertices,radius=radius,depth=depth,location=xyz,rotation=rpy)
+    o=finish(bpy.context.object,name,parent,material)
+    for p in o.data.polygons:p.use_smooth=len(p.vertices)==4
+    m=o.modifiers.new('Rim softening','BEVEL');m.width=.0007;m.segments=2
+    return o
+def line(name,points,parent,material=DARK,radius=.002):
+    cu=bpy.data.curves.new(name,'CURVE');cu.dimensions='3D';cu.bevel_depth=radius;cu.bevel_resolution=2
+    sp=cu.splines.new('POLY');sp.points.add(len(points)-1)
+    for p,v in zip(sp.points,points):p.co=(*v,1)
+    o=bpy.data.objects.new(name,cu);(parent.users_collection[0] if parent else collections['STUDIO']).objects.link(o);o.parent=parent;cu.materials.append(material);return o
+def beam(name,a,b,profile,parent,material=AL):
+    a,b=Vector(a),Vector(b);d=b-a
+    o=box(name,(a+b)/2,(profile,profile,d.length),parent,material,.0006)
+    o.rotation_euler=d.to_track_quat('Z','Y').to_euler()
+    # Inset dark channels are a visual approximation, not a manufacturing profile.
+    for axis in (0,1):
+        for sign in (-1,1):
+            loc=Vector((0,0,0));loc[axis]=sign*(profile/2+.0001)
+            sz=[profile*.13,profile*.13,d.length-.004];sz[axis]=.0003
+            groove=box(name+'_slot',loc,sz,o,DARK,0)
+    return o
+def transform(el):
+    if el is None:return Matrix.Identity(4)
+    xyz=[float(x) for x in el.get('xyz','0 0 0').split()];rpy=[float(x) for x in el.get('rpy','0 0 0').split()]
+    return Matrix.Translation(xyz)@Euler(rpy,'XYZ').to_matrix().to_4x4()
+N={}
+def part(cid,world=(0,0,0),rpy=(0,0,0),parent=None):
+    c=PARTS[cid];p=parent or N.get(c['parent_id'])
+    o=empty('part__'+cid,GROUP[c['interaction_group']],p)
+    bpy.context.view_layer.update()
+    mw=Matrix.Translation(world)@Euler(rpy,'XYZ').to_matrix().to_4x4()
+    o.matrix_world=mw
+    o['component_id']=cid;o['evidence_status']=c['evidence_status'];o['geometry_status']=c['geometry_status']
+    N[cid]=o;return o
+FLOOR=.1125
+root=part('robot.root',(0,0,FLOOR))
+frame=part('base.frame',(0,0,FLOOR))
+
+# Horizontal extents measured; member layout inferred from the oblique photograph.
+for z,xend in [(.300,.24),(.515,-.20),(.620,.24)]:
+    zz=z-FLOOR-.020
+    # Upper 620 mm tier covers the forward equipment deck; 515 mm rear deck.
+    xmin=-.42 if z!=.620 else -.18
+    for y in [-.28,.28]:beam('4040_horizontal',(xmin,y,zz),(xend,y,zz),.04,frame)
+    for x in [xmin,xend]:beam('4040_cross',(x,-.26,zz),(x,.26,zz),.04,frame)
+for x,zmax in [(-.42,.475),(.24,.580)]:
+    for y in [-.28,.28]:beam('4040_upright',(x,y,.300-FLOOR),(x,y,zmax-FLOOR),.04,frame)
+for y in [-.13,.13]:
+    beam('2020_front_support',(.205,y,.620-FLOOR),(.205,y,1.310-FLOOR),.02,frame,DARK)
+beam('2020_top_bridge',(.205,-.14,1.320-FLOOR),(.205,.14,1.320-FLOOR),.02,frame)
+box('Forward equipment deck',(.015,0,.625-FLOOR),(.37,.53,.006),frame,AL)
+box('Rear electrical deck',(-.32,0,.519-FLOOR),(.20,.53,.006),frame,AL)
+box('Base tray',(-.09,0,.303-FLOOR),(.61,.51,.006),frame,AL)
+for x in [-.40,.22]:
+    for y in [-.26,.26]:
+        box('Corner bracket',(x,y,.315-FLOOR),(.055,.055,.004),frame,DARK)
+        for dy in [-.017,.017]:cyl('M6 representative', (x,y+dy,.320-FLOOR),.004,.004,frame,DARK,vertices=12)
+
+wheelpos=[('front_left',.2064,.2489),('front_right',.2064,-.2489),('rear',-.385,0)]
+drive=part('mobility.drive_motor',(0,0,FLOOR))
+steer=part('mobility.steer_motor',(0,0,FLOOR))
+for tag,x,y in wheelpos:
+    w=part('mobility.wheel.'+tag,(x,y,FLOOR));w['pivot_type']='continuous'
+    cyl('Tire',(0,0,0),.1125,.060,w,RUBBER,(math.pi/2,0,0),64)
+    for side in [-1,1]:
+        cyl('Alloy wheel rim',(0,side*.0305,0),.077,.004,w,AL,(math.pi/2,0,0),48)
+        cyl('Wheel hub',(0,side*.034,0),.026,.011,w,DARK,(math.pi/2,0,0))
+        for i in range(8):
+            a=2*math.pi*i/8
+            cyl('Rim recess',(.05*math.sin(a),side*.033,.05*math.cos(a)),.012,.001,w,DARK,(math.pi/2,0,0),16)
+    box('Wheel swivel plate',(0,0,.128),(.125,.13,.012),w,AMBER)
+    for s in [-1,1]:box('Fork bracket',(0,s*.045,.060),(.036,.012,.120),w,AMBER)
+    cyl('Steering bearing',(0,0,.148),.041,.024,w,AL)
+    inward=-1 if y>0 else 1
+    cyl('GFS5G30FR proxy',(x,y+inward*.085,0),.045,.062,drive,AMBER,(math.pi/2,0,0))
+    box('BLMR5100K proxy',(x,y+inward*.14,.0),(.085,.075,.085),drive,DARK)
+    box('XH540 proxy',(x,y,.185),(.055,.045,.07),steer,AMBER)
+
+lift=part('lift.stage.eas',(.230,0,.810))
+box('EAS rail envelope',(0,0,.170),(.055,.065,.390),lift,AL)
+box('Ball screw channel',(.029,0,.170),(.006,.017,.345),lift,DARK)
+for yy in [-.023,.023]:cyl('Guide rod',(.032,yy,.170),.004,.34,lift,AL)
+box('AZ motor proxy',(0,0,-.066),(.055,.065,.08),lift,AMBER)
+for zz in [-.017,.36]:box('EAS end cap',(0,0,zz),(.065,.075,.025),lift,DARK)
+mount=part('arm.mount',(.32084,.01262,1.105),(0,0,-.01532))
+mount['pivot_type']='prismatic';mount['lift_default_m']=.100;mount['lift_stroke_m']=.200
+box('Lift carriage',(-.044,0,-.035),(.035,.075,.090),mount,AMBER)
+box('Arm adapter plate',(-.010,0,-.008),(.13,.11,.016),mount,AMBER)
+arm=part('arm.so101',(.32084,.01262,1.105),(0,0,-.01532))
+
+# Import full supplied arm link meshes with URDF FK, preserving six joint pivots.
+arm_urdf=ROOT/'references/urdf/expanded/so_arm101.urdf'
+tree=ET.parse(arm_urdf).getroot()
+pose={'shoulder_pan_joint':-.014,'shoulder_lift_joint':-.704,'elbow_flex_joint':1.285,'wrist_flex_joint':-.665,'wrist_roll_joint':-1.109,'gripper_joint':.222}
+links={'arm/world':arm};joints=[]
+pending=list(tree.findall('joint'))
+while pending:
+    progress=False
+    for j in pending[:]:
+        pn=j.find('parent').get('link');cn=j.find('child').get('link')
+        if pn not in links:continue
+        o=empty('joint__'+j.get('name').replace('/','_'),'40_ARM',links[pn])
+        m=transform(j.find('origin'));o.matrix_basis=m@Matrix.Rotation(pose.get(j.get('name'),0),4,'Z')
+        o['joint_type']=j.get('type');o['urdf_link']=cn
+        if j.get('name') in pose:
+            o['joint_name']=j.get('name');o['pose_rad']=pose[j.get('name')];o['rest_quaternion_wxyz']=list(m.to_quaternion());joints.append(o)
+            limit=j.find('limit')
+            if limit is not None:
+                for key in ['lower','upper','effort','velocity']:
+                    if key in limit.attrib:o['urdf_limit_'+key]=float(limit.get(key))
+        links[cn]=o;pending.remove(j);progress=True
+    if not progress:raise RuntimeError('Broken URDF tree')
+for l in tree.findall('link'):
+    for i,v in enumerate(l.findall('visual')):
+        mesh=v.find('geometry/mesh')
+        if mesh is None:continue
+        file=(arm_urdf.parent/mesh.get('filename')).resolve()
+        bpy.ops.wm.stl_import(filepath=str(file));o=bpy.context.object
+        finish(o,'mesh__'+l.get('name').replace('/','_')+'_'+str(i),links[l.get('name')],DARK if 'sts3215' in file.name else TEAL)
+        o.matrix_basis=transform(v.find('origin'))
+        o['source_mesh']=str(file.relative_to(ROOT));o['source_unit']='metre';o['component_id']='arm.so101'
+        # Keep original mesh in .blend; exported review mesh is decimated by modifier.
+        if len(o.data.polygons)>7000:
+            dec=o.modifiers.new('Web mesh reduction','DECIMATE');dec.ratio=.42
+        for p in o.data.polygons:p.use_smooth=True
+wrist=part('arm.camera.wrist',parent=links['arm/arm_camera_body_link'])
+wrist.matrix_basis=Matrix.Identity(4)
+box('Wrist camera placeholder',(0,0,-.004),(.032,.032,.008),wrist,AMBER)
+cyl('Wrist lens',(0,0,.003),.008,.008,wrist,GLASS)
+bpy.context.view_layer.update()
+camera_bracket_origin=wrist.matrix_world.inverted() @ links['arm/arm_camera_mount_link'].matrix_world.translation
+line('Estimated wrist camera support',[list(camera_bracket_origin),(0,0,-.009)],wrist,AMBER,.003)
+
+runtime=ET.parse(ROOT/'references/urdf/expanded/robot_runtime_simplified.urdf').getroot()
+pan=part('perception.camera.pan_tilt',(0,0,FLOOR))
+camlinks={'camera_pan_mount_base':pan}
+pending=[j for j in runtime.findall('joint') if j.find('child').get('link').startswith(('camera_','realsense_')) and j.find('child').get('link')!='camera_pan_mount_base']
+while pending:
+    progress=False
+    for j in pending[:]:
+        pn=j.find('parent').get('link');cn=j.find('child').get('link')
+        if pn not in camlinks:continue
+        o=empty('tf__'+cn,'50_PERCEPTION',camlinks[pn]);o.matrix_basis=transform(j.find('origin'));o['joint_type']=j.get('type');camlinks[cn]=o;pending.remove(j);progress=True
+    if not progress:raise RuntimeError('Camera TF incomplete')
+cyl('Pan motor proxy',(0,0,-.019),.027,.038,camlinks['camera_pan_yaw_link'],AMBER)
+box('Pan tilt yoke',(0,0,.020),(.052,.054,.008),camlinks['camera_pan_yaw_link'],DARK)
+cyl('Tilt motor proxy',(0,0,-.016),.018,.032,camlinks['camera_tilt_link'],AMBER)
+camera=part('perception.camera.d435',parent=camlinks['camera_link']);camera.matrix_basis=Matrix.Identity(4)
+v=runtime.find("link[@name='camera_link']/visual")
+visual=empty('D435_mesh_origin','50_PERCEPTION',camera);visual.matrix_basis=transform(v.find('origin'))
+# Blender 5 removed COLLADA; parse its triangle positions without external dependencies.
+dae=ET.parse(ROOT/'references/meshes/realsense/d435.dae').getroot();ns={'c':'http://www.collada.org/2005/11/COLLADASchema'}
+for gi,g in enumerate(dae.findall('.//c:geometry',ns)):
+    me=g.find('c:mesh',ns);sources={s.get('id'):[float(x) for x in s.find('c:float_array',ns).text.split()] for s in me.findall('c:source',ns)}
+    vertexmap={v.get('id'):v.find("c:input[@semantic='POSITION']",ns).get('source')[1:] for v in me.findall('c:vertices',ns)}
+    for tri in me.findall('c:triangles',ns):
+        inputs=tri.findall('c:input',ns);stride=max(int(x.get('offset','0')) for x in inputs)+1
+        vi=next(x for x in inputs if x.get('semantic')=='VERTEX');data=sources[vertexmap[vi.get('source')[1:]]]
+        verts=[data[i:i+3] for i in range(0,len(data),3)]
+        ix=[int(x) for x in tri.find('c:p',ns).text.split()][int(vi.get('offset','0'))::stride]
+        faces=[ix[i:i+3] for i in range(0,len(ix),3)]
+        m=bpy.data.meshes.new('D435 source triangles');m.from_pydata(verts,[],faces);m.update()
+        o=bpy.data.objects.new('D435_original_'+str(gi),m);collections['50_PERCEPTION'].objects.link(o);o.parent=visual;m.materials.append(AL)
+        o['source_mesh']='references/meshes/realsense/d435.dae'
+        for p in m.polygons:p.use_smooth=True
+        if len(m.polygons)>5000:
+            dec=o.modifiers.new('D435 web reduction','DECIMATE');dec.ratio=.3
+
+lidar=part('perception.lidar.mid360',(.24,0,1.4925),(0,.5236,0))
+lidar['physical_transform']='CONFLICT • runtime placement, not physical survey'
+cyl('MID360 body',(0,0,.020),.0352,.040,lidar,AL)
+bpy.ops.mesh.primitive_uv_sphere_add(segments=32,ring_count=16,radius=1,location=(0,0,.041))
+o=finish(bpy.context.object,'MID360 dome envelope',lidar,GLASS);o.scale=(.027,.027,.024)
+for i in range(16):
+    a=i*2*math.pi/16
+    fin=box('MID360 simplified fin',(.033*math.cos(a),.033*math.sin(a),.022),(.004,.008,.025),lidar,AL,.0004);fin.rotation_euler.z=a
+# Unmeasured support extension remains visibly marked rather than hiding the height conflict.
+beam('UNVERIFIED LiDAR bracket',(.205,0,1.33-FLOOR),(.24,0,1.4875-FLOOR),.020,frame,AMBER)
+
+driver=part('lift.driver.azd_kd',(-.16,-.16,.382))
+box('AZD-KD proxy',(0,0,0),(.05,.10,.13),driver,AMBER)
+for z in [-.04,.025]:box('Terminal strip',(.028,0,z),(.010,.075,.024),driver,PCB)
+elec=part('electrical.controllers',(0,0,FLOOR))
+box('NUC13ANH-B enclosure proxy',(-.09,.13,.548-FLOOR),(.12,.12,.055),elec,DARK)
+for i in range(9):box('NUC ventilation',(-.135+i*.011,.13,.577-FLOOR),(.003,.08,.002),elec,AL,0)
+box('Power supply unknown SKU',(-.30,0,.375-FLOOR),(.16,.10,.06),elec,AMBER)
+for y in [-.13,0,.13]:
+    box('BLVD-KRD driver proxy',(-.03,y,.388-FLOOR),(.12,.08,.13),elec,DARK)
+    box('Driver terminal',(.035,y,.403-FLOOR),(.012,.063,.021),elec,PCB)
+for x,y in [(.13,-.16),(.13,.10)]:
+    box('Control PCB proxy',(x,y,.333-FLOOR),(.085,.055,.005),elec,PCB)
+    box('USB connector',(x+.03,y,.34-FLOOR),(.014,.013,.013),elec,AL)
+stop=part('safety.estop',(-.33,-.235,.540))
+cyl('E-stop flange',(0,0,0),.023,.006,stop,AL)
+cyl('Red stop mushroom',(0,0,.011),.017,.018,stop,RED)
+cables=part('cables.main',(0,0,FLOOR))
+for i in range(5):
+    line('Representative electrical loom',[(-.3,.02*i-.1,.35-FLOOR),(-.16,.02*i-.1,.36-FLOOR),(.15,.09+i*.013,.42-FLOOR),(.20,.13,.62-FLOOR),(.19,.14,1.26-FLOOR)],cables,DARK,.0023)
+
+# Default-hidden metrology helpers; measured planes retain unassigned structural names.
+helpers=empty('helper__root','80_HELPERS')
+for z in [.3,.515,.62,1.33]:
+    line('helper__measured_plane_'+str(z),[(-.44,-.30,z),(.26,-.30,z),(.26,.30,z),(-.44,.30,z),(-.44,-.30,z)],helpers,BLUE,.0008)
+line('helper__lift_stroke',[(.37,.10,1.005),(.37,.10,1.205)],helpers,BLUE,.002)
+for o in collections['80_HELPERS'].objects:o.hide_render=True;o.hide_set(True)
+
+DESIRED={
+'robot.root':(0,0,0),'base.frame':(0,0,0),
+'mobility.wheel.front_left':(.10,.32,0),'mobility.wheel.front_right':(.10,-.32,0),'mobility.wheel.rear':(-.32,0,0),
+'mobility.drive_motor':(-.12,-.20,.06),'mobility.steer_motor':(0,.23,.20),
+'lift.stage.eas':(-.26,0,.28),'arm.mount':(.28,.0,.38),'arm.so101':(.39,0,.52),'arm.camera.wrist':(.48,0,.52),
+'perception.camera.pan_tilt':(.32,-.18,.06),'perception.camera.d435':(.48,-.18,.06),
+'perception.lidar.mid360':(0,0,.34),'lift.driver.azd_kd':(-.16,-.38,.18),
+'electrical.controllers':(-.32,.24,.10),'safety.estop':(-.20,-.3,.22),'cables.main':(0,0,0)}
+def ancestor_component(o):
+    while o:
+        if o.name.startswith('part__'):return o.name[6:]
+        o=o.parent
+    return None
+def vecg(v):return [v[0],v[2],-v[1]]
+bpy.context.view_layer.update()
+for cid,o in N.items():
+    c=PARTS[cid];p=ancestor_component(o.parent)
+    relative=Vector(DESIRED[cid])-Vector(DESIRED.get(p,(0,0,0)))
+    delta=o.parent.matrix_world.to_3x3().inverted()@relative if o.parent else relative
+    c['assembly_transform']={'space':'Blender local parent','translation_m':list(o.location),'quaternion_wxyz':list(o.rotation_euler.to_quaternion()),'world_floor_xyz_m':list(o.matrix_world.translation)}
+    c['exploded_offset']=list(DESIRED[cid]);c['exploded_offset_parent_gltf_m']=vecg(delta)
+    c['explode_group']=c['interaction_group'];c['pivot_type']=o.get('pivot_type','fixed');c['node_name']=o.name
+    c['geometry_status']='source-mesh' if cid in ['arm.so101','perception.camera.d435'] else 'procedural-estimate'
+    c['geometry_note']='原始网格与 URDF 位姿；安装版本尚待实机核对。' if c['geometry_status']=='source-mesh' else '可识别占位外形；局部尺寸、孔位与支架不能用于制造。'
+    c['installation_status']='runtime' if cid!='base.frame' else 'measured-envelope / photo-estimated-layout'
+    o['assembly_translation_m']=list(o.location);o['exploded_offset_local_m']=list(delta)
+    start=o.location.copy();o.keyframe_insert(data_path='location',frame=1)
+    o.location=start+delta;o.keyframe_insert(data_path='location',frame=90);o.location=start
+scene.frame_set(1)
+scene.frame_end=90
+scene.timeline_markers.new('ASSEMBLED',frame=1);scene.timeline_markers.new('EXPLODED — presentation only',frame=90)
+DATA['schema_version']=2
+DATA['build']={'version':'v001','date':'2026-09-20','lift_default_mm':100,'arm_pose':'see_front / captured 2026-09-02','pose_source':'references/runtime-config/arm_real_dashboard_test.yaml','glb_convention':'right-handed Y-up; ROS (x,y,z) -> glTF (x,z,-y)','geometry_level':'L0 full assembly; source meshes for SO101 / D435','runtime_only':True}
+DATA['arm_joints']=[{'node':o.name,'name':o['joint_name'],'pose_rad':o['pose_rad'],'rest_quaternion_wxyz':list(o['rest_quaternion_wxyz'])} for o in joints]
+(ROOT/'data/components.json').write_text(json.dumps(DATA,ensure_ascii=False,indent=2))
+
+# Photographic studio and repeatable cameras (excluded from GLB).
+floor=box('Studio ground',(0,0,-.025),(200,200,.04),None,WHITE,0)
+def point_at(o,target):o.rotation_euler=(Vector(target)-o.location).to_track_quat('-Z','Y').to_euler()
+for name,loc,power,size in [('Key',(3,-4,6),800,5),('Fill',(-3,-2,3),500,4),('Rim',(1,3,5),650,3)]:
+    d=bpy.data.lights.new(name,'AREA');d.energy=power;d.shape='DISK';d.size=size
+    o=bpy.data.objects.new(name,d);collections['STUDIO'].objects.link(o);o.location=loc;point_at(o,(0,0,.8))
+def cam(name,loc,target,scale):
+    d=bpy.data.cameras.new(name);d.type='ORTHO';d.ortho_scale=scale
+    o=bpy.data.objects.new(name,d);collections['STUDIO'].objects.link(o);o.location=loc;point_at(o,target);return o
+assembled=cam('assembled_isometric',(3,-4,2.9),(0,0,.84),2.05)
+exploded=cam('exploded_isometric',(3,-4,2.9),(0,0,.90),2.65)
+detail=cam('arm_perception_detail',(3,-4,2.9),(.29,0,1.07),.95)
+scene.camera=assembled
+for screen in bpy.data.screens:
+    for area in screen.areas:
+        if area.type=='VIEW_3D':
+            area.spaces.active.region_3d.view_distance=2.4
+            area.spaces.active.region_3d.view_location=(0,0,.8)
+            area.spaces.active.region_3d.view_rotation=assembled.rotation_euler.to_quaternion()
+            area.spaces.active.shading.color_type='MATERIAL'
+            area.spaces.active.clip_end=100
+bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'blender/robot_master_v001.blend'))
+
+# Export only the semantic robot tree, in metre units, without presentation animation.
+bpy.ops.object.select_all(action='DESELECT')
+for o in [root]+list(root.children_recursive):o.select_set(True)
+glb=ROOT/'web/robot_web.glb'
+bpy.ops.export_scene.gltf(filepath=str(glb),export_format='GLB',use_selection=True,export_extras=True,export_animations=False,export_yup=True,export_apply=True)
+for o in scene.objects:
+    if o.type=='MESH' and o.select_get() and len(o.data.polygons)>300:
+        m=o.modifiers.new('Mobile LOD','DECIMATE');m.ratio=.35
+bpy.ops.export_scene.gltf(filepath=str(ROOT/'web/robot_web_lod1.glb'),export_format='GLB',use_selection=True,export_extras=True,export_animations=False,export_yup=True,export_apply=True)
+for o in scene.objects:
+    if o.type=='MESH' and 'Mobile LOD' in o.modifiers:o.modifiers.remove(o.modifiers['Mobile LOD'])
+manifest={'version':'v001','blender_version':bpy.app.version_string,'source_blend':'blender/robot_master_v001.blend','export_date':'2026-09-20','schema_version':2,'coordinates':'glTF Y-up metres; Blender ROS Z-up metres','files':{}}
+for f in [glb,ROOT/'web/robot_web_lod1.glb',ROOT/'data/components.json']:
+    manifest['files'][str(f.relative_to(ROOT))]={'bytes':f.stat().st_size,'sha256':hashlib.sha256(f.read_bytes()).hexdigest()}
+(ROOT/'web/export-manifest.json').write_text(json.dumps(manifest,indent=2))
+for name,camera,frame_num in [('assembled',assembled,1),('exploded',exploded,90),('arm-detail',detail,1)]:
+    scene.frame_set(frame_num);scene.camera=camera
+    cables.hide_render=(frame_num==90)
+    for o in cables.children_recursive:o.hide_render=(frame_num==90)
+    scene.render.filepath=str(OUT/(name+'.png'));bpy.ops.render.render(write_still=True)
+scene.frame_set(1);scene.camera=assembled
+print('BUILD_COMPLETE',len(N),'components')

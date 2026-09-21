@@ -1,0 +1,22 @@
+{
+  "version": "v003",
+  "blender_version": "5.2.2 LTS",
+  "source_blend": "blender/robot_master_v003.blend",
+  "export_date": "2026-09-20",
+  "schema_version": 2,
+  "coordinates": "glTF Y-up metres; Blender ROS Z-up metres",
+  "files": {
+    "web/robot_web.glb": {
+      "bytes": 10139096,
+      "sha256": "3de0ee5e8489b6ea45b6507d5b5a00528b7ce5b223f8ceb735fbaabc23c0857b"
+    },
+    "web/robot_web_lod1.glb": {
+      "bytes": 5274828,
+      "sha256": "6459406a5cebf6cb5087f3748ef10f250fe4d117a1ae79257695a46f5d25b0f3"
+    },
+    "data/components.json": {
+      "bytes": 84759,
+      "sha256": "dd3e03aaff749c7e8bfa84208ec0d0c53ae9c7869b34973e53f226f787c118f2"
+    }
+  }
+}

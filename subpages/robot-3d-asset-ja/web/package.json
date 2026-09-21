@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "three": "0.180.0"
+  },
+  "type": "module",
+  "scripts": {
+    "validate": "node validate-assets.mjs",
+    "build": "node build-portable.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.10"
+  }
+}

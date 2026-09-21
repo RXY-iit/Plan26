@@ -1,0 +1,13 @@
+{
+  "models": {
+    "robot_web.glb": {
+      "bytes": 10139096,
+      "sha256": "3de0ee5e8489b6ea45b6507d5b5a00528b7ce5b223f8ceb735fbaabc23c0857b"
+    },
+    "robot_web_lod1.glb": {
+      "bytes": 5274828,
+      "sha256": "6459406a5cebf6cb5087f3748ef10f250fe4d117a1ae79257695a46f5d25b0f3"
+    }
+  },
+  "referenceTextCount": 98
+}

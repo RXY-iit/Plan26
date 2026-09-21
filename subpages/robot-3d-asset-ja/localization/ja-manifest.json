@@ -1,0 +1,298 @@
+{
+  "version": "v003",
+  "language": "ja",
+  "files": [
+    {
+      "file": "web/app.js",
+      "source_sha256": "5618e5b3c158d7fe330fa83c7a44b3820269cf85065dea6fc496eea359b2bfc1",
+      "translation_sha256": "b10cfbedbcfd0ff99a5ade204b0748b31b77791954fb94aa6d7317997d87de8e"
+    },
+    {
+      "file": "web/index.html",
+      "source_sha256": "9a29d17796085ad306a69155f26ac1e923ba01859a61bfe353b6b31ae827bfa4",
+      "translation_sha256": "02e9ca849094828a9efacd729a06bda401366632250b65e4ff6c31fea28585d0"
+    },
+    {
+      "file": "web/licenses.html",
+      "source_sha256": "ad4c2cca04d069e7adc3ca7a13179f723faf04b8fc0bc74a7123e9ccea643fc0",
+      "translation_sha256": "7f37a91168dcde692e42e67afe19edb9071fe58ae7fee0bb42b7895a30bcd485"
+    },
+    {
+      "file": "web/overview.html",
+      "source_sha256": "96bc213c3f32f76f59ea02a97401938cca2040b7d3076a1ff50593e6e402ff57",
+      "translation_sha256": "405e7d437827ccdef02c62c826ae972f35eb8d4e7bde50931050c650b87e83f3"
+    },
+    {
+      "file": "web/references.html",
+      "source_sha256": "6250695ac471aae1f00ad644482654369ba7977741de406186bb04d1985831a9",
+      "translation_sha256": "03d24e8520cca1d598583595a6e77d5baa4e93699efb875dda10860e66398b32"
+    },
+    {
+      "file": "references-v2/robot-overview-source.html",
+      "source_sha256": "d429330b1542b9a4322519e7708b62d696bc3d1b60ca9cf8311f3141382532ba",
+      "translation_sha256": "f6a44ab12a18b1854332c7d0df9be6e97e54ed485efd43b52ac8d418a63d1156"
+    },
+    {
+      "file": "COMPONENT-INVENTORY.md",
+      "source_sha256": "0b5c0756f910303879aae6caa8bc8a5fc5ce69f93ab03eddf0ced1adfa710947",
+      "translation_sha256": "33e644930b20b62c3b147bc8da43d0494c1e35414fd90d2c304e96c6f916ee7c"
+    },
+    {
+      "file": "DESIGN-NOTE-TEMPLATE.md",
+      "source_sha256": "39b9968069ad7cfe711252709b8e281b077ab573899f702a5332ae765d3ab4b8",
+      "translation_sha256": "6966146efaef3025e1d471757b0c8c9feccc6b11cdbe4243fe20c704acecf59d"
+    },
+    {
+      "file": "GUIDELINE.md",
+      "source_sha256": "1b9b75846751aec2ad20f255043ae4c5632c098ac1a6f8c5e7d936bf5580dae1",
+      "translation_sha256": "8528e5dd52b28771de87960fd15ced59ffeffc407620c99b5197dadc70b72f34"
+    },
+    {
+      "file": "IMPLEMENTATION.md",
+      "source_sha256": "943394b1f36756404b630eed1db15cae2184f4db1e022f959cd2497925215b2c",
+      "translation_sha256": "12264d403bdecefb0807ea549b64c69438f422cee054e7afe40664bae7a10e57"
+    },
+    {
+      "file": "MEASUREMENTS.md",
+      "source_sha256": "1345e3e124dfab0c078ce4f8986d940d018e0f0f20aed80dd7fb5d6fd80c74ae",
+      "translation_sha256": "f09411f82622d8a64292195bf844b3cd4669b0d0bf0ee802daa204232ee0c1f8"
+    },
+    {
+      "file": "MISSING-INFORMATION.md",
+      "source_sha256": "6250f3e347fe19f653450ab25e9bdcf5f8185272dc74264a8c121f699e9ef049",
+      "translation_sha256": "34a4abcba48381e20da7c210631174c7afd477640f67693ab6431d3215aa314b"
+    },
+    {
+      "file": "PORTABILITY-CHECK.md",
+      "source_sha256": "fc96dc806a976dca2cde3407d98ac17b88653b6e5e266d0be8719c258a347122",
+      "translation_sha256": "5787c5e7d93c59d1986a05a72f0f7e48b0756e3ba4d5ebc89a9e3d810d7cf07e"
+    },
+    {
+      "file": "README.md",
+      "source_sha256": "e0b22cbd8051e783488b263f63ffe0f8e9242d8e758453d871cc23ca30147035",
+      "translation_sha256": "e2c2a4e9b5013c2d4b0b32e0e0168308682e124e3a95b15e1cc577a65a69684e"
+    },
+    {
+      "file": "SOURCE-MANIFEST.md",
+      "source_sha256": "6d9df5da9810c1d51db92bff1163884bc2d9a963283610f39d2da1d94124f60b",
+      "translation_sha256": "e52f8e4ae7c747e4256374e0fdf6aba88b39832346466d16ab24512c5b86209b"
+    },
+    {
+      "file": "blender/README.md",
+      "source_sha256": "9339d9f6cd4326614d0c7346c42a8d6b2cf3974b6461eb5f32323c3f48e859c7",
+      "translation_sha256": "2083e69613c1d752dba23a244e7865f28bc7e7e9979f02508e592bc75fabb21b"
+    },
+    {
+      "file": "data/README.md",
+      "source_sha256": "0678f3dd8784516da8a5d1447b5b68eb487a48cdffb12b575ee039cf19e51a97",
+      "translation_sha256": "eed66fc36225c7b6cb35a9734e7673bff0bd36c1d46ad12017a62a3ffc9ecd55"
+    },
+    {
+      "file": "design-notes/arm.so101.md",
+      "source_sha256": "d28eba946e1189b92d2d34d4b8c096e62d62ad49f3ce3ddb72f75ae420459b19",
+      "translation_sha256": "6dac1340822d141951cd95f9ea56e409a550232d3c5acb51938418975d316148"
+    },
+    {
+      "file": "design-notes/base.frame.md",
+      "source_sha256": "67047120c51622e0246d337e77cbe04347192a3837975823933032c8c16b2ba9",
+      "translation_sha256": "e03c46b3dc0377da3c92887f58a601cc748cf4abed817c6480f0a37b615da1ce"
+    },
+    {
+      "file": "design-notes/lift.control.carrier.md",
+      "source_sha256": "cb6f63a5b918ab5188926eebf2daa4badc1b7b5ff09a2002860c8ba011c263c2",
+      "translation_sha256": "a3fbb263f5116204476c3c7e0bb761acf51aeb8c1205a8f7e3ea81ea34ec29e1"
+    },
+    {
+      "file": "design-notes/lift.stage.eas.md",
+      "source_sha256": "2ee5998a5e8f623cd5579d1bf37488c6a06597cdd2d240b1b427fcbd586f0c1d",
+      "translation_sha256": "78f64d36eb1cf11addc79cae9d330e8fce88fe96a54451d559f7a814bccbe881"
+    },
+    {
+      "file": "design-notes/mobility.drive_motor.md",
+      "source_sha256": "0eee2418bdcddb508cc12e8c4c3015a67bbc96fb4879bdb31f6b55ca41267ac0",
+      "translation_sha256": "3183573a2ea94e805133ebb0cdd0c035cd7899079e6e56e2abe00171744455b2"
+    },
+    {
+      "file": "design-notes/perception.camera.d435.md",
+      "source_sha256": "329453c5876bf9d962047fec224ace4ffd21e2141057cb44190fa1e842109733",
+      "translation_sha256": "8ca4802e41afc801029d9bbacbe245010690aec48084c95e4844e9c1ce48d015"
+    },
+    {
+      "file": "design-notes/perception.camera.pan_tilt.md",
+      "source_sha256": "f0287af72515c71b514dbe4d90a072ff9d4de3d264b0f6da1a8d1b7722aaa55f",
+      "translation_sha256": "a135b63587b3464f3cddff27ee1c74b88df04e506cb4c7bac52105fe93459aec"
+    },
+    {
+      "file": "design-notes/perception.lidar.holder.md",
+      "source_sha256": "8af84e2d568af75b0e73affaa9f85bdb8cac69e05958a739a14437df8c89c40c",
+      "translation_sha256": "260e0c51dcf0f6b662a36cf2769667642ea9a29142752c896c7e9339ee7e3525"
+    },
+    {
+      "file": "design-notes/perception.lidar.mid360.md",
+      "source_sha256": "b631775d26c07c2bffffcbc8872ff7c45c69b5d1d491148b423e4c1abd63ab95",
+      "translation_sha256": "25b834573d7a2c9ab9591393311ad12ca87f3e4df4d1fd5dbb3ab0a5139233b2"
+    },
+    {
+      "file": "references/README.md",
+      "source_sha256": "815dd9b68d967a4b8719c4b93c8793fd49625b0bbe48fad35934bd242d398761",
+      "translation_sha256": "ea6377f20e5ac021499b5b77e5d4053a45cbe7fcc189023197e260b62351dbfe"
+    },
+    {
+      "file": "references/calibration/ARM_DEVELOPMENT_GUIDELINE.md",
+      "source_sha256": "74aee53b02d96d672fc244ac2bfd1b69cbbfb619b4b6c7270008eea18178e9fc",
+      "translation_sha256": "7cbad09696ab4d0f18c31932192204ba93867532c7631770c090c5e5865add82"
+    },
+    {
+      "file": "references/calibration/ARM_TF_README.md",
+      "source_sha256": "d650c2e83e713e828bb1e34b528409734f3f275b5845d1920216ff43cd6298f8",
+      "translation_sha256": "cbf1ffc141a8260c1c79de35536c804d4ea226960bcf8b6dddfdddb0a4d54558"
+    },
+    {
+      "file": "references/calibration/CAMERA_ARM_TF_CALIBRATION.md",
+      "source_sha256": "45a8db74a7bafbad73d4210b9194f9bef6422fe1603c2edd5d793ca6b3dbb769",
+      "translation_sha256": "de3d0707d637f229fff666d6bd7fa6976e884787833e5dea1d5acc3e2537d337"
+    },
+    {
+      "file": "references/calibration/PAN_TILT_CAPTURE_README.md",
+      "source_sha256": "44e2d3f68f42b4d199227e3523dc12b20f0e656b753e2ab0b3b287864bd5d51d",
+      "translation_sha256": "0e7f53bddc4555c78eec577ac636b884cd546dfd9586bbb247b95ce31d0f7dd5"
+    },
+    {
+      "file": "references/concept/README.md",
+      "source_sha256": "5b0144c5e52f8d60f51ea1648161898c6e47f3c40e41742001e5efd86eb48671",
+      "translation_sha256": "9e5e5abc95996727b8b6d552dfbf8e1f5f214a8bfcde4faadfa79399d4020856"
+    },
+    {
+      "file": "references/hardware-docs/README.md",
+      "source_sha256": "704add73fb68218b456f1775e14ade6521b6dcf91a3f9e63f844ad92b755a2d0",
+      "translation_sha256": "bfeabb904c654e6b0e32a24e2e724653a5fb67a26d48b3e6db6dc93671bea70d"
+    },
+    {
+      "file": "references/hardware-docs/blv_r_drive_motors.md",
+      "source_sha256": "f26c3ce7cf9823e7ffc114ab8c94f1b4408a964b5104401971c01adafcf5341a",
+      "translation_sha256": "944647aeeba6e3ab5837b9ea39e997bfa05af395bf63705d4044462068f9d4d0"
+    },
+    {
+      "file": "references/hardware-docs/camera_swing_motor.md",
+      "source_sha256": "a106d7628490503653d525514eef7a8362b54f8bacc32edaa928eb905521e23d",
+      "translation_sha256": "26df94b75c92d64f9f8c298ecbe8e0a7ec9a7c014bcd7cbf13bda6a8403545cc"
+    },
+    {
+      "file": "references/hardware-docs/dynamixel_steer_motors.md",
+      "source_sha256": "c6706489014cd7b419c85f4dba96e59c9c19650947f8a16ac27a3d195cdf3d4d",
+      "translation_sha256": "7a07a09efb876c817effae7b79af59674cf657db81aafab34821c2cca60e8fb5"
+    },
+    {
+      "file": "references/hardware-docs/e-stop.md",
+      "source_sha256": "6fbc211117be9fd1563994c99cc0c7d0b30556c34c9877c5981c2e1a547e1c53",
+      "translation_sha256": "c6d7bfb87b7301512f03c67a8596cccabca2db2c942c69a2bc3f8ef56718191d"
+    },
+    {
+      "file": "references/hardware-docs/lift_mechanism/azd_kd_abzo_interface.md",
+      "source_sha256": "6c05e410149d5db06dde1081db48da64bee1d83a1e33ec602e8e548b548432e0",
+      "translation_sha256": "1fccbd5ed369d7f32e6449bee63224c8b25fb750d052251c992bdb3cf483d30a"
+    },
+    {
+      "file": "references/hardware-docs/lift_mechanism/lift_mechanism.md",
+      "source_sha256": "2d6e2d03e0061f26bee8033d51ed709f8d24c564675688709b8601b446c1ff5a",
+      "translation_sha256": "8390c3815ed51320e41189230f2762045f208a43ef9913936f9181567f32802b"
+    },
+    {
+      "file": "references/hardware-docs/linear_motor.md",
+      "source_sha256": "0199bd3460d9b7b50f08fcaabc90890acf6b25d8b0e62f3684ea46142b8d89af",
+      "translation_sha256": "7036eca306d7582e3bec4ad61c969b0373f219ee487873049a43ba5e12ce1529"
+    },
+    {
+      "file": "references/hardware-docs/livox_mid360.md",
+      "source_sha256": "a29428928afff831de938cb365efdd5e20768a7e21cd25aad711bad952f2cf57",
+      "translation_sha256": "776673fbd6f441fc9222fa2556e8ac8406b4eb1caf39286292768046dae9108d"
+    },
+    {
+      "file": "references/hardware-docs/realsense_d435.md",
+      "source_sha256": "35e4cdaddfaaf9882ff21e6a0dffd12bd13f02e6d1c7efb8f9ac652dd19bf684",
+      "translation_sha256": "d9886c33a84da8e5a3889e125aba475ae4233fae065965620a087bfa2ed4d48b"
+    },
+    {
+      "file": "references/hardware-docs/robot_frame_dimensions.md",
+      "source_sha256": "b993ee61d4417af62255d07ac66218bfc9bb76d5900c0350d2795e754b4689a5",
+      "translation_sha256": "e93b961138c570418a29dd53bfae319f087c8440dac477c9e5285466d7b306dd"
+    },
+    {
+      "file": "references/hardware-docs/so-arm101.md",
+      "source_sha256": "0aedc73416bec9fbb0c68afeae822389b0cb863f37e80c1d4920f3495669fdf4",
+      "translation_sha256": "89635e2228570639e22a63af18fa8ef7a301f32e6b5d5ccdbf2b7ed530e0a6a3"
+    },
+    {
+      "file": "references/licenses/REALSENSE_ROS_NOTICE.md",
+      "source_sha256": "7f7ac65a5fd09405d8dfa6d28a0f8c8024862ed543557b2ab72543c13576a4d1",
+      "translation_sha256": "98b7806a1dcfb429c33a9cab1962b2f896d828fc680fe1fe19715107f51f3f5b"
+    },
+    {
+      "file": "references/licenses/SO_ARM101_ATTRIBUTION.md",
+      "source_sha256": "04d71dbbc65df075ac4375f5d22f19d4d10607e318cd2e8e83caa929bc31de8e",
+      "translation_sha256": "24a8952d28304b25c38dc36e23f54b476bcd86aefd34666b1cce9030cd33c811"
+    },
+    {
+      "file": "references/photos/measurements/README.md",
+      "source_sha256": "82cbdcd53b1b3209633412ffc74f0f379ed52ca5adcb7c7f1088d7cef056475e",
+      "translation_sha256": "53d047df08e60538cdc901b8716b85e79ff6c67947f2dba38034499924ba6720"
+    },
+    {
+      "file": "references/urdf/expanded/README.md",
+      "source_sha256": "39c9c44c797e933326c8a16310336034e9a035fc708d52a70c37369075f19b4a",
+      "translation_sha256": "55f5ad8c51080c97655b21df464aff22ac5a23095ce61170dc14c9983ebe7687"
+    },
+    {
+      "file": "references-v2/cad/BRIEF.md",
+      "source_sha256": "fd113b481e30977b7db99f9c3688f87fa62e5812bb9cc16ebfc02750042a0c6b",
+      "translation_sha256": "15513b842b80b2541308f8fa14289708ad004df725ebe9862b33e45ad1709ffb"
+    },
+    {
+      "file": "references-v2/cad/REVIEW.md",
+      "source_sha256": "d2f2704d084949ac88292baf161555972070a50b223a6a3d652c2de2cd5eb140",
+      "translation_sha256": "38f48c648b74ea952bb72cf0ad46763ce048ccb7ce503b6d777b3a6ded14da5c"
+    },
+    {
+      "file": "references-v2/products/sources.md",
+      "source_sha256": "f5375f11350d4187280b2918209edfd57a398c2b932581bdadd07026e9742480",
+      "translation_sha256": "7a8e38df80e74aa49ea2a810871c15ce32980b1ef2570c6c5defeb754cbb0dd9"
+    },
+    {
+      "file": "web/README.md",
+      "source_sha256": "e24354cc9af836c871a72fb017d42fcad9bd08847f2b9addcd7b4f4b3f5ff30f",
+      "translation_sha256": "07883dcee2822b8b8f065ae9480657cb29a6ecdaab5f18bed17854d674126a97"
+    },
+    {
+      "file": "data/components.json",
+      "source_sha256": "ed87b388ef7cdd2f87682f6db232d152f886161ead99e7527f8955b8f7db6a91",
+      "translation_sha256": "dd3e03aaff749c7e8bfa84208ec0d0c53ae9c7869b34973e53f226f787c118f2"
+    },
+    {
+      "file": "data/design-notes-v003.json",
+      "source_sha256": "73bce7071516eac04518290778ead0cd18c3dc5d4502155bc0e15fa4a6b949e0",
+      "translation_sha256": "4104481f85f55147bb910c84ab81443c96014c21e1dfa386e80428e34dc0d2c0"
+    },
+    {
+      "file": "data/physical-measurements.json",
+      "source_sha256": "6c74188075219d8ccf74c492d62eb1320c261a4a03bebf40facecb0fd729c289",
+      "translation_sha256": "77ab1ff44dcd856c64faede8fbddb209e2f89367f5a90eced74d43df2cd4f8c4"
+    },
+    {
+      "file": "web/vendor/THREE-LICENSE.txt",
+      "source_sha256": "bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601",
+      "translation_sha256": "ef6dffad4c83b0488287ea8eccb522b0306ed0918fb7c92996ad71d3b2726141"
+    },
+    {
+      "file": "references/meshes/so_arm101/LICENSE",
+      "source_sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "translation_sha256": "7e243bff9d31a7c5ca9a71d9d62cffb841f2513e2b4110532e6000107fa21550"
+    },
+    {
+      "file": "serve.py",
+      "source_sha256": "df7e63bf0813f20d4f79fef6581eeef9d950128d38643e6ba4d320358f70ad22",
+      "translation_sha256": "46cdc618d59a6de87a2914eb1630622acc40b9a69f6bb41747ff1c2c1993582b"
+    }
+  ],
+  "missing_count": 0,
+  "raw_assets": "Geometry, images and runtime configuration copied without modification."
+}

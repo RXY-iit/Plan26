@@ -1,0 +1,113 @@
+{
+  "deployment_status": "REJECTED_NOT_DEPLOYED",
+  "rejection_reason": "Absolute board pose was not measured and the public SAPIEN camera frame was initially misidentified as a ROS optical frame; real Touch verification showed a regression.",
+  "sample_count": 130,
+  "translation_rms_m": 0.016142057694732773,
+  "translation_median_m": 0.01309815203656274,
+  "translation_max_m": 0.040741388854745264,
+  "rotation_rms_deg": 2.348817014347157,
+  "rotation_median_deg": 1.852075711952952,
+  "rotation_max_deg": 6.716574023931562,
+  "arm_mount_at_lift_lower": [
+    0.32084,
+    0.01262,
+    0.8924999999999998,
+    0.0,
+    0.0,
+    -0.01532
+  ],
+  "base_link_height_above_ground_m": 0.1125,
+  "arm_base_height_above_ground_m": 1.005,
+  "public_gripper_to_arm_camera_optical_xyz_rpy": [
+    0.0025,
+    0.0675,
+    -0.0062,
+    2.70710133,
+    0.0,
+    -6.73205e-07
+  ],
+  "uvc_image_axis_correction_rotvec": [
+    -0.16452008766419204,
+    -0.08352425719213279,
+    0.1064313508754551
+  ],
+  "uvc_image_axis_correction_deg": 12.204242218699093,
+  "d435_bottom_screw_to_color_optical_xyz_rpy": [
+    0.0106,
+    0.0325,
+    0.0125,
+    -1.5707963267948966,
+    0.0,
+    -1.5707963267948966
+  ],
+  "pan_origin_xyz_m": [
+    0.263022643723,
+    -0.005840533771,
+    0.6224999999999999
+  ],
+  "pan_axis_unit": [
+    0.5181599629482724,
+    0.07338067880185788,
+    0.8521299952331355
+  ],
+  "tilt_origin_at_reference_xyz_m": [
+    0.28802264372299996,
+    -0.0058405337709999975,
+    0.6575
+  ],
+  "tilt_axis_at_reference_unit": [
+    -0.003994611705768336,
+    0.9976689224592166,
+    -0.06812315492096442
+  ],
+  "axis_dot_product": 0.013089991218054202,
+  "holder_from_tilt_xyz_m": [
+    0.010867378612,
+    -0.033386726487,
+    -0.000309485129
+  ],
+  "holder_from_tilt_rpy_rad": [
+    1.537099461227,
+    -0.026728694167,
+    -0.308047366471
+  ],
+  "holder_at_reference_xyz_m": [
+    0.3222934989111687,
+    -0.0054923522636854925,
+    0.665132591877528
+  ],
+  "optimizer_parameters": [
+    0.263022643723,
+    -0.005840533771,
+    -0.161261593283,
+    0.528889458473,
+    -0.302624144749,
+    -1.584178220242,
+    0.153230125481,
+    0.621354970558,
+    0.010867378612,
+    -0.033386726487,
+    -0.000309485129,
+    1.537099461227,
+    -0.026728694167,
+    -0.308047366471,
+    -0.16452008766419204,
+    -0.08352425719213279,
+    0.1064313508754551
+  ],
+  "optimizer_success": true,
+  "optimizer_status": 2,
+  "optimizer_message": "`ftol` termination condition is satisfied.",
+  "mechanism_fit_mode": "DEPLOYED_TF_FIXED__UVC_AXIS_ROTATION_ONLY",
+  "source_sessions": [
+    "session_20260903_010858_115137",
+    "session_20260903_014710_255810",
+    "session_20260903_020201_959088",
+    "session_20260903_023525_587586"
+  ],
+  "wrist_camera_model_source": {
+    "repository": "https://github.com/livekit-examples/so-frame",
+    "commit": "657fb4a0bf65bac8f7b336deed2631a4932311c2",
+    "urdf": "simulation/urdf/so101_on_frame.urdf"
+  }
+}
