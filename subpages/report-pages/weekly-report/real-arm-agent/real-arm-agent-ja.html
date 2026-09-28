@@ -256,6 +256,29 @@ tr:nth-child(even) td { background: #fafafa; }
 .flow-step small { color: var(--muted); font-size: 11px; }
 .flow-arrow { align-self: center; color: var(--muted); font-size: 14px; }
 @media (max-width: 640px) { .fig-grid { grid-template-columns: 1fr; } }
+.vid-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 820px) { .vid-grid.cols-3 { grid-template-columns: 1fr; } }
+
+/* ── 画像ライトボックス ── */
+.img-card img { cursor: zoom-in; }
+.lightbox-overlay {
+  position: fixed; inset: 0; background: rgba(6,10,16,.92);
+  display: none; align-items: center; justify-content: center;
+  z-index: 9999; padding: 28px; cursor: zoom-out;
+}
+.lightbox-overlay.open { display: flex; }
+.lightbox-overlay img {
+  max-width: 94vw; max-height: 94vh; object-fit: contain;
+  border-radius: 6px; box-shadow: 0 12px 48px rgba(0,0,0,.5);
+}
+.lightbox-close {
+  position: fixed; top: 16px; right: 22px; width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 26px; line-height: 1; cursor: pointer;
+  opacity: .75; z-index: 10000; background: rgba(255,255,255,.08);
+  border-radius: 50%; transition: opacity .12s, background .12s;
+}
+.lightbox-close:hover { opacity: 1; background: rgba(255,255,255,.16); }
 </style>
 </head>
 <body>
@@ -293,7 +316,7 @@ tr:nth-child(even) td { background: #fafafa; }
     </div>
     <div class="nav-right">
       <span class="nav-pulse"></span>
-      <div class="nav-badge-pill">Touch Anything 最終接近を改善中</div>
+      <div class="nav-badge-pill">単眼視差という構造的課題を検討中</div>
     </div>
   </div>
 </nav>
@@ -305,12 +328,13 @@ tr:nth-child(even) td { background: #fafafa; }
     <h1>実機 ARM 追加：基本 3 モードと<br>Touch Anything スキル 週次報告</h1>
     <p class="hero-desc">
       移動ベースにロボットアーム（SO-ARM101）を追加し、実機上で基本運転モードの整備と Touch Anything スキルの開発・検証を進めた。<br>
-      最終接近・Press 段階の安定化に向けて、単発の視覚結果に頼らない連続視覚フィードバック方式へ移行中。
+      連続視覚フィードバック（Visual Servoing）への移行と Isaac Sim baseline の構築が進み、追跡自体は実機・Sim とも約 10 Hz で安定。一方で、単眼手先カメラの視差・深度あいまいさという構造的な課題が明確になった。
     </p>
     <div class="hero-meta">
-      <span class="meta-chip">&#128197; 2026-09-20</span>
+      <span class="meta-chip">&#128197; 2026-09-28</span>
       <span class="meta-chip">&#129302; Real Robot（移動ベース + SO-ARM101）</span>
       <span class="meta-chip">&#128073; Touch Anything / Visual Servo</span>
+      <span class="meta-chip">&#129513; Isaac Sim baseline</span>
     </div>
   </div>
 </div>
@@ -323,8 +347,9 @@ tr:nth-child(even) td { background: #fafafa; }
     <h2>今回の要点</h2>
     <ul>
       <li><span>移動ベースへ ARM を追加し、<b>Real to Sim / Teleoperation / Code to Sim &amp; Real</b> の 3 つの基本運転モードを設計・実機で動作確認</span></li>
-      <li><span>3 モードの上に、<b>Touch Anything</b>（目標識別 → 位置推定 → 接近 → Touch / Press）を実機で構築。Depth Camera・Wrist Camera・ARM 間の較正も実施し、将来の ARM Agent Skill として位置づけ</span></li>
-      <li><span>最終接近・Press 段階には安定性の課題が残る。原因を整理し、<b>連続視覚フィードバック（Visual Servoing）</b>への移行と、動作ブロックの重ね合わせ実行を実装。実機の次回検証は Isaac Sim での事前検証後に実施</span></li>
+      <li><span>3 モードの上に、<b>Touch Anything</b>（目標識別 → 位置推定 → 接近 → Touch / Press）を実機で構築。<b>連続視覚フィードバック（Visual Servoing）</b>への移行により、追跡・接近の動作は実機で安定</span></li>
+      <li><span>Isaac Sim 上に real robot 代役の <b>baseline</b> を構築し、同じ Touch Anything の流れを Sim でも確認。特徴量ベースの追跡は実機・Sim とも約 10 Hz に到達</span></li>
+      <li><span>一方、<b>単眼手先カメラの視差・深度あいまいさ</b>という構造的な課題が実機・Sim の双方で確認された。SAM 中心と爪先の画像上の一致は信頼できる Press 条件ではなく、次フェーズの設計課題として検討中</span></li>
     </ul>
   </div>
 
@@ -455,10 +480,80 @@ tr:nth-child(even) td { background: #fafafa; }
     </div>
   </div>
 
-  <!-- ── SECTION 3: 最終接近 ── -->
+  <!-- ── SECTION 3: Isaac Sim 検証 ── -->
   <div class="sec-div">
     <div class="sec-line"></div>
-    <div class="sec-label red">&#127919; 3. 最終接近・Press 段階の課題と改善方針</div>
+    <div class="sec-label purple">&#129513; 3. Isaac Sim 検証</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card purple">
+    <div class="card-body">
+      <p>実機での試行は時間・安全面のコストが高いため、Isaac Sim 上に real robot の代役となる baseline（SO101 Arm・Arm Camera・D435・Dashboard・RViz Touch Anything パネル）を構築し、Touch Anything を Sim 上でも一通り動かせるようにした。</p>
+      <div class="fig-grid">
+        <figure class="img-card">
+          <img src="media/touch-test.jpg" alt="実機の試験環境" />
+          <figcaption class="img-cap">実機の試験環境<small>番号付きボタンと色付きボタンを並べた試験パネル</small></figcaption>
+        </figure>
+        <figure class="img-card">
+          <img src="media/Sim/sim-env-2.png" alt="Isaac Sim の試験環境" />
+          <figcaption class="img-cap">Isaac Sim 側の対応する試験環境<small>同じ配置の色付きボタンパネルを再現</small></figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+
+  <div class="card amber">
+    <div class="card-title"><span class="tag ok">解決</span> ARM 追加後のセンサー頻度低下によるローカリゼーション失敗</div>
+    <div class="card-body">
+      <p>ARM を追加した構成で Isaac Sim を動かすと、LiDAR・カメラなど既存のナビゲーション用トピックの発行頻度が大きく落ち込み、ローカリゼーション・追跡の失敗が頻発するようになった。対策として、ARM のテスト中は Touch Anything に必要なセンサーのみを発行し、LiDAR によるナビゲーション・ローカリゼーションは起動しない構成にした。</p>
+    </div>
+  </div>
+
+  <div class="card blue">
+    <div class="card-title"><span class="tag sw">追跡性能</span> 特徴量ベース追跡で実機・Sim とも約 10 Hz</div>
+    <div class="card-body">
+      <p>Wrist Camera の追跡は、KLT を中心とした特徴量ベースの追跡（低テクスチャ対象は色の連続性も併用）に整理され、<b>実機・Sim のどちらでも無理なく約 10 Hz</b> で動作している。動作ブロックの再計画ゲインなど Sim 特有の調整もあわせて実施した。</p>
+      <div class="fig-grid">
+        <figure class="img-card">
+          <img src="media/Sim/sim-rivz-tracking.png" alt="Sim 側 RViz の追跡表示" />
+          <figcaption class="img-cap">Sim 側 RViz の追跡表示<small>SAM マスク重心（SAM MASK CENTROID）と固定下爪先端（FIXED LOWER TIP）</small></figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+
+  <div class="card teal">
+    <div class="card-title"><span class="tag ok">比較</span> Touch Demo：実機と Sim</div>
+    <div class="card-body">
+      <p>同じ Touch Anything の一連の動作を、実機と Isaac Sim の両方で確認できる状態になっている。</p>
+      <div class="vid-grid cols-3">
+        <div class="vid-card">
+          <video controls preload="metadata" muted><source src="media/Sim/sim-press-demo.webm" type="video/webm">お使いのブラウザは動画再生に対応していません。</video>
+          <div class="vid-cap">Isaac Sim デモ</div>
+        </div>
+        <div class="vid-card">
+          <video controls preload="metadata" muted><source src="media/touch-anything-demo.mp4" type="video/mp4">お使いのブラウザは動画再生に対応していません。</video>
+          <div class="vid-cap">実機デモ<small>通し・長尺版</small></div>
+        </div>
+        <div class="vid-card">
+          <video controls preload="metadata" muted><source src="media/touch-demo.mp4" type="video/mp4">お使いのブラウザは動画再生に対応していません。</video>
+          <div class="vid-cap">実機デモ<small>目標指定〜接触</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note blue">
+    &#128221; Sim 側で見つかったその他の問題（RViz の TF 断裂、Dashboard の制御権など）は
+    <a href="TOUCH-ANYTHING-KNOWHOW-20260907.html#sim" style="font-weight:700; color:var(--accent);">Touch Anything Know-how の「08 Isaac Sim 検証」</a>
+    にまとめています。
+  </div>
+
+  <!-- ── SECTION 4: 最終接近 ── -->
+  <div class="sec-div">
+    <div class="sec-line"></div>
+    <div class="sec-label red">&#127919; 4. 最終接近・Press 段階の課題と改善方針</div>
     <div class="sec-line"></div>
   </div>
 
@@ -467,43 +562,40 @@ tr:nth-child(even) td { background: #fafafa; }
     <div class="card-body">
       <ul>
         <li><b>初期位置の推定誤差：</b>追加の Calibration でカメラと ARM の位置関係を補正し、改善した。</li>
-        <li><b>視覚的な「偽の整列」：</b>Y/Z を同時に補正していたため、見かけ上は整列していても実際の Press 位置がずれることがあった。補正順を「Z → Y」に変更して解決した。</li>
       </ul>
+    </div>
+  </div>
+
+  <div class="card red">
+    <div class="card-title"><span class="tag bug">現在の中心課題</span> 単眼手先カメラの視差・深度あいまいさ（未解決・構造的）</div>
+    <div class="card-body">
+      <p>NEAR フェーズの整列条件は「SAM マスクの重心」と「固定した下爪先端」の画素位置を一致させることで判定している。しかしこれは<b>カメラ・爪先・対象がほぼ同一視線上に並んだ</b>ことを意味するにすぎず、その視線上のどこに対象があるか（奥行き方向のずれ）までは分からない。手先カメラは単眼で深度を持たないため、画像上では整列して見えても、実際の横方向・奥行き方向のずれが残っているケースがある。</p>
+      <p>同じ現象が実機・Isaac Sim の双方の RViz / Arm Camera 映像で確認できており、特定のハードウェア個体や較正誤差ではなく、<b>単眼手先カメラという構成そのものに起因する構造的な問題</b>と判断している。現時点では未解決で、次フェーズの設計課題として検討中。</p>
       <div class="fig-grid">
         <figure class="img-card">
-          <img src="media/press-error.png" alt="偽の整列によるずれの例" />
-          <figcaption class="img-cap">補正方式の変更前（RViz）<small>見かけ上は整列していても、Press 位置にずれが生じた例</small></figcaption>
+          <img src="media/press.png" alt="実機：整列して見える状態" />
+          <figcaption class="img-cap">実機（RViz）<small>SAM マスクと固定下爪先端が画像上では整列して見える状態</small></figcaption>
         </figure>
         <figure class="img-card">
-          <img src="media/press.png" alt="正常な接近時の RViz" />
-          <figcaption class="img-cap">補正方式の変更後（RViz）<small>Arm Camera 上で爪先と対象が整列し、PRESS フェーズに到達した状態</small></figcaption>
+          <img src="media/press-error.png" alt="実機：ずれが生じた状態" />
+          <figcaption class="img-cap">実機（RViz）<small>同じ整列条件を満たしていても、実際にはずれが生じた状態</small></figcaption>
+        </figure>
+        <figure class="img-card">
+          <img src="media/Sim/before-press-correct.png" alt="Sim：整列して見える状態" />
+          <figcaption class="img-cap">Isaac Sim<small>対象が爪先とほぼ整列して見える状態</small></figcaption>
+        </figure>
+        <figure class="img-card">
+          <img src="media/Sim/before-press-wrong.png" alt="Sim：ずれた状態" />
+          <figcaption class="img-cap">Isaac Sim<small>対象が爪先の整列位置から外れている状態</small></figcaption>
         </figure>
       </div>
     </div>
   </div>
 
-  <div class="card red">
-    <div class="card-title"><span class="tag bug">課題</span> 現在残っている主な課題</div>
-    <div class="card-body">
-      <p>Touch Anything の主体フローは一通り動作するようになったが、<b>最終 Press 直前の位置合わせ精度が十分ではない</b>。主な原因として、接近中の動作・補正が連続的ではなく、最終位置に誤差が残ることが考えられる。</p>
-    </div>
-  </div>
-
-  <div class="card amber">
-    <div class="card-title"><span class="tag wip">原因</span> 原因分析</div>
-    <div class="card-body">
-      <ul>
-        <li><b>目標位置と ARM 動作の更新が不連続：</b>従来は「SAM で再分割 → 軌道生成 → 実行 → 停止・整定待ち → 再観測」を 1 ステップずつ繰り返しており、実際の観測間隔は 6〜13 秒に達していた。停止のたびに荷重による沈み込みや振動が生じ、再始動時にも新たな誤差が乗る。</li>
-        <li><b>SO-ARM101 の精度の限界：</b>低コストなアームであり、絶対位置精度・繰り返し位置精度が限られる（荷重下では Z 方向に系統的な下振れが出る）。</li>
-        <li><b>単発の視覚結果への依存：</b>ある一時点の視覚定位結果だけで最終 Press を実行すると、誤差が蓄積しやすい。</li>
-      </ul>
-    </div>
-  </div>
-
   <div class="card green">
-    <div class="card-title"><span class="tag ok">新方針</span> 連続視覚フィードバック（Visual Servoing）</div>
+    <div class="card-title"><span class="tag ok">解決済み</span> 連続視覚フィードバック（Visual Servoing）</div>
     <div class="card-body">
-      <p>最終位置を単一の目標位置から決めるのをやめ、<b>ARM が接近している間、視覚特徴量を実時間で計算し続け、連続的なフィードバックで運動方向を修正して最終 Press 位置へ収束させる</b>方式に切り替える。ARM 自体の位置誤差と、単発の視覚推定誤差の両方の影響を小さくすることが狙い。</p>
+      <p>以前は「動作が止まる・再始動するたびに誤差が乗る」という、接近の連続性そのものに課題があった。最終位置を単一の目標位置から決めるのをやめ、<b>ARM が接近している間、視覚特徴量を実時間で計算し続け、連続的なフィードバックで運動方向を修正して最終 Press 位置へ収束させる</b>方式に切り替えたことで、この問題は解消した。上の「単眼視差・深度あいまいさ」とは別種の、動作の滑らかさに関する課題だった。</p>
       <div class="flow">
         <div class="flow-step"><b>SAM 2</b><small>最初に対象を確定（1 回のみ）</small></div>
         <div class="flow-arrow">→</div>
@@ -530,31 +622,36 @@ tr:nth-child(even) td { background: #fafafa; }
         <tr><td>Z 方向の下振れ（最大 約 44.8 mm）</td><td><span class="tag ok">原因特定・修正</span> 画像ヤコビアンから得る Z 補正の向きが実機の応答と合っていなかった。実測末端との残差を使う閉ループ補償に修正</td></tr>
         <tr><td>運動中に追跡が止まる現象</td><td><span class="tag ok">原因特定・修正</span> 目標を見失ったのではなく、診断用の DDS 配信が Touch プロセスの追跡タイマを最大約 6 秒ブロックしていた。運動中は診断配信を停止し、QoS を軽量化</td></tr>
         <tr><td>停止後の余動</td><td><span class="tag ok">修正</span> 停止時は現在姿勢へ HOLD する動作に変更</td></tr>
-        <tr><td>実機での Press までの連続動作</td><td><span class="tag wip">検証待ち</span> 次項の Isaac Sim 検証を通過してから実施</td></tr>
+        <tr><td>Isaac Sim での連続動作・特徴量ベース追跡</td><td><span class="tag ok">Sim で動作確認</span> 実機・Sim とも追跡は約 10 Hz に到達</td></tr>
+        <tr><td>実機での Press までの連続動作</td><td><span class="tag wip">検証待ち</span> 単眼視差の課題（下記）を整理してから、実機での通し検証を実施</td></tr>
       </table>
     </div>
   </div>
 
   <div class="card purple">
-    <div class="card-title"><span class="tag hw">次のステップ</span> 検証計画（Isaac-first）</div>
+    <div class="card-title"><span class="tag hw">今後の方向性</span> 単眼視差の課題への対応（ハードウェア追加なし）</div>
     <div class="card-body">
-      <p>実機での試行は時間と安全面のコストが高いため、まず Isaac Sim で同一のトピック・テレメトリ構成を再現し、そこで方式を固めてから実機で 1 回だけ検証する。</p>
-      <ol>
-        <li>Isaac Sim 上で Arm Camera・関節状態・TF・視覚サーボ用トピックを実機と同じスキーマで再現する。</li>
-        <li>画像遅延、IK 遅延、DDS の背圧、関節応答の遅れ、Z 方向のモデル誤差を注入し、動作ブロックの置き換え・追跡の締切遵守・停止直後の凍結を確認する。</li>
-        <li>FAR → NEAR の全行程で追跡喪失・タイムアウト・Z 下振れが出ない状態になるまで、Z 補償・速度制限・ブロック長を調整する。</li>
-        <li>同じパラメータを実機に反映し、人が監督する FAR → NEAR を 1 回実施する（Press 実行前は確認待機で HOLD）。判定は Z 下振れ 12 mm 以内、ウォッチドッグ不作動、動作ブロックの再計画数が指令と共に増加していること。</li>
-      </ol>
+      <p>新規センサーの追加は予定していないため、D435・手先 RGB カメラ・TF/URDF（Sim のみ）・Dashboard/RViz の範囲で 2 つの方向性を比較検討している。</p>
+      <ul>
+        <li><b>方向 1：テンプレート位置 + アクティブ・パーセプション</b> — Press 直前の「正しい見え方」をテンプレートとして記録し、その付近で小さな探り動作をしてから Press 可否を判断する。工学的に扱いやすい一方、対象形状・角度が変わると汎化しにくい。</li>
+        <li><b>方向 2：接近フェーズでの RL / VLA</b> — D435 による粗い接近までは現行 baseline を安全境界として残し、NEAR〜PRESS だけを画像から次の微小動作を学習する方式に置き換える。画像的な関係を扱いやすい一方、データ収集・報酬設計・Sim-to-Real の整備が必要。</li>
+      </ul>
+      <p>本フェーズでの追加のパッチ当てはいったん停止し、現行コードは「動くが安定していない Sim baseline」として保持。得られた知見を次フェーズの設計インプットとして記録した。</p>
     </div>
   </div>
 
   <div class="note blue">
     &#128204; 詳細な問題分析と各段階の開発記録は
     <a href="TOUCH-ANYTHING-KNOWHOW-20260907.html" style="font-weight:700; color:var(--accent);">Touch Anything Know-how</a>
-    の「07 最終接近フェーズの改善」に記載しています。
+    の「07 最終接近フェーズの改善」「08 Isaac Sim 検証」「09 単眼視差という核心課題」に記載しています。
   </div>
 
 </main>
+
+<div class="lightbox-overlay" id="lightbox" role="dialog" aria-modal="true" aria-hidden="true">
+  <span class="lightbox-close" aria-label="閉じる">&times;</span>
+  <img id="lightbox-img" src="" alt="" />
+</div>
 
 <script>
 document.querySelectorAll('.nav-btn[data-nav]').forEach(btn => {
@@ -572,6 +669,29 @@ document.addEventListener('click', () => {
   document.querySelectorAll('.nav-drop.open').forEach(d => d.classList.remove('open'));
   document.querySelectorAll('.nav-btn.nav-open').forEach(b => b.classList.remove('nav-open'));
 });
+
+(function () {
+  const overlay = document.getElementById('lightbox');
+  const overlayImg = document.getElementById('lightbox-img');
+  function openLightbox(img) {
+    overlayImg.src = img.currentSrc || img.src;
+    overlayImg.alt = img.alt || '';
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+  }
+  function closeLightbox() {
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden', 'true');
+    overlayImg.src = '';
+  }
+  document.querySelectorAll('.img-card img').forEach(img => {
+    img.addEventListener('click', () => openLightbox(img));
+  });
+  overlay.addEventListener('click', closeLightbox);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+})();
 </script>
 </body>
 </html>

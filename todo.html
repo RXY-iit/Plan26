@@ -610,11 +610,6 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
         </div>
         <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
           <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
-          <span>Sim2Real Validation Checklist（Hardware / Software / Functional / Robustness の4段階）に基づく実機検証</span>
-          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
-          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
           <span>Recovery Agent の実機運用検証（Localization 復帰 / Local Planner 復帰 / Motor 復帰）— 無人運用に耐える信頼性を確認</span>
           <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
         </div>
@@ -629,18 +624,13 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
       <img src="figure/ARM-plan.png" alt="Manipulation / ARM plan overview" style="max-width:60%;border-radius:10px;border:1px solid var(--border);box-shadow:var(--sh-sm);cursor:zoom-in;margin:0 auto 10px;display:block;" onclick="openImgModal('figure/ARM-plan.png','🦾 Manipulation / ARM Plan')" />
       <div style="display:flex;flex-direction:column;gap:7px;">
         <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
-          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span style="color:var(--green);font-weight:700;flex-shrink:0;">✅</span>
           <span>アーム基礎制御の実機安定動作確認（Home → Pose A → Pose B → Home を連続50回実行し、関節超限・通信失敗・漂移が出ないこと）</span>
           <span class="tag hw" style="margin-left:auto;">Hardware</span>
         </div>
         <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
-          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
+          <span style="color:var(--green);font-weight:700;flex-shrink:0;">✅</span>
           <span>TF / URDF / TCP・カメラ内外パラメータ較正の完了と IK・Cartesian 制御の実装（既知の末端位姿5点へ繰り返し到達できること）</span>
-          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
-          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
-          <span>視覚を使わない固定 Pick &amp; Place 状態機の構築・実機検証（20 回中 18 回以上成功）</span>
           <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
         </div>
         <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
@@ -654,19 +644,14 @@ footer a { color: rgba(255,255,255,.75); text-decoration: none; }
           <span class="tag hw" style="margin-left:auto;">Hardware</span>
         </div>
         <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
-          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
-          <span>アームを含む統合デモ（ナビ → 棚へ移動 → アームで作業）を Isaac Sim で成功</span>
+          <span style="color:var(--green);font-weight:700;flex-shrink:0;">✅</span>
+          <span>アームを Isaac Sim で実行</span>
           <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
         </div>
         <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
           <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
           <span>同統合デモを実機で再現・成功</span>
           <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag sw">Software</span></div>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;">
-          <span style="color:var(--border2);font-weight:700;flex-shrink:0;">○</span>
-          <span>PARC2026 コンペ参加に向けた VLA 導入・検証（ルールベース pick を baseline とし、学習ポリシー pick_learned / pick_vla を並存実装して比較）</span>
-          <div style="display:flex;gap:4px;margin-left:auto;"><span class="tag hw">Hardware</span><span class="tag ai">AI/LLM</span></div>
         </div>
       </div>
     </div>
